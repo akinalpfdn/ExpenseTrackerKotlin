@@ -9,13 +9,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.*
-import androidx.compose.ui.graphics.drawscope.DrawScope
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.expensetrackerkotlin.data.ExpenseCategory
 import com.example.expensetrackerkotlin.data.getColor
-import kotlin.math.*
 
 data class CategoryExpense(
     val category: ExpenseCategory,

@@ -5,6 +5,7 @@ import androidx.compose.animation.expandVertically
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectHorizontalDragGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -17,6 +18,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextOverflow
@@ -41,12 +43,13 @@ fun ExpenseRowView(
     var isEditing by remember { mutableStateOf(false) }
     var editAmount by remember { mutableStateOf(expense.amount.toString()) }
     var editDescription by remember { mutableStateOf(expense.description) }
-    
+    var showDeleteConfirmation by remember { mutableStateOf(false) }
+
     LaunchedEffect(isCurrentlyEditing) {
         isEditing = isCurrentlyEditing
         onEditingChanged(isEditing)
     }
-    
+
     Column(
         modifier = modifier.fillMaxWidth()
     ) {
@@ -54,7 +57,14 @@ fun ExpenseRowView(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(vertical = 2.dp)
-                .clickable { 
+                .pointerInput(Unit) {
+                    detectHorizontalDragGestures { _, dragAmount ->
+                        if (dragAmount < -100) {
+                            showDeleteConfirmation = true
+                        }
+                    }
+                }
+                .clickable {
                     if (!isEditing) {
                         isEditing = true
                         onEditingChanged(true)
@@ -68,7 +78,6 @@ fun ExpenseRowView(
             Column(
                 modifier = Modifier.fillMaxWidth()
             ) {
-                // Main expense row
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -76,12 +85,10 @@ fun ExpenseRowView(
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    // Category icon and info
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
                         modifier = Modifier.weight(1f)
                     ) {
-                        // Category icon - smaller for compact design
                         Box(
                             modifier = Modifier
                                 .size(32.dp)
@@ -101,7 +108,6 @@ fun ExpenseRowView(
                         
                         Spacer(modifier = Modifier.width(12.dp))
                         
-                        // Expense info - more compact
                         Column {
                             Text(
                                 text = expense.subCategory,
@@ -123,7 +129,6 @@ fun ExpenseRowView(
                         }
                     }
                     
-                    // Amount - more compact
                     Column(
                         horizontalAlignment = Alignment.End
                     ) {
@@ -141,7 +146,6 @@ fun ExpenseRowView(
                     }
                 }
                 
-                // Expanded editing section - like Swift
                 AnimatedVisibility(
                     visible = isEditing,
                     enter = expandVertically(),
@@ -157,7 +161,6 @@ fun ExpenseRowView(
                             )
                             .padding(12.dp)
                     ) {
-                        // Edit Amount
                         OutlinedTextField(
                             value = editAmount,
                             onValueChange = { newValue ->
@@ -179,7 +182,6 @@ fun ExpenseRowView(
                         
                         Spacer(modifier = Modifier.height(8.dp))
                         
-                        // Edit Description
                         OutlinedTextField(
                             value = editDescription,
                             onValueChange = { editDescription = it },
@@ -195,12 +197,10 @@ fun ExpenseRowView(
                         
                         Spacer(modifier = Modifier.height(12.dp))
                         
-                        // Action buttons
                         Row(
-                            horizontalArrangement = Arrangement.spacedBy(12.dp),
+                            horizontalArrangement = Arrangement.spacedBy(8.dp),
                             modifier = Modifier.fillMaxWidth()
                         ) {
-                            // Save button
                             Button(
                                 onClick = {
                                     val newAmount = editAmount.toDoubleOrNull()
@@ -215,10 +215,13 @@ fun ExpenseRowView(
                                     isEditing = false
                                     onEditingChanged(false)
                                 },
-                                modifier = Modifier.weight(1f),
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .height(40.dp),
                                 colors = ButtonDefaults.buttonColors(
                                     containerColor = Color.Green
-                                )
+                                ),
+                                shape = RoundedCornerShape(8.dp)
                             ) {
                                 Icon(
                                     imageVector = Icons.Default.Check,
@@ -226,21 +229,9 @@ fun ExpenseRowView(
                                     modifier = Modifier.size(16.dp)
                                 )
                                 Spacer(modifier = Modifier.width(4.dp))
-                                Text("Kaydet")
+                                Text("Kaydet", fontSize = 12.sp)
                             }
-                            
-                            // Delete button
-                            Button(
-                                onClick = onDelete,
-                                modifier = Modifier.weight(1f),
-                                colors = ButtonDefaults.buttonColors(
-                                    containerColor = Color.Red
-                                )
-                            ) {
-                                Text("Sil")
-                            }
-                            
-                            // Cancel button
+
                             OutlinedButton(
                                 onClick = {
                                     isEditing = false
@@ -248,7 +239,13 @@ fun ExpenseRowView(
                                     editAmount = expense.amount.toString()
                                     editDescription = expense.description
                                 },
-                                modifier = Modifier.weight(1f)
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .height(40.dp),
+                                colors = ButtonDefaults.outlinedButtonColors(
+                                    contentColor = Color.White
+                                ),
+                                shape = RoundedCornerShape(8.dp)
                             ) {
                                 Icon(
                                     imageVector = Icons.Default.Close,
@@ -256,7 +253,7 @@ fun ExpenseRowView(
                                     modifier = Modifier.size(16.dp)
                                 )
                                 Spacer(modifier = Modifier.width(4.dp))
-                                Text("İptal")
+                                Text("İptal", fontSize = 12.sp)
                             }
                         }
                     }
@@ -264,7 +261,6 @@ fun ExpenseRowView(
             }
         }
         
-        // Thin progress bar underneath - like Swift version
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -278,5 +274,53 @@ fun ExpenseRowView(
                     .background(expense.category.getColor())
             )
         }
+    }
+
+    if (showDeleteConfirmation) {
+        AlertDialog(
+            onDismissRequest = {
+                showDeleteConfirmation = false
+            },
+            title = {
+                Text(
+                    text = "Harcamayı Sil",
+                    color = Color.White,
+                    fontWeight = FontWeight.Bold
+                )
+            },
+            text = {
+                Text(
+                    text = "Bu harcamayı silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.",
+                    color = Color.White
+                )
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        onDelete()
+                        showDeleteConfirmation = false
+                    }
+                ) {
+                    Text(
+                        "Sil", 
+                        color = Color.Red,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+            },
+            dismissButton = {
+                TextButton(
+                    onClick = {
+                        showDeleteConfirmation = false
+                    }
+                ) {
+                    Text(
+                        "İptal", 
+                        color = Color.White
+                    )
+                }
+            },
+            containerColor = Color.Black.copy(alpha = 0.9f)
+        )
     }
 }
