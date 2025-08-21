@@ -50,7 +50,7 @@ fun CategoryDistributionChart(
                 val center = Offset(size.width / 2, size.height / 2)
                 val radius = size.minDimension / 2 - 20.dp.toPx()
                 
-                var currentAngle = -90f // Start from top
+                var currentAngle = -90f // Start from top like Swift
                 
                 categoryExpenses.forEach { categoryExpense ->
                     val sweepAngle = (categoryExpense.percentage * 360).toFloat()

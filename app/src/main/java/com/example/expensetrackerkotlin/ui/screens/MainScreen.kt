@@ -4,6 +4,8 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -68,34 +70,48 @@ fun MainScreen(
             
             Spacer(modifier = Modifier.height(16.dp))
             
-            // Charts TabView
-            Row(
-                horizontalArrangement = Arrangement.SpaceEvenly,
+            // Charts TabView - Horizontal Pager like Swift
+            val pagerState = rememberPagerState(pageCount = { 3 })
+            
+            HorizontalPager(
+                state = pagerState,
                 modifier = Modifier
                     .fillMaxWidth()
+                    .height(160.dp)
                     .padding(horizontal = 20.dp)
-            ) {
-                // Monthly Progress Ring
-                MonthlyProgressRingView(
-                    totalSpent = viewModel.totalSpent,
-                    progressPercentage = viewModel.progressPercentage,
-                    progressColors = viewModel.progressColors,
-                    isOverLimit = viewModel.isOverLimit,
-                    onTap = { /* TODO: Implement monthly calendar */ }
-                )
-                
-                // Daily Progress Ring
-                DailyProgressRingView(
-                    dailyProgressPercentage = viewModel.dailyProgressPercentage,
-                    isOverDailyLimit = viewModel.isOverDailyLimit,
-                    dailyLimitValue = viewModel.dailyLimit.toDoubleOrNull() ?: 0.0,
-                    selectedDateTotal = selectedDayTotal
-                )
-                
-                // Category Distribution
-                CategoryDistributionChart(
-                    categoryExpenses = viewModel.dailyExpensesByCategory
-                )
+            ) { page ->
+                Box(
+                    contentAlignment = Alignment.Center,
+                    modifier = Modifier.fillMaxSize()
+                ) {
+                    when (page) {
+                        0 -> {
+                            // Monthly Progress Ring
+                            MonthlyProgressRingView(
+                                totalSpent = viewModel.totalSpent,
+                                progressPercentage = viewModel.progressPercentage,
+                                progressColors = viewModel.progressColors,
+                                isOverLimit = viewModel.isOverLimit,
+                                onTap = { /* TODO: Implement monthly calendar */ }
+                            )
+                        }
+                        1 -> {
+                            // Daily Progress Ring
+                            DailyProgressRingView(
+                                dailyProgressPercentage = viewModel.dailyProgressPercentage,
+                                isOverDailyLimit = viewModel.isOverDailyLimit,
+                                dailyLimitValue = viewModel.dailyLimit.toDoubleOrNull() ?: 0.0,
+                                selectedDateTotal = selectedDayTotal
+                            )
+                        }
+                        2 -> {
+                            // Category Distribution
+                            CategoryDistributionChart(
+                                categoryExpenses = viewModel.dailyExpensesByCategory
+                            )
+                        }
+                    }
+                }
             }
             
             Spacer(modifier = Modifier.height(16.dp))

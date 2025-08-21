@@ -65,7 +65,7 @@ fun ProgressRing(
                 SolidColor(colors.firstOrNull() ?: Color.Blue)
             }
             
-            // Progress arc
+            // Progress arc - Start from top like Swift
             drawArc(
                 brush = brush,
                 startAngle = -90f,
