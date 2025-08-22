@@ -87,39 +87,65 @@ fun SettingsScreen(
                     color = Color.White
                 )
                 
-                Box {
-                    OutlinedButton(
-                        onClick = { showCurrencyMenu = true },
-                        modifier = Modifier.fillMaxWidth(),
-                        colors = ButtonDefaults.outlinedButtonColors(
-                            containerColor = Color.White.copy(alpha = 0.1f),
-                            contentColor = Color.White
-                        ),
-                        shape = RoundedCornerShape(12.dp)
+                ExposedDropdownMenuBox(
+                    expanded = showCurrencyMenu,
+                    onExpandedChange = { showCurrencyMenu = it },
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(40.dp)
+                            .background(
+                                AppColors.InputBackground,
+                                RoundedCornerShape(12.dp)
+                            )
+                            .border(
+                                width = 1.dp,
+                                color = AppColors.TextGray,
+                                shape = RoundedCornerShape(12.dp)
+                            )
+                            .menuAnchor()
                     ) {
                         Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.Center
+                            modifier = Modifier.fillMaxSize(),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
                         ) {
                             Text(
                                 text = newDefaultCurrency,
-                                fontSize = 18.sp,
-                                fontWeight = FontWeight.SemiBold
+                                fontSize = 14.sp,
+                                fontWeight = FontWeight.SemiBold,
+                                color = AppColors.TextWhite,
+                                modifier = Modifier.padding(start = 12.dp)
+                            )
+                            ExposedDropdownMenuDefaults.TrailingIcon(
+                                expanded = showCurrencyMenu,
+                                modifier = Modifier.padding(end = 8.dp)
                             )
                         }
                     }
                     
-                    DropdownMenu(
+                    ExposedDropdownMenu(
                         expanded = showCurrencyMenu,
-                        onDismissRequest = { showCurrencyMenu = false }
+                        onDismissRequest = { showCurrencyMenu = false },
+                        modifier = Modifier.background(AppColors.InputBackground)
                     ) {
                         currencies.forEach { currency ->
                             DropdownMenuItem(
-                                text = { Text(currency) },
+                                text = { 
+                                    Text(
+                                        text = currency,
+                                        color = AppColors.TextWhite,
+                                        fontSize = 14.sp,
+                                        fontWeight = FontWeight.SemiBold
+                                    ) 
+                                },
                                 onClick = {
                                     newDefaultCurrency = currency
                                     showCurrencyMenu = false
-                                }
+                                },
+                                modifier = Modifier.background(AppColors.InputBackground)
                             )
                         }
                     }

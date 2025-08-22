@@ -139,70 +139,130 @@ fun AddExpenseScreen(
                 }
                 
                 // Currency
-                Box {
-                    OutlinedButton(
-                        onClick = { showCurrencyMenu = true },
+                ExposedDropdownMenuBox(
+                    expanded = showCurrencyMenu,
+                    onExpandedChange = { showCurrencyMenu = it },
+                    modifier = Modifier.width(70.dp)
+                ) {
+                    Box(
                         modifier = Modifier
-                            .width(70.dp)
-                            .height(40.dp),
-                        colors = ButtonDefaults.outlinedButtonColors(
-                            containerColor = AppColors.InputBackground,
-                            contentColor = AppColors.TextWhite
-                        ),
-                        shape = RoundedCornerShape(12.dp)
+                            .fillMaxWidth()
+                            .height(40.dp)
+                            .background(
+                                AppColors.InputBackground,
+                                RoundedCornerShape(12.dp)
+                            )
+                            .border(
+                                width = 1.dp,
+                                color = AppColors.TextGray,
+                                shape = RoundedCornerShape(12.dp)
+                            )
+                            .menuAnchor()
                     ) {
-                        Text(selectedCurrency, fontWeight = FontWeight.SemiBold)
+                        Row(
+                            modifier = Modifier.fillMaxSize(),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(
+                                text = selectedCurrency,
+                                fontSize = 14.sp,
+                                fontWeight = FontWeight.SemiBold,
+                                color = AppColors.TextWhite,
+                                modifier = Modifier.padding(start = 12.dp)
+                            )
+                            ExposedDropdownMenuDefaults.TrailingIcon(
+                                expanded = showCurrencyMenu,
+                                modifier = Modifier.padding(end = 8.dp)
+                            )
+                        }
                     }
                     
-                    DropdownMenu(
+                    ExposedDropdownMenu(
                         expanded = showCurrencyMenu,
-                        onDismissRequest = { showCurrencyMenu = false }
+                        onDismissRequest = { showCurrencyMenu = false },
+                        modifier = Modifier.background(AppColors.InputBackground)
                     ) {
                         currencies.forEach { currency ->
                             DropdownMenuItem(
-                                text = { Text(currency) },
+                                text = { 
+                                    Text(
+                                        text = currency,
+                                        color = AppColors.TextWhite,
+                                        fontSize = 14.sp,
+                                        fontWeight = FontWeight.SemiBold
+                                    ) 
+                                },
                                 onClick = {
                                     selectedCurrency = currency
                                     showCurrencyMenu = false
-                                }
+                                },
+                                modifier = Modifier.background(AppColors.InputBackground)
                             )
                         }
                     }
                 }
                 
                 // Category
-                Box(
+                ExposedDropdownMenuBox(
+                    expanded = showCategoryMenu,
+                    onExpandedChange = { showCategoryMenu = it },
                     modifier = Modifier.weight(1f)
                 ) {
-                    OutlinedButton(
-                        onClick = { showCategoryMenu = true },
+                    Box(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(40.dp),
-                        colors = ButtonDefaults.outlinedButtonColors(
-                            containerColor = AppColors.InputBackground,
-                            contentColor = AppColors.TextWhite
-                        ),
-                        shape = RoundedCornerShape(12.dp)
+                            .height(40.dp)
+                            .background(
+                                AppColors.InputBackground,
+                                RoundedCornerShape(12.dp)
+                            )
+                            .border(
+                                width = 1.dp,
+                                color = AppColors.TextGray,
+                                shape = RoundedCornerShape(12.dp)
+                            )
+                            .menuAnchor()
                     ) {
-                        Text(
-                            text = selectedSubCategory,
-                            maxLines = 1,
-                            fontSize = 14.sp
-                        )
+                        Row(
+                            modifier = Modifier.fillMaxSize(),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(
+                                text = selectedSubCategory,
+                                fontSize = 14.sp,
+                                color = AppColors.TextWhite,
+                                modifier = Modifier.padding(start = 12.dp)
+                            )
+                            ExposedDropdownMenuDefaults.TrailingIcon(
+                                expanded = showCategoryMenu,
+                                modifier = Modifier.padding(end = 8.dp)
+                            )
+                        }
                     }
                     
-                    DropdownMenu(
+                    ExposedDropdownMenu(
                         expanded = showCategoryMenu,
-                        onDismissRequest = { showCategoryMenu = false }
+                        onDismissRequest = { showCategoryMenu = false },
+                        modifier = Modifier
+                            .background(AppColors.InputBackground)
+                            .heightIn(max = 200.dp)
                     ) {
                         CategoryHelper.subCategories.sortedBy { it.name }.forEach { subCategory ->
                             DropdownMenuItem(
-                                text = { Text(subCategory.name) },
+                                text = { 
+                                    Text(
+                                        text = subCategory.name,
+                                        color = AppColors.TextWhite,
+                                        fontSize = 14.sp
+                                    ) 
+                                },
                                 onClick = {
                                     selectedSubCategory = subCategory.name
                                     showCategoryMenu = false
-                                }
+                                },
+                                modifier = Modifier.background(AppColors.InputBackground)
                             )
                         }
                     }
