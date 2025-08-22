@@ -11,11 +11,14 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.*
+import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import com.example.expensetrackerkotlin.ui.theme.AppColors
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -52,7 +55,7 @@ fun MainScreen(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color.Black)
+            .background(AppColors.BackgroundBlack)
     ) {
         Column(
             modifier = Modifier.fillMaxSize()
@@ -126,39 +129,39 @@ fun MainScreen(
                         .weight(1f)
                         .padding(horizontal = 40.dp)
                 ) {
-                    Icon(
-                        imageVector = Icons.Default.Add,
-                        contentDescription = "No expenses",
-                        modifier = Modifier.size(60.dp),
-                        tint = Color.Gray
-                    )
+                                         Icon(
+                         imageVector = Icons.Default.Add,
+                         contentDescription = "No expenses",
+                         modifier = Modifier.size(60.dp),
+                         tint = AppColors.TextGray
+                     )
                     
                     Spacer(modifier = Modifier.height(16.dp))
                     
-                    Text(
-                        text = if (selectedDate.toLocalDate() == LocalDateTime.now().toLocalDate()) {
-                            "Henüz harcama yok"
-                        } else {
-                            "Bu günde harcama yok"
-                        },
-                        fontSize = 20.sp,
-                        fontWeight = FontWeight.Medium,
-                        color = Color.White,
-                        textAlign = TextAlign.Center
-                    )
+                                         Text(
+                         text = if (selectedDate.toLocalDate() == LocalDateTime.now().toLocalDate()) {
+                             "Henüz harcama yok"
+                         } else {
+                             "Bu günde harcama yok"
+                         },
+                         fontSize = 20.sp,
+                         fontWeight = FontWeight.Medium,
+                         color = AppColors.TextWhite,
+                         textAlign = TextAlign.Center
+                     )
                     
                     Spacer(modifier = Modifier.height(8.dp))
                     
-                    Text(
-                        text = if (selectedDate.toLocalDate() == LocalDateTime.now().toLocalDate()) {
-                            "İlk harcamanızı eklemek için + butonuna basın"
-                        } else {
-                            "Bu güne harcama eklemek için + butonuna basın"
-                        },
-                        fontSize = 16.sp,
-                        color = Color.Gray,
-                        textAlign = TextAlign.Center
-                    )
+                                         Text(
+                         text = if (selectedDate.toLocalDate() == LocalDateTime.now().toLocalDate()) {
+                             "İlk harcamanızı eklemek için + butonuna basın"
+                         } else {
+                             "Bu güne harcama eklemek için + butonuna basın"
+                         },
+                         fontSize = 16.sp,
+                         color = AppColors.TextGray,
+                         textAlign = TextAlign.Center
+                     )
                 }
             } else {
                 LazyColumn(
@@ -201,14 +204,27 @@ fun MainScreen(
             // Settings Button
             FloatingActionButton(
                 onClick = { showingSettings = true },
-                containerColor = Color.White.copy(alpha = 0.3f),
-                contentColor = Color.White,
+                containerColor = Color.Transparent,
                 modifier = Modifier.size(50.dp)
             ) {
-                Icon(
-                    imageVector = Icons.Default.Settings,
-                    contentDescription = "Settings"
-                )
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(
+                            Brush.radialGradient(
+                                colors = listOf(Color(0xFF101010), Color(0xFF101010))
+                            ),
+                            CircleShape
+                        ),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Settings,
+                        contentDescription = "Settings",
+                        tint = Color.White,
+                        modifier = Modifier.size(30.dp)
+                    )
+                }
             }
             
             // Add Expense Button
@@ -232,7 +248,7 @@ fun MainScreen(
                         imageVector = Icons.Default.Add,
                         contentDescription = "Add Expense",
                         tint = Color.White,
-                        modifier = Modifier.size(24.dp)
+                        modifier = Modifier.size(36.dp)
                     )
                 }
             }
@@ -275,47 +291,81 @@ fun MainScreen(
     
     // Bottom Sheets
     if (showingAddExpense) {
+        val sheetState = rememberModalBottomSheetState(
+            skipPartiallyExpanded = false,
+            confirmValueChange = { true }
+        )
+        
+        LaunchedEffect(Unit) {
+            sheetState.expand()
+        }
+        
         ModalBottomSheet(
-            onDismissRequest = { showingAddExpense = false }
+            onDismissRequest = { showingAddExpense = false },
+            sheetState = sheetState,
+            dragHandle = { BottomSheetDefaults.DragHandle() }
         ) {
-            AddExpenseScreen(
-                selectedDate = selectedDate,
-                defaultCurrency = viewModel.defaultCurrency,
-                dailyLimit = viewModel.dailyLimit,
-                monthlyLimit = viewModel.monthlyLimit,
-                onExpenseAdded = { expense ->
-                    viewModel.addExpense(expense)
-                },
-                onDismiss = { showingAddExpense = false }
-            )
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .heightIn(max = 800.dp)
+            ) {
+                AddExpenseScreen(
+                    selectedDate = selectedDate,
+                    defaultCurrency = viewModel.defaultCurrency,
+                    dailyLimit = viewModel.dailyLimit,
+                    monthlyLimit = viewModel.monthlyLimit,
+                    onExpenseAdded = { expense ->
+                        viewModel.addExpense(expense)
+                    },
+                    onDismiss = { showingAddExpense = false }
+                )
+            }
         }
     }
     
     if (showingSettings) {
+        val settingsSheetState = rememberModalBottomSheetState(
+            skipPartiallyExpanded = false,
+            confirmValueChange = { true }
+        )
+        
+        LaunchedEffect(Unit) {
+            settingsSheetState.expand()
+        }
+        
         ModalBottomSheet(
-            onDismissRequest = { showingSettings = false }
+            onDismissRequest = { showingSettings = false },
+            sheetState = settingsSheetState,
+            dragHandle = { BottomSheetDefaults.DragHandle() }
         ) {
-            SettingsScreen(
-                defaultCurrency = viewModel.defaultCurrency,
-                dailyLimit = viewModel.dailyLimit,
-                monthlyLimit = viewModel.monthlyLimit,
-                onCurrencyChanged = { currency ->
-                    scope.launch {
-                        viewModel.updateDefaultCurrency(currency)
-                    }
-                },
-                onDailyLimitChanged = { limit ->
-                    scope.launch {
-                        viewModel.updateDailyLimit(limit)
-                    }
-                },
-                onMonthlyLimitChanged = { limit ->
-                    scope.launch {
-                        viewModel.updateMonthlyLimit(limit)
-                    }
-                },
-                onDismiss = { showingSettings = false }
-            )
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .heightIn(max = 800.dp)
+            ) {
+                SettingsScreen(
+                    defaultCurrency = viewModel.defaultCurrency,
+                    dailyLimit = viewModel.dailyLimit,
+                    monthlyLimit = viewModel.monthlyLimit,
+                    onCurrencyChanged = { currency ->
+                        scope.launch {
+                            viewModel.updateDefaultCurrency(currency)
+                        }
+                    },
+                    onDailyLimitChanged = { limit ->
+                        scope.launch {
+                            viewModel.updateDailyLimit(limit)
+                        }
+                    },
+                    onMonthlyLimitChanged = { limit ->
+                        scope.launch {
+                            viewModel.updateMonthlyLimit(limit)
+                        }
+                    },
+                    onDismiss = { showingSettings = false }
+                )
+            }
         }
     }
 }

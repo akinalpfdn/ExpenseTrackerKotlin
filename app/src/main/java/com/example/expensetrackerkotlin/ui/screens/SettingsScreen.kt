@@ -10,7 +10,9 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import com.example.expensetrackerkotlin.ui.theme.AppColors
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
@@ -37,7 +39,7 @@ fun SettingsScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color.Black)
+            .background(AppColors.BackgroundBlack)
             .verticalScroll(rememberScrollState())
     ) {
         Spacer(modifier = Modifier.height(20.dp))
@@ -53,13 +55,13 @@ fun SettingsScreen(
                 text = "Ayarlar",
                 fontSize = 32.sp,
                 fontWeight = FontWeight.Bold,
-                color = Color.White
+                color = AppColors.TextWhite
             )
             Spacer(modifier = Modifier.height(8.dp))
             Text(
                 text = "Uygulamanızı kişiselleştirin",
                 fontSize = 16.sp,
-                color = Color.Gray
+                color = AppColors.TextGray
             )
         }
         
@@ -267,10 +269,11 @@ fun SettingsScreen(
                     onDismiss()
                 },
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .height(56.dp),
+                    .fillMaxWidth(0.7f)
+                    .height(36.dp)
+                    .align(Alignment.CenterHorizontally),
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = Color(0xFF007AFF)
+                    containerColor = AppColors.PrimaryOrange
                 ),
                 shape = RoundedCornerShape(16.dp)
             ) {
@@ -278,25 +281,26 @@ fun SettingsScreen(
                     text = "Kaydet",
                     fontSize = 18.sp,
                     fontWeight = FontWeight.SemiBold,
-                    color = Color.White
+                    color = AppColors.TextWhite
                 )
             }
             
-            OutlinedButton(
+            Button(
                 onClick = onDismiss,
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .height(56.dp),
-                colors = ButtonDefaults.outlinedButtonColors(
-                    containerColor = Color.White.copy(alpha = 0.1f),
-                    contentColor = Color.Gray
+                    .fillMaxWidth(0.7f)
+                    .height(36.dp)
+                    .align(Alignment.CenterHorizontally),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = AppColors.ButtonDisabled
                 ),
                 shape = RoundedCornerShape(16.dp)
             ) {
                 Text(
                     text = "İptal",
                     fontSize = 18.sp,
-                    fontWeight = FontWeight.Medium
+                    fontWeight = FontWeight.Medium,
+                    color = AppColors.TextWhite
                 )
             }
         }

@@ -20,7 +20,9 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import com.example.expensetrackerkotlin.ui.theme.AppColors
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
@@ -141,7 +143,7 @@ fun ExpenseRowView(
                     },
                 shape = RoundedCornerShape(12.dp),
                 colors = CardDefaults.cardColors(
-                    containerColor = Color.White.copy(alpha = 0.05f)
+                    containerColor = AppColors.CardBackground
                 )
             ) {
                 Column(
@@ -225,27 +227,27 @@ fun ExpenseRowView(
                                 .fillMaxWidth()
                                 .padding(12.dp)
                                 .background(
-                                    Color.White.copy(alpha = 0.05f),
+                                    AppColors.CardBackground,
                                     RoundedCornerShape(8.dp)
                                 )
                                 .padding(12.dp)
                         ) {
-                            OutlinedTextField(
+                                                        OutlinedTextField(
                                 value = editAmount,
                                 onValueChange = { newValue ->
                                     if (newValue.isEmpty() || newValue.matches(Regex("^\\d*\\.?\\d*$"))) {
                                         editAmount = newValue
                                     }
                                 },
-                                label = { Text("Miktar", color = Color.Gray) },
+                                label = { Text("Miktar", color = AppColors.TextGray) },
                                 modifier = Modifier.fillMaxWidth(),
                                 singleLine = true,
                                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
                                 colors = OutlinedTextFieldDefaults.colors(
-                                    focusedTextColor = Color.White,
-                                    unfocusedTextColor = Color.White,
-                                    focusedBorderColor = Color.White,
-                                    unfocusedBorderColor = Color.Gray
+                                    focusedTextColor = AppColors.TextWhite,
+                                    unfocusedTextColor = AppColors.TextWhite,
+                                    focusedBorderColor = AppColors.TextWhite,
+                                    unfocusedBorderColor = AppColors.TextGray
                                 )
                             )
                             
@@ -254,13 +256,13 @@ fun ExpenseRowView(
                             OutlinedTextField(
                                 value = editDescription,
                                 onValueChange = { editDescription = it },
-                                label = { Text("Açıklama", color = Color.Gray) },
+                                label = { Text("Açıklama", color = AppColors.TextGray) },
                                 modifier = Modifier.fillMaxWidth(),
                                 colors = OutlinedTextFieldDefaults.colors(
-                                    focusedTextColor = Color.White,
-                                    unfocusedTextColor = Color.White,
-                                    focusedBorderColor = Color.White,
-                                    unfocusedBorderColor = Color.Gray
+                                    focusedTextColor = AppColors.TextWhite,
+                                    unfocusedTextColor = AppColors.TextWhite,
+                                    focusedBorderColor = AppColors.TextWhite,
+                                    unfocusedBorderColor = AppColors.TextGray
                                 )
                             )
                             
@@ -286,22 +288,27 @@ fun ExpenseRowView(
                                     },
                                     modifier = Modifier
                                         .weight(1f)
-                                        .height(40.dp),
+                                        .height(36.dp),
                                     colors = ButtonDefaults.buttonColors(
-                                        containerColor = Color.Green
+                                        containerColor = AppColors.PrimaryOrange
                                     ),
-                                    shape = RoundedCornerShape(8.dp)
+                                    shape = RoundedCornerShape(26.dp)
                                 ) {
-                                    Icon(
-                                        imageVector = Icons.Default.Check,
-                                        contentDescription = "Save",
-                                        modifier = Modifier.size(16.dp)
-                                    )
-                                    Spacer(modifier = Modifier.width(4.dp))
-                                    Text("Kaydet", fontSize = 12.sp)
+                                    Row(
+                                        verticalAlignment = Alignment.CenterVertically
+                                    ) {
+                                        Icon(
+                                            imageVector = Icons.Default.Check,
+                                            contentDescription = "Save",
+                                            tint = AppColors.TextWhite,
+                                            modifier = Modifier.size(16.dp)
+                                        )
+                                        Spacer(modifier = Modifier.width(4.dp))
+                                        Text("Kaydet", fontSize = 12.sp, color = AppColors.TextWhite)
+                                    }
                                 }
 
-                                OutlinedButton(
+                                Button(
                                     onClick = {
                                         isEditing = false
                                         onEditingChanged(false)
@@ -310,19 +317,24 @@ fun ExpenseRowView(
                                     },
                                     modifier = Modifier
                                         .weight(1f)
-                                        .height(40.dp),
-                                    colors = ButtonDefaults.outlinedButtonColors(
-                                        contentColor = Color.White
+                                        .height(36.dp),
+                                    colors = ButtonDefaults.buttonColors(
+                                        containerColor = AppColors.ButtonDisabled
                                     ),
-                                    shape = RoundedCornerShape(8.dp)
+                                    shape = RoundedCornerShape(26.dp)
                                 ) {
-                                    Icon(
-                                        imageVector = Icons.Default.Close,
-                                        contentDescription = "Cancel",
-                                        modifier = Modifier.size(16.dp)
-                                    )
-                                    Spacer(modifier = Modifier.width(4.dp))
-                                    Text("İptal", fontSize = 12.sp)
+                                    Row(
+                                        verticalAlignment = Alignment.CenterVertically
+                                    ) {
+                                        Icon(
+                                            imageVector = Icons.Default.Close,
+                                            contentDescription = "Cancel",
+                                            tint = AppColors.TextWhite,
+                                            modifier = Modifier.size(16.dp)
+                                        )
+                                        Spacer(modifier = Modifier.width(4.dp))
+                                        Text("İptal", fontSize = 12.sp, color = AppColors.TextWhite)
+                                    }
                                 }
                             }
                         }

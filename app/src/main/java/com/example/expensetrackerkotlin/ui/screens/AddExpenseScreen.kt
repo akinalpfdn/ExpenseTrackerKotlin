@@ -12,6 +12,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import com.example.expensetrackerkotlin.ui.theme.AppColors
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
@@ -38,12 +39,12 @@ fun AddExpenseScreen(
     var showCurrencyMenu by remember { mutableStateOf(false) }
     var showCategoryMenu by remember { mutableStateOf(false) }
     
-    val currencies = listOf("₺", "$", "€", "£", "¥", "₹", "₽", "₩", "₪", "₦", "₨", "₴", "₸", "₼", "₾", "₿")
+    val currencies = listOf("₺", "$", "€", "£")//, "¥", "₹", "₽", "₩", "₪", "₦", "₨", "₴", "₸", "₼", "₾", "₿"
     
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color.Black)
+            .background(AppColors.BackgroundBlack)
             .verticalScroll(rememberScrollState())
     ) {
         Spacer(modifier = Modifier.height(20.dp))
@@ -59,13 +60,13 @@ fun AddExpenseScreen(
                 text = "Yeni Harcama",
                 fontSize = 32.sp,
                 fontWeight = FontWeight.Bold,
-                color = Color.White
+                color = AppColors.TextWhite
             )
             Spacer(modifier = Modifier.height(8.dp))
             Text(
                 text = "Harcama detaylarını girin",
                 fontSize = 16.sp,
-                color = Color.Gray
+                color = AppColors.TextGray
             )
         }
         
@@ -95,29 +96,36 @@ fun AddExpenseScreen(
                             filtered
                         }
                     },
-                    placeholder = { Text("0.00", color = Color.Gray) },
-                    modifier = Modifier.weight(1f),
+                    placeholder = { Text("0.00", color = AppColors.TextGray) },
+                    modifier = Modifier
+                        .weight(1f)
+                        .height(40.dp),
                     singleLine = true,
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
                     colors = OutlinedTextFieldDefaults.colors(
-                        focusedTextColor = Color.White,
-                        unfocusedTextColor = Color.White,
-                        focusedBorderColor = Color.White,
-                        unfocusedBorderColor = Color.Gray,
-                        focusedContainerColor = Color.White.copy(alpha = 0.1f),
-                        unfocusedContainerColor = Color.White.copy(alpha = 0.05f)
+                        focusedTextColor = AppColors.TextWhite,
+                        unfocusedTextColor = AppColors.TextWhite,
+                        focusedBorderColor = AppColors.TextWhite,
+                        unfocusedBorderColor = AppColors.TextGray,
+                        focusedContainerColor = AppColors.InputBackgroundFocused,
+                        unfocusedContainerColor = AppColors.InputBackground
                     ),
-                    shape = RoundedCornerShape(12.dp)
+                    shape = RoundedCornerShape(12.dp),
+                    textStyle = androidx.compose.ui.text.TextStyle(
+                        fontSize = 14.sp
+                    )
                 )
                 
                 // Currency
                 Box {
                     OutlinedButton(
                         onClick = { showCurrencyMenu = true },
-                        modifier = Modifier.width(70.dp),
+                        modifier = Modifier
+                            .width(70.dp)
+                            .height(40.dp),
                         colors = ButtonDefaults.outlinedButtonColors(
-                            containerColor = Color.White.copy(alpha = 0.1f),
-                            contentColor = Color.White
+                            containerColor = AppColors.InputBackground,
+                            contentColor = AppColors.TextWhite
                         ),
                         shape = RoundedCornerShape(12.dp)
                     ) {
@@ -146,10 +154,12 @@ fun AddExpenseScreen(
                 ) {
                     OutlinedButton(
                         onClick = { showCategoryMenu = true },
-                        modifier = Modifier.fillMaxWidth(),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(40.dp),
                         colors = ButtonDefaults.outlinedButtonColors(
-                            containerColor = Color.White.copy(alpha = 0.1f),
-                            contentColor = Color.White
+                            containerColor = AppColors.InputBackground,
+                            contentColor = AppColors.TextWhite
                         ),
                         shape = RoundedCornerShape(12.dp)
                     ) {
@@ -185,60 +195,38 @@ fun AddExpenseScreen(
                     text = "Açıklama (İsteğe bağlı)",
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Medium,
-                    color = Color.White
+                    color = AppColors.TextWhite
                 )
                 
                 OutlinedTextField(
                     value = description,
                     onValueChange = { description = it },
-                    placeholder = { Text("Açıklama ekleyin...", color = Color.Gray) },
-                    modifier = Modifier.fillMaxWidth(),
+                    placeholder = { Text("Açıklama ekleyin...", color = AppColors.TextGray) },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(40.dp),
                     colors = OutlinedTextFieldDefaults.colors(
-                        focusedTextColor = Color.White,
-                        unfocusedTextColor = Color.White,
-                        focusedBorderColor = Color.White,
-                        unfocusedBorderColor = Color.Gray,
-                        focusedContainerColor = Color.White.copy(alpha = 0.1f),
-                        unfocusedContainerColor = Color.White.copy(alpha = 0.05f)
+                        focusedTextColor = AppColors.TextWhite,
+                        unfocusedTextColor = AppColors.TextWhite,
+                        focusedBorderColor = AppColors.TextWhite,
+                        unfocusedBorderColor = AppColors.TextGray,
+                        focusedContainerColor = AppColors.InputBackgroundFocused,
+                        unfocusedContainerColor = AppColors.InputBackground
                     ),
-                    shape = RoundedCornerShape(12.dp)
+                    shape = RoundedCornerShape(12.dp),
+                    textStyle = androidx.compose.ui.text.TextStyle(
+                        fontSize = 14.sp
+                    )
                 )
             }
             
-            // Preview
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.spacedBy(8.dp),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .background(
-                        Color.White.copy(alpha = 0.05f),
-                        RoundedCornerShape(16.dp)
-                    )
-                    .padding(16.dp)
-            ) {
-                Text(
-                    text = "Önizleme",
-                    fontSize = 18.sp,
-                    fontWeight = FontWeight.Medium,
-                    color = Color.Gray
-                )
-                
-                Text(
-                    text = "$selectedCurrency ${amount.ifEmpty { "0.00" }}",
-                    fontSize = 28.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = Color(0xFFFF9500),
-                    textAlign = TextAlign.Center
-                )
-            }
+
         }
-        
-        Spacer(modifier = Modifier.weight(1f))
+
         
         // Buttons
-        Column(
-            verticalArrangement = Arrangement.spacedBy(12.dp),
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(12.dp),
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(20.dp)
@@ -262,55 +250,40 @@ fun AddExpenseScreen(
                 },
                 enabled = amount.isNotEmpty() && amount.toDoubleOrNull() != null && amount.toDoubleOrNull()!! > 0,
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .height(56.dp),
+                    .weight(1f)
+                    .height(36.dp),
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = Color.Transparent,
-                    disabledContainerColor = Color.Gray.copy(alpha = 0.3f)
+                    containerColor = if (amount.isNotEmpty() && amount.toDoubleOrNull() != null && amount.toDoubleOrNull()!! > 0) {
+                        AppColors.PrimaryOrange
+                    } else {
+                        AppColors.ButtonDisabled
+                    }
                 ),
                 shape = RoundedCornerShape(16.dp)
             ) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .background(
-                            if (amount.isNotEmpty() && amount.toDoubleOrNull() != null && amount.toDoubleOrNull()!! > 0) {
-                                Brush.horizontalGradient(
-                                    colors = listOf(Color(0xFFFF9500), Color(0xFFFF3B30))
-                                )
-                            } else {
-                                Brush.horizontalGradient(
-                                    colors = listOf(Color.Gray, Color.Gray)
-                                )
-                            },
-                            RoundedCornerShape(16.dp)
-                        ),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(
-                        text = "Harcama Ekle",
-                        fontSize = 18.sp,
-                        fontWeight = FontWeight.SemiBold,
-                        color = Color.White
-                    )
-                }
+                Text(
+                    text = "Harcama Ekle",
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.SemiBold,
+                    color = AppColors.TextWhite
+                )
             }
-            
-            OutlinedButton(
+
+            Button(
                 onClick = onDismiss,
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .height(56.dp),
-                colors = ButtonDefaults.outlinedButtonColors(
-                    containerColor = Color.White.copy(alpha = 0.1f),
-                    contentColor = Color.Gray
+                    .weight(1f)
+                    .height(36.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = AppColors.ButtonDisabled
                 ),
                 shape = RoundedCornerShape(16.dp)
             ) {
                 Text(
                     text = "İptal",
                     fontSize = 18.sp,
-                    fontWeight = FontWeight.Medium
+                    fontWeight = FontWeight.Medium,
+                    color = AppColors.TextWhite
                 )
             }
         }
