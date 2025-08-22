@@ -1,9 +1,11 @@
 package com.example.expensetrackerkotlin.ui.screens
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
@@ -85,36 +87,56 @@ fun AddExpenseScreen(
                 modifier = Modifier.fillMaxWidth()
             ) {
                 // Amount
-                OutlinedTextField(
-                    value = amount,
-                    onValueChange = { newValue ->
-                        val filtered = newValue.filter { "0123456789.,".contains(it) }
-                        val components = filtered.split(",")
-                        amount = if (components.size > 2) {
-                            "${components[0]},${components[1]}"
-                        } else {
-                            filtered
-                        }
-                    },
-                    placeholder = { Text("0.00", color = AppColors.TextGray) },
+                Box(
                     modifier = Modifier
                         .weight(1f)
-                        .height(40.dp),
-                    singleLine = true,
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
-                    colors = OutlinedTextFieldDefaults.colors(
-                        focusedTextColor = AppColors.TextWhite,
-                        unfocusedTextColor = AppColors.TextWhite,
-                        focusedBorderColor = AppColors.TextWhite,
-                        unfocusedBorderColor = AppColors.TextGray,
-                        focusedContainerColor = AppColors.InputBackgroundFocused,
-                        unfocusedContainerColor = AppColors.InputBackground
-                    ),
-                    shape = RoundedCornerShape(12.dp),
-                    textStyle = androidx.compose.ui.text.TextStyle(
-                        fontSize = 14.sp
+                        .height(40.dp)
+                        .background(
+                            AppColors.InputBackground,
+                            RoundedCornerShape(12.dp)
+                        )
+                        .border(
+                            width = 1.dp,
+                            color = AppColors.TextGray,
+                            shape = RoundedCornerShape(12.dp)
+                        )
+                ) {
+                    BasicTextField(
+                        value = amount,
+                        onValueChange = { newValue ->
+                            val filtered = newValue.filter { "0123456789.,".contains(it) }
+                            val components = filtered.split(",")
+                            amount = if (components.size > 2) {
+                                "${components[0]},${components[1]}"
+                            } else {
+                                filtered
+                            }
+                        },
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(horizontal = 12.dp),
+                        singleLine = true,
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
+                        textStyle = androidx.compose.ui.text.TextStyle(
+                            fontSize = 14.sp,
+                            color = AppColors.TextWhite
+                        ),
+                        decorationBox = { innerTextField ->
+                            Box(
+                                contentAlignment = Alignment.CenterStart
+                            ) {
+                                if (amount.isEmpty()) {
+                                    Text(
+                                        text = "0.00",
+                                        fontSize = 14.sp,
+                                        color = AppColors.TextGray
+                                    )
+                                }
+                                innerTextField()
+                            }
+                        }
                     )
-                )
+                }
                 
                 // Currency
                 Box {
@@ -198,26 +220,47 @@ fun AddExpenseScreen(
                     color = AppColors.TextWhite
                 )
                 
-                OutlinedTextField(
-                    value = description,
-                    onValueChange = { description = it },
-                    placeholder = { Text("Açıklama ekleyin...", color = AppColors.TextGray) },
+                Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(40.dp),
-                    colors = OutlinedTextFieldDefaults.colors(
-                        focusedTextColor = AppColors.TextWhite,
-                        unfocusedTextColor = AppColors.TextWhite,
-                        focusedBorderColor = AppColors.TextWhite,
-                        unfocusedBorderColor = AppColors.TextGray,
-                        focusedContainerColor = AppColors.InputBackgroundFocused,
-                        unfocusedContainerColor = AppColors.InputBackground
-                    ),
-                    shape = RoundedCornerShape(12.dp),
-                    textStyle = androidx.compose.ui.text.TextStyle(
-                        fontSize = 14.sp
+                        .height(40.dp)
+                        .background(
+                            AppColors.InputBackground,
+                            RoundedCornerShape(12.dp)
+                        )
+                        .border(
+                            width = 1.dp,
+                            color = AppColors.TextGray,
+                            shape = RoundedCornerShape(12.dp)
+                        )
+                ) {
+                    BasicTextField(
+                        value = description,
+                        onValueChange = { description = it },
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(horizontal = 12.dp),
+                        singleLine = true,
+                        textStyle = androidx.compose.ui.text.TextStyle(
+                            fontSize = 14.sp,
+                            color = AppColors.TextWhite
+                        ),
+                        decorationBox = { innerTextField ->
+                            Box(
+                                contentAlignment = Alignment.CenterStart
+                            ) {
+                                if (description.isEmpty()) {
+                                    Text(
+                                        text = "Açıklama ekleyin...",
+                                        fontSize = 14.sp,
+                                        color = AppColors.TextGray
+                                    )
+                                }
+                                innerTextField()
+                            }
+                        }
                     )
-                )
+                }
             }
             
 

@@ -55,10 +55,11 @@ fun ProgressRing(
         if (progress > 0) {
             val sweepAngle = 360f * progress
             
-            // Create gradient brush
+            // Create gradient brush - rotate colors to start from top
             val brush = if (colors.size > 1) {
+                val rotatedColors = colors.drop(1) + colors.take(1) // Rotate colors to start from top
                 Brush.sweepGradient(
-                    colors = colors,
+                    colors = rotatedColors,
                     center = center
                 )
             } else {

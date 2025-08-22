@@ -1,9 +1,11 @@
 package com.example.expensetrackerkotlin.ui.screens
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
@@ -34,7 +36,7 @@ fun SettingsScreen(
     var newMonthlyLimit by remember { mutableStateOf(monthlyLimit) }
     var showCurrencyMenu by remember { mutableStateOf(false) }
     
-    val currencies = listOf("₺", "$", "€", "£", "¥", "₹", "₽", "₩", "₪", "₦", "₨", "₴", "₸", "₼", "₾", "₿")
+    val currencies = listOf("₺", "$", "€", "£")//, "¥", "₹", "₽", "₩", "₪", "₦", "₨", "₴", "₸", "₼", "₾", "₿")
     
     Column(
         modifier = Modifier
@@ -141,27 +143,52 @@ fun SettingsScreen(
                     color = Color.White
                 )
                 
-                OutlinedTextField(
-                    value = newDailyLimit,
-                    onValueChange = { newValue ->
-                        if (newValue.isEmpty() || newValue.all { it.isDigit() || it == '.' }) {
-                            newDailyLimit = newValue
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(40.dp)
+                        .background(
+                            AppColors.InputBackground,
+                            RoundedCornerShape(12.dp)
+                        )
+                        .border(
+                            width = 1.dp,
+                            color = AppColors.TextGray,
+                            shape = RoundedCornerShape(12.dp)
+                        )
+                ) {
+                    BasicTextField(
+                        value = newDailyLimit,
+                        onValueChange = { newValue ->
+                            if (newValue.isEmpty() || newValue.all { it.isDigit() || it == '.' }) {
+                                newDailyLimit = newValue
+                            }
+                        },
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(horizontal = 12.dp),
+                        singleLine = true,
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                        textStyle = androidx.compose.ui.text.TextStyle(
+                            fontSize = 14.sp,
+                            color = AppColors.TextWhite
+                        ),
+                        decorationBox = { innerTextField ->
+                            Box(
+                                contentAlignment = Alignment.CenterStart
+                            ) {
+                                if (newDailyLimit.isEmpty()) {
+                                    Text(
+                                        text = "Günlük limit girin",
+                                        fontSize = 14.sp,
+                                        color = AppColors.TextGray
+                                    )
+                                }
+                                innerTextField()
+                            }
                         }
-                    },
-                    placeholder = { Text("Günlük limit girin", color = Color.Gray) },
-                    modifier = Modifier.fillMaxWidth(),
-                    singleLine = true,
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                    colors = OutlinedTextFieldDefaults.colors(
-                        focusedTextColor = Color.White,
-                        unfocusedTextColor = Color.White,
-                        focusedBorderColor = Color.White,
-                        unfocusedBorderColor = Color.Gray,
-                        focusedContainerColor = Color.White.copy(alpha = 0.1f),
-                        unfocusedContainerColor = Color.White.copy(alpha = 0.05f)
-                    ),
-                    shape = RoundedCornerShape(12.dp)
-                )
+                    )
+                }
                 
                 Text(
                     text = "Her güne özel harcama limitiniz. Boş bırakılırsa limit uygulanmaz",
@@ -181,27 +208,52 @@ fun SettingsScreen(
                     color = Color.White
                 )
                 
-                OutlinedTextField(
-                    value = newMonthlyLimit,
-                    onValueChange = { newValue ->
-                        if (newValue.isEmpty() || newValue.all { it.isDigit() || it == '.' }) {
-                            newMonthlyLimit = newValue
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(40.dp)
+                        .background(
+                            AppColors.InputBackground,
+                            RoundedCornerShape(12.dp)
+                        )
+                        .border(
+                            width = 1.dp,
+                            color = AppColors.TextGray,
+                            shape = RoundedCornerShape(12.dp)
+                        )
+                ) {
+                    BasicTextField(
+                        value = newMonthlyLimit,
+                        onValueChange = { newValue ->
+                            if (newValue.isEmpty() || newValue.all { it.isDigit() || it == '.' }) {
+                                newMonthlyLimit = newValue
+                            }
+                        },
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(horizontal = 12.dp),
+                        singleLine = true,
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                        textStyle = androidx.compose.ui.text.TextStyle(
+                            fontSize = 14.sp,
+                            color = AppColors.TextWhite
+                        ),
+                        decorationBox = { innerTextField ->
+                            Box(
+                                contentAlignment = Alignment.CenterStart
+                            ) {
+                                if (newMonthlyLimit.isEmpty()) {
+                                    Text(
+                                        text = "Aylık limit girin",
+                                        fontSize = 14.sp,
+                                        color = AppColors.TextGray
+                                    )
+                                }
+                                innerTextField()
+                            }
                         }
-                    },
-                    placeholder = { Text("Aylık limit girin", color = Color.Gray) },
-                    modifier = Modifier.fillMaxWidth(),
-                    singleLine = true,
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                    colors = OutlinedTextFieldDefaults.colors(
-                        focusedTextColor = Color.White,
-                        unfocusedTextColor = Color.White,
-                        focusedBorderColor = Color.White,
-                        unfocusedBorderColor = Color.Gray,
-                        focusedContainerColor = Color.White.copy(alpha = 0.1f),
-                        unfocusedContainerColor = Color.White.copy(alpha = 0.05f)
-                    ),
-                    shape = RoundedCornerShape(12.dp)
-                )
+                    )
+                }
                 
                 Text(
                     text = "Aylık toplam harcama limitiniz. Progress ring bu değere göre gösterilir",
@@ -210,49 +262,9 @@ fun SettingsScreen(
                 )
             }
             
-            // Current Settings Display
-            Card(
-                modifier = Modifier.fillMaxWidth(),
-                colors = CardDefaults.cardColors(
-                    containerColor = Color.White.copy(alpha = 0.05f)
-                ),
-                shape = RoundedCornerShape(12.dp)
-            ) {
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp),
-                    verticalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    Text(
-                        text = "Mevcut Ayarlar",
-                        fontSize = 16.sp,
-                        fontWeight = FontWeight.Medium,
-                        color = Color.White
-                    )
-                    
-                    Text(
-                        text = "Para Birimi: $newDefaultCurrency",
-                        fontSize = 14.sp,
-                        color = Color.Gray
-                    )
-                    
-                    Text(
-                        text = "Günlük Limit: ${if (newDailyLimit.isNotEmpty()) "$newDefaultCurrency $newDailyLimit" else "Belirlenmedi"}",
-                        fontSize = 14.sp,
-                        color = Color.Gray
-                    )
-                    
-                    Text(
-                        text = "Aylık Limit: ${if (newMonthlyLimit.isNotEmpty()) "$newDefaultCurrency $newMonthlyLimit" else "Belirlenmedi"}",
-                        fontSize = 14.sp,
-                        color = Color.Gray
-                    )
-                }
-            }
+
         }
-        
-        Spacer(modifier = Modifier.weight(1f))
+
         
         // Buttons
         Column(
