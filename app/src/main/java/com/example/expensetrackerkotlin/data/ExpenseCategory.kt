@@ -18,7 +18,9 @@ enum class ExpenseCategory(val displayName: String) {
     PETS("Evcil Hayvan"),
     WORK("İş ve Profesyonel Harcamalar"),
     TAX("Vergi ve Hukuki Harcamalar"),
-    DONATIONS("Bağışlar ve Yardımlar")
+    DONATIONS("Bağışlar ve Yardımlar"),
+
+    OTHERS("Diğer Ödemeler")
 }
 
 fun ExpenseCategory.getColor(): Color {
@@ -34,6 +36,7 @@ fun ExpenseCategory.getColor(): Color {
         ExpenseCategory.WORK -> Color(0xFF5AC8FA)
         ExpenseCategory.TAX -> Color(0xFFFFD60A)
         ExpenseCategory.DONATIONS -> Color(0xFF30D158)
+        ExpenseCategory.OTHERS -> Color(0xFF3F51B5)
     }
 }
 
@@ -50,5 +53,6 @@ fun ExpenseCategory.getIcon(): ImageVector {
         ExpenseCategory.WORK -> Icons.Default.Work
         ExpenseCategory.TAX -> Icons.Default.Description
         ExpenseCategory.DONATIONS -> Icons.Default.CardGiftcard
+        ExpenseCategory.OTHERS -> Icons.Default.Dashboard
     }
 }

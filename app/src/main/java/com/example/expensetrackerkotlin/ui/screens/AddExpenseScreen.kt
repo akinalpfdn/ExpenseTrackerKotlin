@@ -196,7 +196,7 @@ fun AddExpenseScreen(
                         expanded = showCategoryMenu,
                         onDismissRequest = { showCategoryMenu = false }
                     ) {
-                        CategoryHelper.subCategories.forEach { subCategory ->
+                        CategoryHelper.subCategories.sortedBy { it.name }.forEach { subCategory ->
                             DropdownMenuItem(
                                 text = { Text(subCategory.name) },
                                 onClick = {
