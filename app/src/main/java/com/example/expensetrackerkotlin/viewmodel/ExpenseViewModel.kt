@@ -66,7 +66,7 @@ class ExpenseViewModel(
     
     // Computed properties
     val totalSpent: Double
-        get() = _expenses.value.sumOf { it.amount }
+        get() = _expenses.value.sumOf { it.getAmountInDefaultCurrency(defaultCurrency) }
     
     private val monthlyLimitValue: Double
         get() = monthlyLimit.toDoubleOrNull() ?: 10000.0
@@ -108,7 +108,7 @@ class ExpenseViewModel(
     val dailyExpensesByCategory: List<CategoryExpense>
         get() {
             val selectedDayExpenses = getExpensesForDate(_selectedDate.value)
-            val selectedDayTotal = selectedDayExpenses.sumOf { it.amount }
+            val selectedDayTotal = selectedDayExpenses.sumOf { it.getAmountInDefaultCurrency(defaultCurrency) }
             
             if (selectedDayTotal <= 0) return emptyList()
             
@@ -134,7 +134,7 @@ class ExpenseViewModel(
             return (0..6).map { dayOffset ->
                 val date = today.minusDays(dayOffset.toLong())
                 val dayExpenses = getExpensesForDate(date)
-                val totalAmount = dayExpenses.sumOf { it.amount }
+                val totalAmount = dayExpenses.sumOf { it.getAmountInDefaultCurrency(defaultCurrency) }
                 val expenseCount = dayExpenses.size
                 
                 val averageDailyLimit = if (dayExpenses.isEmpty()) {
@@ -189,7 +189,7 @@ class ExpenseViewModel(
     }
     
     private fun getSelectedDayTotal(): Double {
-        return getExpensesForDate(_selectedDate.value).sumOf { it.amount }
+        return getExpensesForDate(_selectedDate.value).sumOf { it.getAmountInDefaultCurrency(defaultCurrency) }
     }
     
     private fun getExpensesForDate(date: LocalDateTime): List<Expense> {
@@ -203,7 +203,7 @@ class ExpenseViewModel(
     
     fun getDailyExpenseRatio(expense: Expense): Double {
         val sameDayExpenses = getExpensesForDate(expense.date)
-        val dailyTotal = sameDayExpenses.sumOf { it.amount }
+        val dailyTotal = sameDayExpenses.sumOf { it.getAmountInDefaultCurrency(defaultCurrency) }
         
         return if (dailyTotal > 0) {
             expense.amount / dailyTotal

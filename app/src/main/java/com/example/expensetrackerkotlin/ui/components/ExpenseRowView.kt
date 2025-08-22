@@ -12,6 +12,8 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.foundation.border
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
@@ -44,11 +46,13 @@ fun ExpenseRowView(
     onDelete: () -> Unit,
     isCurrentlyEditing: Boolean,
     dailyExpenseRatio: Double,
+    defaultCurrency: String,
     modifier: Modifier = Modifier
 ) {
     var isEditing by remember { mutableStateOf(false) }
     var editAmount by remember { mutableStateOf(expense.amount.toString()) }
     var editDescription by remember { mutableStateOf(expense.description) }
+    var editExchangeRate by remember { mutableStateOf(expense.exchangeRate?.toString() ?: "") }
     var showDeleteConfirmation by remember { mutableStateOf(false) }
     
     // Swipe animation state
@@ -68,6 +72,22 @@ fun ExpenseRowView(
     LaunchedEffect(isCurrentlyEditing) {
         isEditing = isCurrentlyEditing
         onEditingChanged(isEditing)
+        
+        // Update edit fields when editing starts
+        if (isCurrentlyEditing) {
+            editAmount = expense.amount.toString()
+            editDescription = expense.description
+            editExchangeRate = expense.exchangeRate?.toString() ?: ""
+        }
+    }
+    
+    // Update edit fields when expense changes
+    LaunchedEffect(expense) {
+        if (isEditing) {
+            editAmount = expense.amount.toString()
+            editDescription = expense.description
+            editExchangeRate = expense.exchangeRate?.toString() ?: ""
+        }
     }
 
     Column(
@@ -209,6 +229,13 @@ fun ExpenseRowView(
                                 fontSize = 16.sp,
                                 color = Color.White
                             )
+                            if (expense.exchangeRate != null) {
+                                Text(
+                                    text = "Kur: ${String.format("%.4f", expense.exchangeRate)}",
+                                    fontSize = 11.sp,
+                                    color = Color.Gray
+                                )
+                            }
                             Text(
                                 text = expense.date.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")),
                                 fontSize = 12.sp,
@@ -232,39 +259,148 @@ fun ExpenseRowView(
                                 )
                                 .padding(12.dp)
                         ) {
-                                                        OutlinedTextField(
-                                value = editAmount,
-                                onValueChange = { newValue ->
-                                    if (newValue.isEmpty() || newValue.matches(Regex("^\\d*\\.?\\d*$"))) {
-                                        editAmount = newValue
+                                                        Box(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(40.dp)
+                                    .background(
+                                        AppColors.InputBackground,
+                                        RoundedCornerShape(12.dp)
+                                    )
+                                    .border(
+                                        width = 1.dp,
+                                        color = AppColors.TextGray,
+                                        shape = RoundedCornerShape(12.dp)
+                                    )
+                            ) {
+                                BasicTextField(
+                                    value = editAmount,
+                                    onValueChange = { newValue ->
+                                        if (newValue.isEmpty() || newValue.matches(Regex("^\\d*\\.?\\d*$"))) {
+                                            editAmount = newValue
+                                        }
+                                    },
+                                    modifier = Modifier
+                                        .fillMaxSize()
+                                        .padding(horizontal = 12.dp),
+                                    singleLine = true,
+                                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
+                                    textStyle = androidx.compose.ui.text.TextStyle(
+                                        fontSize = 14.sp,
+                                        color = AppColors.TextWhite
+                                    ),
+                                    decorationBox = { innerTextField ->
+                                        Box(
+                                            contentAlignment = Alignment.CenterStart
+                                        ) {
+                                            if (editAmount.isEmpty()) {
+                                                Text(
+                                                    text = "Miktar",
+                                                    fontSize = 14.sp,
+                                                    color = AppColors.TextGray
+                                                )
+                                            }
+                                            innerTextField()
+                                        }
                                     }
-                                },
-                                label = { Text("Miktar", color = AppColors.TextGray) },
-                                modifier = Modifier.fillMaxWidth(),
-                                singleLine = true,
-                                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
-                                colors = OutlinedTextFieldDefaults.colors(
-                                    focusedTextColor = AppColors.TextWhite,
-                                    unfocusedTextColor = AppColors.TextWhite,
-                                    focusedBorderColor = AppColors.TextWhite,
-                                    unfocusedBorderColor = AppColors.TextGray
                                 )
-                            )
+                            }
                             
                             Spacer(modifier = Modifier.height(8.dp))
                             
-                            OutlinedTextField(
-                                value = editDescription,
-                                onValueChange = { editDescription = it },
-                                label = { Text("Açıklama", color = AppColors.TextGray) },
-                                modifier = Modifier.fillMaxWidth(),
-                                colors = OutlinedTextFieldDefaults.colors(
-                                    focusedTextColor = AppColors.TextWhite,
-                                    unfocusedTextColor = AppColors.TextWhite,
-                                    focusedBorderColor = AppColors.TextWhite,
-                                    unfocusedBorderColor = AppColors.TextGray
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(40.dp)
+                                    .background(
+                                        AppColors.InputBackground,
+                                        RoundedCornerShape(12.dp)
+                                    )
+                                    .border(
+                                        width = 1.dp,
+                                        color = AppColors.TextGray,
+                                        shape = RoundedCornerShape(12.dp)
+                                    )
+                            ) {
+                                BasicTextField(
+                                    value = editDescription,
+                                    onValueChange = { editDescription = it },
+                                    modifier = Modifier
+                                        .fillMaxSize()
+                                        .padding(horizontal = 12.dp),
+                                    singleLine = true,
+                                    textStyle = androidx.compose.ui.text.TextStyle(
+                                        fontSize = 14.sp,
+                                        color = AppColors.TextWhite
+                                    ),
+                                    decorationBox = { innerTextField ->
+                                        Box(
+                                            contentAlignment = Alignment.CenterStart
+                                        ) {
+                                            if (editDescription.isEmpty()) {
+                                                Text(
+                                                    text = "Açıklama",
+                                                    fontSize = 14.sp,
+                                                    color = AppColors.TextGray
+                                                )
+                                            }
+                                            innerTextField()
+                                        }
+                                    }
                                 )
-                            )
+                            }
+                            
+                            // Exchange Rate (only show if currency is different from default)
+                            if (expense.currency != defaultCurrency) {
+                                Spacer(modifier = Modifier.height(8.dp))
+                                
+                                Box(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .height(40.dp)
+                                        .background(
+                                            AppColors.InputBackground,
+                                            RoundedCornerShape(12.dp)
+                                        )
+                                        .border(
+                                            width = 1.dp,
+                                            color = AppColors.TextGray,
+                                            shape = RoundedCornerShape(12.dp)
+                                        )
+                                ) {
+                                    BasicTextField(
+                                        value = editExchangeRate,
+                                        onValueChange = { newValue ->
+                                            if (newValue.isEmpty() || newValue.matches(Regex("^\\d*\\.?\\d*$"))) {
+                                                editExchangeRate = newValue
+                                            }
+                                        },
+                                        modifier = Modifier
+                                            .fillMaxSize()
+                                            .padding(horizontal = 12.dp),
+                                        singleLine = true,
+                                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
+                                        textStyle = androidx.compose.ui.text.TextStyle(
+                                            fontSize = 14.sp,
+                                            color = AppColors.TextWhite
+                                        ),
+                                        decorationBox = { innerTextField ->
+                                            Box(
+                                                contentAlignment = Alignment.CenterStart
+                                            ) {
+                                                if (editExchangeRate.isEmpty()) {
+                                                    Text(
+                                                        text = "Döviz Kuru",
+                                                        fontSize = 14.sp,
+                                                        color = AppColors.TextGray
+                                                    )
+                                                }
+                                                innerTextField()
+                                            }
+                                        }
+                                    )
+                                }
+                            }
                             
                             Spacer(modifier = Modifier.height(12.dp))
                             
@@ -279,7 +415,12 @@ fun ExpenseRowView(
                                             onUpdate(
                                                 expense.copy(
                                                     amount = newAmount,
-                                                    description = editDescription
+                                                    description = editDescription,
+                                                    exchangeRate = if (expense.currency != defaultCurrency) {
+                                                        editExchangeRate.toDoubleOrNull()
+                                                    } else {
+                                                        null
+                                                    }
                                                 )
                                             )
                                         }
@@ -314,6 +455,7 @@ fun ExpenseRowView(
                                         onEditingChanged(false)
                                         editAmount = expense.amount.toString()
                                         editDescription = expense.description
+                                        editExchangeRate = expense.exchangeRate?.toString() ?: ""
                                     },
                                     modifier = Modifier
                                         .weight(1f)

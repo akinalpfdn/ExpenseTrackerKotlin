@@ -17,8 +17,18 @@ data class Expense(
     val description: String,
     val date: LocalDateTime,
     val dailyLimitAtCreation: Double,
-    val monthlyLimitAtCreation: Double
+    val monthlyLimitAtCreation: Double,
+    val exchangeRate: Double? = null
 ) {
     val category: ExpenseCategory
         get() = CategoryHelper.getCategoryForSubCategory(subCategory)
+    
+    // Convert amount to default currency for progress calculations
+    fun getAmountInDefaultCurrency(defaultCurrency: String): Double {
+        return if (currency == defaultCurrency || exchangeRate == null) {
+            amount
+        } else {
+            amount * exchangeRate
+        }
+    }
 }

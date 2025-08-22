@@ -38,6 +38,7 @@ fun AddExpenseScreen(
     var selectedCurrency by remember(defaultCurrency) { mutableStateOf(defaultCurrency) }
     var selectedSubCategory by remember { mutableStateOf("Restoran") }
     var description by remember { mutableStateOf("") }
+    var exchangeRate by remember { mutableStateOf("") }
     var showCurrencyMenu by remember { mutableStateOf(false) }
     var showCategoryMenu by remember { mutableStateOf(false) }
     
@@ -323,6 +324,72 @@ fun AddExpenseScreen(
                 }
             }
             
+            // Exchange Rate (only show if currency is different from default)
+            if (selectedCurrency != defaultCurrency) {
+                Column(
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    Text(
+                        text = "Döviz Kuru (1 $selectedCurrency = ? $defaultCurrency)",
+                        fontSize = 18.sp,
+                        fontWeight = FontWeight.Medium,
+                        color = AppColors.TextWhite
+                    )
+                    
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(40.dp)
+                            .background(
+                                AppColors.InputBackground,
+                                RoundedCornerShape(12.dp)
+                            )
+                            .border(
+                                width = 1.dp,
+                                color = AppColors.TextGray,
+                                shape = RoundedCornerShape(12.dp)
+                            )
+                    ) {
+                        BasicTextField(
+                            value = exchangeRate,
+                            onValueChange = { newValue ->
+                                if (newValue.isEmpty() || newValue.matches(Regex("^\\d*\\.?\\d*$"))) {
+                                    exchangeRate = newValue
+                                }
+                            },
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(horizontal = 12.dp),
+                            singleLine = true,
+                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
+                            textStyle = androidx.compose.ui.text.TextStyle(
+                                fontSize = 14.sp,
+                                color = AppColors.TextWhite
+                            ),
+                            decorationBox = { innerTextField ->
+                                Box(
+                                    contentAlignment = Alignment.CenterStart
+                                ) {
+                                    if (exchangeRate.isEmpty()) {
+                                        Text(
+                                            text = "Örn: 0.035 (1 $selectedCurrency = 0.035 $defaultCurrency)",
+                                            fontSize = 14.sp,
+                                            color = AppColors.TextGray
+                                        )
+                                    }
+                                    innerTextField()
+                                }
+                            }
+                        )
+                    }
+                    
+                    Text(
+                        text = "Bu kur, progress hesaplamaları için kullanılacak",
+                        fontSize = 14.sp,
+                        color = AppColors.TextGray
+                    )
+                }
+            }
 
         }
 
@@ -345,18 +412,25 @@ fun AddExpenseScreen(
                             description = description,
                             date = selectedDate,
                             dailyLimitAtCreation = dailyLimit.toDoubleOrNull() ?: 0.0,
-                            monthlyLimitAtCreation = monthlyLimit.toDoubleOrNull() ?: 0.0
+                            monthlyLimitAtCreation = monthlyLimit.toDoubleOrNull() ?: 0.0,
+                            exchangeRate = if (selectedCurrency != defaultCurrency) {
+                                exchangeRate.toDoubleOrNull()
+                            } else {
+                                null
+                            }
                         )
                         onExpenseAdded(expense)
                         onDismiss()
                     }
                 },
-                enabled = amount.isNotEmpty() && amount.toDoubleOrNull() != null && amount.toDoubleOrNull()!! > 0,
+                enabled = amount.isNotEmpty() && amount.toDoubleOrNull() != null && amount.toDoubleOrNull()!! > 0 && 
+                         (selectedCurrency == defaultCurrency || (exchangeRate.isNotEmpty() && exchangeRate.toDoubleOrNull() != null && exchangeRate.toDoubleOrNull()!! > 0)),
                 modifier = Modifier
                     .weight(1f)
                     .height(36.dp),
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = if (amount.isNotEmpty() && amount.toDoubleOrNull() != null && amount.toDoubleOrNull()!! > 0) {
+                    containerColor = if (amount.isNotEmpty() && amount.toDoubleOrNull() != null && amount.toDoubleOrNull()!! > 0 && 
+                                        (selectedCurrency == defaultCurrency || (exchangeRate.isNotEmpty() && exchangeRate.toDoubleOrNull() != null && exchangeRate.toDoubleOrNull()!! > 0))) {
                         AppColors.PrimaryOrange
                     } else {
                         AppColors.ButtonDisabled

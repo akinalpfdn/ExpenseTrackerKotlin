@@ -87,6 +87,7 @@ fun MonthlyProgressRingView(
     progressColors: List<Color>,
     isOverLimit: Boolean,
     onTap: () -> Unit,
+    currency: String = "₺",
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -105,7 +106,7 @@ fun MonthlyProgressRingView(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(
-                    text = "₺${String.format("%.0f", totalSpent)}",
+                    text = "$currency${String.format("%.0f", totalSpent)}",
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Bold,
                     color = if (isOverLimit) Color.Red else Color.White
@@ -126,6 +127,7 @@ fun DailyProgressRingView(
     isOverDailyLimit: Boolean,
     dailyLimitValue: Double,
     selectedDateTotal: Double,
+    currency: String = "₺",
     modifier: Modifier = Modifier
 ) {
     val progressColors = when {
@@ -151,7 +153,7 @@ fun DailyProgressRingView(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(
-                    text = "₺${String.format("%.0f", selectedDateTotal)}",
+                    text = "$currency${String.format("%.0f", selectedDateTotal)}",
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Bold,
                     color = if (isOverDailyLimit) Color.Red else Color.White

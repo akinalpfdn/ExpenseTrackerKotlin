@@ -89,23 +89,25 @@ fun MainScreen(
                 ) {
                     when (page) {
                         0 -> {
-                            // Monthly Progress Ring
-                            MonthlyProgressRingView(
-                                totalSpent = viewModel.totalSpent,
-                                progressPercentage = viewModel.progressPercentage,
-                                progressColors = viewModel.progressColors,
-                                isOverLimit = viewModel.isOverLimit,
-                                onTap = { /* TODO: Implement monthly calendar */ }
-                            )
+                                                    // Monthly Progress Ring
+                        MonthlyProgressRingView(
+                            totalSpent = viewModel.totalSpent,
+                            progressPercentage = viewModel.progressPercentage,
+                            progressColors = viewModel.progressColors,
+                            isOverLimit = viewModel.isOverLimit,
+                            onTap = { /* TODO: Implement monthly calendar */ },
+                            currency = viewModel.defaultCurrency
+                        )
                         }
                         1 -> {
-                            // Daily Progress Ring
-                            DailyProgressRingView(
-                                dailyProgressPercentage = viewModel.dailyProgressPercentage,
-                                isOverDailyLimit = viewModel.isOverDailyLimit,
-                                dailyLimitValue = viewModel.dailyLimit.toDoubleOrNull() ?: 0.0,
-                                selectedDateTotal = selectedDayTotal
-                            )
+                                                    // Daily Progress Ring
+                        DailyProgressRingView(
+                            dailyProgressPercentage = viewModel.dailyProgressPercentage,
+                            isOverDailyLimit = viewModel.isOverDailyLimit,
+                            dailyLimitValue = viewModel.dailyLimit.toDoubleOrNull() ?: 0.0,
+                            selectedDateTotal = selectedDayTotal,
+                            currency = viewModel.defaultCurrency
+                        )
                         }
                         2 -> {
                             // Category Distribution
@@ -186,7 +188,8 @@ fun MainScreen(
                                 viewModel.deleteExpense(expense.id)
                             },
                             isCurrentlyEditing = editingExpenseId == expense.id,
-                            dailyExpenseRatio = viewModel.getDailyExpenseRatio(expense)
+                            dailyExpenseRatio = viewModel.getDailyExpenseRatio(expense),
+                            defaultCurrency = viewModel.defaultCurrency
                         )
                     }
                 }
