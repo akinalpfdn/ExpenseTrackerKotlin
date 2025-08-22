@@ -267,8 +267,8 @@ fun SettingsScreen(
 
         
         // Buttons
-        Column(
-            verticalArrangement = Arrangement.spacedBy(12.dp),
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(12.dp),
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(20.dp)
@@ -281,9 +281,8 @@ fun SettingsScreen(
                     onDismiss()
                 },
                 modifier = Modifier
-                    .fillMaxWidth(0.7f)
-                    .height(36.dp)
-                    .align(Alignment.CenterHorizontally),
+                    .weight(1f)
+                    .height(36.dp),
                 colors = ButtonDefaults.buttonColors(
                     containerColor = AppColors.PrimaryOrange
                 ),
@@ -300,9 +299,8 @@ fun SettingsScreen(
             Button(
                 onClick = onDismiss,
                 modifier = Modifier
-                    .fillMaxWidth(0.7f)
-                    .height(36.dp)
-                    .align(Alignment.CenterHorizontally),
+                    .weight(1f)
+                    .height(36.dp),
                 colors = ButtonDefaults.buttonColors(
                     containerColor = AppColors.ButtonDisabled
                 ),

@@ -35,7 +35,7 @@ fun AddExpenseScreen(
     onDismiss: () -> Unit
 ) {
     var amount by remember { mutableStateOf("") }
-    var selectedCurrency by remember { mutableStateOf(defaultCurrency) }
+    var selectedCurrency by remember(defaultCurrency) { mutableStateOf(defaultCurrency) }
     var selectedSubCategory by remember { mutableStateOf("Restoran") }
     var description by remember { mutableStateOf("") }
     var showCurrencyMenu by remember { mutableStateOf(false) }

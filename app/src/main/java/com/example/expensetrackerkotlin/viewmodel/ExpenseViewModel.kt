@@ -17,7 +17,8 @@ import java.time.temporal.ChronoUnit
 import kotlin.math.min
 
 class ExpenseViewModel(
-    private val preferencesManager: PreferencesManager
+    private val preferencesManager: PreferencesManager,
+    private val expenseRepository: ExpenseRepository
 ) : ViewModel() {
     
     private val _expenses = MutableStateFlow<List<Expense>>(emptyList())
@@ -52,6 +53,13 @@ class ExpenseViewModel(
         viewModelScope.launch {
             preferencesManager.monthlyLimit.collect { limit ->
                 monthlyLimit = limit
+            }
+        }
+        
+        // Load expenses from database
+        viewModelScope.launch {
+            expenseRepository.allExpenses.collect { expensesList ->
+                _expenses.value = expensesList
             }
         }
     }
@@ -150,29 +158,26 @@ class ExpenseViewModel(
     }
     
     fun addExpense(expense: Expense) {
-        val currentExpenses = _expenses.value.toMutableList()
-        currentExpenses.add(expense)
-        _expenses.value = currentExpenses
-        
-        // Check if over limit
-        if (!isOverLimit && totalSpent > monthlyLimitValue && monthlyLimitValue > 0) {
-            _showingOverLimitAlert.value = true
+        viewModelScope.launch {
+            expenseRepository.insertExpense(expense)
+            
+            // Check if over limit
+            if (!isOverLimit && totalSpent > monthlyLimitValue && monthlyLimitValue > 0) {
+                _showingOverLimitAlert.value = true
+            }
         }
     }
     
     fun updateExpense(expense: Expense) {
-        val currentExpenses = _expenses.value.toMutableList()
-        val index = currentExpenses.indexOfFirst { it.id == expense.id }
-        if (index != -1) {
-            currentExpenses[index] = expense
-            _expenses.value = currentExpenses
+        viewModelScope.launch {
+            expenseRepository.updateExpense(expense)
         }
     }
     
     fun deleteExpense(expenseId: String) {
-        val currentExpenses = _expenses.value.toMutableList()
-        currentExpenses.removeAll { it.id == expenseId }
-        _expenses.value = currentExpenses
+        viewModelScope.launch {
+            expenseRepository.deleteExpenseById(expenseId)
+        }
     }
     
     fun setEditingExpenseId(id: String?) {
