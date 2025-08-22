@@ -59,12 +59,7 @@ fun SettingsScreen(
                 fontWeight = FontWeight.Bold,
                 color = AppColors.TextWhite
             )
-            Spacer(modifier = Modifier.height(8.dp))
-            Text(
-                text = "Uygulamanızı kişiselleştirin",
-                fontSize = 16.sp,
-                color = AppColors.TextGray
-            )
+
         }
         
         Spacer(modifier = Modifier.height(32.dp))
