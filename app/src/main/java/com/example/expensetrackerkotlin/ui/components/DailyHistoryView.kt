@@ -17,6 +17,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.expensetrackerkotlin.data.DailyData
+import com.example.expensetrackerkotlin.ui.theme.ThemeColors
 import java.time.LocalDateTime
 
 @Composable
@@ -24,6 +25,7 @@ fun DailyHistoryView(
     dailyData: List<DailyData>,
     selectedDate: LocalDateTime,
     onDateSelected: (LocalDateTime) -> Unit,
+    isDarkTheme: Boolean = true,
     modifier: Modifier = Modifier
 ) {
     LazyRow(
@@ -35,6 +37,7 @@ fun DailyHistoryView(
             DailyHistoryItem(
                 data = data,
                 isSelected = selectedDate.toLocalDate() == data.date.toLocalDate(),
+                isDarkTheme = isDarkTheme,
                 onClick = { onDateSelected(data.date) }
             )
         }
@@ -45,6 +48,7 @@ fun DailyHistoryView(
 private fun DailyHistoryItem(
     data: DailyData,
     isSelected: Boolean,
+    isDarkTheme: Boolean,
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -54,7 +58,7 @@ private fun DailyHistoryItem(
             .clip(RoundedCornerShape(12.dp))
             .clickable { onClick() }
             .background(
-                if (isSelected) Color.White.copy(alpha = 0.2f) else Color.Transparent
+                if (isSelected) ThemeColors.getTextColor(isDarkTheme).copy(alpha = 0.2f) else Color.Transparent
             )
             .padding(8.dp)
     ) {
@@ -62,7 +66,7 @@ private fun DailyHistoryItem(
         Text(
             text = data.dayName,
             fontSize = 12.sp,
-            color = Color.Gray,
+            color = ThemeColors.getTextGrayColor(isDarkTheme),
             fontWeight = FontWeight.Medium
         )
         
@@ -78,7 +82,7 @@ private fun DailyHistoryItem(
                 modifier = Modifier
                     .size(36.dp)
                     .background(
-                        Color.Gray.copy(alpha = 0.2f),
+                        ThemeColors.getTextGrayColor(isDarkTheme).copy(alpha = 0.2f),
                         CircleShape
                     )
             )
@@ -97,7 +101,7 @@ private fun DailyHistoryItem(
             Text(
                 text = data.dayNumber,
                 fontSize = 12.sp,
-                color = Color.White,
+                color = ThemeColors.getTextColor(isDarkTheme),
                 fontWeight = FontWeight.Bold
             )
         }
@@ -108,7 +112,7 @@ private fun DailyHistoryItem(
         Text(
             text = "₺${String.format("%.0f", data.totalAmount)}",
             fontSize = 10.sp,
-            color = if (data.isOverLimit) Color.Red else Color.White,
+            color = if (data.isOverLimit) Color.Red else ThemeColors.getTextColor(isDarkTheme),
             fontWeight = FontWeight.Medium
         )
     }

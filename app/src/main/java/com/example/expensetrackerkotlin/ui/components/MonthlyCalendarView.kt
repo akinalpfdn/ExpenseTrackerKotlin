@@ -18,6 +18,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.expensetrackerkotlin.ui.theme.AppColors
+import com.example.expensetrackerkotlin.ui.theme.ThemeColors
 import com.example.expensetrackerkotlin.data.DailyData
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -32,6 +33,7 @@ fun MonthlyCalendarView(
     onDateSelected: (LocalDateTime) -> Unit,
     defaultCurrency: String,
     dailyLimit: String,
+    isDarkTheme: Boolean = true,
     onMonthChanged: (YearMonth) -> Unit = {},
     modifier: Modifier = Modifier
 ) {
@@ -61,7 +63,7 @@ fun MonthlyCalendarView(
             .fillMaxWidth()
             .padding(horizontal = 16.dp),
         colors = CardDefaults.cardColors(
-            containerColor = AppColors.CardBackground
+            containerColor = ThemeColors.getCardBackgroundColor(isDarkTheme)
         ),
         shape = RoundedCornerShape(16.dp)
     ) {
@@ -80,7 +82,7 @@ fun MonthlyCalendarView(
                     text = currentMonth.format(DateTimeFormatter.ofPattern("MMMM yyyy", Locale.forLanguageTag("tr"))),
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Bold,
-                    color = AppColors.TextWhite
+                    color = ThemeColors.getTextColor(isDarkTheme)
                 )
                 
                 // Navigation buttons (previous/next month)
@@ -96,7 +98,7 @@ fun MonthlyCalendarView(
                         Text(
                             text = "‹",
                             fontSize = 24.sp,
-                            color = AppColors.TextWhite,
+                            color = ThemeColors.getTextColor(isDarkTheme),
                             fontWeight = FontWeight.Bold
                         )
                     }
@@ -110,7 +112,7 @@ fun MonthlyCalendarView(
                         Text(
                             text = "›",
                             fontSize = 24.sp,
-                            color = AppColors.TextWhite,
+                            color = ThemeColors.getTextColor(isDarkTheme),
                             fontWeight = FontWeight.Bold
                         )
                     }
@@ -186,18 +188,18 @@ fun MonthlyCalendarView(
                                  )
                             }
                             
-                                                         // Day number
+                                                                                      // Day number
                              Text(
                                  text = day.toString(),
                                  fontSize = 14.sp,
                                  fontWeight = if (isSelected || isToday) FontWeight.Bold else FontWeight.Normal,
                                 color = when {
-                                    isSelected -> AppColors.TextWhite
+                                    isSelected -> ThemeColors.getTextColor(isDarkTheme)
                                     isToday -> AppColors.PrimaryOrange
-                                    dayExpenses.isNotEmpty() -> AppColors.TextWhite
-                                    else -> AppColors.TextGray
+                                    dayExpenses.isNotEmpty() -> ThemeColors.getTextColor(isDarkTheme)
+                                    else -> ThemeColors.getTextGrayColor(isDarkTheme)
                                 }
-                            )
+                             )
                         }
                         
                         Spacer(modifier = Modifier.height(8.dp))
@@ -209,8 +211,8 @@ fun MonthlyCalendarView(
                             fontWeight = FontWeight.Medium,
                             color = when {
                                 isOverLimit -> Color.Red
-                                dayExpenses.isNotEmpty() -> AppColors.TextWhite
-                                else -> AppColors.TextGray
+                                dayExpenses.isNotEmpty() -> ThemeColors.getTextColor(isDarkTheme)
+                                else -> ThemeColors.getTextGrayColor(isDarkTheme)
                             },
                             textAlign = TextAlign.Center
                         )
@@ -219,7 +221,7 @@ fun MonthlyCalendarView(
                          Text(
                              text = date.format(DateTimeFormatter.ofPattern("E", Locale.forLanguageTag("tr"))).first().toString().uppercase(),
                              fontSize = 8.sp,
-                            color = AppColors.TextGray,
+                            color = ThemeColors.getTextGrayColor(isDarkTheme),
                             textAlign = TextAlign.Center
                         )
                     }

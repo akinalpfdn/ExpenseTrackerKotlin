@@ -17,6 +17,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.expensetrackerkotlin.ui.theme.ThemeColors
 import kotlin.math.cos
 import kotlin.math.sin
 
@@ -88,6 +89,7 @@ fun MonthlyProgressRingView(
     isOverLimit: Boolean,
     onTap: () -> Unit,
     currency: String = "₺",
+    isDarkTheme: Boolean = true,
     modifier: Modifier = Modifier,
     month: String = ""
 ) {
@@ -110,12 +112,12 @@ fun MonthlyProgressRingView(
                     text = "$currency${String.format("%.0f", totalSpent)}",
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Bold,
-                    color = if (isOverLimit) Color.Red else Color.White
+                    color = if (isOverLimit) Color.Red else ThemeColors.getTextColor(isDarkTheme)
                 )
                 Text(
                     text = if (month.isNotEmpty()) month else "Aylık",
                     fontSize = 12.sp,
-                    color = Color.Gray
+                    color = ThemeColors.getTextGrayColor(isDarkTheme)
                 )
             }
         }
@@ -129,6 +131,7 @@ fun DailyProgressRingView(
     dailyLimitValue: Double,
     selectedDateTotal: Double,
     currency: String = "₺",
+    isDarkTheme: Boolean = true,
     modifier: Modifier = Modifier
 ) {
     val progressColors = when {
@@ -157,12 +160,12 @@ fun DailyProgressRingView(
                     text = "$currency${String.format("%.0f", selectedDateTotal)}",
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Bold,
-                    color = if (isOverDailyLimit) Color.Red else Color.White
+                    color = if (isOverDailyLimit) Color.Red else ThemeColors.getTextColor(isDarkTheme)
                 )
                 Text(
                     text = "Günlük",
                     fontSize = 12.sp,
-                    color = Color.Gray
+                    color = ThemeColors.getTextGrayColor(isDarkTheme)
                 )
             }
         }

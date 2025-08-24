@@ -19,6 +19,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import com.example.expensetrackerkotlin.ui.theme.AppColors
+import com.example.expensetrackerkotlin.ui.theme.ThemeColors
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -53,10 +54,12 @@ fun ExpensesScreen(
     }
     //TODO add a button to manage repeating expenses by changing from there all the future of that expensive will change
     
+    val isDarkTheme = viewModel.theme == "dark"
+    
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(AppColors.BackgroundBlack)
+            .background(ThemeColors.getBackgroundColor(isDarkTheme))
     ) {
         Column(
             modifier = Modifier.fillMaxSize()
@@ -67,6 +70,7 @@ fun ExpensesScreen(
             DailyHistoryView(
                 dailyData = viewModel.dailyHistoryData,
                 selectedDate = selectedDate,
+                isDarkTheme = isDarkTheme,
                 onDateSelected = { date ->
                     viewModel.updateSelectedDate(date)
                 }
@@ -91,15 +95,16 @@ fun ExpensesScreen(
                     when (page) {
                         0 -> {
                             // Monthly Progress Ring
-                                                         MonthlyProgressRingView(
-                                 totalSpent = viewModel.getMonthlyTotal(currentCalendarMonth),
-                                 progressPercentage = viewModel.getMonthlyProgressPercentage(currentCalendarMonth),
-                                 progressColors = viewModel.getMonthlyProgressColors(currentCalendarMonth),
-                                 isOverLimit = viewModel.isMonthlyOverLimit(currentCalendarMonth),
-                                 onTap = { showingMonthlyCalendar = true },
-                                 currency = viewModel.defaultCurrency,
-                                 month = currentCalendarMonth.format(java.time.format.DateTimeFormatter.ofPattern("MMM", java.util.Locale.forLanguageTag("tr")))
-                             )
+                                                                                     MonthlyProgressRingView(
+                                totalSpent = viewModel.getMonthlyTotal(currentCalendarMonth),
+                                progressPercentage = viewModel.getMonthlyProgressPercentage(currentCalendarMonth),
+                                progressColors = viewModel.getMonthlyProgressColors(currentCalendarMonth),
+                                isOverLimit = viewModel.isMonthlyOverLimit(currentCalendarMonth),
+                                onTap = { showingMonthlyCalendar = true },
+                                currency = viewModel.defaultCurrency,
+                                isDarkTheme = isDarkTheme,
+                                month = currentCalendarMonth.format(java.time.format.DateTimeFormatter.ofPattern("MMM", java.util.Locale.forLanguageTag("tr")))
+                            )
                         }
                         1 -> {
                             // Daily Progress Ring
@@ -108,7 +113,8 @@ fun ExpensesScreen(
                                 isOverDailyLimit = viewModel.isOverDailyLimit,
                                 dailyLimitValue = viewModel.dailyLimit.toDoubleOrNull() ?: 0.0,
                                 selectedDateTotal = viewModel.getSelectedDayTotal(),
-                                currency = viewModel.defaultCurrency
+                                currency = viewModel.defaultCurrency,
+                                isDarkTheme = isDarkTheme
                             )
                         }
                         2 -> {
@@ -133,39 +139,39 @@ fun ExpensesScreen(
                         .weight(1f)
                         .padding(horizontal = 40.dp)
                 ) {
-                    Icon(
-                        imageVector = Icons.Default.Add,
-                        contentDescription = "No expenses",
-                        modifier = Modifier.size(60.dp),
-                        tint = AppColors.TextGray
-                    )
+                                         Icon(
+                         imageVector = Icons.Default.Add,
+                         contentDescription = "No expenses",
+                         modifier = Modifier.size(60.dp),
+                         tint = ThemeColors.getTextGrayColor(isDarkTheme)
+                     )
                     
                     Spacer(modifier = Modifier.height(16.dp))
                     
-                    Text(
-                        text = if (selectedDate.toLocalDate() == LocalDateTime.now().toLocalDate()) {
-                            "Henüz harcama yok"
-                        } else {
-                            "Bu günde harcama yok"
-                        },
-                        fontSize = 20.sp,
-                        fontWeight = FontWeight.Medium,
-                        color = AppColors.TextWhite,
-                        textAlign = TextAlign.Center
-                    )
+                                         Text(
+                         text = if (selectedDate.toLocalDate() == LocalDateTime.now().toLocalDate()) {
+                             "Henüz harcama yok"
+                         } else {
+                             "Bu günde harcama yok"
+                         },
+                         fontSize = 20.sp,
+                         fontWeight = FontWeight.Medium,
+                         color = ThemeColors.getTextColor(isDarkTheme),
+                         textAlign = TextAlign.Center
+                     )
                     
                     Spacer(modifier = Modifier.height(8.dp))
                     
-                    Text(
-                        text = if (selectedDate.toLocalDate() == LocalDateTime.now().toLocalDate()) {
-                            "İlk harcamanızı eklemek için + butonuna basın"
-                        } else {
-                            "Bu güne harcama eklemek için + butonuna basın"
-                        },
-                        fontSize = 16.sp,
-                        color = AppColors.TextGray,
-                        textAlign = TextAlign.Center
-                    )
+                                         Text(
+                         text = if (selectedDate.toLocalDate() == LocalDateTime.now().toLocalDate()) {
+                             "İlk harcamanızı eklemek için + butonuna basın"
+                         } else {
+                             "Bu güne harcama eklemek için + butonuna basın"
+                         },
+                         fontSize = 16.sp,
+                         color = ThemeColors.getTextGrayColor(isDarkTheme),
+                         textAlign = TextAlign.Center
+                     )
                 }
             } else {
                 LazyColumn(
@@ -191,7 +197,8 @@ fun ExpensesScreen(
                             },
                             isCurrentlyEditing = editingExpenseId == expense.id,
                             dailyExpenseRatio = viewModel.getDailyExpenseRatio(expense),
-                            defaultCurrency = viewModel.defaultCurrency
+                            defaultCurrency = viewModel.defaultCurrency,
+                            isDarkTheme = isDarkTheme
                         )
                     }
                 }
@@ -320,6 +327,7 @@ fun ExpensesScreen(
                     defaultCurrency = viewModel.defaultCurrency,
                     dailyLimit = viewModel.dailyLimit,
                     monthlyLimit = viewModel.monthlyLimit,
+                    isDarkTheme = isDarkTheme,
                     onExpenseAdded = { expense ->
                         viewModel.addExpense(expense)
                     },
@@ -347,29 +355,35 @@ fun ExpensesScreen(
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .heightIn(max = 650.dp)
+                    .heightIn(max = 700.dp)
             ) {
-                SettingsScreen(
-                    defaultCurrency = viewModel.defaultCurrency,
-                    dailyLimit = viewModel.dailyLimit,
-                    monthlyLimit = viewModel.monthlyLimit,
-                    onCurrencyChanged = { currency ->
-                        scope.launch {
-                            viewModel.updateDefaultCurrency(currency)
-                        }
-                    },
-                    onDailyLimitChanged = { limit ->
-                        scope.launch {
-                            viewModel.updateDailyLimit(limit)
-                        }
-                    },
-                    onMonthlyLimitChanged = { limit ->
-                        scope.launch {
-                            viewModel.updateMonthlyLimit(limit)
-                        }
-                    },
-                    onDismiss = { showingSettings = false }
-                )
+                                 SettingsScreen(
+                     defaultCurrency = viewModel.defaultCurrency,
+                     dailyLimit = viewModel.dailyLimit,
+                     monthlyLimit = viewModel.monthlyLimit,
+                     theme = viewModel.theme,
+                     onCurrencyChanged = { currency ->
+                         scope.launch {
+                             viewModel.updateDefaultCurrency(currency)
+                         }
+                     },
+                     onDailyLimitChanged = { limit ->
+                         scope.launch {
+                             viewModel.updateDailyLimit(limit)
+                         }
+                     },
+                     onMonthlyLimitChanged = { limit ->
+                         scope.launch {
+                             viewModel.updateMonthlyLimit(limit)
+                         }
+                     },
+                     onThemeChanged = { theme ->
+                         scope.launch {
+                             viewModel.updateTheme(theme)
+                         }
+                     },
+                     onDismiss = { showingSettings = false }
+                 )
             }
         }
     }
@@ -404,6 +418,7 @@ fun ExpensesScreen(
                      },
                      defaultCurrency = viewModel.defaultCurrency,
                      dailyLimit = viewModel.dailyLimit,
+                     isDarkTheme = isDarkTheme,
                      onMonthChanged = { month ->
                          currentCalendarMonth = month
                      }

@@ -15,6 +15,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import com.example.expensetrackerkotlin.ui.theme.AppColors
+import com.example.expensetrackerkotlin.ui.theme.ThemeColors
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
@@ -31,6 +32,7 @@ fun AddExpenseScreen(
     defaultCurrency: String,
     dailyLimit: String,
     monthlyLimit: String,
+    isDarkTheme: Boolean = true,
     onExpenseAdded: (Expense) -> Unit,
     onDismiss: () -> Unit
 ) {
@@ -47,7 +49,7 @@ fun AddExpenseScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(AppColors.BackgroundBlack)
+            .background(ThemeColors.getBackgroundColor(isDarkTheme))
             .verticalScroll(rememberScrollState())
     ) {
         Spacer(modifier = Modifier.height(20.dp))
@@ -63,13 +65,13 @@ fun AddExpenseScreen(
                 text = "Yeni Harcama",
                 fontSize = 32.sp,
                 fontWeight = FontWeight.Bold,
-                color = AppColors.TextWhite
+                color = ThemeColors.getTextColor(isDarkTheme)
             )
             Spacer(modifier = Modifier.height(8.dp))
             Text(
                 text = "Harcama detaylarını girin",
                 fontSize = 16.sp,
-                color = AppColors.TextGray
+                color = ThemeColors.getTextGrayColor(isDarkTheme)
             )
         }
         
@@ -87,21 +89,21 @@ fun AddExpenseScreen(
                 horizontalArrangement = Arrangement.spacedBy(12.dp),
                 modifier = Modifier.fillMaxWidth()
             ) {
-                // Amount
-                Box(
-                    modifier = Modifier
-                        .weight(1f)
-                        .height(40.dp)
-                        .background(
-                            AppColors.InputBackground,
-                            RoundedCornerShape(12.dp)
-                        )
-                        .border(
-                            width = 1.dp,
-                            color = AppColors.TextGray,
-                            shape = RoundedCornerShape(12.dp)
-                        )
-                ) {
+                                 // Amount
+                 Box(
+                     modifier = Modifier
+                         .weight(1f)
+                         .height(40.dp)
+                         .background(
+                             ThemeColors.getInputBackgroundColor(isDarkTheme),
+                             RoundedCornerShape(12.dp)
+                         )
+                         .border(
+                             width = 1.dp,
+                             color = ThemeColors.getTextGrayColor(isDarkTheme),
+                             shape = RoundedCornerShape(12.dp)
+                         )
+                 ) {
                     BasicTextField(
                         value = amount,
                         onValueChange = { newValue ->
@@ -120,7 +122,7 @@ fun AddExpenseScreen(
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
                         textStyle = androidx.compose.ui.text.TextStyle(
                             fontSize = 14.sp,
-                            color = AppColors.TextWhite
+                            color = ThemeColors.getTextColor(isDarkTheme)
                         ),
                         decorationBox = { innerTextField ->
                             Box(
@@ -130,7 +132,7 @@ fun AddExpenseScreen(
                                     Text(
                                         text = "0.00",
                                         fontSize = 14.sp,
-                                        color = AppColors.TextGray
+                                        color = ThemeColors.getTextGrayColor(isDarkTheme)
                                     )
                                 }
                                 innerTextField()
@@ -150,12 +152,12 @@ fun AddExpenseScreen(
                             .fillMaxWidth()
                             .height(40.dp)
                             .background(
-                                AppColors.InputBackground,
+                                ThemeColors.getInputBackgroundColor(isDarkTheme),
                                 RoundedCornerShape(12.dp)
                             )
                             .border(
                                 width = 1.dp,
-                                color = AppColors.TextGray,
+                                color = ThemeColors.getTextGrayColor(isDarkTheme),
                                 shape = RoundedCornerShape(12.dp)
                             )
                             .menuAnchor()
@@ -169,7 +171,7 @@ fun AddExpenseScreen(
                                 text = selectedCurrency,
                                 fontSize = 14.sp,
                                 fontWeight = FontWeight.SemiBold,
-                                color = AppColors.TextWhite,
+                                color = ThemeColors.getTextColor(isDarkTheme),
                                 modifier = Modifier.padding(start = 12.dp)
                             )
                             ExposedDropdownMenuDefaults.TrailingIcon(
@@ -182,14 +184,14 @@ fun AddExpenseScreen(
                     ExposedDropdownMenu(
                         expanded = showCurrencyMenu,
                         onDismissRequest = { showCurrencyMenu = false },
-                        modifier = Modifier.background(AppColors.InputBackground)
+                        modifier = Modifier.background(ThemeColors.getInputBackgroundColor(isDarkTheme))
                     ) {
                         currencies.forEach { currency ->
                             DropdownMenuItem(
                                 text = { 
                                     Text(
                                         text = currency,
-                                        color = AppColors.TextWhite,
+                                        color = ThemeColors.getTextColor(isDarkTheme),
                                         fontSize = 14.sp,
                                         fontWeight = FontWeight.SemiBold
                                     ) 
@@ -198,7 +200,7 @@ fun AddExpenseScreen(
                                     selectedCurrency = currency
                                     showCurrencyMenu = false
                                 },
-                                modifier = Modifier.background(AppColors.InputBackground)
+                                modifier = Modifier.background(ThemeColors.getInputBackgroundColor(isDarkTheme))
                             )
                         }
                     }
@@ -215,12 +217,12 @@ fun AddExpenseScreen(
                             .fillMaxWidth()
                             .height(40.dp)
                             .background(
-                                AppColors.InputBackground,
+                                ThemeColors.getInputBackgroundColor(isDarkTheme),
                                 RoundedCornerShape(12.dp)
                             )
                             .border(
                                 width = 1.dp,
-                                color = AppColors.TextGray,
+                                color = ThemeColors.getTextGrayColor(isDarkTheme),
                                 shape = RoundedCornerShape(12.dp)
                             )
                             .menuAnchor()
@@ -233,7 +235,7 @@ fun AddExpenseScreen(
                             Text(
                                 text = selectedSubCategory,
                                 fontSize = 14.sp,
-                                color = AppColors.TextWhite,
+                                color = ThemeColors.getTextColor(isDarkTheme),
                                 modifier = Modifier.padding(start = 12.dp)
                             )
                             ExposedDropdownMenuDefaults.TrailingIcon(
@@ -247,7 +249,7 @@ fun AddExpenseScreen(
                         expanded = showCategoryMenu,
                         onDismissRequest = { showCategoryMenu = false },
                         modifier = Modifier
-                            .background(AppColors.InputBackground)
+                            .background(ThemeColors.getInputBackgroundColor(isDarkTheme))
                             .heightIn(max = 200.dp)
                     ) {
                         CategoryHelper.subCategories.sortedBy { it.name }.forEach { subCategory ->
@@ -255,7 +257,7 @@ fun AddExpenseScreen(
                                 text = { 
                                     Text(
                                         text = subCategory.name,
-                                        color = AppColors.TextWhite,
+                                        color = ThemeColors.getTextColor(isDarkTheme),
                                         fontSize = 14.sp
                                     ) 
                                 },
@@ -263,7 +265,7 @@ fun AddExpenseScreen(
                                     selectedSubCategory = subCategory.name
                                     showCategoryMenu = false
                                 },
-                                modifier = Modifier.background(AppColors.InputBackground)
+                                modifier = Modifier.background(ThemeColors.getInputBackgroundColor(isDarkTheme))
                             )
                         }
                     }
@@ -278,7 +280,7 @@ fun AddExpenseScreen(
                     text = "Açıklama (İsteğe bağlı)",
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Medium,
-                    color = AppColors.TextWhite
+                    color = ThemeColors.getTextColor(isDarkTheme)
                 )
                 
                 Box(
@@ -286,12 +288,12 @@ fun AddExpenseScreen(
                         .fillMaxWidth()
                         .height(40.dp)
                         .background(
-                            AppColors.InputBackground,
+                            ThemeColors.getInputBackgroundColor(isDarkTheme),
                             RoundedCornerShape(12.dp)
                         )
                         .border(
                             width = 1.dp,
-                            color = AppColors.TextGray,
+                            color = ThemeColors.getTextGrayColor(isDarkTheme),
                             shape = RoundedCornerShape(12.dp)
                         )
                 ) {
@@ -304,7 +306,7 @@ fun AddExpenseScreen(
                         singleLine = true,
                         textStyle = androidx.compose.ui.text.TextStyle(
                             fontSize = 14.sp,
-                            color = AppColors.TextWhite
+                            color = ThemeColors.getTextColor(isDarkTheme)
                         ),
                         decorationBox = { innerTextField ->
                             Box(
@@ -314,7 +316,7 @@ fun AddExpenseScreen(
                                     Text(
                                         text = "Açıklama ekleyin...",
                                         fontSize = 14.sp,
-                                        color = AppColors.TextGray
+                                        color = ThemeColors.getTextGrayColor(isDarkTheme)
                                     )
                                 }
                                 innerTextField()
@@ -333,7 +335,7 @@ fun AddExpenseScreen(
                         text = "Döviz Kuru (1 $selectedCurrency = ? $defaultCurrency)",
                         fontSize = 18.sp,
                         fontWeight = FontWeight.Medium,
-                        color = AppColors.TextWhite
+                        color = ThemeColors.getTextColor(isDarkTheme)
                     )
                     
                     Box(
@@ -341,12 +343,12 @@ fun AddExpenseScreen(
                             .fillMaxWidth()
                             .height(40.dp)
                             .background(
-                                AppColors.InputBackground,
+                                ThemeColors.getInputBackgroundColor(isDarkTheme),
                                 RoundedCornerShape(12.dp)
                             )
                             .border(
                                 width = 1.dp,
-                                color = AppColors.TextGray,
+                                color = ThemeColors.getTextGrayColor(isDarkTheme),
                                 shape = RoundedCornerShape(12.dp)
                             )
                     ) {
@@ -364,7 +366,7 @@ fun AddExpenseScreen(
                             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
                             textStyle = androidx.compose.ui.text.TextStyle(
                                 fontSize = 14.sp,
-                                color = AppColors.TextWhite
+                                color = ThemeColors.getTextColor(isDarkTheme)
                             ),
                             decorationBox = { innerTextField ->
                                 Box(
@@ -374,7 +376,7 @@ fun AddExpenseScreen(
                                         Text(
                                             text = "Örn: 0.035 (1 $selectedCurrency = 0.035 $defaultCurrency)",
                                             fontSize = 14.sp,
-                                            color = AppColors.TextGray
+                                            color = ThemeColors.getTextGrayColor(isDarkTheme)
                                         )
                                     }
                                     innerTextField()
@@ -386,7 +388,7 @@ fun AddExpenseScreen(
                     Text(
                         text = "Bu kur, progress hesaplamaları için kullanılacak",
                         fontSize = 14.sp,
-                        color = AppColors.TextGray
+                        color = ThemeColors.getTextGrayColor(isDarkTheme)
                     )
                 }
             }
@@ -433,7 +435,7 @@ fun AddExpenseScreen(
                                         (selectedCurrency == defaultCurrency || (exchangeRate.isNotEmpty() && exchangeRate.toDoubleOrNull() != null && exchangeRate.toDoubleOrNull()!! > 0))) {
                         AppColors.PrimaryOrange
                     } else {
-                        AppColors.ButtonDisabled
+                        ThemeColors.getButtonDisabledColor(isDarkTheme)
                     }
                 ),
                 shape = RoundedCornerShape(16.dp)
@@ -442,7 +444,7 @@ fun AddExpenseScreen(
                     text = "Harcama Ekle",
                     fontSize = 18.sp,
                     fontWeight = FontWeight.SemiBold,
-                    color = AppColors.TextWhite
+                    color = ThemeColors.getTextColor(isDarkTheme)
                 )
             }
 
@@ -452,7 +454,7 @@ fun AddExpenseScreen(
                     .weight(1f)
                     .height(36.dp),
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = AppColors.ButtonDisabled
+                    containerColor = ThemeColors.getButtonDisabledColor(isDarkTheme)
                 ),
                 shape = RoundedCornerShape(16.dp)
             ) {
@@ -460,7 +462,7 @@ fun AddExpenseScreen(
                     text = "İptal",
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Medium,
-                    color = AppColors.TextWhite
+                    color = ThemeColors.getTextColor(isDarkTheme)
                 )
             }
         }

@@ -15,6 +15,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import com.example.expensetrackerkotlin.ui.theme.AppColors
+import com.example.expensetrackerkotlin.ui.theme.ThemeColors
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
@@ -26,22 +27,27 @@ fun SettingsScreen(
     defaultCurrency: String,
     dailyLimit: String,
     monthlyLimit: String,
+    theme: String,
     onCurrencyChanged: (String) -> Unit,
     onDailyLimitChanged: (String) -> Unit,
     onMonthlyLimitChanged: (String) -> Unit,
+    onThemeChanged: (String) -> Unit,
     onDismiss: () -> Unit
 ) {
     var newDefaultCurrency by remember { mutableStateOf(defaultCurrency) }
     var newDailyLimit by remember { mutableStateOf(dailyLimit) }
     var newMonthlyLimit by remember { mutableStateOf(monthlyLimit) }
+    var newTheme by remember { mutableStateOf(theme) }
     var showCurrencyMenu by remember { mutableStateOf(false) }
     
     val currencies = listOf("₺", "$", "€", "£")//, "¥", "₹", "₽", "₩", "₪", "₦", "₨", "₴", "₸", "₼", "₾", "₿")
     
+    val isDarkTheme = theme == "dark"
+    
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(AppColors.BackgroundBlack)
+            .background(ThemeColors.getBackgroundColor(isDarkTheme))
             .verticalScroll(rememberScrollState())
     ) {
         Spacer(modifier = Modifier.height(20.dp))
@@ -57,7 +63,7 @@ fun SettingsScreen(
                 text = "Ayarlar",
                 fontSize = 32.sp,
                 fontWeight = FontWeight.Bold,
-                color = AppColors.TextWhite
+                color = ThemeColors.getTextColor(isDarkTheme)
             )
 
         }
@@ -79,7 +85,7 @@ fun SettingsScreen(
                     text = "Varsayılan Para Birimi",
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Medium,
-                    color = Color.White
+                    color = ThemeColors.getTextColor(isDarkTheme)
                 )
                 
                 ExposedDropdownMenuBox(
@@ -92,12 +98,12 @@ fun SettingsScreen(
                             .fillMaxWidth()
                             .height(40.dp)
                             .background(
-                                AppColors.InputBackground,
+                                ThemeColors.getInputBackgroundColor(isDarkTheme),
                                 RoundedCornerShape(12.dp)
                             )
                             .border(
                                 width = 1.dp,
-                                color = AppColors.TextGray,
+                                color = ThemeColors.getTextGrayColor(isDarkTheme),
                                 shape = RoundedCornerShape(12.dp)
                             )
                             .menuAnchor()
@@ -111,7 +117,7 @@ fun SettingsScreen(
                                 text = newDefaultCurrency,
                                 fontSize = 14.sp,
                                 fontWeight = FontWeight.SemiBold,
-                                color = AppColors.TextWhite,
+                                color = ThemeColors.getTextColor(isDarkTheme),
                                 modifier = Modifier.padding(start = 12.dp)
                             )
                             ExposedDropdownMenuDefaults.TrailingIcon(
@@ -124,14 +130,14 @@ fun SettingsScreen(
                     ExposedDropdownMenu(
                         expanded = showCurrencyMenu,
                         onDismissRequest = { showCurrencyMenu = false },
-                        modifier = Modifier.background(AppColors.InputBackground)
+                        modifier = Modifier.background(ThemeColors.getInputBackgroundColor(isDarkTheme))
                     ) {
                         currencies.forEach { currency ->
                             DropdownMenuItem(
                                 text = { 
                                     Text(
                                         text = currency,
-                                        color = AppColors.TextWhite,
+                                        color = ThemeColors.getTextColor(isDarkTheme),
                                         fontSize = 14.sp,
                                         fontWeight = FontWeight.SemiBold
                                     ) 
@@ -140,7 +146,7 @@ fun SettingsScreen(
                                     newDefaultCurrency = currency
                                     showCurrencyMenu = false
                                 },
-                                modifier = Modifier.background(AppColors.InputBackground)
+                                modifier = Modifier.background(ThemeColors.getInputBackgroundColor(isDarkTheme))
                             )
                         }
                     }
@@ -149,7 +155,7 @@ fun SettingsScreen(
                 Text(
                     text = "Yeni harcamalar için kullanılacak varsayılan para birimi",
                     fontSize = 14.sp,
-                    color = Color.Gray
+                    color = ThemeColors.getTextGrayColor(isDarkTheme)
                 )
             }
             
@@ -161,7 +167,7 @@ fun SettingsScreen(
                     text = "Günlük Harcama Limiti",
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Medium,
-                    color = Color.White
+                    color = ThemeColors.getTextColor(isDarkTheme)
                 )
                 
                 Box(
@@ -169,12 +175,12 @@ fun SettingsScreen(
                         .fillMaxWidth()
                         .height(40.dp)
                         .background(
-                            AppColors.InputBackground,
+                            ThemeColors.getInputBackgroundColor(isDarkTheme),
                             RoundedCornerShape(12.dp)
                         )
                         .border(
                             width = 1.dp,
-                            color = AppColors.TextGray,
+                            color = ThemeColors.getTextGrayColor(isDarkTheme),
                             shape = RoundedCornerShape(12.dp)
                         )
                 ) {
@@ -192,7 +198,7 @@ fun SettingsScreen(
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                         textStyle = androidx.compose.ui.text.TextStyle(
                             fontSize = 14.sp,
-                            color = AppColors.TextWhite
+                            color = ThemeColors.getTextColor(isDarkTheme)
                         ),
                         decorationBox = { innerTextField ->
                             Box(
@@ -202,7 +208,7 @@ fun SettingsScreen(
                                     Text(
                                         text = "Günlük limit girin",
                                         fontSize = 14.sp,
-                                        color = AppColors.TextGray
+                                        color = ThemeColors.getTextGrayColor(isDarkTheme)
                                     )
                                 }
                                 innerTextField()
@@ -214,7 +220,7 @@ fun SettingsScreen(
                 Text(
                     text = "Her güne özel harcama limitiniz. Boş bırakılırsa limit uygulanmaz",
                     fontSize = 14.sp,
-                    color = Color.Gray
+                    color = ThemeColors.getTextGrayColor(isDarkTheme)
                 )
             }
             
@@ -226,20 +232,20 @@ fun SettingsScreen(
                     text = "Aylık Harcama Limiti",
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Medium,
-                    color = Color.White
+                    color = ThemeColors.getTextColor(isDarkTheme)
                 )
                 
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(40.dp)
-                        .background(
-                            AppColors.InputBackground,
-                            RoundedCornerShape(12.dp)
-                        )
-                        .border(
-                            width = 1.dp,
-                            color = AppColors.TextGray,
+                                                    .background(
+                                ThemeColors.getInputBackgroundColor(isDarkTheme),
+                                RoundedCornerShape(12.dp)
+                            )
+                            .border(
+                                width = 1.dp,
+                                color = ThemeColors.getTextGrayColor(isDarkTheme),
                             shape = RoundedCornerShape(12.dp)
                         )
                 ) {
@@ -257,7 +263,7 @@ fun SettingsScreen(
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                         textStyle = androidx.compose.ui.text.TextStyle(
                             fontSize = 14.sp,
-                            color = AppColors.TextWhite
+                            color = ThemeColors.getTextColor(isDarkTheme)
                         ),
                         decorationBox = { innerTextField ->
                             Box(
@@ -267,7 +273,7 @@ fun SettingsScreen(
                                     Text(
                                         text = "Aylık limit girin",
                                         fontSize = 14.sp,
-                                        color = AppColors.TextGray
+                                        color = ThemeColors.getTextGrayColor(isDarkTheme)
                                     )
                                 }
                                 innerTextField()
@@ -279,7 +285,50 @@ fun SettingsScreen(
                 Text(
                     text = "Aylık toplam harcama limitiniz. Progress ring bu değere göre gösterilir",
                     fontSize = 14.sp,
-                    color = Color.Gray
+                    color = ThemeColors.getTextGrayColor(isDarkTheme)
+                )
+            }
+            
+            // Theme Setting
+            Column(
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                Text(
+                    text = "Tema",
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.Medium,
+                    color = ThemeColors.getTextColor(isDarkTheme)
+                )
+                
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = if (newTheme == "dark") "Koyu Tema" else "Açık Tema",
+                        fontSize = 16.sp,
+                        color = ThemeColors.getTextColor(isDarkTheme)
+                    )
+                    
+                    Switch(
+                        checked = newTheme == "light",
+                        onCheckedChange = { isLight ->
+                            newTheme = if (isLight) "light" else "dark"
+                        },
+                        colors = SwitchDefaults.colors(
+                            checkedThumbColor = AppColors.PrimaryOrange,
+                            checkedTrackColor = AppColors.PrimaryOrange.copy(alpha = 0.5f),
+                            uncheckedThumbColor = AppColors.TextGray,
+                            uncheckedTrackColor = AppColors.TextGray.copy(alpha = 0.3f)
+                        )
+                    )
+                }
+                
+                Text(
+                    text = "Uygulamanın görünümünü değiştirin",
+                    fontSize = 14.sp,
+                    color = ThemeColors.getTextGrayColor(isDarkTheme)
                 )
             }
             
@@ -299,6 +348,7 @@ fun SettingsScreen(
                     onCurrencyChanged(newDefaultCurrency)
                     onDailyLimitChanged(newDailyLimit)
                     onMonthlyLimitChanged(newMonthlyLimit)
+                    onThemeChanged(newTheme)
                     onDismiss()
                 },
                 modifier = Modifier
@@ -313,7 +363,7 @@ fun SettingsScreen(
                     text = "Kaydet",
                     fontSize = 18.sp,
                     fontWeight = FontWeight.SemiBold,
-                    color = AppColors.TextWhite
+                    color = ThemeColors.getTextColor(isDarkTheme)
                 )
             }
             
@@ -323,7 +373,7 @@ fun SettingsScreen(
                     .weight(1f)
                     .height(36.dp),
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = AppColors.ButtonDisabled
+                    containerColor = ThemeColors.getButtonDisabledColor(isDarkTheme)
                 ),
                 shape = RoundedCornerShape(16.dp)
             ) {
@@ -331,7 +381,7 @@ fun SettingsScreen(
                     text = "İptal",
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Medium,
-                    color = AppColors.TextWhite
+                    color = ThemeColors.getTextColor(isDarkTheme)
                 )
             }
         }

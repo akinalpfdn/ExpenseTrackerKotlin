@@ -16,6 +16,7 @@ class PreferencesManager(private val context: Context) {
         private val DEFAULT_CURRENCY_KEY = stringPreferencesKey("default_currency")
         private val DAILY_LIMIT_KEY = stringPreferencesKey("daily_limit")
         private val MONTHLY_LIMIT_KEY = stringPreferencesKey("monthly_limit")
+        private val THEME_KEY = stringPreferencesKey("theme")
     }
 
     val defaultCurrency: Flow<String> = context.dataStore.data.map { preferences ->
@@ -28,6 +29,10 @@ class PreferencesManager(private val context: Context) {
 
     val monthlyLimit: Flow<String> = context.dataStore.data.map { preferences ->
         preferences[MONTHLY_LIMIT_KEY] ?: ""
+    }
+
+    val theme: Flow<String> = context.dataStore.data.map { preferences ->
+        preferences[THEME_KEY] ?: "dark"
     }
 
     suspend fun setDefaultCurrency(currency: String) {
@@ -45,6 +50,12 @@ class PreferencesManager(private val context: Context) {
     suspend fun setMonthlyLimit(limit: String) {
         context.dataStore.edit { preferences ->
             preferences[MONTHLY_LIMIT_KEY] = limit
+        }
+    }
+
+    suspend fun setTheme(theme: String) {
+        context.dataStore.edit { preferences ->
+            preferences[THEME_KEY] = theme
         }
     }
 }

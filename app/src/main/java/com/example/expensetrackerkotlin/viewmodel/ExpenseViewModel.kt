@@ -37,6 +37,7 @@ class ExpenseViewModel(
     var defaultCurrency by mutableStateOf("₺")
     var dailyLimit by mutableStateOf("")
     var monthlyLimit by mutableStateOf("")
+    var theme by mutableStateOf("dark")
     
     init {
         // Load preferences
@@ -53,6 +54,11 @@ class ExpenseViewModel(
         viewModelScope.launch {
             preferencesManager.monthlyLimit.collect { limit ->
                 monthlyLimit = limit
+            }
+        }
+        viewModelScope.launch {
+            preferencesManager.theme.collect { themeValue ->
+                theme = themeValue
             }
         }
         
@@ -226,6 +232,11 @@ class ExpenseViewModel(
     suspend fun updateMonthlyLimit(limit: String) {
         preferencesManager.setMonthlyLimit(limit)
         monthlyLimit = limit
+    }
+
+    suspend fun updateTheme(theme: String) {
+        preferencesManager.setTheme(theme)
+        this.theme = theme
     }
     
     // Monthly progress methods for specific month

@@ -25,6 +25,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import com.example.expensetrackerkotlin.ui.theme.AppColors
+import com.example.expensetrackerkotlin.ui.theme.ThemeColors
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
@@ -47,6 +48,7 @@ fun ExpenseRowView(
     isCurrentlyEditing: Boolean,
     dailyExpenseRatio: Double,
     defaultCurrency: String,
+    isDarkTheme: Boolean = true,
     modifier: Modifier = Modifier
 ) {
     var isEditing by remember { mutableStateOf(false) }
@@ -163,7 +165,7 @@ fun ExpenseRowView(
                     },
                 shape = RoundedCornerShape(12.dp),
                 colors = CardDefaults.cardColors(
-                    containerColor = AppColors.CardBackground
+                    containerColor = ThemeColors.getCardBackgroundColor(isDarkTheme)
                 )
             ) {
                 Column(
@@ -204,7 +206,7 @@ fun ExpenseRowView(
                                     text = expense.subCategory,
                                     fontWeight = FontWeight.Medium,
                                     fontSize = 15.sp,
-                                    color = Color.White,
+                                    color = ThemeColors.getTextColor(isDarkTheme),
                                     maxLines = 1,
                                     overflow = TextOverflow.Ellipsis
                                 )
@@ -212,7 +214,7 @@ fun ExpenseRowView(
                                     Text(
                                         text = expense.description,
                                         fontSize = 13.sp,
-                                        color = Color.Gray,
+                                        color = ThemeColors.getTextGrayColor(isDarkTheme),
                                         maxLines = 1,
                                         overflow = TextOverflow.Ellipsis
                                     )
@@ -227,19 +229,19 @@ fun ExpenseRowView(
                                 text = "${expense.currency} ${String.format("%.0f", expense.amount)}",
                                 fontWeight = FontWeight.Bold,
                                 fontSize = 16.sp,
-                                color = Color.White
+                                color = ThemeColors.getTextColor(isDarkTheme)
                             )
                             if (expense.exchangeRate != null) {
                                 Text(
                                     text = "Kur: ${String.format("%.4f", expense.exchangeRate)}",
                                     fontSize = 11.sp,
-                                    color = Color.Gray
+                                    color = ThemeColors.getTextGrayColor(isDarkTheme)
                                 )
                             }
                             Text(
                                 text = expense.date.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")),
                                 fontSize = 12.sp,
-                                color = Color.Gray
+                                color = ThemeColors.getTextGrayColor(isDarkTheme)
                             )
                         }
                     }
@@ -254,7 +256,7 @@ fun ExpenseRowView(
                                 .fillMaxWidth()
                                 .padding(12.dp)
                                 .background(
-                                    AppColors.CardBackground,
+                                    ThemeColors.getCardBackgroundColor(isDarkTheme),
                                     RoundedCornerShape(8.dp)
                                 )
                                 .padding(12.dp)
@@ -264,12 +266,12 @@ fun ExpenseRowView(
                                     .fillMaxWidth()
                                     .height(40.dp)
                                     .background(
-                                        AppColors.InputBackground,
+                                        ThemeColors.getInputBackgroundColor(isDarkTheme),
                                         RoundedCornerShape(12.dp)
                                     )
                                     .border(
                                         width = 1.dp,
-                                        color = AppColors.TextGray,
+                                        color = ThemeColors.getTextGrayColor(isDarkTheme),
                                         shape = RoundedCornerShape(12.dp)
                                     )
                             ) {
@@ -287,7 +289,7 @@ fun ExpenseRowView(
                                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
                                     textStyle = androidx.compose.ui.text.TextStyle(
                                         fontSize = 14.sp,
-                                        color = AppColors.TextWhite
+                                        color = ThemeColors.getTextColor(isDarkTheme)
                                     ),
                                     decorationBox = { innerTextField ->
                                         Box(
@@ -297,7 +299,7 @@ fun ExpenseRowView(
                                                 Text(
                                                     text = "Miktar",
                                                     fontSize = 14.sp,
-                                                    color = AppColors.TextGray
+                                                    color = ThemeColors.getTextGrayColor(isDarkTheme)
                                                 )
                                             }
                                             innerTextField()
@@ -313,12 +315,12 @@ fun ExpenseRowView(
                                     .fillMaxWidth()
                                     .height(40.dp)
                                     .background(
-                                        AppColors.InputBackground,
+                                        ThemeColors.getInputBackgroundColor(isDarkTheme),
                                         RoundedCornerShape(12.dp)
                                     )
                                     .border(
                                         width = 1.dp,
-                                        color = AppColors.TextGray,
+                                        color = ThemeColors.getTextGrayColor(isDarkTheme),
                                         shape = RoundedCornerShape(12.dp)
                                     )
                             ) {
@@ -331,7 +333,7 @@ fun ExpenseRowView(
                                     singleLine = true,
                                     textStyle = androidx.compose.ui.text.TextStyle(
                                         fontSize = 14.sp,
-                                        color = AppColors.TextWhite
+                                        color = ThemeColors.getTextColor(isDarkTheme)
                                     ),
                                     decorationBox = { innerTextField ->
                                         Box(
@@ -341,7 +343,7 @@ fun ExpenseRowView(
                                                 Text(
                                                     text = "Açıklama",
                                                     fontSize = 14.sp,
-                                                    color = AppColors.TextGray
+                                                    color = ThemeColors.getTextGrayColor(isDarkTheme)
                                                 )
                                             }
                                             innerTextField()
@@ -359,12 +361,12 @@ fun ExpenseRowView(
                                         .fillMaxWidth()
                                         .height(40.dp)
                                         .background(
-                                            AppColors.InputBackground,
+                                            ThemeColors.getInputBackgroundColor(isDarkTheme),
                                             RoundedCornerShape(12.dp)
                                         )
                                         .border(
                                             width = 1.dp,
-                                            color = AppColors.TextGray,
+                                            color = ThemeColors.getTextGrayColor(isDarkTheme),
                                             shape = RoundedCornerShape(12.dp)
                                         )
                                 ) {
@@ -382,7 +384,7 @@ fun ExpenseRowView(
                                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
                                         textStyle = androidx.compose.ui.text.TextStyle(
                                             fontSize = 14.sp,
-                                            color = AppColors.TextWhite
+                                            color = ThemeColors.getTextColor(isDarkTheme)
                                         ),
                                         decorationBox = { innerTextField ->
                                             Box(
@@ -392,7 +394,7 @@ fun ExpenseRowView(
                                                     Text(
                                                         text = "Döviz Kuru",
                                                         fontSize = 14.sp,
-                                                        color = AppColors.TextGray
+                                                        color = ThemeColors.getTextGrayColor(isDarkTheme)
                                                     )
                                                 }
                                                 innerTextField()
@@ -441,11 +443,11 @@ fun ExpenseRowView(
                                         Icon(
                                             imageVector = Icons.Default.Check,
                                             contentDescription = "Save",
-                                            tint = AppColors.TextWhite,
+                                            tint = ThemeColors.getTextColor(isDarkTheme),
                                             modifier = Modifier.size(16.dp)
                                         )
                                         Spacer(modifier = Modifier.width(4.dp))
-                                        Text("Kaydet", fontSize = 12.sp, color = AppColors.TextWhite)
+                                        Text("Kaydet", fontSize = 12.sp, color = ThemeColors.getTextColor(isDarkTheme))
                                     }
                                 }
 
@@ -461,7 +463,7 @@ fun ExpenseRowView(
                                         .weight(1f)
                                         .height(36.dp),
                                     colors = ButtonDefaults.buttonColors(
-                                        containerColor = AppColors.ButtonDisabled
+                                        containerColor = ThemeColors.getButtonDisabledColor(isDarkTheme)
                                     ),
                                     shape = RoundedCornerShape(26.dp)
                                 ) {
@@ -471,11 +473,11 @@ fun ExpenseRowView(
                                         Icon(
                                             imageVector = Icons.Default.Close,
                                             contentDescription = "Cancel",
-                                            tint = AppColors.TextWhite,
+                                            tint = ThemeColors.getTextColor(isDarkTheme),
                                             modifier = Modifier.size(16.dp)
                                         )
                                         Spacer(modifier = Modifier.width(4.dp))
-                                        Text("İptal", fontSize = 12.sp, color = AppColors.TextWhite)
+                                        Text("İptal", fontSize = 12.sp, color = ThemeColors.getTextColor(isDarkTheme))
                                     }
                                 }
                             }
@@ -511,14 +513,14 @@ fun ExpenseRowView(
             title = {
                 Text(
                     text = "Harcamayı Sil",
-                    color = Color.White,
+                    color = ThemeColors.getTextColor(isDarkTheme),
                     fontWeight = FontWeight.Bold
                 )
             },
             text = {
                 Text(
                     text = "Bu harcamayı silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.",
-                    color = Color.White
+                    color = ThemeColors.getTextColor(isDarkTheme)
                 )
             },
             confirmButton = {
@@ -549,11 +551,11 @@ fun ExpenseRowView(
                 ) {
                     Text(
                         "İptal", 
-                        color = Color.White
+                        color = ThemeColors.getTextColor(isDarkTheme)
                     )
                 }
             },
-            containerColor = Color.Black.copy(alpha = 0.9f)
+            containerColor = ThemeColors.getCardBackgroundColor(isDarkTheme)
         )
     }
 }
