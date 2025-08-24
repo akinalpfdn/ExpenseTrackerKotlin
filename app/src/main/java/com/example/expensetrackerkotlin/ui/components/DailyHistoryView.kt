@@ -66,8 +66,8 @@ private fun DailyHistoryItem(
         Text(
             text = data.dayName,
             fontSize = 12.sp,
-            color = ThemeColors.getTextGrayColor(isDarkTheme),
-            fontWeight = FontWeight.Medium
+            color = if (isSelected) ThemeColors.getTextColor(isDarkTheme) else ThemeColors.getTextGrayColor(isDarkTheme),
+            fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium
         )
         
         Spacer(modifier = Modifier.height(4.dp))
@@ -102,7 +102,7 @@ private fun DailyHistoryItem(
                 text = data.dayNumber,
                 fontSize = 12.sp,
                 color = ThemeColors.getTextColor(isDarkTheme),
-                fontWeight = FontWeight.Bold
+                fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal
             )
         }
         

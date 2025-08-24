@@ -135,10 +135,10 @@ class ExpenseViewModel(
     
     val dailyHistoryData: List<DailyData>
         get() {
-            val today = LocalDateTime.now()
+            val selectedDate = _selectedDate.value
             
             return (0..6).map { dayOffset ->
-                val date = today.minusDays(dayOffset.toLong())
+                val date = selectedDate.minusDays(dayOffset.toLong())
                 val dayExpenses = getExpensesForDate(date)
                 val totalAmount = dayExpenses.sumOf { it.getAmountInDefaultCurrency(defaultCurrency) }
                 val expenseCount = dayExpenses.size
