@@ -34,7 +34,7 @@ fun MonthlyCalendarView(
     dailyLimit: String,
     modifier: Modifier = Modifier
 ) {
-    val currentMonth = YearMonth.from(selectedDate)
+    var currentMonth by remember { mutableStateOf(YearMonth.from(selectedDate)) }
     val daysInMonth = currentMonth.lengthOfMonth()
     
     // Get expenses for the current month
@@ -83,9 +83,7 @@ fun MonthlyCalendarView(
                 ) {
                     IconButton(
                         onClick = {
-                            val previousMonth = currentMonth.minusMonths(1)
-                            val newDate = previousMonth.atDay(1).atStartOfDay()
-                            onDateSelected(newDate)
+                            currentMonth = currentMonth.minusMonths(1)
                         }
                     ) {
                         Text(
@@ -98,9 +96,7 @@ fun MonthlyCalendarView(
                     
                     IconButton(
                         onClick = {
-                            val nextMonth = currentMonth.plusMonths(1)
-                            val newDate = nextMonth.atDay(1).atStartOfDay()
-                            onDateSelected(newDate)
+                            currentMonth = currentMonth.plusMonths(1)
                         }
                     ) {
                         Text(
