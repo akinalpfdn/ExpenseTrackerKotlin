@@ -295,7 +295,7 @@ fun ExpensesScreen(
     // Bottom Sheets
     if (showingAddExpense) {
         val sheetState = rememberModalBottomSheetState(
-            skipPartiallyExpanded = false,
+            skipPartiallyExpanded = true,
             confirmValueChange = { true }
         )
         
@@ -311,7 +311,7 @@ fun ExpensesScreen(
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .heightIn(max = 800.dp)
+                    .heightIn(max = 600.dp)
             ) {
                 AddExpenseScreen(
                     selectedDate = selectedDate,
@@ -329,7 +329,7 @@ fun ExpensesScreen(
     
     if (showingSettings) {
         val settingsSheetState = rememberModalBottomSheetState(
-            skipPartiallyExpanded = false,
+            skipPartiallyExpanded = true,
             confirmValueChange = { true }
         )
         
@@ -345,7 +345,7 @@ fun ExpensesScreen(
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .heightIn(max = 800.dp)
+                    .heightIn(max = 650.dp)
             ) {
                 SettingsScreen(
                     defaultCurrency = viewModel.defaultCurrency,
