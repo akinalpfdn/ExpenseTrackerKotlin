@@ -137,8 +137,13 @@ class ExpenseViewModel(
         get() {
             val selectedDate = _selectedDate.value
             
+            // Calculate the start of the week (Monday) for the selected date
+            val dayOfWeek = selectedDate.dayOfWeek.value // 1=Monday, 7=Sunday
+            val daysFromMonday = dayOfWeek - 1 // 0=Monday, 6=Sunday
+            val startOfWeek = selectedDate.minusDays(daysFromMonday.toLong())
+            
             return (0..6).map { dayOffset ->
-                val date = selectedDate.minusDays(dayOffset.toLong())
+                val date = startOfWeek.plusDays(dayOffset.toLong())
                 val dayExpenses = getExpensesForDate(date)
                 val totalAmount = dayExpenses.sumOf { it.getAmountInDefaultCurrency(defaultCurrency) }
                 val expenseCount = dayExpenses.size
@@ -155,7 +160,7 @@ class ExpenseViewModel(
                     expenseCount = expenseCount,
                     dailyLimit = averageDailyLimit
                 )
-            }.reversed()
+            }
         }
     
     // Methods

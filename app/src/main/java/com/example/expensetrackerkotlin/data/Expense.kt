@@ -49,8 +49,8 @@ data class Expense(
             return date.toLocalDate() == targetDate.toLocalDate()
         }
         
-        // Check if target date is before start date
-        if (targetDate.isBefore(date)) {
+        // Check if target date is before start date (exclude the start date itself)
+        if (targetDate.isBefore(date.toLocalDate().atStartOfDay())) {
             return false
         }
         
@@ -72,6 +72,15 @@ data class Expense(
                 weeksBetween >= 0 && weeksBetween % 1 == 0L
             }
             RecurrenceType.MONTHLY -> {
+                val startDayOfMonth = date.dayOfMonth
+                val targetDayOfMonth = targetDate.dayOfMonth
+                
+                // Check if it's the same day of month
+                if (startDayOfMonth != targetDayOfMonth) {
+                    return false
+                }
+                
+                // Check if it's the same month or a future month
                 val startMonth = date.toLocalDate().withDayOfMonth(1)
                 val targetMonth = targetDate.toLocalDate().withDayOfMonth(1)
                 val monthsBetween = java.time.temporal.ChronoUnit.MONTHS.between(startMonth, targetMonth)
