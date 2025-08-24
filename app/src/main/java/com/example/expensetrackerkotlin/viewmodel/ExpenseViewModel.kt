@@ -188,7 +188,7 @@ class ExpenseViewModel(
         _showingOverLimitAlert.value = false
     }
     
-    private fun getSelectedDayTotal(): Double {
+    fun getSelectedDayTotal(): Double {
         return getExpensesForDate(_selectedDate.value).sumOf { it.getAmountInDefaultCurrency(defaultCurrency) }
     }
     

@@ -43,7 +43,7 @@ fun AddExpenseScreen(
     var showCategoryMenu by remember { mutableStateOf(false) }
     
     val currencies = listOf("₺", "$", "€", "£")//, "¥", "₹", "₽", "₩", "₪", "₦", "₨", "₴", "₸", "₼", "₾", "₿"
-    
+    //TODO add repeating expense option in which user will select the repeating options like daily weekly monthly and how long
     Column(
         modifier = Modifier
             .fillMaxSize()

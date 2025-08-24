@@ -40,6 +40,7 @@ fun ExpensesScreen(
     
     var showingAddExpense by remember { mutableStateOf(false) }
     var showingSettings by remember { mutableStateOf(false) }
+    var showingMonthlyCalendar by remember { mutableStateOf(false) }
     
     val scope = rememberCoroutineScope()
     
@@ -49,8 +50,7 @@ fun ExpensesScreen(
             expense.date.toLocalDate() == selectedDate.toLocalDate()
         }
     }
-    
-    val selectedDayTotal = selectedDateExpenses.sumOf { it.amount }
+    //TODO add a button to manage repeating expenses by changing from there all the future of that expensive will change
     
     Box(
         modifier = Modifier
@@ -95,7 +95,7 @@ fun ExpensesScreen(
                                 progressPercentage = viewModel.progressPercentage,
                                 progressColors = viewModel.progressColors,
                                 isOverLimit = viewModel.isOverLimit,
-                                onTap = { /* TODO: Implement monthly calendar */ },
+                                onTap = { showingMonthlyCalendar = true },
                                 currency = viewModel.defaultCurrency
                             )
                         }
@@ -105,7 +105,7 @@ fun ExpensesScreen(
                                 dailyProgressPercentage = viewModel.dailyProgressPercentage,
                                 isOverDailyLimit = viewModel.isOverDailyLimit,
                                 dailyLimitValue = viewModel.dailyLimit.toDoubleOrNull() ?: 0.0,
-                                selectedDateTotal = selectedDayTotal,
+                                selectedDateTotal = viewModel.getSelectedDayTotal(),
                                 currency = viewModel.defaultCurrency
                             )
                         }
@@ -367,6 +367,41 @@ fun ExpensesScreen(
                         }
                     },
                     onDismiss = { showingSettings = false }
+                )
+            }
+        }
+    }
+    
+    // Monthly Calendar Bottom Sheet
+    if (showingMonthlyCalendar) {
+        val monthlyCalendarSheetState = rememberModalBottomSheetState(
+            skipPartiallyExpanded = false,
+            confirmValueChange = { true }
+        )
+        
+        LaunchedEffect(Unit) {
+            monthlyCalendarSheetState.expand()
+        }
+        
+        ModalBottomSheet(
+            onDismissRequest = { showingMonthlyCalendar = false },
+            sheetState = monthlyCalendarSheetState,
+            dragHandle = { BottomSheetDefaults.DragHandle() }
+        ) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .heightIn(max = 600.dp)
+            ) {
+                MonthlyCalendarView(
+                    selectedDate = selectedDate,
+                    expenses = expenses,
+                    onDateSelected = { date ->
+                        viewModel.updateSelectedDate(date)
+                        showingMonthlyCalendar = false
+                    },
+                    defaultCurrency = viewModel.defaultCurrency,
+                    dailyLimit = viewModel.dailyLimit
                 )
             }
         }

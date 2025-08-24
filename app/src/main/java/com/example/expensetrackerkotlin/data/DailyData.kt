@@ -33,7 +33,7 @@ data class DailyData(
 
     val dayName: String
         get() {
-            val formatter = DateTimeFormatter.ofPattern("E", Locale("tr", "TR"))
+            val formatter = DateTimeFormatter.ofPattern("E", Locale.forLanguageTag("tr"))
             return date.format(formatter).first().toString().uppercase()
         }
 
