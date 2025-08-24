@@ -375,7 +375,7 @@ fun ExpensesScreen(
     // Monthly Calendar Bottom Sheet
     if (showingMonthlyCalendar) {
         val monthlyCalendarSheetState = rememberModalBottomSheetState(
-            skipPartiallyExpanded = false,
+            skipPartiallyExpanded = true,
             confirmValueChange = { true }
         )
         
@@ -391,7 +391,7 @@ fun ExpensesScreen(
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .heightIn(max = 600.dp)
+                    .height(700.dp)
             ) {
                 MonthlyCalendarView(
                     selectedDate = selectedDate,

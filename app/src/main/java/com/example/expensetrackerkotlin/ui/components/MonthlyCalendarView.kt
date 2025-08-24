@@ -121,7 +121,7 @@ fun MonthlyCalendarView(
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
                 verticalArrangement = Arrangement.spacedBy(12.dp),
                 contentPadding = PaddingValues(horizontal = 8.dp, vertical = 8.dp),
-                modifier = Modifier.height(400.dp)
+                modifier = Modifier.height(600.dp)
             ) {
                 items(daysInMonth) { dayIndex ->
                     val day = dayIndex + 1
