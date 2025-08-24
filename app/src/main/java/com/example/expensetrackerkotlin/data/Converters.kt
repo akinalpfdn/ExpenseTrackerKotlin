@@ -16,4 +16,14 @@ class Converters {
     fun toLocalDateTime(value: String?): LocalDateTime? {
         return value?.let { LocalDateTime.parse(it, formatter) }
     }
+    
+    @TypeConverter
+    fun fromRecurrenceType(value: RecurrenceType?): String? {
+        return value?.name
+    }
+    
+    @TypeConverter
+    fun toRecurrenceType(value: String?): RecurrenceType? {
+        return value?.let { RecurrenceType.valueOf(it) }
+    }
 }

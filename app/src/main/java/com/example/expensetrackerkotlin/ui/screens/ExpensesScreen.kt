@@ -52,10 +52,10 @@ fun ExpensesScreen(
     
     val scope = rememberCoroutineScope()
     
-    // Get selected date expenses
+    // Get selected date expenses (including recurring expenses)
     val selectedDateExpenses = remember(expenses, selectedDate) {
         expenses.filter { expense ->
-            expense.date.toLocalDate() == selectedDate.toLocalDate()
+            expense.isActiveOnDate(selectedDate)
         }
     }
     //TODO add a button to manage repeating expenses by changing from there all the future of that expensive will change

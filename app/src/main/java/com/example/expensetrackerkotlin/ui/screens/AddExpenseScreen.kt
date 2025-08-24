@@ -23,7 +23,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.expensetrackerkotlin.data.CategoryHelper
 import com.example.expensetrackerkotlin.data.Expense
+import com.example.expensetrackerkotlin.data.RecurrenceType
 import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
+import java.util.UUID
+import androidx.compose.foundation.clickable
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -43,9 +47,20 @@ fun AddExpenseScreen(
     var exchangeRate by remember { mutableStateOf("") }
     var showCurrencyMenu by remember { mutableStateOf(false) }
     var showCategoryMenu by remember { mutableStateOf(false) }
+    var showRecurrenceMenu by remember { mutableStateOf(false) }
+    var selectedRecurrenceType by remember { mutableStateOf(RecurrenceType.NONE) }
+    var endDate by remember { mutableStateOf(LocalDateTime.now().plusYears(1)) }
+    var showEndDatePicker by remember { mutableStateOf(false) }
     
-    val currencies = listOf("₺", "$", "€", "£")//, "¥", "₹", "₽", "₩", "₪", "₦", "₨", "₴", "₸", "₼", "₾", "₿"
-    //TODO add repeating expense option in which user will select the repeating options like daily weekly monthly and how long
+    val currencies = listOf("₺", "$", "€", "£")
+    val recurrenceTypes = listOf(
+        RecurrenceType.NONE to "Tek seferlik",
+        RecurrenceType.DAILY to "Her gün",
+        RecurrenceType.WEEKDAYS to "Hafta içi her gün",
+        RecurrenceType.WEEKLY to "Haftada 1 kez",
+        RecurrenceType.MONTHLY to "Ayda 1 kez"
+    )
+    
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -89,21 +104,21 @@ fun AddExpenseScreen(
                 horizontalArrangement = Arrangement.spacedBy(12.dp),
                 modifier = Modifier.fillMaxWidth()
             ) {
-                                 // Amount
-                 Box(
-                     modifier = Modifier
-                         .weight(1f)
-                         .height(40.dp)
-                         .background(
-                             ThemeColors.getInputBackgroundColor(isDarkTheme),
-                             RoundedCornerShape(12.dp)
-                         )
-                         .border(
-                             width = 1.dp,
-                             color = ThemeColors.getTextGrayColor(isDarkTheme),
-                             shape = RoundedCornerShape(12.dp)
-                         )
-                 ) {
+                // Amount
+                Box(
+                    modifier = Modifier
+                        .weight(1f)
+                        .height(40.dp)
+                        .background(
+                            ThemeColors.getInputBackgroundColor(isDarkTheme),
+                            RoundedCornerShape(12.dp)
+                        )
+                        .border(
+                            width = 1.dp,
+                            color = ThemeColors.getTextGrayColor(isDarkTheme),
+                            shape = RoundedCornerShape(12.dp)
+                        )
+                ) {
                     BasicTextField(
                         value = amount,
                         onValueChange = { newValue ->
@@ -326,6 +341,123 @@ fun AddExpenseScreen(
                 }
             }
             
+            // Recurrence Type
+            Column(
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                Text(
+                    text = "Tekrar Türü",
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.Medium,
+                    color = ThemeColors.getTextColor(isDarkTheme)
+                )
+                
+                ExposedDropdownMenuBox(
+                    expanded = showRecurrenceMenu,
+                    onExpandedChange = { showRecurrenceMenu = it },
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(40.dp)
+                            .background(
+                                ThemeColors.getInputBackgroundColor(isDarkTheme),
+                                RoundedCornerShape(12.dp)
+                            )
+                            .border(
+                                width = 1.dp,
+                                color = ThemeColors.getTextGrayColor(isDarkTheme),
+                                shape = RoundedCornerShape(12.dp)
+                            )
+                            .menuAnchor()
+                    ) {
+                        Row(
+                            modifier = Modifier.fillMaxSize(),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(
+                                text = recurrenceTypes.find { it.first == selectedRecurrenceType }?.second ?: "Tek seferlik",
+                                fontSize = 14.sp,
+                                color = ThemeColors.getTextColor(isDarkTheme),
+                                modifier = Modifier.padding(start = 12.dp)
+                            )
+                            ExposedDropdownMenuDefaults.TrailingIcon(
+                                expanded = showRecurrenceMenu,
+                                modifier = Modifier.padding(end = 8.dp)
+                            )
+                        }
+                    }
+                    
+                    ExposedDropdownMenu(
+                        expanded = showRecurrenceMenu,
+                        onDismissRequest = { showRecurrenceMenu = false },
+                        modifier = Modifier.background(ThemeColors.getInputBackgroundColor(isDarkTheme))
+                    ) {
+                        recurrenceTypes.forEach { (recurrenceType, displayName) ->
+                            DropdownMenuItem(
+                                text = { 
+                                    Text(
+                                        text = displayName,
+                                        color = ThemeColors.getTextColor(isDarkTheme),
+                                        fontSize = 14.sp
+                                    ) 
+                                },
+                                onClick = {
+                                    selectedRecurrenceType = recurrenceType
+                                    showRecurrenceMenu = false
+                                },
+                                modifier = Modifier.background(ThemeColors.getInputBackgroundColor(isDarkTheme))
+                            )
+                        }
+                    }
+                }
+            }
+            
+            // End Date (only show if recurring)
+            if (selectedRecurrenceType != RecurrenceType.NONE) {
+                Column(
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    Text(
+                        text = "Bitiş Tarihi",
+                        fontSize = 18.sp,
+                        fontWeight = FontWeight.Medium,
+                        color = ThemeColors.getTextColor(isDarkTheme)
+                    )
+                    
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(40.dp)
+                            .background(
+                                ThemeColors.getInputBackgroundColor(isDarkTheme),
+                                RoundedCornerShape(12.dp)
+                            )
+                            .border(
+                                width = 1.dp,
+                                color = ThemeColors.getTextGrayColor(isDarkTheme),
+                                shape = RoundedCornerShape(12.dp)
+                            )
+                            .clickable { showEndDatePicker = true }
+                    ) {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(horizontal = 12.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(
+                                text = endDate.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")),
+                                fontSize = 14.sp,
+                                color = ThemeColors.getTextColor(isDarkTheme)
+                            )
+                        }
+                    }
+                }
+            }
+            
             // Exchange Rate (only show if currency is different from default)
             if (selectedCurrency != defaultCurrency) {
                 Column(
@@ -392,9 +524,7 @@ fun AddExpenseScreen(
                     )
                 }
             }
-
         }
-
         
         // Buttons
         Row(
@@ -419,7 +549,10 @@ fun AddExpenseScreen(
                                 exchangeRate.toDoubleOrNull()
                             } else {
                                 null
-                            }
+                            },
+                            recurrenceType = selectedRecurrenceType,
+                            endDate = if (selectedRecurrenceType != RecurrenceType.NONE) endDate else null,
+                            recurrenceGroupId = if (selectedRecurrenceType != RecurrenceType.NONE) UUID.randomUUID().toString() else null
                         )
                         onExpenseAdded(expense)
                         onDismiss()
@@ -465,6 +598,15 @@ fun AddExpenseScreen(
                     color = ThemeColors.getTextColor(isDarkTheme)
                 )
             }
+        }
+    }
+    
+    // Date Picker Dialog
+    if (showEndDatePicker) {
+        // TODO: Implement date picker dialog
+        // For now, we'll just close it
+        LaunchedEffect(Unit) {
+            showEndDatePicker = false
         }
     }
 }

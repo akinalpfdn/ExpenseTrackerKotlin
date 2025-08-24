@@ -18,6 +18,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -33,6 +34,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.expensetrackerkotlin.data.Expense
+import com.example.expensetrackerkotlin.data.RecurrenceType
 import com.example.expensetrackerkotlin.data.getColor
 import com.example.expensetrackerkotlin.data.getIcon
 import java.time.format.DateTimeFormatter
@@ -238,11 +240,35 @@ fun ExpenseRowView(
                                     color = ThemeColors.getTextGrayColor(isDarkTheme)
                                 )
                             }
-                            Text(
-                                text = expense.date.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")),
-                                fontSize = 12.sp,
-                                color = ThemeColors.getTextGrayColor(isDarkTheme)
-                            )
+                                                         Text(
+                                 text = expense.date.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")),
+                                 fontSize = 12.sp,
+                                 color = ThemeColors.getTextGrayColor(isDarkTheme)
+                             )
+                             if (expense.recurrenceType != RecurrenceType.NONE) {
+                                 Row(
+                                     verticalAlignment = Alignment.CenterVertically,
+                                     horizontalArrangement = Arrangement.spacedBy(4.dp)
+                                 ) {
+                                     Icon(
+                                         imageVector = Icons.Default.Refresh,
+                                         contentDescription = "Recurring",
+                                         tint = ThemeColors.getTextGrayColor(isDarkTheme),
+                                         modifier = Modifier.size(10.dp)
+                                     )
+                                     Text(
+                                         text = when (expense.recurrenceType) {
+                                             RecurrenceType.DAILY -> "Her gün"
+                                             RecurrenceType.WEEKDAYS -> "Hafta içi"
+                                             RecurrenceType.WEEKLY -> "Haftalık"
+                                             RecurrenceType.MONTHLY -> "Aylık"
+                                             RecurrenceType.NONE -> ""
+                                         },
+                                         fontSize = 10.sp,
+                                         color = ThemeColors.getTextGrayColor(isDarkTheme)
+                                     )
+                                 }
+                             }
                         }
                     }
                     

@@ -199,11 +199,31 @@ class ExpenseViewModel(
     }
     
     private fun getExpensesForDate(date: LocalDateTime): List<Expense> {
-        val startOfDay = date.truncatedTo(ChronoUnit.DAYS)
-        val endOfDay = startOfDay.plusDays(1)
+        return _expenses.value.filter { expense ->
+            expense.isActiveOnDate(date)
+        }
+    }
+    
+    // Get all expenses that are active on any date (for display in list)
+    private fun getAllActiveExpenses(): List<Expense> {
+        val today = LocalDateTime.now()
+        val endDate = today.plusYears(1) // Show expenses for next year
         
         return _expenses.value.filter { expense ->
-            expense.date.isAfter(startOfDay.minusSeconds(1)) && expense.date.isBefore(endOfDay)
+            if (expense.recurrenceType == RecurrenceType.NONE) {
+                // Single expense: show if it's today or in the future
+                expense.date.toLocalDate() >= today.toLocalDate()
+            } else {
+                // Recurring expense: show if it's active on any date from today onwards
+                var currentDate = today
+                while (!currentDate.isAfter(endDate)) {
+                    if (expense.isActiveOnDate(currentDate)) {
+                        return@filter true
+                    }
+                    currentDate = currentDate.plusDays(1)
+                }
+                false
+            }
         }
     }
     
@@ -212,7 +232,7 @@ class ExpenseViewModel(
         val dailyTotal = sameDayExpenses.sumOf { it.getAmountInDefaultCurrency(defaultCurrency) }
         
         return if (dailyTotal > 0) {
-            expense.amount / dailyTotal
+            expense.getAmountInDefaultCurrency(defaultCurrency) / dailyTotal
         } else {
             1.0
         }
@@ -241,12 +261,33 @@ class ExpenseViewModel(
     
     // Monthly progress methods for specific month
     fun getMonthlyTotal(yearMonth: java.time.YearMonth): Double {
+        val startOfMonth = yearMonth.atDay(1).atStartOfDay()
+        val endOfMonth = yearMonth.atEndOfMonth().atTime(23, 59, 59)
+        
         return _expenses.value
             .filter { expense ->
-                val expenseDate = expense.date.toLocalDate()
-                expenseDate.year == yearMonth.year && expenseDate.month == yearMonth.month
+                // Check if this expense is active on any day in this month
+                var currentDate = startOfMonth
+                while (!currentDate.isAfter(endOfMonth)) {
+                    if (expense.isActiveOnDate(currentDate)) {
+                        return@filter true
+                    }
+                    currentDate = currentDate.plusDays(1)
+                }
+                false
             }
-            .sumOf { it.getAmountInDefaultCurrency(defaultCurrency) }
+            .sumOf { expense ->
+                // Calculate total for this expense in this month
+                var total = 0.0
+                var currentDate = startOfMonth
+                while (!currentDate.isAfter(endOfMonth)) {
+                    if (expense.isActiveOnDate(currentDate)) {
+                        total += expense.getAmountInDefaultCurrency(defaultCurrency)
+                    }
+                    currentDate = currentDate.plusDays(1)
+                }
+                total
+            }
     }
     
     fun getMonthlyProgressPercentage(yearMonth: java.time.YearMonth): Double {
