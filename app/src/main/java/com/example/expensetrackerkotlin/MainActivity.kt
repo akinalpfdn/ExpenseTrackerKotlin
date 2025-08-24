@@ -16,6 +16,12 @@ import com.example.expensetrackerkotlin.ui.screens.MainScreen
 import com.example.expensetrackerkotlin.ui.theme.ExpenseTrackerKotlinTheme
 import com.example.expensetrackerkotlin.viewmodel.ExpenseViewModel
 import com.example.expensetrackerkotlin.viewmodel.ExpenseViewModelFactory
+import androidx.core.view.WindowCompat
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
+import androidx.core.view.WindowInsetsControllerCompat
 
 class MainActivity : ComponentActivity() {
     
@@ -29,7 +35,24 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+        
         setContent {
+            val isDarkTheme = viewModel.theme == "dark"
+            
+            // Configure system UI colors based on theme
+            WindowCompat.setDecorFitsSystemWindows(window, false)
+            val windowInsetsController = WindowCompat.getInsetsController(window, window.decorView)
+            
+            if (isDarkTheme) {
+                // Dark theme: light system UI (white text/icons)
+                windowInsetsController.isAppearanceLightStatusBars = false
+                windowInsetsController.isAppearanceLightNavigationBars = false
+            } else {
+                // Light theme: dark system UI (black text/icons)
+                windowInsetsController.isAppearanceLightStatusBars = true
+                windowInsetsController.isAppearanceLightNavigationBars = true
+            }
+            
             ExpenseTrackerKotlinTheme {
                 Surface(
                     modifier = Modifier.fillMaxSize(),

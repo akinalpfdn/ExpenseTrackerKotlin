@@ -11,15 +11,17 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.expensetrackerkotlin.ui.theme.AppColors
+import com.example.expensetrackerkotlin.ui.theme.ThemeColors
 
 @Composable
 fun PlanningScreen(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    isDarkTheme: Boolean = true
 ) {
     Box(
         modifier = modifier
             .fillMaxSize()
-            .background(AppColors.BackgroundBlack),
+            .background(ThemeColors.getBackgroundColor(isDarkTheme)),
         contentAlignment = Alignment.Center
     ) {
         Column(
@@ -34,12 +36,12 @@ fun PlanningScreen(
                 text = "Planlama",
                 fontSize = 32.sp,
                 fontWeight = FontWeight.Bold,
-                color = AppColors.TextWhite
+                color = ThemeColors.getTextColor(isDarkTheme)
             )
             Text(
                 text = "Harcama planlaması burada görünecek",
                 fontSize = 16.sp,
-                color = AppColors.TextGray
+                color = ThemeColors.getTextGrayColor(isDarkTheme)
             )
         }
     }
