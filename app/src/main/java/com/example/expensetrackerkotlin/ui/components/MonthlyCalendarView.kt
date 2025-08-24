@@ -32,10 +32,16 @@ fun MonthlyCalendarView(
     onDateSelected: (LocalDateTime) -> Unit,
     defaultCurrency: String,
     dailyLimit: String,
+    onMonthChanged: (YearMonth) -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     var currentMonth by remember { mutableStateOf(YearMonth.from(selectedDate)) }
     val daysInMonth = currentMonth.lengthOfMonth()
+    
+    // Notify parent of initial month
+    LaunchedEffect(Unit) {
+        onMonthChanged(currentMonth)
+    }
     
     // Get expenses for the current month
     val monthlyExpenses = remember(expenses, currentMonth) {
@@ -84,6 +90,7 @@ fun MonthlyCalendarView(
                     IconButton(
                         onClick = {
                             currentMonth = currentMonth.minusMonths(1)
+                            onMonthChanged(currentMonth)
                         }
                     ) {
                         Text(
@@ -97,6 +104,7 @@ fun MonthlyCalendarView(
                     IconButton(
                         onClick = {
                             currentMonth = currentMonth.plusMonths(1)
+                            onMonthChanged(currentMonth)
                         }
                     ) {
                         Text(

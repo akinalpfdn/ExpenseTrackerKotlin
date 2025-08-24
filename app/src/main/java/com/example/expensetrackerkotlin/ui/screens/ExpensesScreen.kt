@@ -41,6 +41,7 @@ fun ExpensesScreen(
     var showingAddExpense by remember { mutableStateOf(false) }
     var showingSettings by remember { mutableStateOf(false) }
     var showingMonthlyCalendar by remember { mutableStateOf(false) }
+    var currentCalendarMonth by remember { mutableStateOf(java.time.YearMonth.from(selectedDate)) }
     
     val scope = rememberCoroutineScope()
     
@@ -90,14 +91,15 @@ fun ExpensesScreen(
                     when (page) {
                         0 -> {
                             // Monthly Progress Ring
-                            MonthlyProgressRingView(
-                                totalSpent = viewModel.totalSpent,
-                                progressPercentage = viewModel.progressPercentage,
-                                progressColors = viewModel.progressColors,
-                                isOverLimit = viewModel.isOverLimit,
-                                onTap = { showingMonthlyCalendar = true },
-                                currency = viewModel.defaultCurrency
-                            )
+                                                         MonthlyProgressRingView(
+                                 totalSpent = viewModel.getMonthlyTotal(currentCalendarMonth),
+                                 progressPercentage = viewModel.getMonthlyProgressPercentage(currentCalendarMonth),
+                                 progressColors = viewModel.getMonthlyProgressColors(currentCalendarMonth),
+                                 isOverLimit = viewModel.isMonthlyOverLimit(currentCalendarMonth),
+                                 onTap = { showingMonthlyCalendar = true },
+                                 currency = viewModel.defaultCurrency,
+                                 month = currentCalendarMonth.format(java.time.format.DateTimeFormatter.ofPattern("MMM", java.util.Locale.forLanguageTag("tr")))
+                             )
                         }
                         1 -> {
                             // Daily Progress Ring
@@ -393,16 +395,19 @@ fun ExpensesScreen(
                     .fillMaxWidth()
                     .height(700.dp)
             ) {
-                MonthlyCalendarView(
-                    selectedDate = selectedDate,
-                    expenses = expenses,
-                    onDateSelected = { date ->
-                        viewModel.updateSelectedDate(date)
-                        showingMonthlyCalendar = false
-                    },
-                    defaultCurrency = viewModel.defaultCurrency,
-                    dailyLimit = viewModel.dailyLimit
-                )
+                                 MonthlyCalendarView(
+                     selectedDate = selectedDate,
+                     expenses = expenses,
+                     onDateSelected = { date ->
+                         viewModel.updateSelectedDate(date)
+                         showingMonthlyCalendar = false
+                     },
+                     defaultCurrency = viewModel.defaultCurrency,
+                     dailyLimit = viewModel.dailyLimit,
+                     onMonthChanged = { month ->
+                         currentCalendarMonth = month
+                     }
+                 )
             }
         }
     }

@@ -88,7 +88,8 @@ fun MonthlyProgressRingView(
     isOverLimit: Boolean,
     onTap: () -> Unit,
     currency: String = "₺",
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    month: String = ""
 ) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -112,7 +113,7 @@ fun MonthlyProgressRingView(
                     color = if (isOverLimit) Color.Red else Color.White
                 )
                 Text(
-                    text = "Aylık",
+                    text = if (month.isNotEmpty()) month else "Aylık",
                     fontSize = 12.sp,
                     color = Color.Gray
                 )

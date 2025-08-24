@@ -227,4 +227,38 @@ class ExpenseViewModel(
         preferencesManager.setMonthlyLimit(limit)
         monthlyLimit = limit
     }
+    
+    // Monthly progress methods for specific month
+    fun getMonthlyTotal(yearMonth: java.time.YearMonth): Double {
+        return _expenses.value
+            .filter { expense ->
+                val expenseDate = expense.date.toLocalDate()
+                expenseDate.year == yearMonth.year && expenseDate.month == yearMonth.month
+            }
+            .sumOf { it.getAmountInDefaultCurrency(defaultCurrency) }
+    }
+    
+    fun getMonthlyProgressPercentage(yearMonth: java.time.YearMonth): Double {
+        val monthlyTotal = getMonthlyTotal(yearMonth)
+        if (monthlyLimitValue <= 0) return 0.0
+        return min(monthlyTotal / monthlyLimitValue, 1.0)
+    }
+    
+    fun isMonthlyOverLimit(yearMonth: java.time.YearMonth): Boolean {
+        val monthlyTotal = getMonthlyTotal(yearMonth)
+        return monthlyTotal > monthlyLimitValue && monthlyLimitValue > 0
+    }
+    
+    fun getMonthlyProgressColors(yearMonth: java.time.YearMonth): List<Color> {
+        val progressPercentage = getMonthlyProgressPercentage(yearMonth)
+        val isOverLimit = isMonthlyOverLimit(yearMonth)
+        
+        return when {
+            isOverLimit -> listOf(Color.Red, Color.Red, Color.Red, Color.Red)
+            progressPercentage < 0.3 -> listOf(Color.Green, Color.Green, Color.Green, Color.Green)
+            progressPercentage < 0.6 -> listOf(Color.Green, Color.Green, Color.Yellow, Color.Yellow)
+            progressPercentage < 0.9 -> listOf(Color.Green, Color.Yellow, Color(0xFFFFA500), Color(0xFFFFA500))
+            else -> listOf(Color.Green, Color.Yellow, Color(0xFFFFA500), Color.Red)
+        }
+    }
 }
