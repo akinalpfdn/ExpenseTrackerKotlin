@@ -20,6 +20,7 @@ import androidx.compose.ui.unit.sp
 import com.example.expensetrackerkotlin.ui.theme.AppColors
 import com.example.expensetrackerkotlin.ui.theme.ThemeColors
 import com.example.expensetrackerkotlin.data.DailyData
+import com.example.expensetrackerkotlin.data.Expense
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.YearMonth
@@ -29,7 +30,7 @@ import java.util.*
 @Composable
 fun MonthlyCalendarView(
     selectedDate: LocalDateTime,
-    expenses: List<com.example.expensetrackerkotlin.data.Expense>,
+    expenses: List<Expense>,
     onDateSelected: (LocalDateTime) -> Unit,
     defaultCurrency: String,
     dailyLimit: String,
@@ -45,17 +46,50 @@ fun MonthlyCalendarView(
         onMonthChanged(currentMonth)
     }
     
-    // Get expenses for the current month
+    // Get expenses for the current month (including recurring expenses)
     val monthlyExpenses = remember(expenses, currentMonth) {
         expenses.filter { expense ->
-            val expenseDate = expense.date.toLocalDate()
-            expenseDate.year == currentMonth.year && expenseDate.month == currentMonth.month
+            // Check if this expense is active on any day in this month
+            val startOfMonth = currentMonth.atDay(1)
+            val endOfMonth = currentMonth.atEndOfMonth()
+            
+            var currentDate = startOfMonth
+            while (!currentDate.isAfter(endOfMonth)) {
+                if (expense.isActiveOnDate(currentDate.atStartOfDay())) {
+                    return@filter true
+                }
+                currentDate = currentDate.plusDays(1)
+            }
+            false
         }
     }
     
-    // Group expenses by day
-    val expensesByDay = remember(monthlyExpenses) {
-        monthlyExpenses.groupBy { it.date.toLocalDate() }
+    // Group expenses by day (including recurring expenses)
+    val expensesByDay = remember(monthlyExpenses, currentMonth) {
+        val startOfMonth = currentMonth.atDay(1)
+        val endOfMonth = currentMonth.atEndOfMonth()
+        
+        val groupedExpenses = mutableMapOf<LocalDate, MutableList<Expense>>()
+        
+        // Initialize all days in the month
+        var currentDate = startOfMonth
+        while (!currentDate.isAfter(endOfMonth)) {
+            groupedExpenses[currentDate] = mutableListOf()
+            currentDate = currentDate.plusDays(1)
+        }
+        
+        // Add expenses to their active days
+        monthlyExpenses.forEach { expense ->
+            var checkDate = startOfMonth
+            while (!checkDate.isAfter(endOfMonth)) {
+                if (expense.isActiveOnDate(checkDate.atStartOfDay())) {
+                    groupedExpenses[checkDate]?.add(expense)
+                }
+                checkDate = checkDate.plusDays(1)
+            }
+        }
+        
+        groupedExpenses
     }
     
     Card(
