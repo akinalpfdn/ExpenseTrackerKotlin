@@ -40,19 +40,19 @@ fun MonthlyCalendarView(
 ) {
     var currentMonth by remember { mutableStateOf(YearMonth.from(selectedDate)) }
     val daysInMonth = currentMonth.lengthOfMonth()
-    
+
     // Notify parent of initial month
     LaunchedEffect(Unit) {
         onMonthChanged(currentMonth)
     }
-    
+
     // Get expenses for the current month (including recurring expenses)
     val monthlyExpenses = remember(expenses, currentMonth) {
         expenses.filter { expense ->
             // Check if this expense is active on any day in this month
             val startOfMonth = currentMonth.atDay(1)
             val endOfMonth = currentMonth.atEndOfMonth()
-            
+
             var currentDate = startOfMonth
             while (!currentDate.isAfter(endOfMonth)) {
                 if (expense.isActiveOnDate(currentDate.atStartOfDay())) {
@@ -63,21 +63,21 @@ fun MonthlyCalendarView(
             false
         }
     }
-    
+
     // Group expenses by day (including recurring expenses)
     val expensesByDay = remember(monthlyExpenses, currentMonth) {
         val startOfMonth = currentMonth.atDay(1)
         val endOfMonth = currentMonth.atEndOfMonth()
-        
+
         val groupedExpenses = mutableMapOf<LocalDate, MutableList<Expense>>()
-        
+
         // Initialize all days in the month
         var currentDate = startOfMonth
         while (!currentDate.isAfter(endOfMonth)) {
             groupedExpenses[currentDate] = mutableListOf()
             currentDate = currentDate.plusDays(1)
         }
-        
+
         // Add expenses to their active days
         monthlyExpenses.forEach { expense ->
             var checkDate = startOfMonth
@@ -88,10 +88,10 @@ fun MonthlyCalendarView(
                 checkDate = checkDate.plusDays(1)
             }
         }
-        
+
         groupedExpenses
     }
-    
+
     Card(
         modifier = modifier
             .fillMaxWidth()
@@ -113,12 +113,17 @@ fun MonthlyCalendarView(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = currentMonth.format(DateTimeFormatter.ofPattern("MMMM yyyy", Locale.forLanguageTag("tr"))),
+                    text = currentMonth.format(
+                        DateTimeFormatter.ofPattern(
+                            "MMMM yyyy",
+                            Locale.forLanguageTag("tr")
+                        )
+                    ),
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Bold,
                     color = ThemeColors.getTextColor(isDarkTheme)
                 )
-                
+
                 // Navigation buttons (previous/next month)
                 Row(
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
@@ -136,7 +141,7 @@ fun MonthlyCalendarView(
                             fontWeight = FontWeight.Bold
                         )
                     }
-                    
+
                     IconButton(
                         onClick = {
                             currentMonth = currentMonth.plusMonths(1)
@@ -152,9 +157,28 @@ fun MonthlyCalendarView(
                     }
                 }
             }
-            
+
             Spacer(modifier = Modifier.height(16.dp))
-            
+
+            // Day headers (Pazartesi'den Pazar'a)
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceEvenly
+            ) {
+                listOf("P", "S", "Ç", "P", "C", "C", "P").forEach { dayName ->
+                    Text(
+                        text = dayName,
+                        fontSize = 12.sp,
+                        fontWeight = FontWeight.Medium,
+                        color = ThemeColors.getTextGrayColor(isDarkTheme),
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier.weight(1f)
+                    )
+                }
+            }
+
+            Spacer(modifier = Modifier.height(8.dp))
+
             // Daily Progress Rings - Grid Layout like Calendar
             LazyVerticalGrid(
                 columns = GridCells.Fixed(7),
@@ -163,11 +187,27 @@ fun MonthlyCalendarView(
                 contentPadding = PaddingValues(horizontal = 8.dp, vertical = 8.dp),
                 modifier = Modifier.height(600.dp)
             ) {
-                items(daysInMonth) { dayIndex ->
-                    val day = dayIndex + 1
-                    val date = currentMonth.atDay(day)
+                // Calculate the start of the week (Monday) for the first day of the month
+                val firstDayOfMonth = currentMonth.atDay(1)
+                val dayOfWeek = firstDayOfMonth.dayOfWeek.value // 1=Monday, 7=Sunday
+                val daysFromMonday = dayOfWeek - 1 // 0=Monday, 6=Sunday
+                val startOfWeek = firstDayOfMonth.minusDays(daysFromMonday.toLong())
+
+                // Calculate total days to show (including previous month's days and next month's days)
+                val endOfMonth = currentMonth.atEndOfMonth()
+                val lastDayOfMonth = endOfMonth.dayOfWeek.value // 1=Monday, 7=Sunday
+                val daysToEndOfWeek = 7 - lastDayOfMonth // Days needed to complete the week
+                val endOfWeek = endOfMonth.plusDays(daysToEndOfWeek.toLong())
+
+                val totalDaysToShow =
+                    java.time.temporal.ChronoUnit.DAYS.between(startOfWeek, endOfWeek) + 1
+
+                items(totalDaysToShow.toInt()) { dayIndex ->
+                    val date = startOfWeek.plusDays(dayIndex.toLong())
+                    val isCurrentMonth = date.month == currentMonth.month
                     val dayExpenses = expensesByDay[date] ?: emptyList()
-                    val dayTotal = dayExpenses.sumOf { it.getAmountInDefaultCurrency(defaultCurrency) }
+                    val dayTotal =
+                        dayExpenses.sumOf { it.getAmountInDefaultCurrency(defaultCurrency) }
                     val dailyLimitValue = dailyLimit.toDoubleOrNull() ?: 0.0
                     val progressPercentage = if (dailyLimitValue > 0) {
                         minOf(dayTotal / dailyLimitValue, 1.0)
@@ -177,7 +217,7 @@ fun MonthlyCalendarView(
                     val isOverLimit = dayTotal > dailyLimitValue && dailyLimitValue > 0
                     val isSelected = date == selectedDate.toLocalDate()
                     val isToday = date == LocalDate.now()
-                    
+
                     // Create DailyData-like object for consistent styling
                     val dailyData = DailyData(
                         date = date.atStartOfDay(),
@@ -185,79 +225,89 @@ fun MonthlyCalendarView(
                         expenseCount = dayExpenses.size,
                         dailyLimit = dailyLimitValue
                     )
-                    
-                                         Column(
-                         horizontalAlignment = Alignment.CenterHorizontally,
-                         modifier = Modifier
-                             .fillMaxWidth()
-                             .clickable {
-                                 onDateSelected(date.atStartOfDay())
-                             }
-                     ) {
-                                                 // Progress Ring
-                         Box(
-                             contentAlignment = Alignment.Center,
-                             modifier = Modifier.size(50.dp)
-                         ) {
-                                                         // Background circle
-                             Box(
-                                 modifier = Modifier
-                                     .fillMaxSize()
-                                     .background(
-                                         color = when {
-                                             isToday -> AppColors.PrimaryOrange.copy(alpha = 0.3f)
-                                             else -> Color.Transparent
-                                         },
-                                         shape = CircleShape
-                                     )
-                             )
-                            
-                            // Progress ring overlay
-                            if (dayExpenses.isNotEmpty()) {
-                                                                 ProgressRing(
-                                     progress = progressPercentage.toFloat(),
-                                     colors = dailyData.progressColors,
-                                     strokeWidth = 3.dp,
-                                     modifier = Modifier.size(50.dp)
-                                 )
+
+                    // Skip rendering if not current month and no expenses
+                    if (!isCurrentMonth && dayExpenses.isEmpty()) {
+                        // Empty space for previous/next month days
+                        Box(modifier = Modifier.size(50.dp))
+                    } else {
+
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clickable {
+                                    onDateSelected(date.atStartOfDay())
+                                }
+                        ) {
+                            // Progress Ring
+                            Box(
+                                contentAlignment = Alignment.Center,
+                                modifier = Modifier.size(50.dp)
+                            ) {
+                                // Background circle
+                                Box(
+                                    modifier = Modifier
+                                        .fillMaxSize()
+                                        .background(
+                                            color = when {
+                                                isToday -> AppColors.PrimaryOrange.copy(alpha = 0.3f)
+                                                else -> Color.Transparent
+                                            },
+                                            shape = CircleShape
+                                        )
+                                )
+
+                                // Progress ring overlay
+                                if (dayExpenses.isNotEmpty()) {
+                                    ProgressRing(
+                                        progress = progressPercentage.toFloat(),
+                                        colors = dailyData.progressColors,
+                                        strokeWidth = 3.dp,
+                                        modifier = Modifier.size(50.dp)
+                                    )
+                                }
+
+                                // Day number
+                                Text(
+                                    text = date.dayOfMonth.toString(),
+                                    fontSize = 14.sp,
+                                    fontWeight = if (isSelected || isToday) FontWeight.Bold else FontWeight.Normal,
+                                    color = when {
+                                        isSelected -> ThemeColors.getTextColor(isDarkTheme)
+                                        isToday -> AppColors.PrimaryOrange
+                                        !isCurrentMonth -> ThemeColors.getTextGrayColor(isDarkTheme)
+                                            .copy(alpha = 0.3f)
+
+                                        dayExpenses.isNotEmpty() -> ThemeColors.getTextColor(
+                                            isDarkTheme
+                                        )
+
+                                        else -> ThemeColors.getTextGrayColor(isDarkTheme)
+                                    }
+                                )
                             }
-                            
-                                                                                      // Day number
-                             Text(
-                                 text = day.toString(),
-                                 fontSize = 14.sp,
-                                 fontWeight = if (isSelected || isToday) FontWeight.Bold else FontWeight.Normal,
+
+                            Spacer(modifier = Modifier.height(8.dp))
+
+                            // Amount
+                            Text(
+                                text = "$defaultCurrency${String.format("%.0f", dayTotal)}",
+                                fontSize = 10.sp,
+                                fontWeight = FontWeight.Medium,
                                 color = when {
-                                    isSelected -> ThemeColors.getTextColor(isDarkTheme)
-                                    isToday -> AppColors.PrimaryOrange
+                                    isOverLimit -> Color.Red
+                                    !isCurrentMonth -> ThemeColors.getTextGrayColor(isDarkTheme)
+                                        .copy(alpha = 0.3f)
+
                                     dayExpenses.isNotEmpty() -> ThemeColors.getTextColor(isDarkTheme)
                                     else -> ThemeColors.getTextGrayColor(isDarkTheme)
-                                }
-                             )
+                                },
+                                textAlign = TextAlign.Center
+                            )
+
+                            
                         }
-                        
-                        Spacer(modifier = Modifier.height(8.dp))
-                        
-                                                 // Amount
-                         Text(
-                             text = "$defaultCurrency${String.format("%.0f", dayTotal)}",
-                             fontSize = 10.sp,
-                            fontWeight = FontWeight.Medium,
-                            color = when {
-                                isOverLimit -> Color.Red
-                                dayExpenses.isNotEmpty() -> ThemeColors.getTextColor(isDarkTheme)
-                                else -> ThemeColors.getTextGrayColor(isDarkTheme)
-                            },
-                            textAlign = TextAlign.Center
-                        )
-                        
-                                                 // Day name (short)
-                         Text(
-                             text = date.format(DateTimeFormatter.ofPattern("E", Locale.forLanguageTag("tr"))).first().toString().uppercase(),
-                             fontSize = 8.sp,
-                            color = ThemeColors.getTextGrayColor(isDarkTheme),
-                            textAlign = TextAlign.Center
-                        )
                     }
                 }
             }
