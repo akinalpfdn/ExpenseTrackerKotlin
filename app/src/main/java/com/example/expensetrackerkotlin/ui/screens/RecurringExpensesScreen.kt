@@ -4,23 +4,45 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.foundation.gestures.detectHorizontalDragGestures
+import androidx.compose.foundation.layout.offset
+import androidx.compose.animation.*
+import androidx.compose.animation.core.*
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.shrinkVertically
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.expensetrackerkotlin.data.Expense
 import com.example.expensetrackerkotlin.data.RecurrenceType
-import com.example.expensetrackerkotlin.ui.components.ExpenseRowView
+import com.example.expensetrackerkotlin.data.getColor
+import com.example.expensetrackerkotlin.data.getIcon
+import com.example.expensetrackerkotlin.ui.theme.AppColors
 import com.example.expensetrackerkotlin.ui.theme.ThemeColors
 import com.example.expensetrackerkotlin.viewmodel.ExpenseViewModel
 import java.time.format.DateTimeFormatter
 import java.util.*
+import kotlin.math.abs
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -136,49 +158,569 @@ fun RecurringExpenseCard(
     isDarkTheme: Boolean,
     onDelete: () -> Unit
 ) {
-    // Create a modified expense for display with recurrence info
-    val displayExpense = expense.copy(
-        description = buildString {
-            append(expense.description)
-            if (expense.description.isNotEmpty()) append("\n")
-            append("${expense.recurrenceType.name.lowercase().replaceFirstChar { it.uppercase() }} • ")
-            append("Başlangıç: ${expense.date.format(DateTimeFormatter.ofPattern("dd MMM yyyy", Locale.forLanguageTag("tr")))}")
-            expense.endDate?.let { endDate ->
-                append(" • Bitiş: ${endDate.format(DateTimeFormatter.ofPattern("dd MMM yyyy", Locale.forLanguageTag("tr")))}")
-            }
-        }
+    var isEditing by remember { mutableStateOf(false) }
+    var editAmount by remember { mutableStateOf(expense.amount.toString()) }
+    var editDescription by remember { mutableStateOf(expense.description) }
+    var editExchangeRate by remember { mutableStateOf(expense.exchangeRate?.toString() ?: "") }
+    var editEndDate by remember { mutableStateOf(expense.endDate?.toLocalDate()?.toString() ?: "") }
+    var showDeleteConfirmation by remember { mutableStateOf(false) }
+    
+    // Swipe animation state
+    var offsetX by remember { mutableStateOf(0f) }
+    var isSwiped by remember { mutableStateOf(false) }
+    
+    // Animated offset for smooth movement
+    val animatedOffsetX by animateFloatAsState(
+        targetValue = offsetX,
+        animationSpec = spring(
+            dampingRatio = Spring.DampingRatioMediumBouncy,
+            stiffness = Spring.StiffnessLow
+        ),
+        label = "swipe_offset"
     )
     
-    ExpenseRowView(
-        expense = displayExpense,
-        onUpdate = { updatedExpense ->
-            // Update all expenses with the same recurrence group ID that are from today onwards
-            val today = java.time.LocalDate.now()
-            val expensesToUpdate = viewModel.expenses.value.filter { 
-                it.recurrenceGroupId == expense.recurrenceGroupId &&
-                it.date.toLocalDate().isAfter(today.minusDays(1)) // Today and future
+    Column(
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 2.dp)
+        ) {
+            // Delete background that appears when swiping
+            if (abs(offsetX) > 0f) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(
+                            Color.Red.copy(alpha = 0.8f),
+                            RoundedCornerShape(12.dp)
+                        )
+                        .padding(16.dp),
+                    contentAlignment = Alignment.CenterEnd
+                ) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Delete,
+                            contentDescription = "Delete",
+                            tint = Color.White,
+                            modifier = Modifier.size(24.dp)
+                        )
+                        Text(
+                            text = "Sil",
+                            color = Color.White,
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 16.sp
+                        )
+                    }
+                }
             }
-            expensesToUpdate.forEach { 
-                val updatedExpenseWithSameId = updatedExpense.copy(
-                    id = it.id,
-                    date = it.date, // Keep original date for each occurrence
-                    recurrenceType = it.recurrenceType, // Keep original recurrence type
-                    recurrenceGroupId = it.recurrenceGroupId, // Keep original group ID
-                    description = expense.description // Keep original description
+            
+            // Main card content
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .offset(x = animatedOffsetX.dp)
+                    .pointerInput(Unit) {
+                        detectHorizontalDragGestures(
+                            onDragEnd = {
+                                if (abs(offsetX) > 150f) {
+                                    // Swipe threshold reached, show confirmation
+                                    showDeleteConfirmation = true
+                                    isSwiped = true
+                                } else {
+                                    // Reset position if not swiped enough
+                                    offsetX = 0f
+                                    isSwiped = false
+                                }
+                            }
+                        ) { _, dragAmount ->
+                            // Only allow left swipe (negative drag)
+                            if (dragAmount < 0) {
+                                offsetX = (offsetX + dragAmount).coerceAtMost(0f)
+                            }
+                        }
+                    }
+                    .clickable {
+                        if (!isEditing && !isSwiped) {
+                            isEditing = true
+                        }
+                    },
+                shape = RoundedCornerShape(12.dp),
+                colors = CardDefaults.cardColors(
+                    containerColor = ThemeColors.getCardBackgroundColor(isDarkTheme)
                 )
-                viewModel.updateExpense(updatedExpenseWithSameId)
+            ) {
+                Column(
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(12.dp),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            modifier = Modifier.weight(1f)
+                        ) {
+                            Box(
+                                modifier = Modifier
+                                    .size(32.dp)
+                                    .background(
+                                        expense.category.getColor().copy(alpha = 0.2f),
+                                        CircleShape
+                                    ),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Icon(
+                                    imageVector = expense.category.getIcon(),
+                                    contentDescription = expense.category.displayName,
+                                    tint = expense.category.getColor(),
+                                    modifier = Modifier.size(16.dp)
+                                )
+                            }
+                            
+                            Spacer(modifier = Modifier.width(12.dp))
+                            
+                            Column {
+                                Text(
+                                    text = expense.subCategory,
+                                    fontWeight = FontWeight.Medium,
+                                    fontSize = 15.sp,
+                                    color = ThemeColors.getTextColor(isDarkTheme),
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis
+                                )
+                                if (expense.description.isNotBlank()) {
+                                    Text(
+                                        text = expense.description,
+                                        fontSize = 13.sp,
+                                        color = ThemeColors.getTextGrayColor(isDarkTheme),
+                                        maxLines = 1,
+                                        overflow = TextOverflow.Ellipsis
+                                    )
+                                }
+                            }
+                        }
+                        
+                        Column(
+                            horizontalAlignment = Alignment.End
+                        ) {
+                            Text(
+                                text = "${expense.currency} ${String.format("%.0f", expense.amount)}",
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 16.sp,
+                                color = ThemeColors.getTextColor(isDarkTheme)
+                            )
+                            if (expense.exchangeRate != null) {
+                                Text(
+                                    text = "Kur: ${String.format("%.4f", expense.exchangeRate)}",
+                                    fontSize = 11.sp,
+                                    color = ThemeColors.getTextGrayColor(isDarkTheme)
+                                )
+                            }
+                        }
+                    }
+                    
+                    // Recurrence info row
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 12.dp, vertical = 4.dp),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = when (expense.recurrenceType) {
+                                RecurrenceType.DAILY -> "Her gün"
+                                RecurrenceType.WEEKDAYS -> "Hafta içi"
+                                RecurrenceType.WEEKLY -> "Haftalık"
+                                RecurrenceType.MONTHLY -> "Aylık"
+                                RecurrenceType.NONE -> ""
+                            },
+                            fontSize = 12.sp,
+                            color = ThemeColors.getTextGrayColor(isDarkTheme)
+                        )
+                        
+                        expense.endDate?.let { endDate ->
+                            Text(
+                                text = "Bitiş: ${endDate.format(DateTimeFormatter.ofPattern("dd MMM yyyy", Locale.forLanguageTag("tr")))}",
+                                fontSize = 12.sp,
+                                color = ThemeColors.getTextGrayColor(isDarkTheme)
+                            )
+                        }
+                    }
+                    
+                    AnimatedVisibility(
+                        visible = isEditing,
+                        enter = expandVertically(),
+                        exit = shrinkVertically()
+                    ) {
+                        Column(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(12.dp)
+                                .background(
+                                    ThemeColors.getCardBackgroundColor(isDarkTheme),
+                                    RoundedCornerShape(8.dp)
+                                )
+                                .padding(12.dp)
+                        ) {
+                            // Amount field
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(40.dp)
+                                    .background(
+                                        ThemeColors.getInputBackgroundColor(isDarkTheme),
+                                        RoundedCornerShape(12.dp)
+                                    )
+                                    .border(
+                                        width = 1.dp,
+                                        color = ThemeColors.getTextGrayColor(isDarkTheme),
+                                        shape = RoundedCornerShape(12.dp)
+                                    )
+                            ) {
+                                BasicTextField(
+                                    value = editAmount,
+                                    onValueChange = { newValue ->
+                                        if (newValue.isEmpty() || newValue.matches(Regex("^\\d*\\.?\\d*$"))) {
+                                            editAmount = newValue
+                                        }
+                                    },
+                                    modifier = Modifier
+                                        .fillMaxSize()
+                                        .padding(horizontal = 12.dp),
+                                    singleLine = true,
+                                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
+                                    textStyle = androidx.compose.ui.text.TextStyle(
+                                        fontSize = 14.sp,
+                                        color = ThemeColors.getTextColor(isDarkTheme)
+                                    ),
+                                    decorationBox = { innerTextField ->
+                                        Box(
+                                            contentAlignment = Alignment.CenterStart
+                                        ) {
+                                            if (editAmount.isEmpty()) {
+                                                Text(
+                                                    text = "Miktar",
+                                                    fontSize = 14.sp,
+                                                    color = ThemeColors.getTextGrayColor(isDarkTheme)
+                                                )
+                                            }
+                                            innerTextField()
+                                        }
+                                    }
+                                )
+                            }
+                            
+                            Spacer(modifier = Modifier.height(8.dp))
+                            
+                            // Description field
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(40.dp)
+                                    .background(
+                                        ThemeColors.getInputBackgroundColor(isDarkTheme),
+                                        RoundedCornerShape(12.dp)
+                                    )
+                                    .border(
+                                        width = 1.dp,
+                                        color = ThemeColors.getTextGrayColor(isDarkTheme),
+                                        shape = RoundedCornerShape(12.dp)
+                                    )
+                            ) {
+                                BasicTextField(
+                                    value = editDescription,
+                                    onValueChange = { editDescription = it },
+                                    modifier = Modifier
+                                        .fillMaxSize()
+                                        .padding(horizontal = 12.dp),
+                                    singleLine = true,
+                                    textStyle = androidx.compose.ui.text.TextStyle(
+                                        fontSize = 14.sp,
+                                        color = ThemeColors.getTextColor(isDarkTheme)
+                                    ),
+                                    decorationBox = { innerTextField ->
+                                        Box(
+                                            contentAlignment = Alignment.CenterStart
+                                        ) {
+                                            if (editDescription.isEmpty()) {
+                                                Text(
+                                                    text = "Açıklama",
+                                                    fontSize = 14.sp,
+                                                    color = ThemeColors.getTextGrayColor(isDarkTheme)
+                                                )
+                                            }
+                                            innerTextField()
+                                        }
+                                    }
+                                )
+                            }
+                            
+                            // Exchange Rate (only show if currency is different from default)
+                            if (expense.currency != viewModel.defaultCurrency) {
+                                Spacer(modifier = Modifier.height(8.dp))
+                                
+                                Box(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .height(40.dp)
+                                        .background(
+                                            ThemeColors.getInputBackgroundColor(isDarkTheme),
+                                            RoundedCornerShape(12.dp)
+                                        )
+                                        .border(
+                                            width = 1.dp,
+                                            color = ThemeColors.getTextGrayColor(isDarkTheme),
+                                            shape = RoundedCornerShape(12.dp)
+                                        )
+                                ) {
+                                    BasicTextField(
+                                        value = editExchangeRate,
+                                        onValueChange = { newValue ->
+                                            if (newValue.isEmpty() || newValue.matches(Regex("^\\d*\\.?\\d*$"))) {
+                                                editExchangeRate = newValue
+                                            }
+                                        },
+                                        modifier = Modifier
+                                            .fillMaxSize()
+                                            .padding(horizontal = 12.dp),
+                                        singleLine = true,
+                                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
+                                        textStyle = androidx.compose.ui.text.TextStyle(
+                                            fontSize = 14.sp,
+                                            color = ThemeColors.getTextColor(isDarkTheme)
+                                        ),
+                                        decorationBox = { innerTextField ->
+                                            Box(
+                                                contentAlignment = Alignment.CenterStart
+                                            ) {
+                                                if (editExchangeRate.isEmpty()) {
+                                                    Text(
+                                                        text = "Döviz Kuru",
+                                                        fontSize = 14.sp,
+                                                        color = ThemeColors.getTextGrayColor(isDarkTheme)
+                                                    )
+                                                }
+                                                innerTextField()
+                                            }
+                                        }
+                                    )
+                                }
+                            }
+                            
+                            // End Date field
+                            Spacer(modifier = Modifier.height(8.dp))
+                            
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(40.dp)
+                                    .background(
+                                        ThemeColors.getInputBackgroundColor(isDarkTheme),
+                                        RoundedCornerShape(12.dp)
+                                    )
+                                    .border(
+                                        width = 1.dp,
+                                        color = ThemeColors.getTextGrayColor(isDarkTheme),
+                                        shape = RoundedCornerShape(12.dp)
+                                    )
+                            ) {
+                                BasicTextField(
+                                    value = editEndDate,
+                                    onValueChange = { editEndDate = it },
+                                    modifier = Modifier
+                                        .fillMaxSize()
+                                        .padding(horizontal = 12.dp),
+                                    singleLine = true,
+                                    textStyle = androidx.compose.ui.text.TextStyle(
+                                        fontSize = 14.sp,
+                                        color = ThemeColors.getTextColor(isDarkTheme)
+                                    ),
+                                    decorationBox = { innerTextField ->
+                                        Box(
+                                            contentAlignment = Alignment.CenterStart
+                                        ) {
+                                            if (editEndDate.isEmpty()) {
+                                                Text(
+                                                    text = "Bitiş Tarihi (YYYY-MM-DD)",
+                                                    fontSize = 14.sp,
+                                                    color = ThemeColors.getTextGrayColor(isDarkTheme)
+                                                )
+                                            }
+                                            innerTextField()
+                                        }
+                                    }
+                                )
+                            }
+                            
+                            Spacer(modifier = Modifier.height(12.dp))
+                            
+                            Row(
+                                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                                modifier = Modifier.fillMaxWidth()
+                            ) {
+                                Button(
+                                    onClick = {
+                                        val newAmount = editAmount.toDoubleOrNull()
+                                        if (newAmount != null && newAmount > 0) {
+                                            // Update all expenses with the same recurrence group ID that are from today onwards
+                                            val today = java.time.LocalDate.now()
+                                            val expensesToUpdate = viewModel.expenses.value.filter { 
+                                                it.recurrenceGroupId == expense.recurrenceGroupId &&
+                                                it.date.toLocalDate().isAfter(today.minusDays(1)) // Today and future
+                                            }
+                                            
+                                            val newEndDate = if (editEndDate.isNotEmpty()) {
+                                                try {
+                                                    java.time.LocalDate.parse(editEndDate).atStartOfDay()
+                                                } catch (e: Exception) {
+                                                    expense.endDate
+                                                }
+                                            } else {
+                                                expense.endDate
+                                            }
+                                            
+                                            expensesToUpdate.forEach { 
+                                                val updatedExpenseWithSameId = expense.copy(
+                                                    id = it.id,
+                                                    amount = newAmount,
+                                                    description = editDescription,
+                                                    exchangeRate = if (expense.currency != viewModel.defaultCurrency) {
+                                                        editExchangeRate.toDoubleOrNull()
+                                                    } else {
+                                                        null
+                                                    },
+                                                    endDate = newEndDate,
+                                                    date = it.date, // Keep original date for each occurrence
+                                                    recurrenceType = it.recurrenceType, // Keep original recurrence type
+                                                    recurrenceGroupId = it.recurrenceGroupId // Keep original group ID
+                                                )
+                                                viewModel.updateExpense(updatedExpenseWithSameId)
+                                            }
+                                        }
+                                        isEditing = false
+                                    },
+                                    modifier = Modifier
+                                        .weight(1f)
+                                        .height(36.dp),
+                                    colors = ButtonDefaults.buttonColors(
+                                        containerColor = AppColors.PrimaryOrange
+                                    ),
+                                    shape = RoundedCornerShape(26.dp)
+                                ) {
+                                    Row(
+                                        verticalAlignment = Alignment.CenterVertically
+                                    ) {
+                                        Icon(
+                                            imageVector = Icons.Default.Check,
+                                            contentDescription = "Save",
+                                            tint = ThemeColors.getTextColor(isDarkTheme),
+                                            modifier = Modifier.size(16.dp)
+                                        )
+                                        Spacer(modifier = Modifier.width(4.dp))
+                                        Text("Kaydet", fontSize = 12.sp, color = ThemeColors.getTextColor(isDarkTheme))
+                                    }
+                                }
+
+                                Button(
+                                    onClick = {
+                                        isEditing = false
+                                        editAmount = expense.amount.toString()
+                                        editDescription = expense.description
+                                        editExchangeRate = expense.exchangeRate?.toString() ?: ""
+                                        editEndDate = expense.endDate?.toLocalDate()?.toString() ?: ""
+                                    },
+                                    modifier = Modifier
+                                        .weight(1f)
+                                        .height(36.dp),
+                                    colors = ButtonDefaults.buttonColors(
+                                        containerColor = ThemeColors.getButtonDisabledColor(isDarkTheme)
+                                    ),
+                                    shape = RoundedCornerShape(26.dp)
+                                ) {
+                                    Row(
+                                        verticalAlignment = Alignment.CenterVertically
+                                    ) {
+                                        Icon(
+                                            imageVector = Icons.Default.Close,
+                                            contentDescription = "Cancel",
+                                            tint = ThemeColors.getTextColor(isDarkTheme),
+                                            modifier = Modifier.size(16.dp)
+                                        )
+                                        Spacer(modifier = Modifier.width(4.dp))
+                                        Text("İptal", fontSize = 12.sp, color = ThemeColors.getTextColor(isDarkTheme))
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
             }
-        },
-        onEditingChanged = { isEditing ->
-            if (isEditing) {
-                // Handle editing state if needed
-            }
-        },
-        onDelete = onDelete,
-        isCurrentlyEditing = false,
-        dailyExpenseRatio = 1.0, // Not relevant for recurring expenses
-        defaultCurrency = viewModel.defaultCurrency,
-        isDarkTheme = isDarkTheme,
-        isRecurringExpenseMode = true
-    )
+        }
+    }
+
+    if (showDeleteConfirmation) {
+        AlertDialog(
+            onDismissRequest = {
+                showDeleteConfirmation = false
+                // Reset swipe state when dialog is dismissed
+                offsetX = 0f
+                isSwiped = false
+            },
+            title = {
+                Text(
+                    text = "Tekrar Eden Harcamayı Sil",
+                    color = ThemeColors.getTextColor(isDarkTheme),
+                    fontWeight = FontWeight.Bold
+                )
+            },
+            text = {
+                Text(
+                    text = "Bu tekrar eden harcamayı bugünden itibaren silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.",
+                    color = ThemeColors.getTextColor(isDarkTheme)
+                )
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        onDelete()
+                        showDeleteConfirmation = false
+                        // Reset swipe state after deletion
+                        offsetX = 0f
+                        isSwiped = false
+                    }
+                ) {
+                    Text(
+                        "Sil", 
+                        color = Color.Red,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+            },
+            dismissButton = {
+                TextButton(
+                    onClick = {
+                        showDeleteConfirmation = false
+                        // Reset swipe state when canceling
+                        offsetX = 0f
+                        isSwiped = false
+                    }
+                ) {
+                    Text(
+                        "İptal", 
+                        color = ThemeColors.getTextColor(isDarkTheme)
+                    )
+                }
+            },
+            containerColor = ThemeColors.getCardBackgroundColor(isDarkTheme)
+        )
+    }
 }
