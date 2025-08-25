@@ -66,8 +66,17 @@ data class Expense(
                 dayOfWeek in 1..5 // Monday = 1, Friday = 5
             }
             RecurrenceType.WEEKLY -> {
-                val startWeek = date.toLocalDate().atStartOfDay()
-                val targetWeek = targetDate.toLocalDate().atStartOfDay()
+                // Check if it's the same day of week
+                val startDayOfWeek = date.dayOfWeek
+                val targetDayOfWeek = targetDate.dayOfWeek
+                
+                if (startDayOfWeek != targetDayOfWeek) {
+                    return false
+                }
+                
+                // Check if it's the same week or a future week
+                val startWeek = date.toLocalDate().with(java.time.DayOfWeek.MONDAY)
+                val targetWeek = targetDate.toLocalDate().with(java.time.DayOfWeek.MONDAY)
                 val weeksBetween = java.time.temporal.ChronoUnit.WEEKS.between(startWeek, targetWeek)
                 weeksBetween >= 0 && weeksBetween % 1 == 0L
             }
