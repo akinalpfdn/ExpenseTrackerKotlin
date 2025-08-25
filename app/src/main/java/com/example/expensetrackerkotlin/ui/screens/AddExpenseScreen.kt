@@ -38,18 +38,33 @@ fun AddExpenseScreen(
     monthlyLimit: String,
     isDarkTheme: Boolean = true,
     onExpenseAdded: (Expense) -> Unit,
-    onDismiss: () -> Unit
+    onDismiss: () -> Unit,
+    editingExpense: Expense? = null
 ) {
-    var amount by remember { mutableStateOf("") }
-    var selectedCurrency by remember(defaultCurrency) { mutableStateOf(defaultCurrency) }
-    var selectedSubCategory by remember { mutableStateOf("Restoran") }
-    var description by remember { mutableStateOf("") }
-    var exchangeRate by remember { mutableStateOf("") }
+    var amount by remember { 
+        mutableStateOf(editingExpense?.amount?.toString() ?: "") 
+    }
+    var selectedCurrency by remember(defaultCurrency) { 
+        mutableStateOf(editingExpense?.currency ?: defaultCurrency) 
+    }
+    var selectedSubCategory by remember { 
+        mutableStateOf(editingExpense?.subCategory ?: "Restoran") 
+    }
+    var description by remember { 
+        mutableStateOf(editingExpense?.description ?: "") 
+    }
+    var exchangeRate by remember { 
+        mutableStateOf(editingExpense?.exchangeRate?.toString() ?: "") 
+    }
     var showCurrencyMenu by remember { mutableStateOf(false) }
     var showCategoryMenu by remember { mutableStateOf(false) }
     var showRecurrenceMenu by remember { mutableStateOf(false) }
-    var selectedRecurrenceType by remember { mutableStateOf(RecurrenceType.NONE) }
-    var endDate by remember { mutableStateOf(LocalDateTime.now().plusYears(1)) }
+    var selectedRecurrenceType by remember { 
+        mutableStateOf(editingExpense?.recurrenceType ?: RecurrenceType.NONE) 
+    }
+    var endDate by remember { 
+        mutableStateOf(editingExpense?.endDate ?: LocalDateTime.now().plusYears(1)) 
+    }
     var showEndDatePicker by remember { mutableStateOf(false) }
     
     val currencies = listOf("₺", "$", "€", "£")
@@ -77,7 +92,7 @@ fun AddExpenseScreen(
                 .padding(horizontal = 20.dp)
         ) {
             Text(
-                text = "Yeni Harcama",
+                text = if (editingExpense != null) "Harcamayı Düzenle" else "Yeni Harcama",
                 fontSize = 32.sp,
                 fontWeight = FontWeight.Bold,
                 color = ThemeColors.getTextColor(isDarkTheme)
@@ -537,23 +552,41 @@ fun AddExpenseScreen(
                 onClick = {
                     val amountValue = amount.toDoubleOrNull()
                     if (amountValue != null && amountValue > 0) {
-                        val expense = Expense(
-                            amount = amountValue,
-                            currency = selectedCurrency,
-                            subCategory = selectedSubCategory,
-                            description = description,
-                            date = selectedDate,
-                            dailyLimitAtCreation = dailyLimit.toDoubleOrNull() ?: 0.0,
-                            monthlyLimitAtCreation = monthlyLimit.toDoubleOrNull() ?: 0.0,
-                            exchangeRate = if (selectedCurrency != defaultCurrency) {
-                                exchangeRate.toDoubleOrNull()
-                            } else {
-                                null
-                            },
-                            recurrenceType = selectedRecurrenceType,
-                            endDate = if (selectedRecurrenceType != RecurrenceType.NONE) endDate else null,
-                            recurrenceGroupId = if (selectedRecurrenceType != RecurrenceType.NONE) UUID.randomUUID().toString() else null
-                        )
+                        val expense = if (editingExpense != null) {
+                            // Update existing expense
+                            editingExpense.copy(
+                                amount = amountValue,
+                                currency = selectedCurrency,
+                                subCategory = selectedSubCategory,
+                                description = description,
+                                exchangeRate = if (selectedCurrency != defaultCurrency) {
+                                    exchangeRate.toDoubleOrNull()
+                                } else {
+                                    null
+                                },
+                                recurrenceType = selectedRecurrenceType,
+                                endDate = if (selectedRecurrenceType != RecurrenceType.NONE) endDate else null
+                            )
+                        } else {
+                            // Create new expense
+                            Expense(
+                                amount = amountValue,
+                                currency = selectedCurrency,
+                                subCategory = selectedSubCategory,
+                                description = description,
+                                date = selectedDate,
+                                dailyLimitAtCreation = dailyLimit.toDoubleOrNull() ?: 0.0,
+                                monthlyLimitAtCreation = monthlyLimit.toDoubleOrNull() ?: 0.0,
+                                exchangeRate = if (selectedCurrency != defaultCurrency) {
+                                    exchangeRate.toDoubleOrNull()
+                                } else {
+                                    null
+                                },
+                                recurrenceType = selectedRecurrenceType,
+                                endDate = if (selectedRecurrenceType != RecurrenceType.NONE) endDate else null,
+                                recurrenceGroupId = if (selectedRecurrenceType != RecurrenceType.NONE) UUID.randomUUID().toString() else null
+                            )
+                        }
                         onExpenseAdded(expense)
                         onDismiss()
                     }
@@ -574,7 +607,7 @@ fun AddExpenseScreen(
                 shape = RoundedCornerShape(16.dp)
             ) {
                 Text(
-                    text = "Harcama Ekle",
+                    text = if (editingExpense != null) "Güncelle" else "Harcama Ekle",
                     fontSize = 18.sp,
                     fontWeight = FontWeight.SemiBold,
                     color = ThemeColors.getTextColor(isDarkTheme)

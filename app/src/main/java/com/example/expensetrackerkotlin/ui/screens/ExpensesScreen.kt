@@ -10,6 +10,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.*
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.rememberModalBottomSheetState
@@ -26,8 +27,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.expensetrackerkotlin.ui.components.*
 import com.example.expensetrackerkotlin.viewmodel.ExpenseViewModel
+import com.example.expensetrackerkotlin.data.RecurrenceType
 import kotlinx.coroutines.launch
 import java.time.LocalDateTime
+import java.util.UUID
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.navigationBars
@@ -48,6 +51,7 @@ fun ExpensesScreen(
     var showingAddExpense by remember { mutableStateOf(false) }
     var showingSettings by remember { mutableStateOf(false) }
     var showingMonthlyCalendar by remember { mutableStateOf(false) }
+    var showingRecurringExpenses by remember { mutableStateOf(false) }
     var currentCalendarMonth by remember { mutableStateOf(java.time.YearMonth.from(selectedDate)) }
     
     val scope = rememberCoroutineScope()
@@ -191,6 +195,7 @@ fun ExpensesScreen(
                         ExpenseRowView(
                             expense = expense,
                             onUpdate = { updatedExpense ->
+                                // Now each expense has its own ID, so we can update directly
                                 viewModel.updateExpense(updatedExpense)
                             },
                             onEditingChanged = { isEditing ->
@@ -201,29 +206,31 @@ fun ExpensesScreen(
                                 }
                             },
                             onDelete = {
+                                // Now each expense has its own ID, so we can delete directly
                                 viewModel.deleteExpense(expense.id)
                             },
                             isCurrentlyEditing = editingExpenseId == expense.id,
                             dailyExpenseRatio = viewModel.getDailyExpenseRatio(expense),
                             defaultCurrency = viewModel.defaultCurrency,
-                            isDarkTheme = isDarkTheme
+                            isDarkTheme = isDarkTheme,
+                            isRecurringExpenseMode = false
                         )
                     }
                 }
             }
         }
         
-        // Floating Action Buttons
-        Row(
+        // Floating Action Buttons (Bottom)
+        Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .align(Alignment.BottomCenter)
+                .align(Alignment.BottomEnd)
                 .padding(horizontal = 20.dp, vertical = 40.dp),
-            horizontalArrangement = Arrangement.SpaceBetween
+            horizontalAlignment = Alignment.End
         ) {
-            // Settings Button
+            // Recurring Expenses Button (Above Add Button)
             FloatingActionButton(
-                onClick = { showingSettings = true },
+                onClick = { showingRecurringExpenses = true },
                 containerColor = Color.Transparent,
                 modifier = Modifier.size(50.dp)
             ) {
@@ -232,20 +239,22 @@ fun ExpensesScreen(
                         .fillMaxSize()
                         .background(
                             Brush.radialGradient(
-                                colors = listOf(Color(0xFF101010), Color(0xFF101010))
+                                colors = listOf(Color(0xFF007AFF), Color(0xFF5856D6))
                             ),
                             CircleShape
                         ),
                     contentAlignment = Alignment.Center
                 ) {
                     Icon(
-                        imageVector = Icons.Default.Settings,
-                        contentDescription = "Settings",
+                        imageVector = Icons.Default.Refresh,
+                        contentDescription = "Recurring Expenses",
                         tint = Color.White,
                         modifier = Modifier.size(30.dp)
                     )
                 }
             }
+            
+            Spacer(modifier = Modifier.height(26.dp))
             
             // Add Expense Button
             FloatingActionButton(
@@ -269,6 +278,39 @@ fun ExpensesScreen(
                         contentDescription = "Add Expense",
                         tint = Color.White,
                         modifier = Modifier.size(36.dp)
+                    )
+                }
+            }
+        }
+        
+        // Settings Button (Bottom Left)
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .align(Alignment.BottomStart)
+                .padding(horizontal = 20.dp, vertical = 40.dp)
+        ) {
+            FloatingActionButton(
+                onClick = { showingSettings = true },
+                containerColor = Color.Transparent,
+                modifier = Modifier.size(50.dp)
+            ) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(
+                            Brush.radialGradient(
+                                colors = listOf(Color(0xFF101010), Color(0xFF101010))
+                            ),
+                            CircleShape
+                        ),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Settings,
+                        contentDescription = "Settings",
+                        tint = Color.White,
+                        modifier = Modifier.size(30.dp)
                     )
                 }
             }
@@ -305,6 +347,35 @@ fun ExpensesScreen(
                         Text("✕", color = Color.White)
                     }
                 }
+            }
+        }
+    }
+    
+    // Recurring Expenses Bottom Sheet
+    if (showingRecurringExpenses) {
+        val recurringExpensesSheetState = rememberModalBottomSheetState(
+            skipPartiallyExpanded = true,
+            confirmValueChange = { true }
+        )
+        
+        LaunchedEffect(Unit) {
+            recurringExpensesSheetState.expand()
+        }
+        
+        ModalBottomSheet(
+            onDismissRequest = { showingRecurringExpenses = false },
+            sheetState = recurringExpensesSheetState,
+            dragHandle = { BottomSheetDefaults.DragHandle() }
+        ) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(700.dp)
+            ) {
+                RecurringExpensesScreen(
+                    viewModel = viewModel,
+                    onDismiss = { showingRecurringExpenses = false }
+                )
             }
         }
     }

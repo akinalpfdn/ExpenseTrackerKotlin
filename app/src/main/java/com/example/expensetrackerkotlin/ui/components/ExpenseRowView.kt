@@ -51,6 +51,7 @@ fun ExpenseRowView(
     dailyExpenseRatio: Double,
     defaultCurrency: String,
     isDarkTheme: Boolean = true,
+    isRecurringExpenseMode: Boolean = false,
     modifier: Modifier = Modifier
 ) {
     var isEditing by remember { mutableStateOf(false) }
@@ -94,6 +95,8 @@ fun ExpenseRowView(
         }
     }
 
+
+    
     Column(
         modifier = modifier.fillMaxWidth()
     ) {

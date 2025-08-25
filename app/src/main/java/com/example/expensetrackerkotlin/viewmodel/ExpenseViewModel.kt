@@ -14,6 +14,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import java.time.LocalDateTime
 import java.time.temporal.ChronoUnit
+import java.util.UUID
 import kotlin.math.min
 
 class ExpenseViewModel(
@@ -170,12 +171,91 @@ class ExpenseViewModel(
     
     fun addExpense(expense: Expense) {
         viewModelScope.launch {
-            expenseRepository.insertExpense(expense)
+            if (expense.recurrenceType != RecurrenceType.NONE && expense.recurrenceGroupId != null) {
+                // For recurring expenses, create individual records for each occurrence
+                val recurringExpenses = generateRecurringExpenses(expense)
+                recurringExpenses.forEach { individualExpense ->
+                    expenseRepository.insertExpense(individualExpense)
+                }
+            } else {
+                // For single expenses, just insert the expense
+                expenseRepository.insertExpense(expense)
+            }
             
             // Check if over limit
             if (!isOverLimit && totalSpent > monthlyLimitValue && monthlyLimitValue > 0) {
                 _showingOverLimitAlert.value = true
             }
+        }
+    }
+    
+    private fun generateRecurringExpenses(baseExpense: Expense): List<Expense> {
+        val expenses = mutableListOf<Expense>()
+        val endDate = baseExpense.endDate ?: LocalDateTime.now().plusYears(1)
+        var currentDate = baseExpense.date
+        
+        while (!currentDate.isAfter(endDate)) {
+            if (isRecurringExpenseActiveOnDate(baseExpense, currentDate)) {
+                val individualExpense = baseExpense.copy(
+                    id = UUID.randomUUID().toString(), // Each occurrence gets a unique ID
+                    date = currentDate // Set the specific date for this occurrence
+                )
+                expenses.add(individualExpense)
+            }
+            currentDate = currentDate.plusDays(1)
+        }
+        
+        return expenses
+    }
+    
+    private fun isRecurringExpenseActiveOnDate(expense: Expense, targetDate: LocalDateTime): Boolean {
+        // Check if target date is before start date (exclude the start date itself)
+        if (targetDate.isBefore(expense.date.toLocalDate().atStartOfDay())) {
+            return false
+        }
+        
+        // Check if target date is after end date
+        if (expense.endDate != null && targetDate.isAfter(expense.endDate)) {
+            return false
+        }
+        
+        return when (expense.recurrenceType) {
+            RecurrenceType.DAILY -> true
+            RecurrenceType.WEEKDAYS -> {
+                val dayOfWeek = targetDate.dayOfWeek.value
+                dayOfWeek in 1..5 // Monday = 1, Friday = 5
+            }
+            RecurrenceType.WEEKLY -> {
+                // Check if it's the same day of week
+                val startDayOfWeek = expense.date.dayOfWeek
+                val targetDayOfWeek = targetDate.dayOfWeek
+                
+                if (startDayOfWeek != targetDayOfWeek) {
+                    return false
+                }
+                
+                // Check if it's the same week or a future week
+                val startWeek = expense.date.toLocalDate().with(java.time.DayOfWeek.MONDAY)
+                val targetWeek = targetDate.toLocalDate().with(java.time.DayOfWeek.MONDAY)
+                val weeksBetween = java.time.temporal.ChronoUnit.WEEKS.between(startWeek, targetWeek)
+                weeksBetween >= 0 && weeksBetween % 1 == 0L
+            }
+            RecurrenceType.MONTHLY -> {
+                val startDayOfMonth = expense.date.dayOfMonth
+                val targetDayOfMonth = targetDate.dayOfMonth
+                
+                // Check if it's the same day of month
+                if (startDayOfMonth != targetDayOfMonth) {
+                    return false
+                }
+                
+                // Check if it's the same month or a future month
+                val startMonth = expense.date.toLocalDate().withDayOfMonth(1)
+                val targetMonth = targetDate.toLocalDate().withDayOfMonth(1)
+                val monthsBetween = java.time.temporal.ChronoUnit.MONTHS.between(startMonth, targetMonth)
+                monthsBetween >= 0 && monthsBetween % 1 == 0L
+            }
+            RecurrenceType.NONE -> false
         }
     }
     
