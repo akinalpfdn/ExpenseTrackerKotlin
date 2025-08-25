@@ -4,17 +4,12 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -42,8 +37,6 @@ fun RecurringExpensesScreen(
             .groupBy { it.recurrenceGroupId }
             .map { (_, groupExpenses) -> groupExpenses.first() } // Take one from each group
     }
-    
-    var editingExpenseId by remember { mutableStateOf<String?>(null) }
     
     Box(
         modifier = Modifier
@@ -117,8 +110,8 @@ fun RecurringExpensesScreen(
                     items(recurringExpenses) { expense ->
                         RecurringExpenseCard(
                             expense = expense,
+                            viewModel = viewModel,
                             isDarkTheme = isDarkTheme,
-                            onEdit = { editingExpenseId = expense.id },
                             onDelete = {
                                 // Delete all expenses with the same recurrence group ID that are from today onwards
                                 val today = java.time.LocalDate.now()
@@ -134,168 +127,58 @@ fun RecurringExpensesScreen(
             }
         }
     }
-    
-    // Edit Expense Bottom Sheet
-    if (editingExpenseId != null) {
-        val expenseToEdit = recurringExpenses.find { it.id == editingExpenseId }
-        if (expenseToEdit != null) {
-            val sheetState = rememberModalBottomSheetState(
-                skipPartiallyExpanded = true,
-                confirmValueChange = { true }
-            )
-            
-            LaunchedEffect(Unit) {
-                sheetState.expand()
-            }
-            
-            ModalBottomSheet(
-                onDismissRequest = { editingExpenseId = null },
-                sheetState = sheetState,
-                dragHandle = { BottomSheetDefaults.DragHandle() }
-            ) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .heightIn(max = 700.dp)
-                ) {
-                                         AddExpenseScreen(
-                         selectedDate = expenseToEdit.date,
-                         defaultCurrency = viewModel.defaultCurrency,
-                         dailyLimit = viewModel.dailyLimit,
-                         monthlyLimit = viewModel.monthlyLimit,
-                         isDarkTheme = isDarkTheme,
-                         onExpenseAdded = { updatedExpense ->
-                             // Update all expenses with the same recurrence group ID that are from today onwards
-                             val today = java.time.LocalDate.now()
-                             val expensesToUpdate = expenses.filter { 
-                                 it.recurrenceGroupId == expenseToEdit.recurrenceGroupId &&
-                                 it.date.toLocalDate().isAfter(today.minusDays(1)) // Today and future
-                             }
-                             expensesToUpdate.forEach { 
-                                 val updatedExpenseWithSameId = updatedExpense.copy(
-                                     id = it.id,
-                                     date = it.date, // Keep original date for each occurrence
-                                     recurrenceType = it.recurrenceType, // Keep original recurrence type
-                                     recurrenceGroupId = it.recurrenceGroupId // Keep original group ID
-                                 )
-                                 viewModel.updateExpense(updatedExpenseWithSameId)
-                             }
-                             editingExpenseId = null
-                         },
-                         onDismiss = { editingExpenseId = null },
-                         editingExpense = expenseToEdit
-                     )
-                }
-            }
-        }
-    }
 }
 
 @Composable
 fun RecurringExpenseCard(
     expense: Expense,
+    viewModel: ExpenseViewModel,
     isDarkTheme: Boolean,
-    onEdit: () -> Unit,
     onDelete: () -> Unit
 ) {
-    Card(
-        modifier = Modifier.fillMaxWidth(),
-        colors = CardDefaults.cardColors(
-            containerColor = ThemeColors.getCardBackgroundColor(isDarkTheme)
-        ),
-        shape = RoundedCornerShape(16.dp)
-    ) {
-        Column(
-            modifier = Modifier.padding(16.dp)
-        ) {
-            // Header with edit/delete buttons
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    text = expense.recurrenceType.name.lowercase().replaceFirstChar { it.uppercase() },
-                    fontSize = 12.sp,
-                    fontWeight = FontWeight.Medium,
-                    color = ThemeColors.getTextGrayColor(isDarkTheme)
-                )
-                
-                Row(
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    IconButton(
-                        onClick = onEdit,
-                        modifier = Modifier.size(32.dp)
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Edit,
-                            contentDescription = "Edit",
-                            tint = ThemeColors.getTextGrayColor(isDarkTheme),
-                            modifier = Modifier.size(16.dp)
-                        )
-                    }
-                    
-                    IconButton(
-                        onClick = onDelete,
-                        modifier = Modifier.size(32.dp)
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Delete,
-                            contentDescription = "Delete",
-                            tint = Color.Red,
-                            modifier = Modifier.size(16.dp)
-                        )
-                    }
-                }
-            }
-            
-            Spacer(modifier = Modifier.height(12.dp))
-            
-            // Expense details
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Column {
-                    Text(
-                        text = expense.subCategory,
-                        fontSize = 16.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = ThemeColors.getTextColor(isDarkTheme)
-                    )
-                    
-                    if (expense.description.isNotEmpty()) {
-                        Text(
-                            text = expense.description,
-                            fontSize = 14.sp,
-                            color = ThemeColors.getTextGrayColor(isDarkTheme)
-                        )
-                    }
-                    
-                    Text(
-                        text = "Başlangıç: ${expense.date.format(DateTimeFormatter.ofPattern("dd MMM yyyy", Locale.forLanguageTag("tr")))}",
-                        fontSize = 12.sp,
-                        color = ThemeColors.getTextGrayColor(isDarkTheme)
-                    )
-                    
-                    expense.endDate?.let { endDate ->
-                        Text(
-                            text = "Bitiş: ${endDate.format(DateTimeFormatter.ofPattern("dd MMM yyyy", Locale.forLanguageTag("tr")))}",
-                            fontSize = 12.sp,
-                            color = ThemeColors.getTextGrayColor(isDarkTheme)
-                        )
-                    }
-                }
-                
-                Text(
-                    text = "${expense.currency} ${String.format("%.2f", expense.amount)}",
-                    fontSize = 18.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = ThemeColors.getTextColor(isDarkTheme)
-                )
+    // Create a modified expense for display with recurrence info
+    val displayExpense = expense.copy(
+        description = buildString {
+            append(expense.description)
+            if (expense.description.isNotEmpty()) append("\n")
+            append("${expense.recurrenceType.name.lowercase().replaceFirstChar { it.uppercase() }} • ")
+            append("Başlangıç: ${expense.date.format(DateTimeFormatter.ofPattern("dd MMM yyyy", Locale.forLanguageTag("tr")))}")
+            expense.endDate?.let { endDate ->
+                append(" • Bitiş: ${endDate.format(DateTimeFormatter.ofPattern("dd MMM yyyy", Locale.forLanguageTag("tr")))}")
             }
         }
-    }
+    )
+    
+    ExpenseRowView(
+        expense = displayExpense,
+        onUpdate = { updatedExpense ->
+            // Update all expenses with the same recurrence group ID that are from today onwards
+            val today = java.time.LocalDate.now()
+            val expensesToUpdate = viewModel.expenses.value.filter { 
+                it.recurrenceGroupId == expense.recurrenceGroupId &&
+                it.date.toLocalDate().isAfter(today.minusDays(1)) // Today and future
+            }
+            expensesToUpdate.forEach { 
+                val updatedExpenseWithSameId = updatedExpense.copy(
+                    id = it.id,
+                    date = it.date, // Keep original date for each occurrence
+                    recurrenceType = it.recurrenceType, // Keep original recurrence type
+                    recurrenceGroupId = it.recurrenceGroupId, // Keep original group ID
+                    description = expense.description // Keep original description
+                )
+                viewModel.updateExpense(updatedExpenseWithSameId)
+            }
+        },
+        onEditingChanged = { isEditing ->
+            if (isEditing) {
+                // Handle editing state if needed
+            }
+        },
+        onDelete = onDelete,
+        isCurrentlyEditing = false,
+        dailyExpenseRatio = 1.0, // Not relevant for recurring expenses
+        defaultCurrency = viewModel.defaultCurrency,
+        isDarkTheme = isDarkTheme,
+        isRecurringExpenseMode = true
+    )
 }
