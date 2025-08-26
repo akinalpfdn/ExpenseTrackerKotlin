@@ -31,6 +31,9 @@ import java.util.UUID
 import androidx.compose.foundation.clickable
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CalendarToday
+import androidx.compose.ui.focus.FocusManager
+import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.platform.LocalFocusManager
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -79,11 +82,14 @@ fun AddExpenseScreen(
         RecurrenceType.MONTHLY to "Ayda 1 kez"
     )
     
+    val focusManager = LocalFocusManager.current
+    
     Column(
         modifier = Modifier
             .fillMaxSize()
             .background(ThemeColors.getBackgroundColor(isDarkTheme))
             .verticalScroll(rememberScrollState())
+            .clickable { focusManager.clearFocus() }
     ) {
         Spacer(modifier = Modifier.height(20.dp))
         
@@ -177,7 +183,10 @@ fun AddExpenseScreen(
                 // Currency
                 ExposedDropdownMenuBox(
                     expanded = showCurrencyMenu,
-                    onExpandedChange = { showCurrencyMenu = it },
+                    onExpandedChange = { 
+                        showCurrencyMenu = it
+                        if (it) focusManager.clearFocus()
+                    },
                     modifier = Modifier.width(70.dp)
                 ) {
                     Box(
@@ -242,7 +251,10 @@ fun AddExpenseScreen(
                 // Category
                 ExposedDropdownMenuBox(
                     expanded = showCategoryMenu,
-                    onExpandedChange = { showCategoryMenu = it },
+                    onExpandedChange = { 
+                        showCategoryMenu = it
+                        if (it) focusManager.clearFocus()
+                    },
                     modifier = Modifier.weight(1f)
                 ) {
                     Box(
@@ -372,7 +384,10 @@ fun AddExpenseScreen(
                 
                 ExposedDropdownMenuBox(
                     expanded = showRecurrenceMenu,
-                    onExpandedChange = { showRecurrenceMenu = it },
+                    onExpandedChange = { 
+                        showRecurrenceMenu = it
+                        if (it) focusManager.clearFocus()
+                    },
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     Box(
@@ -458,7 +473,10 @@ fun AddExpenseScreen(
                                 color = ThemeColors.getTextGrayColor(isDarkTheme),
                                 shape = RoundedCornerShape(12.dp)
                             )
-                            .clickable { showEndDatePicker = true }
+                            .clickable { 
+                                showEndDatePicker = true
+                                focusManager.clearFocus()
+                            }
                     ) {
                         Row(
                             modifier = Modifier
