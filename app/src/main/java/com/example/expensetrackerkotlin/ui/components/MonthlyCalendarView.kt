@@ -262,7 +262,7 @@ fun MonthlyCalendarView(
                                 if (dayExpenses.isNotEmpty()) {
                                     ProgressRing(
                                         progress = progressPercentage.toFloat(),
-                                        colors = dailyData.progressColors,
+                                        isLimitOver = isOverLimit,
                                         strokeWidth = 3.dp,
                                         modifier = Modifier.size(50.dp)
                                     )

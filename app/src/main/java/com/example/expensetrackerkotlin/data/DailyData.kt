@@ -22,14 +22,7 @@ data class DailyData(
     val isOverLimit: Boolean
         get() = totalAmount > dailyLimit && dailyLimit > 0
 
-    val progressColors: List<Color>
-        get() = when {
-            isOverLimit -> listOf(Color.Red, Color.Red, Color.Red, Color.Red)
-            progressPercentage < 0.3 -> listOf(Color.Green, Color.Green, Color.Green, Color.Green)
-            progressPercentage < 0.6 -> listOf(Color.Green, Color.Green, Color.Yellow, Color.Yellow)
-            progressPercentage < 0.9 -> listOf(Color.Green, Color.Yellow, Color(0xFFFFA500), Color(0xFFFFA500))
-            else -> listOf(Color.Green, Color.Yellow, Color(0xFFFFA500), Color.Red)
-        }
+
 
     val dayName: String
         get() {

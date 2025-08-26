@@ -386,16 +386,5 @@ class ExpenseViewModel(
         return monthlyTotal > monthlyLimitValue && monthlyLimitValue > 0
     }
     
-    fun getMonthlyProgressColors(yearMonth: java.time.YearMonth): List<Color> {
-        val progressPercentage = getMonthlyProgressPercentage(yearMonth)
-        val isOverLimit = isMonthlyOverLimit(yearMonth)
-        
-        return when {
-            isOverLimit -> listOf(Color.Red, Color.Red, Color.Red, Color.Red)
-            progressPercentage < 0.3 -> listOf(Color.Green, Color.Green, Color.Green, Color.Green)
-            progressPercentage < 0.6 -> listOf(Color.Green, Color.Green, Color.Yellow, Color.Yellow)
-            progressPercentage < 0.9 -> listOf(Color.Green, Color.Yellow, Color(0xFFFFA500), Color(0xFFFFA500))
-            else -> listOf(Color.Green, Color.Yellow, Color(0xFFFFA500), Color.Red)
-        }
-    }
+
 }

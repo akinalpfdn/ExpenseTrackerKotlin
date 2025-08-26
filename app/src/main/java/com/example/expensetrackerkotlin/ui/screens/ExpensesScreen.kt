@@ -110,7 +110,6 @@ fun ExpensesScreen(
                             MonthlyProgressRingView(
                                 totalSpent = viewModel.getMonthlyTotal(currentCalendarMonth),
                                 progressPercentage = viewModel.getMonthlyProgressPercentage(currentCalendarMonth),
-                                progressColors = viewModel.getMonthlyProgressColors(currentCalendarMonth),
                                 isOverLimit = viewModel.isMonthlyOverLimit(currentCalendarMonth),
                                 onTap = { showingMonthlyCalendar = true },
                                 currency = viewModel.defaultCurrency,
@@ -119,15 +118,15 @@ fun ExpensesScreen(
                             )
                         }
                         1 -> {
-                            // Daily Progress Ring
-                            DailyProgressRingView(
-                                dailyProgressPercentage = viewModel.dailyProgressPercentage,
-                                isOverDailyLimit = viewModel.isOverDailyLimit,
-                                dailyLimitValue = viewModel.dailyLimit.toDoubleOrNull() ?: 0.0,
-                                selectedDateTotal = viewModel.getSelectedDayTotal(),
-                                currency = viewModel.defaultCurrency,
-                                isDarkTheme = isDarkTheme
-                            )
+                                                    // Daily Progress Ring
+                        DailyProgressRingView(
+                            dailyProgressPercentage = viewModel.dailyProgressPercentage,
+                            isOverDailyLimit = viewModel.isOverDailyLimit,
+                            dailyLimitValue = viewModel.dailyLimit.toDoubleOrNull() ?: 0.0,
+                            selectedDateTotal = viewModel.getSelectedDayTotal(),
+                            currency = viewModel.defaultCurrency,
+                            isDarkTheme = isDarkTheme
+                        )
                         }
                         2 -> {
                             // Category Distribution

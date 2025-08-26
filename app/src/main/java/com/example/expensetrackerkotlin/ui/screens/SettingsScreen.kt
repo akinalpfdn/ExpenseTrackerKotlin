@@ -108,7 +108,7 @@ fun SettingsScreen(
                                 color = ThemeColors.getTextGrayColor(isDarkTheme),
                                 shape = RoundedCornerShape(12.dp)
                             )
-                            .menuAnchor(MenuAnchorType.PrimaryNotEditable) // Changed this line 
+                            .menuAnchor(MenuAnchorType.PrimaryNotEditable) // Changed this line
                     ) {
                         Row(
                             modifier = Modifier.fillMaxSize(),

@@ -9,10 +9,12 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.*
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -24,12 +26,17 @@ import kotlin.math.sin
 @Composable
 fun ProgressRing(
     progress: Float,
-    colors: List<Color>,
+    isLimitOver: Boolean = false,
     modifier: Modifier = Modifier,
     strokeWidth: Dp = 8.dp,
     onClick: (() -> Unit)? = null
 ) {
-    Canvas(
+    val colors = when {
+        isLimitOver -> listOf(Color.Red, Color.Red, Color.Red, Color.Red)
+        else -> listOf(Color.Green, Color.Green, Color.Green, Color.Yellow,Color.Yellow, Color.Yellow,Color.Red,Color.Red,Color.Gray.copy(alpha = 0.2f))
+    }
+    Box(
+        contentAlignment = Alignment.Center,
         modifier = modifier
             .size(120.dp)
             .then(
@@ -40,43 +47,46 @@ fun ProgressRing(
                 }
             )
     ) {
-        val canvasSize = size.minDimension
-        val strokeWidthPx = strokeWidth.toPx()
-        val radius = (canvasSize - strokeWidthPx) / 2
-        val center = Offset(size.width / 2, size.height / 2)
-        
-        // Background ring
-        drawCircle(
-            color = Color.Gray.copy(alpha = 0.2f),
-            radius = radius,
-            center = center,
-            style = Stroke(width = strokeWidthPx, cap = StrokeCap.Round)
-        )
-        
-        if (progress > 0) {
-            val sweepAngle = 360f * progress
+        Canvas(
+            modifier = Modifier
+                .size(120.dp)
+                .rotate(-90f)
+                .graphicsLayer {
+                    rotationY = 360f
+                }
+        ) {
+            val canvasSize = size.minDimension
+            val strokeWidthPx = strokeWidth.toPx()
+            val radius = (canvasSize - strokeWidthPx) / 2
+            val center = Offset(size.width / 2, size.height / 2)
             
-            // Create gradient brush - rotate colors to start from top
-            val brush = if (colors.size > 1) {
-                val rotatedColors = colors.drop(1) + colors.take(1) // Rotate colors to start from top
-                Brush.sweepGradient(
-                    colors = rotatedColors,
-                    center = center
-                )
-            } else {
-                SolidColor(colors.firstOrNull() ?: Color.Blue)
-            }
-            
-            // Progress arc - Start from top like Swift
+            // Background ring
             drawArc(
-                brush = brush,
-                startAngle = -90f,
-                sweepAngle = sweepAngle,
+                color = Color.Gray.copy(alpha = 0.2f),
+                startAngle = 0f,
+                sweepAngle = 360f,
                 useCenter = false,
-                topLeft = Offset(center.x - radius, center.y - radius),
-                size = androidx.compose.ui.geometry.Size(radius * 2, radius * 2),
                 style = Stroke(width = strokeWidthPx, cap = StrokeCap.Round)
             )
+            
+            if (progress > 0) {
+                val sweepAngle = progress * 359f  // 360 yerine 359 kullanıyoruz
+                
+                // Create gradient brush with green-yellow-red colors
+                val brush = Brush.sweepGradient(
+                    colors = colors,
+                    center = center
+                )
+                
+                // Progress arc
+                drawArc(
+                    brush = brush,
+                    startAngle = 0f,
+                    sweepAngle = sweepAngle,
+                    useCenter = false,
+                    style = Stroke(width = strokeWidthPx, cap = StrokeCap.Round)
+                )
+            }
         }
     }
 }
@@ -85,7 +95,6 @@ fun ProgressRing(
 fun MonthlyProgressRingView(
     totalSpent: Double,
     progressPercentage: Double,
-    progressColors: List<Color>,
     isOverLimit: Boolean,
     onTap: () -> Unit,
     currency: String = "₺",
@@ -102,7 +111,7 @@ fun MonthlyProgressRingView(
         ) {
             ProgressRing(
                 progress = progressPercentage.toFloat(),
-                colors = progressColors,
+                isLimitOver = isOverLimit,
                 onClick = onTap
             )
             Column(
@@ -134,13 +143,6 @@ fun DailyProgressRingView(
     isDarkTheme: Boolean = true,
     modifier: Modifier = Modifier
 ) {
-    val progressColors = when {
-        isOverDailyLimit -> listOf(Color.Red, Color.Red, Color.Red, Color.Red)
-        dailyProgressPercentage < 0.3 -> listOf(Color.Green, Color.Green, Color.Green, Color.Green)
-        dailyProgressPercentage < 0.6 -> listOf(Color.Green, Color.Green, Color.Yellow, Color.Yellow)
-        dailyProgressPercentage < 0.9 -> listOf(Color.Green, Color.Yellow, Color(0xFFFFA500), Color(0xFFFFA500))
-        else -> listOf(Color.Green, Color.Yellow, Color(0xFFFFA500), Color.Red)
-    }
     
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -151,7 +153,7 @@ fun DailyProgressRingView(
         ) {
             ProgressRing(
                 progress = dailyProgressPercentage.toFloat(),
-                colors = progressColors
+                isLimitOver = isOverDailyLimit
             )
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally

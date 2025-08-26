@@ -91,7 +91,7 @@ private fun DailyHistoryItem(
             if (data.progressPercentage > 0) {
                 ProgressRing(
                     progress = data.progressPercentage.toFloat(),
-                    colors = data.progressColors,
+                    isLimitOver = data.isOverLimit,
                     modifier = Modifier.size(36.dp),
                     strokeWidth = 3.dp
                 )
