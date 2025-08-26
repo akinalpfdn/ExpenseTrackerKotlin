@@ -36,13 +36,14 @@ A modern, feature-rich expense tracking application built with **Kotlin** and **
 
 <!-- Add your screenshots here -->
 <div align="center">
-  <img src="screenshots/main_screen.png" alt="Main Screen" width="200"/>
-  <img src="screenshots/monthly_calendar.png" alt="Monthly Calendar" width="200"/>
-  <img src="screenshots/recurring_expenses.png" alt="Recurring Expenses" width="200"/>
-  <img src="screenshots/add_expense.png" alt="Add Expense" width="200"/>
+  <img src="screenshots/5.png" alt="Main Screen" width="200"/>
+  <img src="screenshots/3.png" alt="Monthly Calendar" width="200"/>
+  <img src="screenshots/1.png" alt="Recurring Expenses" width="200"/>
+  <img src="screenshots/4.png" alt="Add Expense" width="200"/>
+  
+  <img src="screenshots/2.png" alt="Settings" width="200"/>
 </div>
 
-*Screenshots coming soon - Add your app screenshots to the `screenshots/` folder*
 
 ## 🏗️ Architecture
 
@@ -180,4 +181,3 @@ If you have any questions or need help, please:
 
 **Made with ❤️ using Kotlin and Jetpack Compose**
 
-*Add your screenshots to the `screenshots/` folder and update the image paths in this README to showcase your app!*
