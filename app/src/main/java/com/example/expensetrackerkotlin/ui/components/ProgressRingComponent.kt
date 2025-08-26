@@ -14,6 +14,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.*
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.drawscope.rotate
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
@@ -35,10 +36,11 @@ fun ProgressRing(
         isLimitOver -> listOf(Color.Red, Color.Red, Color.Red, Color.Red)
         else -> listOf(Color.Green, Color.Green, Color.Green, Color.Yellow,Color.Yellow, Color.Yellow,Color.Red,Color.Red,Color.Gray.copy(alpha = 0.2f))
     }
-    Box(
-        contentAlignment = Alignment.Center,
+    
+    Canvas(
         modifier = modifier
             .size(120.dp)
+ 
             .then(
                 if (onClick != null) {
                     Modifier.clickable { onClick() }
@@ -47,43 +49,42 @@ fun ProgressRing(
                 }
             )
     ) {
-        Canvas(
-            modifier = Modifier
-                .size(120.dp)
-                .rotate(-90f)
-                .graphicsLayer {
-                    rotationY = 360f
-                }
-        ) {
-            val canvasSize = size.minDimension
-            val strokeWidthPx = strokeWidth.toPx()
-            val radius = (canvasSize - strokeWidthPx) / 2
-            val center = Offset(size.width / 2, size.height / 2)
+        val canvasSize = size.minDimension
+        val strokeWidthPx = strokeWidth.toPx()
+        val radius = (canvasSize - strokeWidthPx) / 2
+        val center = Offset(size.width / 2, size.height / 2)
+        
+        // Background ring
+        drawCircle(
+            color = Color.Gray.copy(alpha = 0.2f),
+            radius = radius,
+            center = center,
+            style = Stroke(width = strokeWidthPx, cap = StrokeCap.Round)
+        )
+        
+        if (progress > 0) {
+            val sweepAngle = 360f * progress
             
-            // Background ring
-            drawArc(
-                color = Color.Gray.copy(alpha = 0.2f),
-                startAngle = 0f,
-                sweepAngle = 360f,
-                useCenter = false,
-                style = Stroke(width = strokeWidthPx, cap = StrokeCap.Round)
-            )
-            
-            if (progress > 0) {
-                val sweepAngle = progress * 359f  // 360 yerine 359 kullanıyoruz
-                
-                // Create gradient brush with green-yellow-red colors
-                val brush = Brush.sweepGradient(
+            // Create gradient brush - start from right (0 degrees)
+            val brush = if (colors.size > 1) {
+                Brush.sweepGradient(
                     colors = colors,
                     center = center
                 )
-                
-                // Progress arc
+            } else {
+                SolidColor(colors.firstOrNull() ?: Color.Blue)
+            }
+            
+            // Rotate the canvas to align gradient with progress arc
+            rotate(-90f, center) {
+                // Progress arc - Start from top like Swift
                 drawArc(
                     brush = brush,
-                    startAngle = 0f,
+                    startAngle = 0f, // Now starts from right (0 degrees) but canvas is rotated
                     sweepAngle = sweepAngle,
                     useCenter = false,
+                    topLeft = Offset(center.x - radius, center.y - radius),
+                    size = androidx.compose.ui.geometry.Size(radius * 2, radius * 2),
                     style = Stroke(width = strokeWidthPx, cap = StrokeCap.Round)
                 )
             }
