@@ -34,6 +34,7 @@ import androidx.compose.material.icons.filled.CalendarToday
 import androidx.compose.ui.focus.FocusManager
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.material3.MenuAnchorType
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -202,7 +203,7 @@ fun AddExpenseScreen(
                                 color = ThemeColors.getTextGrayColor(isDarkTheme),
                                 shape = RoundedCornerShape(12.dp)
                             )
-                            .menuAnchor()
+                            .menuAnchor(MenuAnchorType.PrimaryNotEditable) // Changed this line
                     ) {
                         Row(
                             modifier = Modifier.fillMaxSize(),
@@ -270,7 +271,7 @@ fun AddExpenseScreen(
                                 color = ThemeColors.getTextGrayColor(isDarkTheme),
                                 shape = RoundedCornerShape(12.dp)
                             )
-                            .menuAnchor()
+                            .menuAnchor(MenuAnchorType.PrimaryNotEditable) // Changed this line
                     ) {
                         Row(
                             modifier = Modifier.fillMaxSize(),
@@ -371,39 +372,39 @@ fun AddExpenseScreen(
                 }
             }
             
-            // Recurrence Type
-            Column(
-                verticalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                Text(
-                    text = "Tekrar Türü",
-                    fontSize = 18.sp,
-                    fontWeight = FontWeight.Medium,
-                    color = ThemeColors.getTextColor(isDarkTheme)
-                )
-                
-                ExposedDropdownMenuBox(
-                    expanded = showRecurrenceMenu,
-                    onExpandedChange = { 
-                        showRecurrenceMenu = it
-                        if (it) focusManager.clearFocus()
-                    },
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(40.dp)
-                            .background(
-                                ThemeColors.getInputBackgroundColor(isDarkTheme),
-                                RoundedCornerShape(12.dp)
-                            )
-                            .border(
-                                width = 1.dp,
-                                color = ThemeColors.getTextGrayColor(isDarkTheme),
-                                shape = RoundedCornerShape(12.dp)
-                            )
-                            .menuAnchor()
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                               // Recurrence Type
+                 Column(
+                     verticalArrangement = Arrangement.spacedBy(8.dp)
+                 ) {
+                     Text(
+                         text = "Tekrar Türü",
+                         fontSize = 18.sp,
+                         fontWeight = FontWeight.Medium,
+                         color = ThemeColors.getTextColor(isDarkTheme)
+                     )
+                     
+                     ExposedDropdownMenuBox(
+                         expanded = showRecurrenceMenu,
+                         onExpandedChange = { 
+                             showRecurrenceMenu = it
+                             if (it) focusManager.clearFocus()
+                         },
+                         modifier = Modifier.fillMaxWidth()
+                     ) {
+                         Box(
+                             modifier = Modifier
+                                 .fillMaxWidth()
+                                 .height(40.dp)
+                                 .background(
+                                     ThemeColors.getInputBackgroundColor(isDarkTheme),
+                                     RoundedCornerShape(12.dp)
+                                 )
+                                 .border(
+                                     width = 1.dp,
+                                     color = ThemeColors.getTextGrayColor(isDarkTheme),
+                                     shape = RoundedCornerShape(12.dp)
+                                 )
+                                 .menuAnchor(MenuAnchorType.PrimaryNotEditable) // Changed this line
                     ) {
                         Row(
                             modifier = Modifier.fillMaxSize(),
