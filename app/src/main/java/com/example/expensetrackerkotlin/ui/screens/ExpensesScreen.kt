@@ -10,7 +10,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material.icons.filled.Refresh
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.*
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.rememberModalBottomSheetState
@@ -239,14 +239,14 @@ fun ExpensesScreen(
                         .fillMaxSize()
                         .background(
                             Brush.radialGradient(
-                                colors = listOf(Color(0xFF007AFF), Color(0xFF5856D6))
+                                colors = listOf(AppColors.RecurringButtonStart, AppColors.RecurringButtonEnd)
                             ),
                             CircleShape
                         ),
                     contentAlignment = Alignment.Center
                 ) {
                     Icon(
-                        imageVector = Icons.Default.Refresh,
+                        imageVector = Icons.Default.Edit,
                         contentDescription = "Recurring Expenses",
                         tint = Color.White,
                         modifier = Modifier.size(30.dp)

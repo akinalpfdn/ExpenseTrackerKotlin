@@ -29,4 +29,12 @@ object AppColors {
     // Gradient colors for buttons
     val ButtonGradientStart = PrimaryOrange
     val ButtonGradientEnd = PrimaryRed
+    
+    // Recurring expenses button colors
+    val RecurringButtonStart = Color(0xFF1EC3FC)
+    val RecurringButtonEnd = Color(0xFF03AAE4)
+    
+    // Dialog background colors
+    val DialogBackgroundDark = Color(0xFF1E1E1E)
+    val DialogBackgroundLight = Color(0xFFFFFFFF)
 }

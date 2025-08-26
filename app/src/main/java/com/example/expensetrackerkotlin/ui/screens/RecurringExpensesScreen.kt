@@ -720,7 +720,7 @@ fun RecurringExpenseCard(
                     )
                 }
             },
-            containerColor = ThemeColors.getCardBackgroundColor(isDarkTheme)
+            containerColor = ThemeColors.getDialogBackgroundColor(isDarkTheme)
         )
     }
 }

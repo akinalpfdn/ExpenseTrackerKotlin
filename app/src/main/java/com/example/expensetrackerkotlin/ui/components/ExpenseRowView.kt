@@ -584,7 +584,7 @@ fun ExpenseRowView(
                     )
                 }
             },
-            containerColor = ThemeColors.getCardBackgroundColor(isDarkTheme)
+            containerColor = ThemeColors.getDialogBackgroundColor(isDarkTheme)
         )
     }
 }
