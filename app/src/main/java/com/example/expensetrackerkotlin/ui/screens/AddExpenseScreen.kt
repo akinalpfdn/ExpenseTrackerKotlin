@@ -28,6 +28,8 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.UUID
 import androidx.compose.foundation.clickable
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.CalendarToday
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -461,12 +463,20 @@ fun AddExpenseScreen(
                             modifier = Modifier
                                 .fillMaxSize()
                                 .padding(horizontal = 12.dp),
-                            verticalAlignment = Alignment.CenterVertically
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.SpaceBetween
                         ) {
                             Text(
                                 text = endDate.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")),
                                 fontSize = 14.sp,
                                 color = ThemeColors.getTextColor(isDarkTheme)
+                            )
+                            
+                            Icon(
+                                imageVector = Icons.Default.CalendarToday,
+                                contentDescription = "Tarih Seç",
+                                tint = ThemeColors.getTextGrayColor(isDarkTheme),
+                                modifier = Modifier.size(20.dp)
                             )
                         }
                     }
@@ -636,10 +646,60 @@ fun AddExpenseScreen(
     
     // Date Picker Dialog
     if (showEndDatePicker) {
-        // TODO: Implement date picker dialog
-        // For now, we'll just close it
-        LaunchedEffect(Unit) {
-            showEndDatePicker = false
+        val datePickerState = rememberDatePickerState(
+            initialSelectedDateMillis = endDate.toInstant(java.time.ZoneOffset.UTC).toEpochMilli()
+        )
+        
+        DatePickerDialog(
+            onDismissRequest = { showEndDatePicker = false },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        datePickerState.selectedDateMillis?.let { millis ->
+                            endDate = java.time.Instant.ofEpochMilli(millis)
+                                .atZone(java.time.ZoneOffset.UTC)
+                                .toLocalDateTime()
+                        }
+                        showEndDatePicker = false
+                    }
+                ) {
+                    Text("Tamam")
+                }
+            },
+            dismissButton = {
+                TextButton(
+                    onClick = { showEndDatePicker = false }
+                ) {
+                    Text("İptal")
+                }
+            },
+            colors = DatePickerDefaults.colors(
+                containerColor = ThemeColors.getDialogBackgroundColor(isDarkTheme),
+                titleContentColor = ThemeColors.getTextColor(isDarkTheme),
+                headlineContentColor = ThemeColors.getTextColor(isDarkTheme),
+                weekdayContentColor = ThemeColors.getTextGrayColor(isDarkTheme),
+                subheadContentColor = ThemeColors.getTextColor(isDarkTheme),
+                yearContentColor = ThemeColors.getTextColor(isDarkTheme),
+                currentYearContentColor = AppColors.PrimaryOrange,
+                selectedYearContentColor = ThemeColors.getTextColor(isDarkTheme),
+                selectedYearContainerColor = AppColors.PrimaryOrange,
+                dayContentColor = ThemeColors.getTextColor(isDarkTheme),
+                selectedDayContentColor = ThemeColors.getTextColor(isDarkTheme),
+                selectedDayContainerColor = AppColors.PrimaryOrange,
+                todayContentColor = AppColors.PrimaryOrange,
+                todayDateBorderColor = AppColors.PrimaryOrange
+            )
+        ) {
+            DatePicker(
+                state = datePickerState,
+                title = {
+                    Text(
+                        text = "Bitiş Tarihi Seçin",
+                        color = ThemeColors.getTextColor(isDarkTheme),
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+            )
         }
     }
 }

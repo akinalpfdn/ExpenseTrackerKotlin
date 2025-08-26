@@ -163,9 +163,20 @@ fun ExpenseRowView(
                         }
                     }
                     .clickable {
-                        if (!isEditing && !isSwiped) {
-                            isEditing = true
-                            onEditingChanged(true)
+                        if (!isSwiped) {
+                            if (isEditing) {
+                                // If already editing, close the edit mode
+                                isEditing = false
+                                onEditingChanged(false)
+                                // Reset edit fields to original values
+                                editAmount = expense.amount.toString()
+                                editDescription = expense.description
+                                editExchangeRate = expense.exchangeRate?.toString() ?: ""
+                            } else {
+                                // If not editing, open edit mode
+                                isEditing = true
+                                onEditingChanged(true)
+                            }
                         }
                     },
                 shape = RoundedCornerShape(12.dp),

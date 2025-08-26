@@ -245,8 +245,19 @@ fun RecurringExpenseCard(
                         }
                     }
                     .clickable {
-                        if (!isEditing && !isSwiped) {
-                            isEditing = true
+                        if (!isSwiped) {
+                            if (isEditing) {
+                                // If already editing, close the edit mode
+                                isEditing = false
+                                // Reset edit fields to original values
+                                editAmount = expense.amount.toString()
+                                editDescription = expense.description
+                                editExchangeRate = expense.exchangeRate?.toString() ?: ""
+                                editEndDate = expense.endDate?.toLocalDate()?.toString() ?: ""
+                            } else {
+                                // If not editing, open edit mode
+                                isEditing = true
+                            }
                         }
                     },
                 shape = RoundedCornerShape(12.dp),
