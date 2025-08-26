@@ -18,6 +18,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.CalendarToday
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Delete
@@ -151,6 +152,7 @@ fun RecurringExpensesScreen(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RecurringExpenseCard(
     expense: Expense,
@@ -164,6 +166,8 @@ fun RecurringExpenseCard(
     var editExchangeRate by remember { mutableStateOf(expense.exchangeRate?.toString() ?: "") }
     var editEndDate by remember { mutableStateOf(expense.endDate?.toLocalDate()?.toString() ?: "") }
     var showDeleteConfirmation by remember { mutableStateOf(false) }
+    var showEndDatePicker by remember { mutableStateOf(false) }
+    var tempEndDate by remember { mutableStateOf(expense.endDate ?: java.time.LocalDateTime.now().plusYears(1)) }
     
     // Swipe animation state
     var offsetX by remember { mutableStateOf(0f) }
@@ -543,33 +547,28 @@ fun RecurringExpenseCard(
                                         color = ThemeColors.getTextGrayColor(isDarkTheme),
                                         shape = RoundedCornerShape(12.dp)
                                     )
+                                    .clickable { showEndDatePicker = true }
                             ) {
-                                BasicTextField(
-                                    value = editEndDate,
-                                    onValueChange = { editEndDate = it },
+                                Row(
                                     modifier = Modifier
                                         .fillMaxSize()
                                         .padding(horizontal = 12.dp),
-                                    singleLine = true,
-                                    textStyle = androidx.compose.ui.text.TextStyle(
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    horizontalArrangement = Arrangement.SpaceBetween
+                                ) {
+                                    Text(
+                                        text = tempEndDate.format(java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy")),
                                         fontSize = 14.sp,
                                         color = ThemeColors.getTextColor(isDarkTheme)
-                                    ),
-                                    decorationBox = { innerTextField ->
-                                        Box(
-                                            contentAlignment = Alignment.CenterStart
-                                        ) {
-                                            if (editEndDate.isEmpty()) {
-                                                Text(
-                                                    text = "Bitiş Tarihi (YYYY-MM-DD)",
-                                                    fontSize = 14.sp,
-                                                    color = ThemeColors.getTextGrayColor(isDarkTheme)
-                                                )
-                                            }
-                                            innerTextField()
-                                        }
-                                    }
-                                )
+                                    )
+                                    
+                                    Icon(
+                                        imageVector = Icons.Default.CalendarToday,
+                                        contentDescription = "Tarih Seç",
+                                        tint = ThemeColors.getTextGrayColor(isDarkTheme),
+                                        modifier = Modifier.size(20.dp)
+                                    )
+                                }
                             }
                             
                             Spacer(modifier = Modifier.height(12.dp))
@@ -589,15 +588,7 @@ fun RecurringExpenseCard(
                                                 it.date.toLocalDate().isAfter(today.minusDays(1)) // Today and future
                                             }
                                             
-                                            val newEndDate = if (editEndDate.isNotEmpty()) {
-                                                try {
-                                                    java.time.LocalDate.parse(editEndDate).atStartOfDay()
-                                                } catch (e: Exception) {
-                                                    expense.endDate
-                                                }
-                                            } else {
-                                                expense.endDate
-                                            }
+                                            val newEndDate = tempEndDate
                                             
                                             expensesToUpdate.forEach { 
                                                 val updatedExpenseWithSameId = expense.copy(
@@ -733,5 +724,64 @@ fun RecurringExpenseCard(
             },
             containerColor = ThemeColors.getDialogBackgroundColor(isDarkTheme)
         )
+    }
+    
+    // Date Picker Dialog
+    if (showEndDatePicker) {
+        val datePickerState = rememberDatePickerState(
+            initialSelectedDateMillis = tempEndDate.toInstant(java.time.ZoneOffset.UTC).toEpochMilli()
+        )
+        
+        DatePickerDialog(
+            onDismissRequest = { showEndDatePicker = false },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        datePickerState.selectedDateMillis?.let { millis ->
+                            tempEndDate = java.time.Instant.ofEpochMilli(millis)
+                                .atZone(java.time.ZoneOffset.UTC)
+                                .toLocalDateTime()
+                        }
+                        showEndDatePicker = false
+                    }
+                ) {
+                    Text(
+                        "Tamam",
+                        color = AppColors.PrimaryOrange,
+                        fontWeight = FontWeight.SemiBold
+                    )
+                }
+            },
+            dismissButton = {
+                TextButton(
+                    onClick = { showEndDatePicker = false }
+                ) {
+                    Text(
+                        "İptal",
+                        color = if (isDarkTheme) ThemeColors.getTextGrayColor(true) else Color.White
+                    )
+                }
+            }
+        ) {
+            DatePicker(
+                state = datePickerState,
+                colors = DatePickerDefaults.colors(
+                    containerColor = if (isDarkTheme) Color(0xFF1E1E1E) else Color.White,
+                    titleContentColor = if (isDarkTheme) Color.White else Color.Black,
+                    headlineContentColor = if (isDarkTheme) Color.White else Color.Black,
+                    weekdayContentColor = Color.Gray,
+                    subheadContentColor = if (isDarkTheme) Color.White else Color.Black,
+                    yearContentColor = if (isDarkTheme) Color.White else Color.Black,
+                    currentYearContentColor = AppColors.PrimaryOrange,
+                    selectedYearContentColor = if (isDarkTheme) Color.White else Color.White,
+                    selectedYearContainerColor = AppColors.PrimaryOrange,
+                    dayContentColor = if (isDarkTheme) Color.White else Color.Black,
+                    selectedDayContentColor = if (isDarkTheme) Color.White else Color.White,
+                    selectedDayContainerColor = AppColors.PrimaryOrange,
+                    todayContentColor = AppColors.PrimaryOrange,
+                    todayDateBorderColor = AppColors.PrimaryOrange
+                )
+            )
+        }
     }
 }

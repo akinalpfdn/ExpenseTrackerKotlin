@@ -651,7 +651,7 @@ fun AddExpenseScreen(
              initialSelectedDateMillis = endDate.toInstant(java.time.ZoneOffset.UTC).toEpochMilli()
          )
          
-                                                                                                                                                               DatePickerDialog(
+       DatePickerDialog(
                  onDismissRequest = { showEndDatePicker = false },
                  confirmButton = {
                      TextButton(
@@ -677,7 +677,7 @@ fun AddExpenseScreen(
                      ) {
                          Text(
                              "İptal",
-                             color = ThemeColors.getTextGrayColor(isDarkTheme)
+                             color = if (isDarkTheme) ThemeColors.getTextGrayColor(true) else Color.White
                          )
                      }
                  }
