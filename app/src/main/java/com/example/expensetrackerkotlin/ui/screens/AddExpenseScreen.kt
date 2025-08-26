@@ -5,6 +5,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
@@ -644,62 +645,62 @@ fun AddExpenseScreen(
         }
     }
     
-    // Date Picker Dialog
-    if (showEndDatePicker) {
-        val datePickerState = rememberDatePickerState(
-            initialSelectedDateMillis = endDate.toInstant(java.time.ZoneOffset.UTC).toEpochMilli()
-        )
-        
-        DatePickerDialog(
-            onDismissRequest = { showEndDatePicker = false },
-            confirmButton = {
-                TextButton(
-                    onClick = {
-                        datePickerState.selectedDateMillis?.let { millis ->
-                            endDate = java.time.Instant.ofEpochMilli(millis)
-                                .atZone(java.time.ZoneOffset.UTC)
-                                .toLocalDateTime()
-                        }
-                        showEndDatePicker = false
-                    }
-                ) {
-                    Text("Tamam")
-                }
-            },
-            dismissButton = {
-                TextButton(
-                    onClick = { showEndDatePicker = false }
-                ) {
-                    Text("İptal")
-                }
-            },
-            colors = DatePickerDefaults.colors(
-                containerColor = ThemeColors.getDialogBackgroundColor(isDarkTheme),
-                titleContentColor = ThemeColors.getTextColor(isDarkTheme),
-                headlineContentColor = ThemeColors.getTextColor(isDarkTheme),
-                weekdayContentColor = ThemeColors.getTextGrayColor(isDarkTheme),
-                subheadContentColor = ThemeColors.getTextColor(isDarkTheme),
-                yearContentColor = ThemeColors.getTextColor(isDarkTheme),
-                currentYearContentColor = AppColors.PrimaryOrange,
-                selectedYearContentColor = ThemeColors.getTextColor(isDarkTheme),
-                selectedYearContainerColor = AppColors.PrimaryOrange,
-                dayContentColor = ThemeColors.getTextColor(isDarkTheme),
-                selectedDayContentColor = ThemeColors.getTextColor(isDarkTheme),
-                selectedDayContainerColor = AppColors.PrimaryOrange,
-                todayContentColor = AppColors.PrimaryOrange,
-                todayDateBorderColor = AppColors.PrimaryOrange
-            )
-        ) {
-            DatePicker(
-                state = datePickerState,
-                title = {
-                    Text(
-                        text = "Bitiş Tarihi Seçin",
-                        color = ThemeColors.getTextColor(isDarkTheme),
-                        fontWeight = FontWeight.Bold
-                    )
-                }
-            )
-        }
-    }
+         // Date Picker Dialog
+     if (showEndDatePicker) {
+         val datePickerState = rememberDatePickerState(
+             initialSelectedDateMillis = endDate.toInstant(java.time.ZoneOffset.UTC).toEpochMilli()
+         )
+         
+                                                                                                                                                               DatePickerDialog(
+                 onDismissRequest = { showEndDatePicker = false },
+                 confirmButton = {
+                     TextButton(
+                         onClick = {
+                             datePickerState.selectedDateMillis?.let { millis ->
+                                 endDate = java.time.Instant.ofEpochMilli(millis)
+                                     .atZone(java.time.ZoneOffset.UTC)
+                                     .toLocalDateTime()
+                             }
+                             showEndDatePicker = false
+                         }
+                     ) {
+                         Text(
+                             "Tamam",
+                             color = AppColors.PrimaryOrange,
+                             fontWeight = FontWeight.SemiBold
+                         )
+                     }
+                 },
+                 dismissButton = {
+                     TextButton(
+                         onClick = { showEndDatePicker = false }
+                     ) {
+                         Text(
+                             "İptal",
+                             color = ThemeColors.getTextGrayColor(isDarkTheme)
+                         )
+                     }
+                 }
+             ) {
+                           DatePicker(
+                  state = datePickerState,
+                  colors = DatePickerDefaults.colors(
+                      containerColor = if (isDarkTheme) Color(0xFF1E1E1E) else Color.White,
+                      titleContentColor = if (isDarkTheme) Color.White else Color.Black,
+                      headlineContentColor = if (isDarkTheme) Color.White else Color.Black,
+                      weekdayContentColor = Color.Gray,
+                      subheadContentColor = if (isDarkTheme) Color.White else Color.Black,
+                      yearContentColor = if (isDarkTheme) Color.White else Color.Black,
+                      currentYearContentColor = AppColors.PrimaryOrange,
+                      selectedYearContentColor = if (isDarkTheme) Color.White else Color.White,
+                      selectedYearContainerColor = AppColors.PrimaryOrange,
+                      dayContentColor = if (isDarkTheme) Color.White else Color.Black,
+                      selectedDayContentColor = if (isDarkTheme) Color.White else Color.White,
+                      selectedDayContainerColor = AppColors.PrimaryOrange,
+                      todayContentColor = AppColors.PrimaryOrange,
+                      todayDateBorderColor = AppColors.PrimaryOrange
+                  )
+              )
+         }
+     }
 }
