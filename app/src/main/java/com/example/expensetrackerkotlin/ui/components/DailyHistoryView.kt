@@ -77,25 +77,13 @@ private fun DailyHistoryItem(
             contentAlignment = Alignment.Center,
             modifier = Modifier.size(40.dp)
         ) {
-            // Background ring
-            Box(
-                modifier = Modifier
-                    .size(36.dp)
-                    .background(
-                        ThemeColors.getTextGrayColor(isDarkTheme).copy(alpha = 0.2f),
-                        CircleShape
-                    )
+            // Progress ring - always show, even if progress is 0
+            ProgressRing(
+                progress = data.progressPercentage.toFloat(),
+                isLimitOver = data.isOverLimit,
+                modifier = Modifier.size(40.dp),
+                strokeWidth = 5.dp
             )
-            
-            // Progress ring
-            if (data.progressPercentage > 0) {
-                ProgressRing(
-                    progress = data.progressPercentage.toFloat(),
-                    isLimitOver = data.isOverLimit,
-                    modifier = Modifier.size(36.dp),
-                    strokeWidth = 3.dp
-                )
-            }
             
             // Day number
             Text(

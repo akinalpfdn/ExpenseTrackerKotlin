@@ -34,13 +34,14 @@ fun ProgressRing(
 ) {
     val colors = when {
         isLimitOver -> listOf(Color.Red, Color.Red, Color.Red, Color.Red)
-        else -> listOf(Color.Green, Color.Green, Color.Green, Color.Yellow,Color.Yellow, Color.Yellow,Color.Red,Color.Red,Color.Gray.copy(alpha = 0.2f))
+        else -> {
+                listOf(Color.Green, Color.Green, Color.Green, Color.Yellow,Color.Yellow, Color.Yellow,Color.Red,Color.Red,Color.Gray.copy(alpha = 0.2f))
+
+        }
     }
     
     Canvas(
         modifier = modifier
-            .size(120.dp)
- 
             .then(
                 if (onClick != null) {
                     Modifier.clickable { onClick() }
@@ -62,32 +63,30 @@ fun ProgressRing(
             style = Stroke(width = strokeWidthPx, cap = StrokeCap.Round)
         )
         
-        if (progress > 0) {
-            val sweepAngle = 360f * progress
-            
-            // Create gradient brush - start from right (0 degrees)
-            val brush = if (colors.size > 1) {
-                Brush.sweepGradient(
-                    colors = colors,
-                    center = center
-                )
-            } else {
-                SolidColor(colors.firstOrNull() ?: Color.Blue)
-            }
-            
-            // Rotate the canvas to align gradient with progress arc
-            rotate(-90f, center) {
-                // Progress arc - Start from top like Swift
-                drawArc(
-                    brush = brush,
-                    startAngle = 0f, // Now starts from right (0 degrees) but canvas is rotated
-                    sweepAngle = sweepAngle,
-                    useCenter = false,
-                    topLeft = Offset(center.x - radius, center.y - radius),
-                    size = androidx.compose.ui.geometry.Size(radius * 2, radius * 2),
-                    style = Stroke(width = strokeWidthPx, cap = StrokeCap.Round)
-                )
-            }
+        val sweepAngle = 360f * progress
+        
+        // Create gradient brush - start from right (0 degrees)
+        val brush = if (colors.size > 1) {
+            Brush.sweepGradient(
+                colors = colors,
+                center = center
+            )
+        } else {
+            SolidColor(colors.firstOrNull() ?: Color.Blue)
+        }
+        
+        // Rotate the canvas to align gradient with progress arc
+        rotate(-90f, center) {
+            // Progress arc - Start from top like Swift
+            drawArc(
+                brush = brush,
+                startAngle = 0f, // Now starts from right (0 degrees) but canvas is rotated
+                sweepAngle = sweepAngle,
+                useCenter = false,
+                topLeft = Offset(center.x - radius, center.y - radius),
+                size = androidx.compose.ui.geometry.Size(radius * 2, radius * 2),
+                style = Stroke(width = strokeWidthPx, cap = StrokeCap.Round)
+            )
         }
     }
 }
@@ -113,6 +112,7 @@ fun MonthlyProgressRingView(
             ProgressRing(
                 progress = progressPercentage.toFloat(),
                 isLimitOver = isOverLimit,
+                modifier = Modifier.size(120.dp),
                 onClick = onTap
             )
             Column(
@@ -154,7 +154,8 @@ fun DailyProgressRingView(
         ) {
             ProgressRing(
                 progress = dailyProgressPercentage.toFloat(),
-                isLimitOver = isOverDailyLimit
+                isLimitOver = isOverDailyLimit,
+                modifier = Modifier.size(120.dp)
             )
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally

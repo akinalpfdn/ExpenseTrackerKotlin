@@ -149,11 +149,7 @@ class ExpenseViewModel(
                 val totalAmount = dayExpenses.sumOf { it.getAmountInDefaultCurrency(defaultCurrency) }
                 val expenseCount = dayExpenses.size
                 
-                val averageDailyLimit = if (dayExpenses.isEmpty()) {
-                    dailyLimitValue
-                } else {
-                    dayExpenses.sumOf { it.dailyLimitAtCreation } / dayExpenses.size
-                }
+                val averageDailyLimit = dailyLimitValue
                 
                 DailyData(
                     date = date,
