@@ -22,6 +22,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.material3.MenuAnchorType
+import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -36,13 +37,8 @@ fun SettingsScreen(
     onThemeChanged: (String) -> Unit,
     onDismiss: () -> Unit
 ) {
-    var newDefaultCurrency by remember { mutableStateOf(defaultCurrency) }
-    var newDailyLimit by remember { mutableStateOf(dailyLimit) }
-    var newMonthlyLimit by remember { mutableStateOf(monthlyLimit) }
-    var newTheme by remember { mutableStateOf(theme) }
-    var showCurrencyMenu by remember { mutableStateOf(false) }
-    
-    val currencies = listOf("₺", "$", "€", "£")//, "¥", "₹", "₽", "₩", "₪", "₦", "₨", "₴", "₸", "₼", "₾", "₿")
+    var selectedTabIndex by remember { mutableStateOf(0) }
+    val tabs = listOf("Genel Ayarlar", "Kategoriler")
     
     val isDarkTheme = theme == "dark"
     
@@ -50,28 +46,90 @@ fun SettingsScreen(
         modifier = Modifier
             .fillMaxSize()
             .background(ThemeColors.getBackgroundColor(isDarkTheme))
-            .verticalScroll(rememberScrollState())
     ) {
-        Spacer(modifier = Modifier.height(20.dp))
-        
-        // Header
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 20.dp)
-        ) {
-            Text(
-                text = "Ayarlar",
-                fontSize = 32.sp,
-                fontWeight = FontWeight.Bold,
-                color = ThemeColors.getTextColor(isDarkTheme)
-            )
 
+        
+        // Tab Row
+        TabRow(
+            selectedTabIndex = selectedTabIndex,
+            modifier = Modifier.padding(horizontal = 20.dp),
+            containerColor = ThemeColors.getBackgroundColor(isDarkTheme),
+            contentColor = AppColors.PrimaryOrange,
+            indicator = { tabPositions ->
+                TabRowDefaults.Indicator(
+                    modifier = Modifier.tabIndicatorOffset(tabPositions[selectedTabIndex]),
+                    height = 3.dp,
+                    color = AppColors.PrimaryOrange
+                )
+            }
+        ) {
+            tabs.forEachIndexed { index, title ->
+                Tab(
+                    selected = selectedTabIndex == index,
+                    onClick = { selectedTabIndex = index },
+                    text = {
+                        Text(
+                            text = title,
+                            fontSize = 22.sp,
+                            fontWeight = if (selectedTabIndex == index) FontWeight.SemiBold else FontWeight.Normal,
+                            color = if (selectedTabIndex == index) AppColors.PrimaryOrange else ThemeColors.getTextGrayColor(isDarkTheme)
+                        )
+                    },
+                    modifier = Modifier.padding(vertical = 8.dp)
+                )
+            }
         }
         
-        Spacer(modifier = Modifier.height(32.dp))
+        Spacer(modifier = Modifier.height(16.dp))
         
+        // Tab Content
+        when (selectedTabIndex) {
+            0 -> GeneralSettingsTab(
+                defaultCurrency = defaultCurrency,
+                dailyLimit = dailyLimit,
+                monthlyLimit = monthlyLimit,
+                theme = theme,
+                onCurrencyChanged = onCurrencyChanged,
+                onDailyLimitChanged = onDailyLimitChanged,
+                onMonthlyLimitChanged = onMonthlyLimitChanged,
+                onThemeChanged = onThemeChanged,
+                onDismiss = onDismiss,
+                isDarkTheme = isDarkTheme
+            )
+            1 -> CategoriesTab(
+                isDarkTheme = isDarkTheme
+            )
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun GeneralSettingsTab(
+    defaultCurrency: String,
+    dailyLimit: String,
+    monthlyLimit: String,
+    theme: String,
+    onCurrencyChanged: (String) -> Unit,
+    onDailyLimitChanged: (String) -> Unit,
+    onMonthlyLimitChanged: (String) -> Unit,
+    onThemeChanged: (String) -> Unit,
+    onDismiss: () -> Unit,
+    isDarkTheme: Boolean
+) {
+    var newDefaultCurrency by remember { mutableStateOf(defaultCurrency) }
+    var newDailyLimit by remember { mutableStateOf(dailyLimit) }
+    var newMonthlyLimit by remember { mutableStateOf(monthlyLimit) }
+    var newTheme by remember { mutableStateOf(theme) }
+    var showCurrencyMenu by remember { mutableStateOf(false) }
+    
+    val currencies = listOf("₺", "$", "€", "£")
+    
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState())
+    ) {
         // Settings Form
         Column(
             modifier = Modifier
@@ -108,7 +166,7 @@ fun SettingsScreen(
                                 color = ThemeColors.getTextGrayColor(isDarkTheme),
                                 shape = RoundedCornerShape(12.dp)
                             )
-                            .menuAnchor(MenuAnchorType.PrimaryNotEditable) // Changed this line
+                            .menuAnchor(MenuAnchorType.PrimaryNotEditable)
                     ) {
                         Row(
                             modifier = Modifier.fillMaxSize(),
@@ -241,13 +299,13 @@ fun SettingsScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(40.dp)
-                                                    .background(
-                                ThemeColors.getInputBackgroundColor(isDarkTheme),
-                                RoundedCornerShape(12.dp)
-                            )
-                            .border(
-                                width = 1.dp,
-                                color = ThemeColors.getTextGrayColor(isDarkTheme),
+                        .background(
+                            ThemeColors.getInputBackgroundColor(isDarkTheme),
+                            RoundedCornerShape(12.dp)
+                        )
+                        .border(
+                            width = 1.dp,
+                            color = ThemeColors.getTextGrayColor(isDarkTheme),
                             shape = RoundedCornerShape(12.dp)
                         )
                 ) {
@@ -333,10 +391,9 @@ fun SettingsScreen(
                     color = ThemeColors.getTextGrayColor(isDarkTheme)
                 )
             }
-            
-
         }
-
+        
+        Spacer(modifier = Modifier.height(20.dp))
         
         // Buttons
         Row(
@@ -387,5 +444,34 @@ fun SettingsScreen(
                 )
             }
         }
+    }
+}
+
+@Composable
+fun CategoriesTab(
+    isDarkTheme: Boolean
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(20.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        Text(
+            text = "Kategoriler",
+            fontSize = 24.sp,
+            fontWeight = FontWeight.Bold,
+            color = ThemeColors.getTextColor(isDarkTheme)
+        )
+        
+        Spacer(modifier = Modifier.height(16.dp))
+        
+        Text(
+            text = "Kategori yönetimi yakında eklenecek",
+            fontSize = 16.sp,
+            color = ThemeColors.getTextGrayColor(isDarkTheme),
+            textAlign = androidx.compose.ui.text.style.TextAlign.Center
+        )
     }
 }
