@@ -204,7 +204,7 @@ class ExpenseViewModel(
         return expenses
     }
     
-    private fun isRecurringExpenseActiveOnDate(expense: Expense, targetDate: LocalDateTime): Boolean {
+    fun isRecurringExpenseActiveOnDate(expense: Expense, targetDate: LocalDateTime): Boolean {
         // Check if target date is before start date (exclude the start date itself)
         if (targetDate.isBefore(expense.date.toLocalDate().atStartOfDay())) {
             return false
@@ -255,9 +255,156 @@ class ExpenseViewModel(
         }
     }
     
+    // Similar to isRecurringExpenseActiveOnDate but ignores end date check
+    private fun isRecurringExpenseActiveOnDateIgnoringEndDate(expense: Expense, targetDate: LocalDateTime): Boolean {
+        // Check if target date is before start date (exclude the start date itself)
+        if (targetDate.isBefore(expense.date.toLocalDate().atStartOfDay())) {
+            return false
+        }
+        
+        // Don't check end date - this is used when generating new expenses
+        
+        return when (expense.recurrenceType) {
+            RecurrenceType.DAILY -> true
+            RecurrenceType.WEEKDAYS -> {
+                val dayOfWeek = targetDate.dayOfWeek.value
+                dayOfWeek in 1..5 // Monday = 1, Friday = 5
+            }
+            RecurrenceType.WEEKLY -> {
+                // Check if it's the same day of week
+                val startDayOfWeek = expense.date.dayOfWeek
+                val targetDayOfWeek = targetDate.dayOfWeek
+                
+                if (startDayOfWeek != targetDayOfWeek) {
+                    return false
+                }
+                
+                // Check if it's the same week or a future week
+                val startWeek = expense.date.toLocalDate().with(java.time.DayOfWeek.MONDAY)
+                val targetWeek = targetDate.toLocalDate().with(java.time.DayOfWeek.MONDAY)
+                val weeksBetween = java.time.temporal.ChronoUnit.WEEKS.between(startWeek, targetWeek)
+                weeksBetween >= 0 && weeksBetween % 1 == 0L
+            }
+            RecurrenceType.MONTHLY -> {
+                val startDayOfMonth = expense.date.dayOfMonth
+                val targetDayOfMonth = targetDate.dayOfMonth
+                
+                // Check if it's the same day of month
+                if (startDayOfMonth != targetDayOfMonth) {
+                    return false
+                }
+                
+                // Check if it's the same month or a future month
+                val startMonth = expense.date.toLocalDate().withDayOfMonth(1)
+                val targetMonth = targetDate.toLocalDate().withDayOfMonth(1)
+                val monthsBetween = java.time.temporal.ChronoUnit.MONTHS.between(startMonth, targetMonth)
+                monthsBetween >= 0 && monthsBetween % 1 == 0L
+            }
+            RecurrenceType.NONE -> false
+        }
+    }
+    
     fun updateExpense(expense: Expense) {
         viewModelScope.launch {
             expenseRepository.updateExpense(expense)
+        }
+    }
+    
+    fun updateRecurringExpenseEndDate(
+        baseExpense: Expense,
+        newEndDate: LocalDateTime,
+        newAmount: Double,
+        newDescription: String,
+        newExchangeRate: Double?
+    ) {
+        viewModelScope.launch {
+            val oldEndDate = baseExpense.endDate ?: LocalDateTime.now().plusYears(1)
+            val today = LocalDateTime.now()
+            
+            // Get all existing expenses with the same recurrence group ID
+            val existingExpenses = _expenses.value.filter { 
+                it.recurrenceGroupId == baseExpense.recurrenceGroupId 
+            }.sortedBy { it.date }
+            
+            if (newEndDate.isBefore(oldEndDate)) {
+                // End date decreased - delete expenses after new end date
+                val expensesToDelete = existingExpenses.filter { 
+                    it.date.isAfter(newEndDate) 
+                }
+                expensesToDelete.forEach { 
+                    expenseRepository.deleteExpenseById(it.id) 
+                }
+                
+                // Update remaining expenses with new values (only from today onwards)
+                val expensesToUpdate = existingExpenses.filter { 
+                    !it.date.isAfter(newEndDate) && 
+                    it.date.toLocalDate().isAfter(today.toLocalDate().minusDays(1)) // Today and future
+                }
+                expensesToUpdate.forEach { existingExpense ->
+                    val updatedExpense = existingExpense.copy(
+                        amount = newAmount,
+                        description = newDescription,
+                        exchangeRate = newExchangeRate,
+                        endDate = newEndDate
+                    )
+                    expenseRepository.updateExpense(updatedExpense)
+                }
+            } else if (newEndDate.isAfter(oldEndDate)) {
+                // End date increased - update existing expenses and add new ones
+                
+                // Update existing expenses with new values (only from today onwards)
+                val expensesToUpdate = existingExpenses.filter { 
+                    it.date.toLocalDate().isAfter(today.toLocalDate().minusDays(1)) // Today and future
+                }
+                expensesToUpdate.forEach { existingExpense ->
+                    val updatedExpense = existingExpense.copy(
+                        amount = newAmount,
+                        description = newDescription,
+                        exchangeRate = newExchangeRate,
+                        endDate = newEndDate
+                    )
+                    expenseRepository.updateExpense(updatedExpense)
+                }
+                
+                // Generate new expenses from old end date to new end date
+                val startDate = oldEndDate.plusDays(1)
+                
+                // Get existing dates to avoid duplicates
+                val existingDates = existingExpenses.map { it.date.toLocalDate() }.toSet()
+                
+                var currentDate = startDate
+                while (!currentDate.isAfter(newEndDate)) {
+                    // Check if this date should have a recurring expense and doesn't already exist
+                    if (isRecurringExpenseActiveOnDateIgnoringEndDate(baseExpense, currentDate) && 
+                        !existingDates.contains(currentDate.toLocalDate())) {
+                        val newExpense = baseExpense.copy(
+                            id = UUID.randomUUID().toString(),
+                            date = currentDate,
+                            amount = newAmount,
+                            description = newDescription,
+                            exchangeRate = newExchangeRate,
+                            endDate = newEndDate,
+                            recurrenceGroupId = baseExpense.recurrenceGroupId // Keep the same group ID
+                        )
+                        expenseRepository.insertExpense(newExpense)
+                    }
+                    currentDate = currentDate.plusDays(1)
+                }
+            } else {
+                // End date unchanged - just update existing expenses (only from today onwards)
+                val expensesToUpdate = existingExpenses.filter { 
+                    it.date.toLocalDate().isAfter(today.toLocalDate().minusDays(1)) // Today and future
+                }
+                expensesToUpdate.forEach { existingExpense ->
+                    val updatedExpense = existingExpense.copy(
+                        amount = newAmount,
+                        description = newDescription,
+                        exchangeRate = newExchangeRate,
+                        endDate = newEndDate
+                    )
+                    expenseRepository.updateExpense(updatedExpense)
+                }
+            }
         }
     }
     

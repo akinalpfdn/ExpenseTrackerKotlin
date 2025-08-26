@@ -581,32 +581,21 @@ fun RecurringExpenseCard(
                                     onClick = {
                                         val newAmount = editAmount.toDoubleOrNull()
                                         if (newAmount != null && newAmount > 0) {
-                                            // Update all expenses with the same recurrence group ID that are from today onwards
-                                            val today = java.time.LocalDate.now()
-                                            val expensesToUpdate = viewModel.expenses.value.filter { 
-                                                it.recurrenceGroupId == expense.recurrenceGroupId &&
-                                                it.date.toLocalDate().isAfter(today.minusDays(1)) // Today and future
-                                            }
-                                            
                                             val newEndDate = tempEndDate
-                                            
-                                            expensesToUpdate.forEach { 
-                                                val updatedExpenseWithSameId = expense.copy(
-                                                    id = it.id,
-                                                    amount = newAmount,
-                                                    description = editDescription,
-                                                    exchangeRate = if (expense.currency != viewModel.defaultCurrency) {
-                                                        editExchangeRate.toDoubleOrNull()
-                                                    } else {
-                                                        null
-                                                    },
-                                                    endDate = newEndDate,
-                                                    date = it.date, // Keep original date for each occurrence
-                                                    recurrenceType = it.recurrenceType, // Keep original recurrence type
-                                                    recurrenceGroupId = it.recurrenceGroupId // Keep original group ID
-                                                )
-                                                viewModel.updateExpense(updatedExpenseWithSameId)
+                                            val newExchangeRate = if (expense.currency != viewModel.defaultCurrency) {
+                                                editExchangeRate.toDoubleOrNull()
+                                            } else {
+                                                null
                                             }
+                                            
+                                            // Use the new method to handle end date changes properly
+                                            viewModel.updateRecurringExpenseEndDate(
+                                                baseExpense = expense,
+                                                newEndDate = newEndDate,
+                                                newAmount = newAmount,
+                                                newDescription = editDescription,
+                                                newExchangeRate = newExchangeRate
+                                            )
                                         }
                                         isEditing = false
                                     },
