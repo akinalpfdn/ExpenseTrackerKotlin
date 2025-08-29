@@ -433,7 +433,7 @@ fun ExpensesScreen(
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .heightIn(max = 700.dp)
+                    .heightIn(max = 750.dp)
             ) {
                 SettingsScreen(
                     defaultCurrency = viewModel.defaultCurrency,
