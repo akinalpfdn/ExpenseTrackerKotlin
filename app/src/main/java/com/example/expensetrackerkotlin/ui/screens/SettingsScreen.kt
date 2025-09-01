@@ -17,6 +17,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import com.example.expensetrackerkotlin.ui.theme.AppColors
 import com.example.expensetrackerkotlin.ui.theme.ThemeColors
+import com.example.expensetrackerkotlin.ui.components.CategoryManagementScreen
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
@@ -96,7 +97,7 @@ fun SettingsScreen(
                 onDismiss = onDismiss,
                 isDarkTheme = isDarkTheme
             )
-            1 -> CategoriesTab(
+            1 -> CategoryManagementScreen(
                 isDarkTheme = isDarkTheme
             )
         }
@@ -447,31 +448,3 @@ fun GeneralSettingsTab(
     }
 }
 
-@Composable
-fun CategoriesTab(
-    isDarkTheme: Boolean
-) {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(20.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
-    ) {
-        Text(
-            text = "Kategoriler",
-            fontSize = 24.sp,
-            fontWeight = FontWeight.Bold,
-            color = ThemeColors.getTextColor(isDarkTheme)
-        )
-        
-        Spacer(modifier = Modifier.height(16.dp))
-        
-        Text(
-            text = "Kategori yönetimi yakında eklenecek",
-            fontSize = 16.sp,
-            color = ThemeColors.getTextGrayColor(isDarkTheme),
-            textAlign = androidx.compose.ui.text.style.TextAlign.Center
-        )
-    }
-}
