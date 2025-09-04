@@ -180,15 +180,19 @@ fun CategoryManagementScreen(
                      selectedCategory = null
                      selectedSubcategory = null
                  },
-                 onConfirm = { newName ->
-                     // Update category or subcategory name
+                 onConfirm = { newName, iconName, colorHex ->
+                     // Update category or subcategory
                      if (selectedSubcategory != null) {
-                         // Update subcategory
+                         // Update subcategory (only name)
                          val updatedSubCategory = selectedSubcategory!!.copy(name = newName)
                          viewModel.updateSubCategory(updatedSubCategory)
-                     } else if (selectedCategory != null) {
-                         // Update category
-                         val updatedCategory = selectedCategory!!.copy(name = newName)
+                     } else if (selectedCategory != null && iconName != null && colorHex != null) {
+                         // Update category (name, icon, and color)
+                         val updatedCategory = selectedCategory!!.copy(
+                             name = newName,
+                             iconName = iconName,
+                             colorHex = colorHex
+                         )
                          viewModel.updateCategory(updatedCategory)
                      }
                      showEditCategoryDialog = false
@@ -258,7 +262,36 @@ private fun AddMainCategoryDialog(
          "restaurant_menu" to Icons.Default.RestaurantMenu,
          "local_gas_station" to Icons.Default.LocalGasStation,
          "phone" to Icons.Default.Phone,
-         "computer" to Icons.Default.Computer
+         "computer" to Icons.Default.Computer,
+         "book" to Icons.Default.Book,
+         "cake" to Icons.Default.Cake,
+         "coffee" to Icons.Default.Coffee,
+         "directions_bus" to Icons.Default.DirectionsBus,
+         "directions_walk" to Icons.Default.DirectionsWalk,
+         "eco" to Icons.Default.Eco,
+         "fitness_center" to Icons.Default.FitnessCenter,
+         "gavel" to Icons.Default.Gavel,
+         "healing" to Icons.Default.Healing,
+         "kitchen" to Icons.Default.Kitchen,
+         "local_laundry_service" to Icons.Default.LocalLaundryService,
+         "local_pharmacy" to Icons.Default.LocalPharmacy,
+         "local_pizza" to Icons.Default.LocalPizza,
+         "local_shipping" to Icons.Default.LocalShipping,
+         "lunch_dining" to Icons.Default.LunchDining,
+         "monetization_on" to Icons.Default.MonetizationOn,
+         "palette" to Icons.Default.Palette,
+         "park" to Icons.Default.Park,
+         "pool" to Icons.Default.Pool,
+         "psychology" to Icons.Default.Psychology,
+         "receipt" to Icons.Default.Receipt,
+         "security" to Icons.Default.Security,
+         "spa" to Icons.Default.Spa,
+         "star" to Icons.Default.Star,
+         "theater_comedy" to Icons.Default.TheaterComedy,
+         "toys" to Icons.Default.Toys,
+         "volunteer_activism" to Icons.Default.VolunteerActivism,
+         "water_drop" to Icons.Default.WaterDrop,
+         "wifi" to Icons.Default.Wifi
      )
      
      // Available colors
@@ -634,16 +667,85 @@ private fun EditCategoryDialog(
     category: com.example.expensetrackerkotlin.data.Category?,
     subcategory: com.example.expensetrackerkotlin.data.SubCategory?,
     onDismiss: () -> Unit,
-    onConfirm: (String) -> Unit,
+    onConfirm: (String, String?, String?) -> Unit, // name, iconName (null for subcategories), colorHex (null for subcategories)
     isDarkTheme: Boolean
 ) {
      var editName by remember { mutableStateOf("") }
+     var selectedIconName by remember { mutableStateOf("category") }
+     var selectedColorHex by remember { mutableStateOf("#FF9500") }
+     
+     // Available icons (same as AddMainCategoryDialog)
+     val availableIcons = listOf(
+         "restaurant" to Icons.Default.Restaurant,
+         "home" to Icons.Default.Home,
+         "directions_car" to Icons.Default.DirectionsCar,
+         "local_hospital" to Icons.Default.LocalHospital,
+         "movie" to Icons.Default.Movie,
+         "school" to Icons.Default.School,
+         "shopping_cart" to Icons.Default.ShoppingCart,
+         "pets" to Icons.Default.Pets,
+         "work" to Icons.Default.Work,
+         "account_balance" to Icons.Default.AccountBalance,
+         "favorite" to Icons.Default.Favorite,
+         "category" to Icons.Default.Category,
+         "sports" to Icons.Default.Sports,
+         "music_note" to Icons.Default.MusicNote,
+         "flight" to Icons.Default.Flight,
+         "hotel" to Icons.Default.Hotel,
+         "restaurant_menu" to Icons.Default.RestaurantMenu,
+         "local_gas_station" to Icons.Default.LocalGasStation,
+         "phone" to Icons.Default.Phone,
+         "computer" to Icons.Default.Computer,
+         "book" to Icons.Default.Book,
+         "cake" to Icons.Default.Cake,
+         "coffee" to Icons.Default.Coffee,
+         "directions_bus" to Icons.Default.DirectionsBus,
+         "directions_walk" to Icons.Default.DirectionsWalk,
+         "eco" to Icons.Default.Eco,
+         "fitness_center" to Icons.Default.FitnessCenter,
+         "gavel" to Icons.Default.Gavel,
+         "healing" to Icons.Default.Healing,
+         "kitchen" to Icons.Default.Kitchen,
+         "local_laundry_service" to Icons.Default.LocalLaundryService,
+         "local_pharmacy" to Icons.Default.LocalPharmacy,
+         "local_pizza" to Icons.Default.LocalPizza,
+         "local_shipping" to Icons.Default.LocalShipping,
+         "lunch_dining" to Icons.Default.LunchDining,
+         "monetization_on" to Icons.Default.MonetizationOn,
+         "palette" to Icons.Default.Palette,
+         "park" to Icons.Default.Park,
+         "pool" to Icons.Default.Pool,
+         "psychology" to Icons.Default.Psychology,
+         "receipt" to Icons.Default.Receipt,
+         "security" to Icons.Default.Security,
+         "spa" to Icons.Default.Spa,
+         "star" to Icons.Default.Star,
+         "theater_comedy" to Icons.Default.TheaterComedy,
+         "toys" to Icons.Default.Toys,
+         "volunteer_activism" to Icons.Default.VolunteerActivism,
+         "water_drop" to Icons.Default.WaterDrop,
+         "wifi" to Icons.Default.Wifi
+     )
+     
+     // Available colors (same as AddMainCategoryDialog)
+     val availableColors = listOf(
+         "#FF9500", "#007AFF", "#34C759", "#FF2D92", "#9D73E3",
+         "#5856D6", "#FF3B30", "#64D2FF", "#5AC8FA", "#FFD60A",
+         "#30D158", "#3F51B5", "#FF6B35", "#4ECDC4", "#45B7D1",
+         "#96CEB4", "#FFEAA7", "#DDA0DD", "#98D8C8", "#F7DC6F"
+     )
      
      LaunchedEffect(category, subcategory) {
          editName = when {
              subcategory != null -> subcategory.name
              category != null -> category.name
              else -> ""
+         }
+         
+         // Set icon and color for categories (not subcategories)
+         if (category != null) {
+             selectedIconName = category.iconName
+             selectedColorHex = category.colorHex
          }
      }
      
@@ -663,67 +765,168 @@ private fun EditCategoryDialog(
          },
          text = {
              Column(
-                 verticalArrangement = Arrangement.spacedBy(8.dp)
+                 verticalArrangement = Arrangement.spacedBy(16.dp)
              ) {
-                 Text(
-                     text = "Ad",
-                     fontSize = 18.sp,
-                     fontWeight = FontWeight.Medium,
-                     color = ThemeColors.getTextColor(isDarkTheme)
-                 )
-                 
-                 Box(
-                     modifier = Modifier
-                         .fillMaxWidth()
-                         .height(40.dp)
-                         .background(
-                             ThemeColors.getInputBackgroundColor(isDarkTheme),
-                             RoundedCornerShape(12.dp)
-                         )
-                         .border(
-                             width = 1.dp,
-                             color = ThemeColors.getTextGrayColor(isDarkTheme),
-                             shape = RoundedCornerShape(12.dp)
-                         )
+                 // Name Input
+                 Column(
+                     verticalArrangement = Arrangement.spacedBy(8.dp)
                  ) {
-                     BasicTextField(
-                         value = editName,
-                         onValueChange = { editName = it },
-                         modifier = Modifier
-                             .fillMaxSize()
-                             .padding(horizontal = 12.dp),
-                         singleLine = true,
-                         textStyle = androidx.compose.ui.text.TextStyle(
-                             fontSize = 14.sp,
-                             color = ThemeColors.getTextColor(isDarkTheme)
-                         ),
-                         decorationBox = { innerTextField ->
-                             Box(
-                                 contentAlignment = Alignment.CenterStart
-                             ) {
-                                 if (editName.isEmpty()) {
-                                     Text(
-                                         text = "Ad girin",
-                                         fontSize = 14.sp,
-                                         color = ThemeColors.getTextGrayColor(isDarkTheme)
-                                     )
-                                 }
-                                 innerTextField()
-                             }
-                         }
+                     Text(
+                         text = "Ad",
+                         fontSize = 18.sp,
+                         fontWeight = FontWeight.Medium,
+                         color = ThemeColors.getTextColor(isDarkTheme)
                      )
+                     
+                     Box(
+                         modifier = Modifier
+                             .fillMaxWidth()
+                             .height(40.dp)
+                             .background(
+                                 ThemeColors.getInputBackgroundColor(isDarkTheme),
+                                 RoundedCornerShape(12.dp)
+                             )
+                             .border(
+                                 width = 1.dp,
+                                 color = ThemeColors.getTextGrayColor(isDarkTheme),
+                                 shape = RoundedCornerShape(12.dp)
+                             )
+                     ) {
+                         BasicTextField(
+                             value = editName,
+                             onValueChange = { editName = it },
+                             modifier = Modifier
+                                 .fillMaxSize()
+                                 .padding(horizontal = 12.dp),
+                             singleLine = true,
+                             textStyle = androidx.compose.ui.text.TextStyle(
+                                 fontSize = 14.sp,
+                                 color = ThemeColors.getTextColor(isDarkTheme)
+                             ),
+                             decorationBox = { innerTextField ->
+                                 Box(
+                                     contentAlignment = Alignment.CenterStart
+                                 ) {
+                                     if (editName.isEmpty()) {
+                                         Text(
+                                             text = "Ad girin",
+                                             fontSize = 14.sp,
+                                             color = ThemeColors.getTextGrayColor(isDarkTheme)
+                                         )
+                                     }
+                                     innerTextField()
+                                 }
+                             }
+                         )
+                     }
                  }
                  
-                 Text(
-                     text = "Kategori veya alt kategori için yeni ad belirleyin",
-                     fontSize = 14.sp,
-                     color = ThemeColors.getTextGrayColor(isDarkTheme)
-                 )
+                 // Icon and Color Selection (only for categories, not subcategories)
+                 if (category != null) {
+                     // Icon Selection
+                     Column(
+                         verticalArrangement = Arrangement.spacedBy(8.dp)
+                     ) {
+                         Text(
+                             text = "İkon Seçimi",
+                             fontSize = 18.sp,
+                             fontWeight = FontWeight.Medium,
+                             color = ThemeColors.getTextColor(isDarkTheme)
+                         )
+                         
+                         LazyRow(
+                             horizontalArrangement = Arrangement.spacedBy(8.dp)
+                         ) {
+                             items(availableIcons.size) { index ->
+                                 val (iconName, icon) = availableIcons[index]
+                                 val isSelected = selectedIconName == iconName
+                                 
+                                 Box(
+                                     modifier = Modifier
+                                         .size(48.dp)
+                                         .background(
+                                             if (isSelected) Color(android.graphics.Color.parseColor(selectedColorHex)).copy(alpha = 0.2f) 
+                                             else ThemeColors.getInputBackgroundColor(isDarkTheme),
+                                             CircleShape
+                                         )
+                                         .border(
+                                             width = if (isSelected) 2.dp else 1.dp,
+                                             color = if (isSelected) Color(android.graphics.Color.parseColor(selectedColorHex)) 
+                                                    else ThemeColors.getTextGrayColor(isDarkTheme),
+                                             shape = CircleShape
+                                         )
+                                         .clickable { selectedIconName = iconName },
+                                     contentAlignment = Alignment.Center
+                                 ) {
+                                     Icon(
+                                         imageVector = icon,
+                                         contentDescription = iconName,
+                                         modifier = Modifier.size(24.dp),
+                                         tint = if (isSelected) Color(android.graphics.Color.parseColor(selectedColorHex))
+                                               else ThemeColors.getTextGrayColor(isDarkTheme)
+                                     )
+                                 }
+                             }
+                         }
+                     }
+                     
+                     // Color Selection
+                     Column(
+                         verticalArrangement = Arrangement.spacedBy(8.dp)
+                     ) {
+                         Text(
+                             text = "Renk Seçimi",
+                             fontSize = 18.sp,
+                             fontWeight = FontWeight.Medium,
+                             color = ThemeColors.getTextColor(isDarkTheme)
+                         )
+                         
+                         LazyRow(
+                             horizontalArrangement = Arrangement.spacedBy(8.dp)
+                         ) {
+                             items(availableColors.size) { index ->
+                                 val colorHex = availableColors[index]
+                                 val isSelected = selectedColorHex == colorHex
+                                 
+                                 Box(
+                                     modifier = Modifier
+                                         .size(40.dp)
+                                         .background(
+                                             Color(android.graphics.Color.parseColor(colorHex)),
+                                             CircleShape
+                                         )
+                                         .border(
+                                             width = if (isSelected) 3.dp else 1.dp,
+                                             color = if (isSelected) Color.White else Color.Transparent,
+                                             shape = CircleShape
+                                         )
+                                         .clickable { selectedColorHex = colorHex },
+                                     contentAlignment = Alignment.Center
+                                 ) {
+                                     if (isSelected) {
+                                         Icon(
+                                             imageVector = Icons.Default.Check,
+                                             contentDescription = "Selected",
+                                             modifier = Modifier.size(20.dp),
+                                             tint = Color.White
+                                         )
+                                     }
+                                 }
+                             }
+                         }
+                     }
+                 }
              }
          },
          confirmButton = {
              Button(
-                 onClick = { onConfirm(editName) },
+                 onClick = { 
+                     onConfirm(
+                         editName, 
+                         if (category != null) selectedIconName else null,
+                         if (category != null) selectedColorHex else null
+                     ) 
+                 },
                  enabled = editName.isNotBlank(),
                  colors = ButtonDefaults.buttonColors(
                      containerColor = AppColors.PrimaryOrange
