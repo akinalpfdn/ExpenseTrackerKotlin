@@ -9,7 +9,7 @@ import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 import kotlinx.coroutines.launch
 
-@Database(entities = [Expense::class, Category::class, SubCategory::class], version = 5, exportSchema = false)
+@Database(entities = [Expense::class, Category::class, SubCategory::class], version = 6, exportSchema = false)
 @TypeConverters(Converters::class)
 abstract class ExpenseDatabase : RoomDatabase() {
     abstract fun expenseDao(): ExpenseDao
@@ -69,6 +69,135 @@ abstract class ExpenseDatabase : RoomDatabase() {
             }
         }
         
+        private val MIGRATION_5_6 = object : Migration(5, 6) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                // First, create a temporary table with the new structure
+                database.execSQL("""
+                    CREATE TABLE expenses_new (
+                        id TEXT PRIMARY KEY NOT NULL,
+                        amount REAL NOT NULL,
+                        currency TEXT NOT NULL,
+                        categoryId TEXT NOT NULL,
+                        subCategoryId TEXT NOT NULL,
+                        description TEXT NOT NULL,
+                        date TEXT NOT NULL,
+                        dailyLimitAtCreation REAL NOT NULL,
+                        monthlyLimitAtCreation REAL NOT NULL,
+                        exchangeRate REAL,
+                        recurrenceType TEXT NOT NULL DEFAULT 'NONE',
+                        endDate TEXT,
+                        recurrenceGroupId TEXT
+                    )
+                """)
+                
+                // Copy data from old table to new table, mapping subCategory strings to IDs
+                // We'll use a default mapping for existing data
+                database.execSQL("""
+                    INSERT INTO expenses_new (
+                        id, amount, currency, categoryId, subCategoryId, description, 
+                        date, dailyLimitAtCreation, monthlyLimitAtCreation, exchangeRate,
+                        recurrenceType, endDate, recurrenceGroupId
+                    )
+                    SELECT 
+                        id, amount, currency, 
+                        CASE 
+                            WHEN subCategory IN ('Restoran', 'Market alışverişi', 'Kafeler') THEN 
+                                (SELECT id FROM categories WHERE name = 'Gıda ve İçecek' LIMIT 1)
+                            WHEN subCategory IN ('Kira', 'Aidat', 'Mortgage ödemesi', 'Elektrik faturası', 'Su faturası', 'Isınma (doğalgaz, kalorifer)', 'İnternet ve telefon', 'Diğer Faturalar', 'Temizlik malzemeleri') THEN 
+                                (SELECT id FROM categories WHERE name = 'Konut' LIMIT 1)
+                            WHEN subCategory IN ('Benzin/Dizel', 'Toplu taşıma', 'Araç bakımı', 'Oto kiralama', 'Taksi/Uber', 'Araç sigortası', 'MTV', 'Park ücretleri') THEN 
+                                (SELECT id FROM categories WHERE name = 'Ulaşım' LIMIT 1)
+                            WHEN subCategory IN ('Doktor randevusu', 'İlaçlar', 'Spor salonu üyeliği', 'Cilt bakım ürünleri', 'Diş bakımı', 'Giyim ve aksesuar') THEN 
+                                (SELECT id FROM categories WHERE name = 'Sağlık ve Kişisel Bakım' LIMIT 1)
+                            WHEN subCategory IN ('Sinema ve tiyatro', 'Konser ve etkinlikler', 'Abonelikler (Netflix, Spotify vb.)', 'Kitaplar ve dergiler', 'Seyahat ve tatil', 'Oyunlar ve uygulamalar') THEN 
+                                (SELECT id FROM categories WHERE name = 'Eğlence ve Hobiler' LIMIT 1)
+                            WHEN subCategory IN ('Kurs ücretleri', 'Eğitim materyalleri', 'Seminerler', 'Online kurslar') THEN 
+                                (SELECT id FROM categories WHERE name = 'Eğitim' LIMIT 1)
+                            WHEN subCategory IN ('Elektronik', 'Giyim', 'Ev eşyaları', 'Hediyeler', 'Takı ve aksesuar', 'Parfüm') THEN 
+                                (SELECT id FROM categories WHERE name = 'Alışveriş' LIMIT 1)
+                            WHEN subCategory IN ('Mama ve oyuncaklar', 'Veteriner hizmetleri', 'Evcil hayvan sigortası') THEN 
+                                (SELECT id FROM categories WHERE name = 'Evcil Hayvan' LIMIT 1)
+                            WHEN subCategory IN ('İş yemekleri', 'Ofis malzemeleri', 'İş seyahatleri', 'Eğitim ve seminerler', 'Freelance iş ödemeleri') THEN 
+                                (SELECT id FROM categories WHERE name = 'İş ve Profesyonel Harcamalar' LIMIT 1)
+                            WHEN subCategory IN ('Vergi ödemeleri', 'Avukat ve danışman ücretleri') THEN 
+                                (SELECT id FROM categories WHERE name = 'Vergi ve Hukuki Harcamalar' LIMIT 1)
+                            WHEN subCategory IN ('Hayır kurumları', 'Yardımlar ve bağışlar', 'Çevre ve toplum projeleri') THEN 
+                                (SELECT id FROM categories WHERE name = 'Bağışlar ve Yardımlar' LIMIT 1)
+                            ELSE 
+                                (SELECT id FROM categories WHERE name = 'Diğer Ödemeler' LIMIT 1)
+                        END as categoryId,
+                        CASE 
+                            WHEN subCategory = 'Restoran' THEN (SELECT id FROM subcategories WHERE name = 'Restoran' LIMIT 1)
+                            WHEN subCategory = 'Market alışverişi' THEN (SELECT id FROM subcategories WHERE name = 'Market alışverişi' LIMIT 1)
+                            WHEN subCategory = 'Kafeler' THEN (SELECT id FROM subcategories WHERE name = 'Kafeler' LIMIT 1)
+                            WHEN subCategory = 'Kira' THEN (SELECT id FROM subcategories WHERE name = 'Kira' LIMIT 1)
+                            WHEN subCategory = 'Aidat' THEN (SELECT id FROM subcategories WHERE name = 'Aidat' LIMIT 1)
+                            WHEN subCategory = 'Mortgage ödemesi' THEN (SELECT id FROM subcategories WHERE name = 'Mortgage ödemesi' LIMIT 1)
+                            WHEN subCategory = 'Elektrik faturası' THEN (SELECT id FROM subcategories WHERE name = 'Elektrik faturası' LIMIT 1)
+                            WHEN subCategory = 'Su faturası' THEN (SELECT id FROM subcategories WHERE name = 'Su faturası' LIMIT 1)
+                            WHEN subCategory = 'Isınma (doğalgaz, kalorifer)' THEN (SELECT id FROM subcategories WHERE name = 'Isınma (doğalgaz, kalorifer)' LIMIT 1)
+                            WHEN subCategory = 'İnternet ve telefon' THEN (SELECT id FROM subcategories WHERE name = 'İnternet ve telefon' LIMIT 1)
+                            WHEN subCategory = 'Diğer Faturalar' THEN (SELECT id FROM subcategories WHERE name = 'Diğer Faturalar' LIMIT 1)
+                            WHEN subCategory = 'Temizlik malzemeleri' THEN (SELECT id FROM subcategories WHERE name = 'Temizlik malzemeleri' LIMIT 1)
+                            WHEN subCategory = 'Benzin/Dizel' THEN (SELECT id FROM subcategories WHERE name = 'Benzin/Dizel' LIMIT 1)
+                            WHEN subCategory = 'Toplu taşıma' THEN (SELECT id FROM subcategories WHERE name = 'Toplu taşıma' LIMIT 1)
+                            WHEN subCategory = 'Araç bakımı' THEN (SELECT id FROM subcategories WHERE name = 'Araç bakımı' LIMIT 1)
+                            WHEN subCategory = 'Oto kiralama' THEN (SELECT id FROM subcategories WHERE name = 'Oto kiralama' LIMIT 1)
+                            WHEN subCategory = 'Taksi/Uber' THEN (SELECT id FROM subcategories WHERE name = 'Taksi/Uber' LIMIT 1)
+                            WHEN subCategory = 'Araç sigortası' THEN (SELECT id FROM subcategories WHERE name = 'Araç sigortası' LIMIT 1)
+                            WHEN subCategory = 'MTV' THEN (SELECT id FROM subcategories WHERE name = 'MTV' LIMIT 1)
+                            WHEN subCategory = 'Park ücretleri' THEN (SELECT id FROM subcategories WHERE name = 'Park ücretleri' LIMIT 1)
+                            WHEN subCategory = 'Doktor randevusu' THEN (SELECT id FROM subcategories WHERE name = 'Doktor randevusu' LIMIT 1)
+                            WHEN subCategory = 'İlaçlar' THEN (SELECT id FROM subcategories WHERE name = 'İlaçlar' LIMIT 1)
+                            WHEN subCategory = 'Spor salonu üyeliği' THEN (SELECT id FROM subcategories WHERE name = 'Spor salonu üyeliği' LIMIT 1)
+                            WHEN subCategory = 'Cilt bakım ürünleri' THEN (SELECT id FROM subcategories WHERE name = 'Cilt bakım ürünleri' LIMIT 1)
+                            WHEN subCategory = 'Diş bakımı' THEN (SELECT id FROM subcategories WHERE name = 'Diş bakımı' LIMIT 1)
+                            WHEN subCategory = 'Giyim ve aksesuar' THEN (SELECT id FROM subcategories WHERE name = 'Giyim ve aksesuar' LIMIT 1)
+                            WHEN subCategory = 'Sinema ve tiyatro' THEN (SELECT id FROM subcategories WHERE name = 'Sinema ve tiyatro' LIMIT 1)
+                            WHEN subCategory = 'Konser ve etkinlikler' THEN (SELECT id FROM subcategories WHERE name = 'Konser ve etkinlikler' LIMIT 1)
+                            WHEN subCategory = 'Abonelikler (Netflix, Spotify vb.)' THEN (SELECT id FROM subcategories WHERE name = 'Abonelikler (Netflix, Spotify vb.)' LIMIT 1)
+                            WHEN subCategory = 'Kitaplar ve dergiler' THEN (SELECT id FROM subcategories WHERE name = 'Kitaplar ve dergiler' LIMIT 1)
+                            WHEN subCategory = 'Seyahat ve tatil' THEN (SELECT id FROM subcategories WHERE name = 'Seyahat ve tatil' LIMIT 1)
+                            WHEN subCategory = 'Oyunlar ve uygulamalar' THEN (SELECT id FROM subcategories WHERE name = 'Oyunlar ve uygulamalar' LIMIT 1)
+                            WHEN subCategory = 'Kurs ücretleri' THEN (SELECT id FROM subcategories WHERE name = 'Kurs ücretleri' LIMIT 1)
+                            WHEN subCategory = 'Eğitim materyalleri' THEN (SELECT id FROM subcategories WHERE name = 'Eğitim materyalleri' LIMIT 1)
+                            WHEN subCategory = 'Seminerler' THEN (SELECT id FROM subcategories WHERE name = 'Seminerler' LIMIT 1)
+                            WHEN subCategory = 'Online kurslar' THEN (SELECT id FROM subcategories WHERE name = 'Online kurslar' LIMIT 1)
+                            WHEN subCategory = 'Elektronik' THEN (SELECT id FROM subcategories WHERE name = 'Elektronik' LIMIT 1)
+                            WHEN subCategory = 'Giyim' THEN (SELECT id FROM subcategories WHERE name = 'Giyim' LIMIT 1)
+                            WHEN subCategory = 'Ev eşyaları' THEN (SELECT id FROM subcategories WHERE name = 'Ev eşyaları' LIMIT 1)
+                            WHEN subCategory = 'Hediyeler' THEN (SELECT id FROM subcategories WHERE name = 'Hediyeler' LIMIT 1)
+                            WHEN subCategory = 'Takı ve aksesuar' THEN (SELECT id FROM subcategories WHERE name = 'Takı ve aksesuar' LIMIT 1)
+                            WHEN subCategory = 'Parfüm' THEN (SELECT id FROM subcategories WHERE name = 'Parfüm' LIMIT 1)
+                            WHEN subCategory = 'Mama ve oyuncaklar' THEN (SELECT id FROM subcategories WHERE name = 'Mama ve oyuncaklar' LIMIT 1)
+                            WHEN subCategory = 'Veteriner hizmetleri' THEN (SELECT id FROM subcategories WHERE name = 'Veteriner hizmetleri' LIMIT 1)
+                            WHEN subCategory = 'Evcil hayvan sigortası' THEN (SELECT id FROM subcategories WHERE name = 'Evcil hayvan sigortası' LIMIT 1)
+                            WHEN subCategory = 'İş yemekleri' THEN (SELECT id FROM subcategories WHERE name = 'İş yemekleri' LIMIT 1)
+                            WHEN subCategory = 'Ofis malzemeleri' THEN (SELECT id FROM subcategories WHERE name = 'Ofis malzemeleri' LIMIT 1)
+                            WHEN subCategory = 'İş seyahatleri' THEN (SELECT id FROM subcategories WHERE name = 'İş seyahatleri' LIMIT 1)
+                            WHEN subCategory = 'Eğitim ve seminerler' THEN (SELECT id FROM subcategories WHERE name = 'Eğitim ve seminerler' LIMIT 1)
+                            WHEN subCategory = 'Freelance iş ödemeleri' THEN (SELECT id FROM subcategories WHERE name = 'Freelance iş ödemeleri' LIMIT 1)
+                            WHEN subCategory = 'Vergi ödemeleri' THEN (SELECT id FROM subcategories WHERE name = 'Vergi ödemeleri' LIMIT 1)
+                            WHEN subCategory = 'Avukat ve danışman ücretleri' THEN (SELECT id FROM subcategories WHERE name = 'Avukat ve danışman ücretleri' LIMIT 1)
+                            WHEN subCategory = 'Hayır kurumları' THEN (SELECT id FROM subcategories WHERE name = 'Hayır kurumları' LIMIT 1)
+                            WHEN subCategory = 'Yardımlar ve bağışlar' THEN (SELECT id FROM subcategories WHERE name = 'Yardımlar ve bağışlar' LIMIT 1)
+                            WHEN subCategory = 'Çevre ve toplum projeleri' THEN (SELECT id FROM subcategories WHERE name = 'Çevre ve toplum projeleri' LIMIT 1)
+                            WHEN subCategory = 'Diğer Harcamalar' THEN (SELECT id FROM subcategories WHERE name = 'Diğer Harcamalar' LIMIT 1)
+                            ELSE (SELECT id FROM subcategories WHERE name = 'Diğer Harcamalar' LIMIT 1)
+                        END as subCategoryId,
+                        description, date, dailyLimitAtCreation, monthlyLimitAtCreation, 
+                        exchangeRate, recurrenceType, endDate, recurrenceGroupId
+                    FROM expenses
+                """)
+                
+                // Drop the old table
+                database.execSQL("DROP TABLE expenses")
+                
+                // Rename the new table
+                database.execSQL("ALTER TABLE expenses_new RENAME TO expenses")
+            }
+        }
+        
         @Volatile
         private var INSTANCE: ExpenseDatabase? = null
         
@@ -79,7 +208,7 @@ abstract class ExpenseDatabase : RoomDatabase() {
                     ExpenseDatabase::class.java,
                     "expense_database"
                 )
-                .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5)
+                .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5, MIGRATION_5_6)
                 .addCallback(object : RoomDatabase.Callback() {
                     override fun onCreate(db: SupportSQLiteDatabase) {
                         super.onCreate(db)

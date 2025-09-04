@@ -146,18 +146,23 @@ class ExpenseViewModel(
             
             if (selectedDayTotal <= 0) return emptyList()
             
-            val categoryTotals = mutableMapOf<ExpenseCategory, Double>()
+            val categoryTotals = mutableMapOf<String, Double>()
             
             selectedDayExpenses.forEach { expense ->
-                categoryTotals[expense.category] = categoryTotals.getOrDefault(expense.category, 0.0) + expense.amount
+                categoryTotals[expense.categoryId] = categoryTotals.getOrDefault(expense.categoryId, 0.0) + expense.getAmountInDefaultCurrency(defaultCurrency)
             }
             
-            return categoryTotals.map { (category, amount) ->
-                CategoryExpense(
-                    category = category,
-                    amount = amount,
-                    percentage = amount / selectedDayTotal
-                )
+            return categoryTotals.mapNotNull { (categoryId, amount) ->
+                val category = _categories.value.find { it.id == categoryId }
+                if (category != null) {
+                    CategoryExpense(
+                        category = category,
+                        amount = amount,
+                        percentage = amount / selectedDayTotal
+                    )
+                } else {
+                    null
+                }
             }.sortedByDescending { it.amount }
         }
     

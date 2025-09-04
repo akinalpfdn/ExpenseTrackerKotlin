@@ -23,10 +23,6 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.expensetrackerkotlin.data.ExpenseCategory
-import com.example.expensetrackerkotlin.data.CategoryHelper
-import com.example.expensetrackerkotlin.data.getColor
-import com.example.expensetrackerkotlin.data.getIcon
 import com.example.expensetrackerkotlin.ui.theme.AppColors
 import com.example.expensetrackerkotlin.ui.theme.ThemeColors
 

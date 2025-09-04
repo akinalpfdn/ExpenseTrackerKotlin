@@ -19,6 +19,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.CalendarToday
+import androidx.compose.material.icons.filled.Category
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Delete
@@ -36,8 +37,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.expensetrackerkotlin.data.Expense
 import com.example.expensetrackerkotlin.data.RecurrenceType
-import com.example.expensetrackerkotlin.data.getColor
-import com.example.expensetrackerkotlin.data.getIcon
+import androidx.compose.runtime.collectAsState
 import com.example.expensetrackerkotlin.ui.theme.AppColors
 import com.example.expensetrackerkotlin.ui.theme.ThemeColors
 import com.example.expensetrackerkotlin.viewmodel.ExpenseViewModel
@@ -169,6 +169,14 @@ fun RecurringExpenseCard(
     var showEndDatePicker by remember { mutableStateOf(false) }
     var tempEndDate by remember { mutableStateOf(expense.endDate ?: java.time.LocalDateTime.now().plusYears(1)) }
     
+    // Collect categories and subcategories from ViewModel
+    val categories by viewModel.categories.collectAsState()
+    val subCategories by viewModel.subCategories.collectAsState()
+    
+    // Get category and subcategory for this expense
+    val category = categories.find { it.id == expense.categoryId }
+    val subCategory = subCategories.find { it.id == expense.subCategoryId }
+    
     // Swipe animation state
     var offsetX by remember { mutableStateOf(0f) }
     var isSwiped by remember { mutableStateOf(false) }
@@ -287,15 +295,15 @@ fun RecurringExpenseCard(
                                 modifier = Modifier
                                     .size(32.dp)
                                     .background(
-                                        expense.category.getColor().copy(alpha = 0.2f),
+                                        (category?.getColor() ?: Color.Gray).copy(alpha = 0.2f),
                                         CircleShape
                                     ),
                                 contentAlignment = Alignment.Center
                             ) {
                                 Icon(
-                                    imageVector = expense.category.getIcon(),
-                                    contentDescription = expense.category.displayName,
-                                    tint = expense.category.getColor(),
+                                    imageVector = category?.getIcon() ?: androidx.compose.material.icons.Icons.Default.Category,
+                                    contentDescription = category?.name ?: "Category",
+                                    tint = category?.getColor() ?: Color.Gray,
                                     modifier = Modifier.size(16.dp)
                                 )
                             }
@@ -304,7 +312,7 @@ fun RecurringExpenseCard(
                             
                             Column {
                                 Text(
-                                    text = expense.subCategory,
+                                    text = subCategory?.name ?: "Unknown",
                                     fontWeight = FontWeight.Medium,
                                     fontSize = 15.sp,
                                     color = ThemeColors.getTextColor(isDarkTheme),

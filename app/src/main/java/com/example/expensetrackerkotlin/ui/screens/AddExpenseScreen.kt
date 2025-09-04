@@ -11,6 +11,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
@@ -22,7 +23,6 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.expensetrackerkotlin.data.CategoryHelper
 import com.example.expensetrackerkotlin.data.Expense
 import com.example.expensetrackerkotlin.data.RecurrenceType
 import java.time.LocalDateTime
@@ -46,7 +46,8 @@ fun AddExpenseScreen(
     isDarkTheme: Boolean = true,
     onExpenseAdded: (Expense) -> Unit,
     onDismiss: () -> Unit,
-    editingExpense: Expense? = null
+    editingExpense: Expense? = null,
+    viewModel: com.example.expensetrackerkotlin.viewmodel.ExpenseViewModel
 ) {
     var amount by remember { 
         mutableStateOf(editingExpense?.amount?.toString() ?: "") 
@@ -54,8 +55,11 @@ fun AddExpenseScreen(
     var selectedCurrency by remember(defaultCurrency) { 
         mutableStateOf(editingExpense?.currency ?: defaultCurrency) 
     }
-    var selectedSubCategory by remember { 
-        mutableStateOf(editingExpense?.subCategory ?: "Restoran") 
+    var selectedCategoryId by remember { 
+        mutableStateOf(editingExpense?.categoryId ?: "") 
+    }
+    var selectedSubCategoryId by remember { 
+        mutableStateOf(editingExpense?.subCategoryId ?: "") 
     }
     var description by remember { 
         mutableStateOf(editingExpense?.description ?: "") 
@@ -65,6 +69,7 @@ fun AddExpenseScreen(
     }
     var showCurrencyMenu by remember { mutableStateOf(false) }
     var showCategoryMenu by remember { mutableStateOf(false) }
+    var showMainCategoryMenu by remember { mutableStateOf(false) }
     var showRecurrenceMenu by remember { mutableStateOf(false) }
     var selectedRecurrenceType by remember { 
         mutableStateOf(editingExpense?.recurrenceType ?: RecurrenceType.NONE) 
@@ -73,6 +78,32 @@ fun AddExpenseScreen(
         mutableStateOf(editingExpense?.endDate ?: LocalDateTime.now().plusYears(1)) 
     }
     var showEndDatePicker by remember { mutableStateOf(false) }
+    
+    // Collect categories and subcategories from ViewModel
+    val categories by viewModel.categories.collectAsState()
+    val subCategories by viewModel.subCategories.collectAsState()
+    
+    // Get subcategories for selected category
+    val availableSubCategories = remember(selectedCategoryId) {
+        if (selectedCategoryId.isNotEmpty()) {
+            subCategories.filter { it.categoryId == selectedCategoryId }
+        } else {
+            emptyList()
+        }
+    }
+    
+    // Initialize with first category and subcategory if not editing
+    LaunchedEffect(categories) {
+        if (categories.isNotEmpty() && selectedCategoryId.isEmpty() && editingExpense == null) {
+            selectedCategoryId = categories.first().id
+        }
+    }
+    
+    LaunchedEffect(availableSubCategories) {
+        if (availableSubCategories.isNotEmpty() && selectedSubCategoryId.isEmpty() && editingExpense == null) {
+            selectedSubCategoryId = availableSubCategories.first().id
+        }
+    }
     
     val currencies = listOf("₺", "$", "€", "£")
     val recurrenceTypes = listOf(
@@ -124,7 +155,87 @@ fun AddExpenseScreen(
                 .padding(horizontal = 20.dp),
             verticalArrangement = Arrangement.spacedBy(20.dp)
         ) {
-            // Amount, Currency and Category row
+            // Category Selection
+            Column(
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                Text(
+                    text = "Kategori",
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.Medium,
+                    color = ThemeColors.getTextColor(isDarkTheme)
+                )
+                
+                ExposedDropdownMenuBox(
+                    expanded = showMainCategoryMenu,
+                    onExpandedChange = { 
+                        showMainCategoryMenu = it
+                        if (it) focusManager.clearFocus()
+                    },
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(40.dp)
+                                                    .background(
+                            ThemeColors.getInputBackgroundColor(isDarkTheme),
+                            RoundedCornerShape(12.dp)
+                        )
+                        .border(
+                            width = 1.dp,
+                            color = ThemeColors.getTextGrayColor(isDarkTheme),
+                            shape = RoundedCornerShape(12.dp)
+                        )
+                        .menuAnchor(MenuAnchorType.PrimaryNotEditable)
+                    ) {
+                        Row(
+                            modifier = Modifier.fillMaxSize(),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(
+                                text = categories.find { it.id == selectedCategoryId }?.name ?: "Kategori seçin",
+                                fontSize = 14.sp,
+                                color = ThemeColors.getTextColor(isDarkTheme),
+                                modifier = Modifier.padding(start = 12.dp)
+                            )
+                            ExposedDropdownMenuDefaults.TrailingIcon(
+                                expanded = showMainCategoryMenu,
+                                modifier = Modifier.padding(end = 8.dp)
+                            )
+                        }
+                    }
+                    
+                    ExposedDropdownMenu(
+                        expanded = showMainCategoryMenu,
+                        onDismissRequest = { showMainCategoryMenu = false },
+                        modifier = Modifier
+                            .background(ThemeColors.getInputBackgroundColor(isDarkTheme))
+                            .heightIn(max = 200.dp)
+                    ) {
+                        categories.sortedBy { it.name }.forEach { category ->
+                            DropdownMenuItem(
+                                text = { 
+                                    Text(
+                                        text = category.name,
+                                        color = ThemeColors.getTextColor(isDarkTheme),
+                                        fontSize = 14.sp
+                                    ) 
+                                },
+                                onClick = {
+                                    selectedCategoryId = category.id
+                                    selectedSubCategoryId = "" // Reset subcategory when category changes
+                                    showMainCategoryMenu = false
+                                },
+                                modifier = Modifier.background(ThemeColors.getInputBackgroundColor(isDarkTheme))
+                            )
+                        }
+                    }
+                }
+            }
+            
+            // Amount, Currency and Subcategory row
             Row(
                 horizontalArrangement = Arrangement.spacedBy(12.dp),
                 modifier = Modifier.fillMaxWidth()
@@ -249,7 +360,7 @@ fun AddExpenseScreen(
                     }
                 }
                 
-                // Category
+                // Subcategory
                 ExposedDropdownMenuBox(
                     expanded = showCategoryMenu,
                     onExpandedChange = { 
@@ -271,7 +382,7 @@ fun AddExpenseScreen(
                                 color = ThemeColors.getTextGrayColor(isDarkTheme),
                                 shape = RoundedCornerShape(12.dp)
                             )
-                            .menuAnchor(MenuAnchorType.PrimaryNotEditable) // Changed this line
+                            .menuAnchor(MenuAnchorType.PrimaryNotEditable)
                     ) {
                         Row(
                             modifier = Modifier.fillMaxSize(),
@@ -279,7 +390,7 @@ fun AddExpenseScreen(
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Text(
-                                text = selectedSubCategory,
+                                text = availableSubCategories.find { it.id == selectedSubCategoryId }?.name ?: "Alt kategori seçin",
                                 fontSize = 14.sp,
                                 color = ThemeColors.getTextColor(isDarkTheme),
                                 modifier = Modifier.padding(start = 12.dp)
@@ -298,7 +409,7 @@ fun AddExpenseScreen(
                             .background(ThemeColors.getInputBackgroundColor(isDarkTheme))
                             .heightIn(max = 200.dp)
                     ) {
-                        CategoryHelper.subCategories.sortedBy { it.name }.forEach { subCategory ->
+                        availableSubCategories.sortedBy { it.name }.forEach { subCategory ->
                             DropdownMenuItem(
                                 text = { 
                                     Text(
@@ -308,7 +419,7 @@ fun AddExpenseScreen(
                                     ) 
                                 },
                                 onClick = {
-                                    selectedSubCategory = subCategory.name
+                                    selectedSubCategoryId = subCategory.id
                                     showCategoryMenu = false
                                 },
                                 modifier = Modifier.background(ThemeColors.getInputBackgroundColor(isDarkTheme))
@@ -587,7 +698,8 @@ fun AddExpenseScreen(
                             editingExpense.copy(
                                 amount = amountValue,
                                 currency = selectedCurrency,
-                                subCategory = selectedSubCategory,
+                                categoryId = selectedCategoryId,
+                                subCategoryId = selectedSubCategoryId,
                                 description = description,
                                 exchangeRate = if (selectedCurrency != defaultCurrency) {
                                     exchangeRate.toDoubleOrNull()
@@ -602,7 +714,8 @@ fun AddExpenseScreen(
                             Expense(
                                 amount = amountValue,
                                 currency = selectedCurrency,
-                                subCategory = selectedSubCategory,
+                                categoryId = selectedCategoryId,
+                                subCategoryId = selectedSubCategoryId,
                                 description = description,
                                 date = selectedDate,
                                 dailyLimitAtCreation = dailyLimit.toDoubleOrNull() ?: 0.0,
@@ -622,12 +735,14 @@ fun AddExpenseScreen(
                     }
                 },
                 enabled = amount.isNotEmpty() && amount.toDoubleOrNull() != null && amount.toDoubleOrNull()!! > 0 && 
+                         selectedCategoryId.isNotEmpty() && selectedSubCategoryId.isNotEmpty() &&
                          (selectedCurrency == defaultCurrency || (exchangeRate.isNotEmpty() && exchangeRate.toDoubleOrNull() != null && exchangeRate.toDoubleOrNull()!! > 0)),
                 modifier = Modifier
                     .weight(1f)
                     .height(36.dp),
                 colors = ButtonDefaults.buttonColors(
                     containerColor = if (amount.isNotEmpty() && amount.toDoubleOrNull() != null && amount.toDoubleOrNull()!! > 0 && 
+                                        selectedCategoryId.isNotEmpty() && selectedSubCategoryId.isNotEmpty() &&
                                         (selectedCurrency == defaultCurrency || (exchangeRate.isNotEmpty() && exchangeRate.toDoubleOrNull() != null && exchangeRate.toDoubleOrNull()!! > 0))) {
                         AppColors.PrimaryOrange
                     } else {

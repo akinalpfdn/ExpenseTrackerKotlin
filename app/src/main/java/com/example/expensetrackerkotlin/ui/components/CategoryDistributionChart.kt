@@ -11,11 +11,10 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.*
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.expensetrackerkotlin.data.ExpenseCategory
-import com.example.expensetrackerkotlin.data.getColor
+import com.example.expensetrackerkotlin.data.Category
 
 data class CategoryExpense(
-    val category: ExpenseCategory,
+    val category: Category,
     val amount: Double,
     val percentage: Double
 )

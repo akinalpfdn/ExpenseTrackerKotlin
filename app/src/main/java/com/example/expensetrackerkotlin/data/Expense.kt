@@ -21,7 +21,8 @@ data class Expense(
     val id: String = UUID.randomUUID().toString(),
     val amount: Double,
     val currency: String,
-    val subCategory: String,
+    val categoryId: String,  // Reference to Category table
+    val subCategoryId: String,  // Reference to SubCategory table
     val description: String,
     val date: LocalDateTime,
     val dailyLimitAtCreation: Double,
@@ -31,8 +32,6 @@ data class Expense(
     val endDate: LocalDateTime? = null,  // Tekrar eden harcamanın bitiş tarihi
     val recurrenceGroupId: String? = null  // Tekrar eden harcamalar için ortak ID
 ) {
-    val category: ExpenseCategory
-        get() = CategoryHelper.getCategoryForSubCategory(subCategory)
     
     // Convert amount to default currency for progress calculations
     fun getAmountInDefaultCurrency(defaultCurrency: String): Double {

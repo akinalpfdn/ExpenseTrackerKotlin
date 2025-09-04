@@ -212,7 +212,8 @@ fun ExpensesScreen(
                             dailyExpenseRatio = viewModel.getDailyExpenseRatio(expense),
                             defaultCurrency = viewModel.defaultCurrency,
                             isDarkTheme = isDarkTheme,
-                            isRecurringExpenseMode = false
+                            isRecurringExpenseMode = false,
+                            viewModel = viewModel
                         )
                     }
                 }
@@ -409,7 +410,8 @@ fun ExpensesScreen(
                     onExpenseAdded = { expense ->
                         viewModel.addExpense(expense)
                     },
-                    onDismiss = { showingAddExpense = false }
+                    onDismiss = { showingAddExpense = false },
+                    viewModel = viewModel
                 )
             }
         }
