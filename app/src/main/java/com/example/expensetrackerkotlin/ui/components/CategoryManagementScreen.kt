@@ -300,14 +300,6 @@ private fun AddMainCategoryDialog(
      
      AlertDialog(
          onDismissRequest = onDismiss,
-         title = {
-             Text(
-                 text = "Yeni Ana Kategori Ekle",
-                 fontSize = 18.sp,
-                 fontWeight = FontWeight.Bold,
-                 color = ThemeColors.getTextColor(isDarkTheme)
-             )
-         },
          text = {
              Column(
                  verticalArrangement = Arrangement.spacedBy(16.dp)
@@ -316,13 +308,7 @@ private fun AddMainCategoryDialog(
                  Column(
                      verticalArrangement = Arrangement.spacedBy(8.dp)
                  ) {
-                     Text(
-                         text = "Kategori Adı",
-                         fontSize = 18.sp,
-                         fontWeight = FontWeight.Medium,
-                         color = ThemeColors.getTextColor(isDarkTheme)
-                     )
-                     
+
                      Box(
                          modifier = Modifier
                              .fillMaxWidth()
@@ -513,14 +499,6 @@ private fun AddSubcategoryDialog(
      
      AlertDialog(
          onDismissRequest = onDismiss,
-         title = {
-             Text(
-                 text = "Yeni Alt Kategori Ekle",
-                 fontSize = 18.sp,
-                 fontWeight = FontWeight.Bold,
-                 color = ThemeColors.getTextColor(isDarkTheme)
-             )
-         },
          text = {
              Column(
                  verticalArrangement = Arrangement.spacedBy(16.dp)
