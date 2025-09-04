@@ -5,6 +5,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -38,6 +39,7 @@ fun CategoryManagementScreen(
     var expandedCategories by remember { mutableStateOf(setOf<String>()) } // Store category IDs
     var showAddMainCategoryDialog by remember { mutableStateOf(false) }
     var showAddSubcategoryDialog by remember { mutableStateOf(false) }
+    var selectedCategoryForSubcategory by remember { mutableStateOf<com.example.expensetrackerkotlin.data.Category?>(null) }
     var showEditCategoryDialog by remember { mutableStateOf(false) }
     var showDeleteConfirmationDialog by remember { mutableStateOf(false) }
     var selectedCategory by remember { mutableStateOf<com.example.expensetrackerkotlin.data.Category?>(null) }
@@ -54,6 +56,7 @@ fun CategoryManagementScreen(
      ) {
          // Tree View
                  LazyColumn(
+             modifier = Modifier.weight(1f),
              verticalArrangement = Arrangement.spacedBy(8.dp)
          ) {
              items(categories) { category ->
@@ -87,16 +90,19 @@ fun CategoryManagementScreen(
                          selectedCategory = null
                          showDeleteConfirmationDialog = true
                      },
+                     onAddSubcategory = { category ->
+                         selectedCategoryForSubcategory = category
+                         showAddSubcategoryDialog = true
+                     },
                      allSubcategories = subCategories,
                      isDarkTheme = isDarkTheme
                  )
             }
         }
         
-        Spacer(modifier = Modifier.weight(1f))
-        
         // Add Buttons Row
         Column(
+            modifier = Modifier.padding(top = 16.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             // Add Main Category Button
@@ -123,29 +129,6 @@ fun CategoryManagementScreen(
                 )
             }
             
-            // Add Subcategory Button
-                         OutlinedButton(
-                 onClick = { showAddSubcategoryDialog = true },
-                 modifier = Modifier
-                     .fillMaxWidth()
-                     .height(44.dp),
-                 colors = ButtonDefaults.outlinedButtonColors(
-                     contentColor = AppColors.PrimaryOrange
-                 ),
-                 shape = RoundedCornerShape(16.dp)
-             ) {
-                Icon(
-                    imageVector = Icons.Default.Add,
-                    contentDescription = "Add Subcategory",
-                    modifier = Modifier.size(18.dp)
-                )
-                Spacer(modifier = Modifier.width(8.dp))
-                Text(
-                    text = "Yeni Alt Kategori Ekle",
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.Medium
-                )
-                         }
          }
          
          // Dialogs
@@ -154,12 +137,12 @@ fun CategoryManagementScreen(
                  onDismiss = { 
                      showAddMainCategoryDialog = false 
                  },
-                 onConfirm = { categoryName ->
+                 onConfirm = { categoryName, iconName, colorHex ->
                      // Add new custom category
                      viewModel.createCustomCategory(
                          name = categoryName,
-                         colorHex = "#FF9500", // Default orange color
-                         iconName = "category" // Default category icon
+                         colorHex = colorHex,
+                         iconName = iconName
                      )
                      showAddMainCategoryDialog = false 
                  },
@@ -173,17 +156,17 @@ fun CategoryManagementScreen(
                      showAddSubcategoryDialog = false 
                  },
                  onConfirm = { subcategoryName ->
-                     // Add new subcategory - need to select a category first
-                     // For now, use the first available category
-                     val firstCategory = categories.firstOrNull()
-                     if (firstCategory != null) {
+                     // Add new subcategory to the selected category
+                     selectedCategoryForSubcategory?.let { category ->
                          viewModel.createCustomSubCategory(
                              name = subcategoryName,
-                             categoryId = firstCategory.id
+                             categoryId = category.id
                          )
                      }
                      showAddSubcategoryDialog = false 
+                     selectedCategoryForSubcategory = null
                  },
+                 selectedCategory = selectedCategoryForSubcategory,
                  isDarkTheme = isDarkTheme
              )
          }
@@ -247,12 +230,44 @@ fun CategoryManagementScreen(
  @Composable
 private fun AddMainCategoryDialog(
     onDismiss: () -> Unit,
-    onConfirm: (String) -> Unit,
+    onConfirm: (String, String, String) -> Unit, // name, iconName, colorHex
     isDarkTheme: Boolean
 ) {
      var categoryName by remember { mutableStateOf("") }
-     var selectedIcon by remember { mutableStateOf(Icons.Default.Category) }
-     var selectedColor by remember { mutableStateOf(Color.Blue) }
+     var selectedIconName by remember { mutableStateOf("category") }
+     var selectedColorHex by remember { mutableStateOf("#FF9500") }
+     
+     // Available icons
+     val availableIcons = listOf(
+         "restaurant" to Icons.Default.Restaurant,
+         "home" to Icons.Default.Home,
+         "directions_car" to Icons.Default.DirectionsCar,
+         "local_hospital" to Icons.Default.LocalHospital,
+         "movie" to Icons.Default.Movie,
+         "school" to Icons.Default.School,
+         "shopping_cart" to Icons.Default.ShoppingCart,
+         "pets" to Icons.Default.Pets,
+         "work" to Icons.Default.Work,
+         "account_balance" to Icons.Default.AccountBalance,
+         "favorite" to Icons.Default.Favorite,
+         "category" to Icons.Default.Category,
+         "sports" to Icons.Default.Sports,
+         "music_note" to Icons.Default.MusicNote,
+         "flight" to Icons.Default.Flight,
+         "hotel" to Icons.Default.Hotel,
+         "restaurant_menu" to Icons.Default.RestaurantMenu,
+         "local_gas_station" to Icons.Default.LocalGasStation,
+         "phone" to Icons.Default.Phone,
+         "computer" to Icons.Default.Computer
+     )
+     
+     // Available colors
+     val availableColors = listOf(
+         "#FF9500", "#007AFF", "#34C759", "#FF2D92", "#9D73E3",
+         "#5856D6", "#FF3B30", "#64D2FF", "#5AC8FA", "#FFD60A",
+         "#30D158", "#3F51B5", "#FF6B35", "#4ECDC4", "#45B7D1",
+         "#96CEB4", "#FFEAA7", "#DDA0DD", "#98D8C8", "#F7DC6F"
+     )
      
      AlertDialog(
          onDismissRequest = onDismiss,
@@ -328,17 +343,103 @@ private fun AddMainCategoryDialog(
                      )
                  }
                  
-                 // Icon and Color Selection (simplified for now)
-                 Text(
-                     text = "Icon ve renk seçimi yakında eklenecek",
-                     fontSize = 14.sp,
-                     color = ThemeColors.getTextGrayColor(isDarkTheme)
-                 )
+                 // Icon Selection
+                 Column(
+                     verticalArrangement = Arrangement.spacedBy(8.dp)
+                 ) {
+                     Text(
+                         text = "İkon Seçimi",
+                         fontSize = 18.sp,
+                         fontWeight = FontWeight.Medium,
+                         color = ThemeColors.getTextColor(isDarkTheme)
+                     )
+                     
+                     LazyRow(
+                         horizontalArrangement = Arrangement.spacedBy(8.dp)
+                     ) {
+                         items(availableIcons.size) { index ->
+                             val (iconName, icon) = availableIcons[index]
+                             val isSelected = selectedIconName == iconName
+                             
+                             Box(
+                                 modifier = Modifier
+                                     .size(48.dp)
+                                     .background(
+                                         if (isSelected) Color(android.graphics.Color.parseColor(selectedColorHex)).copy(alpha = 0.2f) 
+                                         else ThemeColors.getInputBackgroundColor(isDarkTheme),
+                                         CircleShape
+                                     )
+                                     .border(
+                                         width = if (isSelected) 2.dp else 1.dp,
+                                         color = if (isSelected) Color(android.graphics.Color.parseColor(selectedColorHex)) 
+                                                else ThemeColors.getTextGrayColor(isDarkTheme),
+                                         shape = CircleShape
+                                     )
+                                     .clickable { selectedIconName = iconName },
+                                 contentAlignment = Alignment.Center
+                             ) {
+                                 Icon(
+                                     imageVector = icon,
+                                     contentDescription = iconName,
+                                     modifier = Modifier.size(24.dp),
+                                     tint = if (isSelected) Color(android.graphics.Color.parseColor(selectedColorHex))
+                                           else ThemeColors.getTextGrayColor(isDarkTheme)
+                                 )
+                             }
+                         }
+                     }
+                 }
+                 
+                 // Color Selection
+                 Column(
+                     verticalArrangement = Arrangement.spacedBy(8.dp)
+                 ) {
+                     Text(
+                         text = "Renk Seçimi",
+                         fontSize = 18.sp,
+                         fontWeight = FontWeight.Medium,
+                         color = ThemeColors.getTextColor(isDarkTheme)
+                     )
+                     
+                     LazyRow(
+                         horizontalArrangement = Arrangement.spacedBy(8.dp)
+                     ) {
+                         items(availableColors.size) { index ->
+                             val colorHex = availableColors[index]
+                             val isSelected = selectedColorHex == colorHex
+                             
+                             Box(
+                                 modifier = Modifier
+                                     .size(40.dp)
+                                     .background(
+                                         Color(android.graphics.Color.parseColor(colorHex)),
+                                         CircleShape
+                                     )
+                                     .border(
+                                         width = if (isSelected) 3.dp else 1.dp,
+                                         color = if (isSelected) Color.White else Color.Transparent,
+                                         shape = CircleShape
+                                     )
+                                     .clickable { selectedColorHex = colorHex },
+                                 contentAlignment = Alignment.Center
+                             ) {
+                                 if (isSelected) {
+                                     Icon(
+                                         imageVector = Icons.Default.Check,
+                                         contentDescription = "Selected",
+                                         modifier = Modifier.size(20.dp),
+                                         tint = Color.White
+                                     )
+                                 }
+                             }
+                         }
+                     }
+                 }
              }
          },
          confirmButton = {
              Button(
-                 onClick = { onConfirm(categoryName) },
+                 onClick = { onConfirm(categoryName, selectedIconName, selectedColorHex) },
                  enabled = categoryName.isNotBlank(),
                  colors = ButtonDefaults.buttonColors(
                      containerColor = AppColors.PrimaryOrange
@@ -376,10 +477,10 @@ private fun AddMainCategoryDialog(
 private fun AddSubcategoryDialog(
     onDismiss: () -> Unit,
     onConfirm: (String) -> Unit,
+    selectedCategory: com.example.expensetrackerkotlin.data.Category?,
     isDarkTheme: Boolean
 ) {
      var subcategoryName by remember { mutableStateOf("") }
-     var selectedCategory by remember { mutableStateOf<com.example.expensetrackerkotlin.data.Category?>(null) }
      
      AlertDialog(
          onDismissRequest = onDismiss,
@@ -719,6 +820,7 @@ private fun CategoryTreeItem(
     onDelete: () -> Unit,
     onEditSubcategory: (com.example.expensetrackerkotlin.data.SubCategory) -> Unit,
     onDeleteSubcategory: (com.example.expensetrackerkotlin.data.SubCategory) -> Unit,
+    onAddSubcategory: (com.example.expensetrackerkotlin.data.Category) -> Unit,
     allSubcategories: List<com.example.expensetrackerkotlin.data.SubCategory>,
     isDarkTheme: Boolean,
     modifier: Modifier = Modifier
@@ -827,17 +929,40 @@ private fun CategoryTreeItem(
         
         // Subcategories (when expanded)
         if (isExpanded) {
-                         subCategories.forEach { subCategory ->
-                 SubCategoryItem(
-                     subCategory = subCategory,
-                     onEdit = { onEditSubcategory(subCategory) },
-                     onDelete = { onDeleteSubcategory(subCategory) },
-                     isDarkTheme = isDarkTheme,
-                     modifier = Modifier.padding(start = 48.dp, end = 16.dp, bottom = 8.dp)
-                 )
-             }
+            subCategories.forEach { subCategory ->
+                SubCategoryItem(
+                    subCategory = subCategory,
+                    onEdit = { onEditSubcategory(subCategory) },
+                    onDelete = { onDeleteSubcategory(subCategory) },
+                    isDarkTheme = isDarkTheme,
+                    modifier = Modifier.padding(start = 48.dp, end = 16.dp, bottom = 8.dp)
+                )
+            }
             
-
+            // Add Subcategory Button
+            OutlinedButton(
+                onClick = { onAddSubcategory(category) },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(start = 48.dp, end = 16.dp, top = 8.dp, bottom = 8.dp)
+                    .height(36.dp),
+                colors = ButtonDefaults.outlinedButtonColors(
+                    contentColor = AppColors.PrimaryOrange
+                ),
+                shape = RoundedCornerShape(12.dp)
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Add,
+                    contentDescription = "Add Subcategory",
+                    modifier = Modifier.size(16.dp)
+                )
+                Spacer(modifier = Modifier.width(6.dp))
+                Text(
+                    text = "Alt Kategori Ekle",
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.Medium
+                )
+            }
         }
     }
 }
@@ -860,25 +985,15 @@ private fun SubCategoryItem(
             .padding(12.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        // Subcategory Icon (using parent category icon)
-        // Note: We need to get the parent category from the ViewModel
-        // For now, using a default color and icon
+        // Simple bullet point for subcategories (no icon)
         Box(
             modifier = Modifier
-                .size(24.dp)
+                .size(6.dp)
                 .background(
-                    Color.Blue.copy(alpha = 0.1f), // Default color
+                    ThemeColors.getTextGrayColor(isDarkTheme),
                     CircleShape
-                ),
-            contentAlignment = Alignment.Center
-        ) {
-            Icon(
-                imageVector = Icons.Default.Category, // Default icon
-                contentDescription = subCategory.name,
-                modifier = Modifier.size(14.dp),
-                tint = Color.Blue // Default color
-            )
-        }
+                )
+        )
         
         Spacer(modifier = Modifier.width(12.dp))
         
