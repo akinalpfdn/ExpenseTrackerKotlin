@@ -11,6 +11,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import com.example.expensetrackerkotlin.data.ExpenseDatabase
 import com.example.expensetrackerkotlin.data.ExpenseRepository
+import com.example.expensetrackerkotlin.data.CategoryRepository
 import com.example.expensetrackerkotlin.data.PreferencesManager
 import com.example.expensetrackerkotlin.ui.screens.MainScreen
 import com.example.expensetrackerkotlin.ui.theme.ExpenseTrackerKotlinTheme
@@ -28,8 +29,9 @@ class MainActivity : ComponentActivity() {
     private val preferencesManager by lazy { PreferencesManager(this) }
     private val database by lazy { ExpenseDatabase.getDatabase(this) }
     private val expenseRepository by lazy { ExpenseRepository(database.expenseDao()) }
+    private val categoryRepository by lazy { CategoryRepository(database.categoryDao()) }
     private val viewModel: ExpenseViewModel by viewModels {
-        ExpenseViewModelFactory(preferencesManager, expenseRepository)
+        ExpenseViewModelFactory(preferencesManager, expenseRepository, categoryRepository)
     }
     
     override fun onCreate(savedInstanceState: Bundle?) {

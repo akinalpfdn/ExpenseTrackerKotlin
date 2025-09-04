@@ -436,6 +436,7 @@ fun ExpensesScreen(
                     .heightIn(max = 750.dp)
             ) {
                 SettingsScreen(
+                    viewModel = viewModel,
                     defaultCurrency = viewModel.defaultCurrency,
                     dailyLimit = viewModel.dailyLimit,
                     monthlyLimit = viewModel.monthlyLimit,

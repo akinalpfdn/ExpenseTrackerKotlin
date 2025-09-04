@@ -28,6 +28,7 @@ import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsScreen(
+    viewModel: com.example.expensetrackerkotlin.viewmodel.ExpenseViewModel,
     defaultCurrency: String,
     dailyLimit: String,
     monthlyLimit: String,
@@ -98,6 +99,7 @@ fun SettingsScreen(
                 isDarkTheme = isDarkTheme
             )
             1 -> CategoryManagementScreen(
+                viewModel = viewModel,
                 isDarkTheme = isDarkTheme
             )
         }

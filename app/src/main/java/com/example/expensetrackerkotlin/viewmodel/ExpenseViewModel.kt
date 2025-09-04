@@ -19,7 +19,8 @@ import kotlin.math.min
 
 class ExpenseViewModel(
     private val preferencesManager: PreferencesManager,
-    private val expenseRepository: ExpenseRepository
+    private val expenseRepository: ExpenseRepository,
+    private val categoryRepository: CategoryRepository
 ) : ViewModel() {
     
     private val _expenses = MutableStateFlow<List<Expense>>(emptyList())
@@ -33,6 +34,13 @@ class ExpenseViewModel(
     
     private val _editingExpenseId = MutableStateFlow<String?>(null)
     val editingExpenseId: StateFlow<String?> = _editingExpenseId.asStateFlow()
+    
+    // Category management
+    private val _categories = MutableStateFlow<List<Category>>(emptyList())
+    val categories: StateFlow<List<Category>> = _categories.asStateFlow()
+    
+    private val _subCategories = MutableStateFlow<List<SubCategory>>(emptyList())
+    val subCategories: StateFlow<List<SubCategory>> = _subCategories.asStateFlow()
     
     // Settings
     var defaultCurrency by mutableStateOf("₺")
@@ -68,6 +76,25 @@ class ExpenseViewModel(
             expenseRepository.allExpenses.collect { expensesList ->
                 _expenses.value = expensesList
             }
+        }
+        
+        // Load categories from database
+        viewModelScope.launch {
+            categoryRepository.allCategories.collect { categoriesList ->
+                _categories.value = categoriesList
+            }
+        }
+        
+        // Load subcategories from database
+        viewModelScope.launch {
+            categoryRepository.allSubCategories.collect { subCategoriesList ->
+                _subCategories.value = subCategoriesList
+            }
+        }
+        
+        // Initialize default data if needed
+        viewModelScope.launch {
+            categoryRepository.initializeDefaultDataIfNeeded()
         }
     }
     
@@ -529,5 +556,53 @@ class ExpenseViewModel(
         return monthlyTotal > monthlyLimitValue && monthlyLimitValue > 0
     }
     
+    // Category management methods
+    fun getSubCategoriesForCategory(categoryId: String): List<SubCategory> {
+        return _subCategories.value.filter { it.categoryId == categoryId }
+    }
+    
+    fun createCustomCategory(name: String, colorHex: String, iconName: String) {
+        viewModelScope.launch {
+            categoryRepository.createCustomCategory(name, colorHex, iconName)
+        }
+    }
+    
+    fun createCustomSubCategory(name: String, categoryId: String) {
+        viewModelScope.launch {
+            categoryRepository.createCustomSubCategory(name, categoryId)
+        }
+    }
+    
+    fun updateCategory(category: Category) {
+        viewModelScope.launch {
+            categoryRepository.updateCategory(category)
+        }
+    }
+    
+    fun updateSubCategory(subCategory: SubCategory) {
+        viewModelScope.launch {
+            categoryRepository.updateSubCategory(subCategory)
+        }
+    }
+    
+    fun deleteCategory(category: Category) {
+        viewModelScope.launch {
+            categoryRepository.deleteCategory(category)
+        }
+    }
+    
+    fun deleteSubCategory(subCategory: SubCategory) {
+        viewModelScope.launch {
+            categoryRepository.deleteSubCategory(subCategory)
+        }
+    }
+    
+    suspend fun getCategoryById(categoryId: String): Category? {
+        return categoryRepository.getCategoryById(categoryId)
+    }
+    
+    suspend fun getSubCategoryById(subCategoryId: String): SubCategory? {
+        return categoryRepository.getSubCategoryById(subCategoryId)
+    }
 
 }

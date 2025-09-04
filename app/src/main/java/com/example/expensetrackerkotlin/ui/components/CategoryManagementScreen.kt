@@ -13,6 +13,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -30,24 +31,21 @@ import com.example.expensetrackerkotlin.ui.theme.ThemeColors
 
 @Composable
 fun CategoryManagementScreen(
+    viewModel: com.example.expensetrackerkotlin.viewmodel.ExpenseViewModel,
     isDarkTheme: Boolean = true,
     modifier: Modifier = Modifier
 ) {
-    var expandedCategories by remember { mutableStateOf(setOf<ExpenseCategory>()) }
+    var expandedCategories by remember { mutableStateOf(setOf<String>()) } // Store category IDs
     var showAddMainCategoryDialog by remember { mutableStateOf(false) }
     var showAddSubcategoryDialog by remember { mutableStateOf(false) }
     var showEditCategoryDialog by remember { mutableStateOf(false) }
     var showDeleteConfirmationDialog by remember { mutableStateOf(false) }
-    var selectedCategory by remember { mutableStateOf<ExpenseCategory?>(null) }
-    var selectedSubcategory by remember { mutableStateOf<com.example.expensetrackerkotlin.data.ExpenseSubCategory?>(null) }
+    var selectedCategory by remember { mutableStateOf<com.example.expensetrackerkotlin.data.Category?>(null) }
+    var selectedSubcategory by remember { mutableStateOf<com.example.expensetrackerkotlin.data.SubCategory?>(null) }
     
-    // Temporary in-memory lists for demo purposes
-    var customCategories by remember { mutableStateOf(listOf<ExpenseCategory>()) }
-    var customSubcategories by remember { mutableStateOf(listOf<com.example.expensetrackerkotlin.data.ExpenseSubCategory>()) }
-    
-    // Combine default and custom categories
-    val allCategories = ExpenseCategory.values().toList() + customCategories
-    val allSubcategories = CategoryHelper.subCategories + customSubcategories
+    // Get categories and subcategories from ViewModel
+    val categories by viewModel.categories.collectAsState()
+    val subCategories by viewModel.subCategories.collectAsState()
     
          Column(
          modifier = modifier
@@ -58,15 +56,15 @@ fun CategoryManagementScreen(
                  LazyColumn(
              verticalArrangement = Arrangement.spacedBy(8.dp)
          ) {
-             items(allCategories) { category ->
+             items(categories) { category ->
                                  CategoryTreeItem(
                      category = category,
-                     isExpanded = expandedCategories.contains(category),
+                     isExpanded = expandedCategories.contains(category.id),
                      onToggleExpanded = {
-                         expandedCategories = if (expandedCategories.contains(category)) {
-                             expandedCategories - category
+                         expandedCategories = if (expandedCategories.contains(category.id)) {
+                             expandedCategories - category.id
                          } else {
-                             expandedCategories + category
+                             expandedCategories + category.id
                          }
                      },
                      onEdit = { 
@@ -89,7 +87,7 @@ fun CategoryManagementScreen(
                          selectedCategory = null
                          showDeleteConfirmationDialog = true
                      },
-                     allSubcategories = allSubcategories,
+                     allSubcategories = subCategories,
                      isDarkTheme = isDarkTheme
                  )
             }
@@ -158,11 +156,11 @@ fun CategoryManagementScreen(
                  },
                  onConfirm = { categoryName ->
                      // Add new custom category
-                     val newCategory = ExpenseCategory.values().firstOrNull { it.displayName == categoryName }
-                     if (newCategory == null) {
-                         // Create a new custom category (simplified for demo)
-                         customCategories = customCategories + ExpenseCategory.FOOD // Placeholder
-                     }
+                     viewModel.createCustomCategory(
+                         name = categoryName,
+                         colorHex = "#FF9500", // Default orange color
+                         iconName = "category" // Default category icon
+                     )
                      showAddMainCategoryDialog = false 
                  },
                  isDarkTheme = isDarkTheme
@@ -175,12 +173,15 @@ fun CategoryManagementScreen(
                      showAddSubcategoryDialog = false 
                  },
                  onConfirm = { subcategoryName ->
-                     // Add new subcategory
-                     val newSubcategory = com.example.expensetrackerkotlin.data.ExpenseSubCategory(
-                         name = subcategoryName,
-                         category = ExpenseCategory.FOOD // Default category for demo
-                     )
-                     customSubcategories = customSubcategories + newSubcategory
+                     // Add new subcategory - need to select a category first
+                     // For now, use the first available category
+                     val firstCategory = categories.firstOrNull()
+                     if (firstCategory != null) {
+                         viewModel.createCustomSubCategory(
+                             name = subcategoryName,
+                             categoryId = firstCategory.id
+                         )
+                     }
                      showAddSubcategoryDialog = false 
                  },
                  isDarkTheme = isDarkTheme
@@ -200,14 +201,12 @@ fun CategoryManagementScreen(
                      // Update category or subcategory name
                      if (selectedSubcategory != null) {
                          // Update subcategory
-                         customSubcategories = customSubcategories.map { 
-                             if (it == selectedSubcategory) {
-                                 it.copy(name = newName)
-                             } else it
-                         }
+                         val updatedSubCategory = selectedSubcategory!!.copy(name = newName)
+                         viewModel.updateSubCategory(updatedSubCategory)
                      } else if (selectedCategory != null) {
-                         // Update category (simplified for demo)
-                         // In real app, you'd update the enum or database
+                         // Update category
+                         val updatedCategory = selectedCategory!!.copy(name = newName)
+                         viewModel.updateCategory(updatedCategory)
                      }
                      showEditCategoryDialog = false
                      selectedCategory = null
@@ -229,11 +228,11 @@ fun CategoryManagementScreen(
                  onConfirm = { 
                      // Delete category or subcategory
                      if (selectedSubcategory != null) {
-                         // Remove subcategory from custom list
-                         customSubcategories = customSubcategories.filter { it != selectedSubcategory }
+                         // Delete subcategory
+                         viewModel.deleteSubCategory(selectedSubcategory!!)
                      } else if (selectedCategory != null) {
-                         // Remove category from custom list
-                         customCategories = customCategories.filter { it != selectedCategory }
+                         // Delete category
+                         viewModel.deleteCategory(selectedCategory!!)
                      }
                      showDeleteConfirmationDialog = false
                      selectedCategory = null
@@ -380,7 +379,7 @@ private fun AddSubcategoryDialog(
     isDarkTheme: Boolean
 ) {
      var subcategoryName by remember { mutableStateOf("") }
-     var selectedCategory by remember { mutableStateOf(ExpenseCategory.FOOD) }
+     var selectedCategory by remember { mutableStateOf<com.example.expensetrackerkotlin.data.Category?>(null) }
      
      AlertDialog(
          onDismissRequest = onDismiss,
@@ -408,7 +407,7 @@ private fun AddSubcategoryDialog(
                      )
                      
                      Text(
-                         text = selectedCategory.displayName,
+                         text = selectedCategory?.name ?: "Kategori seçin",
                          fontSize = 14.sp,
                          color = ThemeColors.getTextColor(isDarkTheme),
                          modifier = Modifier
@@ -531,8 +530,8 @@ private fun AddSubcategoryDialog(
  
  @Composable
 private fun EditCategoryDialog(
-    category: ExpenseCategory?,
-    subcategory: com.example.expensetrackerkotlin.data.ExpenseSubCategory?,
+    category: com.example.expensetrackerkotlin.data.Category?,
+    subcategory: com.example.expensetrackerkotlin.data.SubCategory?,
     onDismiss: () -> Unit,
     onConfirm: (String) -> Unit,
     isDarkTheme: Boolean
@@ -542,7 +541,7 @@ private fun EditCategoryDialog(
      LaunchedEffect(category, subcategory) {
          editName = when {
              subcategory != null -> subcategory.name
-             category != null -> category.displayName
+             category != null -> category.name
              else -> ""
          }
      }
@@ -659,15 +658,15 @@ private fun EditCategoryDialog(
  
  @Composable
  private fun DeleteConfirmationDialog(
-     category: ExpenseCategory?,
-     subcategory: com.example.expensetrackerkotlin.data.ExpenseSubCategory?,
+     category: com.example.expensetrackerkotlin.data.Category?,
+     subcategory: com.example.expensetrackerkotlin.data.SubCategory?,
      onDismiss: () -> Unit,
      onConfirm: () -> Unit,
      isDarkTheme: Boolean
  ) {
      val itemName = when {
          subcategory != null -> subcategory.name
-         category != null -> category.displayName
+         category != null -> category.name
          else -> "Bu öğe"
      }
      
@@ -713,18 +712,18 @@ private fun EditCategoryDialog(
 
 @Composable
 private fun CategoryTreeItem(
-    category: ExpenseCategory,
+    category: com.example.expensetrackerkotlin.data.Category,
     isExpanded: Boolean,
     onToggleExpanded: () -> Unit,
     onEdit: () -> Unit,
     onDelete: () -> Unit,
-    onEditSubcategory: (com.example.expensetrackerkotlin.data.ExpenseSubCategory) -> Unit,
-    onDeleteSubcategory: (com.example.expensetrackerkotlin.data.ExpenseSubCategory) -> Unit,
-    allSubcategories: List<com.example.expensetrackerkotlin.data.ExpenseSubCategory>,
+    onEditSubcategory: (com.example.expensetrackerkotlin.data.SubCategory) -> Unit,
+    onDeleteSubcategory: (com.example.expensetrackerkotlin.data.SubCategory) -> Unit,
+    allSubcategories: List<com.example.expensetrackerkotlin.data.SubCategory>,
     isDarkTheme: Boolean,
     modifier: Modifier = Modifier
 ) {
-    val subCategories = allSubcategories.filter { it.category == category }
+    val subCategories = allSubcategories.filter { it.categoryId == category.id }
     
     Column(
         modifier = modifier
@@ -769,7 +768,7 @@ private fun CategoryTreeItem(
             ) {
                 Icon(
                     imageVector = category.getIcon(),
-                    contentDescription = category.displayName,
+                    contentDescription = category.name,
                     modifier = Modifier.size(20.dp),
                     tint = category.getColor()
                 )
@@ -779,7 +778,7 @@ private fun CategoryTreeItem(
             
             // Category Name
             Text(
-                text = category.displayName,
+                text = category.name,
                 fontSize = 16.sp,
                 fontWeight = FontWeight.SemiBold,
                 color = ThemeColors.getTextColor(isDarkTheme),
@@ -845,7 +844,7 @@ private fun CategoryTreeItem(
 
 @Composable
 private fun SubCategoryItem(
-    subCategory: com.example.expensetrackerkotlin.data.ExpenseSubCategory,
+    subCategory: com.example.expensetrackerkotlin.data.SubCategory,
     onEdit: () -> Unit,
     onDelete: () -> Unit,
     isDarkTheme: Boolean,
@@ -862,20 +861,22 @@ private fun SubCategoryItem(
         verticalAlignment = Alignment.CenterVertically
     ) {
         // Subcategory Icon (using parent category icon)
+        // Note: We need to get the parent category from the ViewModel
+        // For now, using a default color and icon
         Box(
             modifier = Modifier
                 .size(24.dp)
                 .background(
-                    subCategory.category.getColor().copy(alpha = 0.1f),
+                    Color.Blue.copy(alpha = 0.1f), // Default color
                     CircleShape
                 ),
             contentAlignment = Alignment.Center
         ) {
             Icon(
-                imageVector = subCategory.category.getIcon(),
+                imageVector = Icons.Default.Category, // Default icon
                 contentDescription = subCategory.name,
                 modifier = Modifier.size(14.dp),
-                tint = subCategory.category.getColor()
+                tint = Color.Blue // Default color
             )
         }
         
