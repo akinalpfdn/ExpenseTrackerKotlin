@@ -6,7 +6,7 @@ import androidx.compose.animation.expandVertically
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.detectHorizontalDragGestures
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.shape.CircleShape
@@ -69,19 +69,6 @@ fun ExpenseRowView(
     val category = categories.find { it.id == expense.categoryId }
     val subCategory = subCategories.find { it.id == expense.subCategoryId }
     
-    // Swipe animation state
-    var offsetX by remember { mutableStateOf(0f) }
-    var isSwiped by remember { mutableStateOf(false) }
-    
-    // Animated offset for smooth movement
-    val animatedOffsetX by animateFloatAsState(
-        targetValue = offsetX,
-        animationSpec = spring(
-            dampingRatio = Spring.DampingRatioMediumBouncy,
-            stiffness = Spring.StiffnessLow
-        ),
-        label = "swipe_offset"
-    )
 
     LaunchedEffect(isCurrentlyEditing) {
         isEditing = isCurrentlyEditing
@@ -114,78 +101,32 @@ fun ExpenseRowView(
                 .fillMaxWidth()
                 .padding(vertical = 2.dp)
         ) {
-            // Delete background that appears when swiping
-            if (abs(offsetX) > 0f) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .background(
-                            Color.Red.copy(alpha = 0.8f),
-                            RoundedCornerShape(12.dp)
-                        )
-                        .padding(16.dp),
-                    contentAlignment = Alignment.CenterEnd
-                ) {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(8.dp)
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Delete,
-                            contentDescription = "Delete",
-                            tint = Color.White,
-                            modifier = Modifier.size(24.dp)
-                        )
-                        Text(
-                            text = "Sil",
-                            color = Color.White,
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 16.sp
-                        )
-                    }
-                }
-            }
             
             // Main card content
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .offset(x = animatedOffsetX.dp)
                     .pointerInput(Unit) {
-                        detectHorizontalDragGestures(
-                            onDragEnd = {
-                                if (abs(offsetX) > 150f) {
-                                    // Swipe threshold reached, show confirmation
-                                    showDeleteConfirmation = true
-                                    isSwiped = true
-                                } else {
-                                    // Reset position if not swiped enough
-                                    offsetX = 0f
-                                    isSwiped = false
-                                }
+                        detectTapGestures(
+                            onLongPress = {
+                                // Long press to show delete confirmation
+                                showDeleteConfirmation = true
                             }
-                        ) { _, dragAmount ->
-                            // Only allow left swipe (negative drag)
-                            if (dragAmount < 0) {
-                                offsetX = (offsetX + dragAmount).coerceAtMost(0f)
-                            }
-                        }
+                        )
                     }
                     .clickable {
-                        if (!isSwiped) {
-                            if (isEditing) {
-                                // If already editing, close the edit mode
-                                isEditing = false
-                                onEditingChanged(false)
-                                // Reset edit fields to original values
-                                editAmount = expense.amount.toString()
-                                editDescription = expense.description
-                                editExchangeRate = expense.exchangeRate?.toString() ?: ""
-                            } else {
-                                // If not editing, open edit mode
-                                isEditing = true
-                                onEditingChanged(true)
-                            }
+                        if (isEditing) {
+                            // If already editing, close the edit mode
+                            isEditing = false
+                            onEditingChanged(false)
+                            // Reset edit fields to original values
+                            editAmount = expense.amount.toString()
+                            editDescription = expense.description
+                            editExchangeRate = expense.exchangeRate?.toString() ?: ""
+                        } else {
+                            // If not editing, open edit mode
+                            isEditing = true
+                            onEditingChanged(true)
                         }
                     },
                 shape = RoundedCornerShape(12.dp),
@@ -529,6 +470,32 @@ fun ExpenseRowView(
                                         Text("İptal", fontSize = 12.sp, color = ThemeColors.getTextColor(isDarkTheme))
                                     }
                                 }
+                                
+                                Button(
+                                    onClick = {
+                                        showDeleteConfirmation = true
+                                    },
+                                    modifier = Modifier
+                                        .weight(1f)
+                                        .height(36.dp),
+                                    colors = ButtonDefaults.buttonColors(
+                                        containerColor = Color.Red
+                                    ),
+                                    shape = RoundedCornerShape(26.dp)
+                                ) {
+                                    Row(
+                                        verticalAlignment = Alignment.CenterVertically
+                                    ) {
+                                        Icon(
+                                            imageVector = Icons.Default.Delete,
+                                            contentDescription = "Delete",
+                                            tint = Color.White,
+                                            modifier = Modifier.size(16.dp)
+                                        )
+                                        Spacer(modifier = Modifier.width(4.dp))
+                                        Text("Sil", fontSize = 12.sp, color = Color.White)
+                                    }
+                                }
                             }
                         }
                     }
@@ -555,9 +522,6 @@ fun ExpenseRowView(
         AlertDialog(
             onDismissRequest = {
                 showDeleteConfirmation = false
-                // Reset swipe state when dialog is dismissed
-                offsetX = 0f
-                isSwiped = false
             },
             title = {
                 Text(
@@ -577,9 +541,6 @@ fun ExpenseRowView(
                     onClick = {
                         onDelete()
                         showDeleteConfirmation = false
-                        // Reset swipe state after deletion
-                        offsetX = 0f
-                        isSwiped = false
                     }
                 ) {
                     Text(
@@ -593,9 +554,6 @@ fun ExpenseRowView(
                 TextButton(
                     onClick = {
                         showDeleteConfirmation = false
-                        // Reset swipe state when canceling
-                        offsetX = 0f
-                        isSwiped = false
                     }
                 ) {
                     Text(

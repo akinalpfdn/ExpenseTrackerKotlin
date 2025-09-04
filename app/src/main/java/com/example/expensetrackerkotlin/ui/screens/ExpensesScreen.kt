@@ -138,8 +138,6 @@ fun ExpensesScreen(
                 }
             }
             
-            Spacer(modifier = Modifier.height(16.dp))
-            
             // Expenses List
             if (selectedDateExpenses.isEmpty()) {
                 Column(
@@ -220,80 +218,20 @@ fun ExpensesScreen(
             }
         }
         
-        // Floating Action Buttons (Bottom)
-        Column(
+        // Floating Action Buttons (Over Charts)
+        Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .align(Alignment.BottomEnd)
-                .padding(horizontal = 20.dp, vertical = 40.dp),
-            horizontalAlignment = Alignment.End
+                .padding(horizontal = 20.dp, vertical = 20.dp), // Position higher up to avoid expense list overlap
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            // Recurring Expenses Button (Above Add Button)
-            FloatingActionButton(
-                onClick = { showingRecurringExpenses = true },
-                containerColor = Color.Transparent,
-                modifier = Modifier.size(50.dp)
-            ) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .background(
-                            Brush.radialGradient(
-                                colors = listOf(AppColors.RecurringButtonStart, AppColors.RecurringButtonEnd)
-                            ),
-                            CircleShape
-                        ),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Edit,
-                        contentDescription = "Recurring Expenses",
-                        tint = Color.White,
-                        modifier = Modifier.size(30.dp)
-                    )
-                }
-            }
-            
-            Spacer(modifier = Modifier.height(26.dp))
-            
-            // Add Expense Button
-            FloatingActionButton(
-                onClick = { showingAddExpense = true },
-                containerColor = Color.Transparent,
-                modifier = Modifier.size(56.dp)
-            ) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .background(
-                            Brush.radialGradient(
-                                colors = listOf(Color(0xFFFF9500), Color(0xFFFF3B30))
-                            ),
-                            CircleShape
-                        ),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Add,
-                        contentDescription = "Add Expense",
-                        tint = Color.White,
-                        modifier = Modifier.size(36.dp)
-                    )
-                }
-            }
-        }
-        
-        // Settings Button (Bottom Left)
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .align(Alignment.BottomStart)
-                .padding(horizontal = 20.dp, vertical = 40.dp)
-        ) {
+            // Settings Button (Left)
             FloatingActionButton(
                 onClick = { showingSettings = true },
                 containerColor = Color.Transparent,
-                modifier = Modifier.size(50.dp)
+                modifier = Modifier.size(60.dp)
+                    .offset(y = 175.dp)
             ) {
                 Box(
                     modifier = Modifier
@@ -312,6 +250,66 @@ fun ExpensesScreen(
                         tint = Color.White,
                         modifier = Modifier.size(30.dp)
                     )
+                }
+            }
+            
+            // Right side buttons (vertical stack)
+            Column(
+                verticalArrangement = Arrangement.spacedBy(12.dp),
+                horizontalAlignment = Alignment.End
+            ) {
+                // Recurring Expenses Button (Top)
+                FloatingActionButton(
+                    onClick = { showingRecurringExpenses = true },
+                    containerColor = Color.Transparent,
+                    modifier = Modifier.size(60.dp)
+                        .offset(y = 140.dp)
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .background(
+                                Brush.radialGradient(
+                                    colors = listOf(AppColors.RecurringButtonStart, AppColors.RecurringButtonEnd)
+                                ),
+                                CircleShape
+                            ),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Edit,
+                            contentDescription = "Recurring Expenses",
+                            tint = Color.White,
+                            modifier = Modifier.size(30.dp)
+                        )
+                    }
+                }
+                
+                // Add Expense Button (Bottom)
+                FloatingActionButton(
+                    onClick = { showingAddExpense = true },
+                    containerColor = Color.Transparent,
+                    modifier = Modifier.size(60.dp)
+                        .offset(y = 140.dp)
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .background(
+                                Brush.radialGradient(
+                                    colors = listOf(Color(0xFFFF9500), Color(0xFFFF3B30))
+                                ),
+                                CircleShape
+                            ),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Add,
+                            contentDescription = "Add Expense",
+                            tint = Color.White,
+                            modifier = Modifier.size(36.dp)
+                        )
+                    }
                 }
             }
         }

@@ -313,7 +313,7 @@ fun AddExpenseScreen(
                         onDismissRequest = { showCategoryMenu = false },
                         modifier = Modifier
                             .background(ThemeColors.getInputBackgroundColor(isDarkTheme))
-                            .heightIn(max = 200.dp)
+                            .heightIn(max = 350.dp)
                     ) {
                         subCategories.sortedBy { it.name }.forEach { subCategory ->
                             DropdownMenuItem(

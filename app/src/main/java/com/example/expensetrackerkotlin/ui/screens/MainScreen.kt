@@ -25,7 +25,7 @@ import androidx.compose.foundation.layout.windowInsetsPadding
 fun MainScreen(
     viewModel: ExpenseViewModel
 ) {
-    val pagerState = rememberPagerState(pageCount = { 3 },initialPage = 2)
+    val pagerState = rememberPagerState(pageCount = { 3 },initialPage = 0)
     val isDarkTheme = viewModel.theme == "dark"
     
     Box(
@@ -41,9 +41,9 @@ fun MainScreen(
             modifier = Modifier.fillMaxSize()
         ) { page ->
             when (page) {
-                2 -> ExpensesScreen(viewModel = viewModel)
+                0 -> ExpensesScreen(viewModel = viewModel)
                 1 -> AnalysisScreen(isDarkTheme = isDarkTheme)
-                0-> PlanningScreen(isDarkTheme = isDarkTheme)
+                2-> PlanningScreen(isDarkTheme = isDarkTheme)
             }
         }
         
