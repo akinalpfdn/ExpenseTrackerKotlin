@@ -41,6 +41,7 @@ import androidx.compose.runtime.collectAsState
 import com.example.expensetrackerkotlin.ui.theme.AppColors
 import com.example.expensetrackerkotlin.ui.theme.ThemeColors
 import com.example.expensetrackerkotlin.viewmodel.ExpenseViewModel
+import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.*
 import kotlin.math.abs
@@ -54,11 +55,19 @@ fun RecurringExpensesScreen(
     val expenses by viewModel.expenses.collectAsState()
     val isDarkTheme = viewModel.theme == "dark"
     
-    // Get only recurring expenses
+    // Get only recurring expenses that still have future occurrences
     val recurringExpenses = remember(expenses) {
+        val today = LocalDateTime.now()
         expenses.filter { it.recurrenceType != RecurrenceType.NONE }
             .groupBy { it.recurrenceGroupId }
-            .map { (_, groupExpenses) -> groupExpenses.first() } // Take one from each group
+            .mapNotNull { (_, groupExpenses) -> 
+                val baseExpense = groupExpenses.first()
+                // Check if this recurring expense still has future occurrences
+                val hasFutureOccurrences = groupExpenses.any { 
+                    it.date.toLocalDate().isAfter(today.toLocalDate().minusDays(1)) // Today and future
+                }
+                if (hasFutureOccurrences) baseExpense else null
+            }
     }
     
     Box(
