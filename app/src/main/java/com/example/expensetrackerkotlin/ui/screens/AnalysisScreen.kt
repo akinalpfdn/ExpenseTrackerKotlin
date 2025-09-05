@@ -3,6 +3,7 @@ package com.example.expensetrackerkotlin.ui.screens
 import androidx.compose.animation.*
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.*
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.*
 import androidx.compose.foundation.shape.*
@@ -15,12 +16,14 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.*
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.*
 import androidx.compose.ui.window.DialogProperties
+import kotlin.math.*
 import com.example.expensetrackerkotlin.data.*
 import com.example.expensetrackerkotlin.ui.components.*
 import com.example.expensetrackerkotlin.ui.theme.*
@@ -129,6 +132,7 @@ fun AnalysisScreen(
                 item {
                     MonthlyAnalysisPieChart(
                         categoryData = categoryAnalysisData,
+                        defaultCurrency = viewModel.defaultCurrency,
                         isDarkTheme = isDarkTheme
                     )
                 }
@@ -277,9 +281,11 @@ fun MonthYearSelector(
 @Composable
 fun MonthlyAnalysisPieChart(
     categoryData: List<CategoryAnalysisData>,
+    defaultCurrency: String,
     isDarkTheme: Boolean,
     modifier: Modifier = Modifier
 ) {
+    var selectedSegment by remember { mutableStateOf<Int?>(null) }
     val animatedPercentages = categoryData.map { data ->
         val animatedValue = remember { Animatable(0f) }
         LaunchedEffect(data.percentage) {
@@ -291,6 +297,30 @@ fun MonthlyAnalysisPieChart(
         animatedValue.value
     }
 
+    val segmentScales = categoryData.mapIndexed { index, _ ->
+        val animatedScale = remember { Animatable(1f) }
+        LaunchedEffect(selectedSegment) {
+            if (selectedSegment == index) {
+                animatedScale.animateTo(
+                    targetValue = 1.1f,
+                    animationSpec = spring(
+                        dampingRatio = Spring.DampingRatioMediumBouncy,
+                        stiffness = Spring.StiffnessMedium
+                    )
+                )
+            } else {
+                animatedScale.animateTo(
+                    targetValue = 1f,
+                    animationSpec = spring(
+                        dampingRatio = Spring.DampingRatioMediumBouncy,
+                        stiffness = Spring.StiffnessMedium
+                    )
+                )
+            }
+        }
+        animatedScale.value
+    }
+
     Card(
         modifier = modifier.fillMaxWidth(),
         colors = CardDefaults.cardColors(
@@ -299,49 +329,198 @@ fun MonthlyAnalysisPieChart(
         shape = RoundedCornerShape(16.dp)
     ) {
         Column(
-            modifier = Modifier.padding(20.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
+            modifier = Modifier.padding(20.dp)
         ) {
             Text(
                 text = "Kategori Dağılımı",
                 fontSize = 18.sp,
                 fontWeight = FontWeight.Bold,
-                color = ThemeColors.getTextColor(isDarkTheme)
+                color = ThemeColors.getTextColor(isDarkTheme),
+                modifier = Modifier.align(Alignment.CenterHorizontally)
             )
             
             Spacer(modifier = Modifier.height(16.dp))
 
             if (categoryData.isNotEmpty()) {
-                Canvas(
-                    modifier = Modifier.size(200.dp)
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
-                    val center = Offset(size.width / 2, size.height / 2)
-                    val radius = size.minDimension / 2 - 20.dp.toPx()
-                    
-                    var currentAngle = -90f
-                    
-                    animatedPercentages.forEachIndexed { index, animatedPercentage ->
-                        val sweepAngle = animatedPercentage * 360f
-                        val color = categoryData[index].category.getColor()
+                    // Pie Chart
+                    Canvas(
+                        modifier = Modifier
+                            .size(200.dp)
+                            .pointerInput(categoryData) {
+                                detectTapGestures { tapOffset ->
+                                    val center = Offset(size.width / 2f, size.height / 2f)
+                                    val radius = minOf(size.width, size.height) / 2f - 20.dp.toPx()
+                                    
+                                    val distance = sqrt(
+                                        (tapOffset.x - center.x).pow(2) + 
+                                        (tapOffset.y - center.y).pow(2)
+                                    )
+                                    
+                                    if (distance <= radius && distance >= radius * 0.45f) {
+                                        val angle = atan2(
+                                            tapOffset.y - center.y,
+                                            tapOffset.x - center.x
+                                        )
+                                        var normalizedAngle = ((angle * 180f / PI.toFloat()) + 90f) % 360f
+                                        if (normalizedAngle < 0) normalizedAngle += 360f
+                                        
+                                        var currentAngle = 0f
+                                        for (i in animatedPercentages.indices) {
+                                            val sweepAngle = animatedPercentages[i] * 360f
+                                            if (normalizedAngle >= currentAngle && normalizedAngle <= currentAngle + sweepAngle) {
+                                                selectedSegment = if (selectedSegment == i) null else i
+                                                break
+                                            }
+                                            currentAngle += sweepAngle
+                                        }
+                                    }
+                                }
+                            }
+                    ) {
+                        val center = Offset(size.width / 2, size.height / 2)
+                        val baseRadius = minOf(size.width, size.height) / 2 - 20.dp.toPx()
                         
-                        drawArc(
-                            color = color,
-                            startAngle = currentAngle,
-                            sweepAngle = sweepAngle,
-                            useCenter = true,
-                            topLeft = Offset(center.x - radius, center.y - radius),
-                            size = Size(radius * 2, radius * 2)
+                        var currentAngle = -90f
+                        
+                        animatedPercentages.forEachIndexed { index, animatedPercentage ->
+                            val sweepAngle = animatedPercentage * 360f
+                            val color = categoryData[index].category.getColor()
+                            val scale = segmentScales[index]
+                            val radius = baseRadius * scale
+                            
+                            drawArc(
+                                color = color,
+                                startAngle = currentAngle,
+                                sweepAngle = sweepAngle,
+                                useCenter = true,
+                                topLeft = Offset(center.x - radius, center.y - radius),
+                                size = Size(radius * 2, radius * 2)
+                            )
+                            
+                            currentAngle += sweepAngle
+                        }
+                        
+                        drawCircle(
+                            color = Color.Transparent,
+                            radius = baseRadius * 0.45f,
+                            center = center,
+                            blendMode = BlendMode.Clear
                         )
-                        
-                        currentAngle += sweepAngle
                     }
                     
-                    drawCircle(
-                        color = Color.Transparent,
-                        radius = radius * 0.45f,
-                        center = center,
-                        blendMode = BlendMode.Clear
-                    )
+                    Spacer(modifier = Modifier.width(16.dp))
+                    
+                    // Selected Category Info
+                    Box(
+                        modifier = Modifier
+                            .weight(1f)
+                            .height(200.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        if (selectedSegment != null && selectedSegment!! < categoryData.size) {
+                            val selected = categoryData[selectedSegment!!]
+                            androidx.compose.animation.AnimatedVisibility(
+                                visible = true,
+                                enter = fadeIn() + slideInHorizontally(),
+                                exit = fadeOut() + slideOutHorizontally()
+                            ) {
+                                Card(
+                                    colors = CardDefaults.cardColors(
+                                        containerColor = selected.category.getColor().copy(alpha = 0.1f)
+                                    ),
+                                    shape = RoundedCornerShape(12.dp),
+                                    border = BorderStroke(2.dp, selected.category.getColor().copy(alpha = 0.3f))
+                                ) {
+                                    Column(
+                                        modifier = Modifier.padding(16.dp),
+                                        horizontalAlignment = Alignment.CenterHorizontally
+                                    ) {
+                                        Box(
+                                            modifier = Modifier
+                                                .size(40.dp)
+                                                .background(
+                                                    selected.category.getColor().copy(alpha = 0.2f),
+                                                    CircleShape
+                                                ),
+                                            contentAlignment = Alignment.Center
+                                        ) {
+                                            Icon(
+                                                imageVector = selected.category.getIcon(),
+                                                contentDescription = null,
+                                                tint = selected.category.getColor(),
+                                                modifier = Modifier.size(24.dp)
+                                            )
+                                        }
+                                        
+                                        Spacer(modifier = Modifier.height(12.dp))
+                                        
+                                        Text(
+                                            text = selected.category.name,
+                                            fontSize = 14.sp,
+                                            fontWeight = FontWeight.Bold,
+                                            color = ThemeColors.getTextColor(isDarkTheme),
+                                            textAlign = TextAlign.Center,
+                                            maxLines = 2,
+                                            overflow = TextOverflow.Ellipsis
+                                        )
+                                        
+                                        Spacer(modifier = Modifier.height(8.dp))
+                                        
+                                        Text(
+                                            text = "${selected.expenseCount} harcama",
+                                            fontSize = 12.sp,
+                                            color = ThemeColors.getTextGrayColor(isDarkTheme),
+                                            textAlign = TextAlign.Center
+                                        )
+                                        
+                                        Spacer(modifier = Modifier.height(4.dp))
+                                        
+                                        Text(
+                                            text = "$defaultCurrency ${NumberFormatter.formatAmount(selected.totalAmount)}",
+                                            fontSize = 16.sp,
+                                            fontWeight = FontWeight.Bold,
+                                            color = selected.category.getColor(),
+                                            textAlign = TextAlign.Center
+                                        )
+                                        
+                                        Spacer(modifier = Modifier.height(4.dp))
+                                        
+                                        Text(
+                                            text = "%${String.format("%.1f", selected.percentage * 100)}",
+                                            fontSize = 12.sp,
+                                            fontWeight = FontWeight.Medium,
+                                            color = ThemeColors.getTextGrayColor(isDarkTheme),
+                                            textAlign = TextAlign.Center
+                                        )
+                                    }
+                                }
+                            }
+                        } else {
+                            Column(
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                verticalArrangement = Arrangement.Center
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.TouchApp,
+                                    contentDescription = null,
+                                    tint = ThemeColors.getTextGrayColor(isDarkTheme).copy(alpha = 0.6f),
+                                    modifier = Modifier.size(32.dp)
+                                )
+                                Spacer(modifier = Modifier.height(8.dp))
+                                Text(
+                                    text = "Kategori seçmek için\ngrafiğe dokunun",
+                                    fontSize = 12.sp,
+                                    color = ThemeColors.getTextGrayColor(isDarkTheme).copy(alpha = 0.8f),
+                                    textAlign = TextAlign.Center
+                                )
+                            }
+                        }
+                    }
                 }
             }
         }
