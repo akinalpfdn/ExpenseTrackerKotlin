@@ -214,27 +214,84 @@ fun AnalysisScreen(
                         Box(
                             modifier = Modifier.align(Alignment.Center)
                         ) {
-                            // Arrow pointing upward to the pie chart
+                            // Two-line connector from pie segment to popup
                             Canvas(
                                 modifier = Modifier
-                                    .size(20.dp)
-                                    .align(Alignment.TopCenter)
-                                    .offset(y = (-10).dp)
+                                    .fillMaxWidth()
+                                    .height(200.dp) // Constrained height to prevent extending out
+                                    .offset(y = (-180).dp) // Position to align with pie chart
                                     .graphicsLayer {
                                         alpha = popupAlpha.value
                                         scaleX = popupScale.value
                                         scaleY = popupScale.value
                                     }
                             ) {
-                                val path = Path().apply {
-                                    moveTo(size.width / 2f, 0f)
-                                    lineTo(0f, size.height)
-                                    lineTo(size.width, size.height)
+                                // Calculate pie chart center position (at top of canvas)
+                                val pieChartCenterX = size.width / 2f
+                                val pieChartCenterY = 40.dp.toPx() // Pie chart center position
+                                val pieRadius = 125.dp.toPx() // Half of 250dp pie chart size
+                                
+                                // Calculate the actual center point of the selected segment
+                                // First calculate the middle angle of the segment
+                                val segmentIndex = selectedSegment!!
+                                var segmentStartAngle = -90f // Start from top
+                                for (i in 0 until segmentIndex) {
+                                    segmentStartAngle += animatedPercentages[i] * 360f
+                                }
+                                val segmentMiddleAngle = segmentStartAngle + (animatedPercentages[segmentIndex] * 360f / 2f)
+                                val segmentAngleRad = segmentMiddleAngle * PI.toFloat() / 180f
+                                
+                                // Position at the middle of the segment thickness (between inner and outer radius)
+                                val segmentRadius = pieRadius * 0.725f // Middle of donut (between 0.45f inner and 1.0f outer)
+                                val segmentCenterX = pieChartCenterX + cos(segmentAngleRad) * segmentRadius
+                                val segmentCenterY = pieChartCenterY + sin(segmentAngleRad) * segmentRadius
+                                
+                                // Line 1: Angled connector going DOWN from segment center
+                                val elbowDistance = 35.dp.toPx()
+                                // Always go down and slightly outward based on which side of the chart we're on
+                                val elbowAngle = if (segmentCenterX < pieChartCenterX) {
+                                    150f // Down and left
+                                } else {
+                                    30f // Down and right
+                                }
+                                val elbowAngleRad = elbowAngle * PI.toFloat() / 180f
+                                
+                                val elbowX = segmentCenterX + cos(elbowAngleRad) * elbowDistance
+                                val elbowY = segmentCenterY + sin(elbowAngleRad) * elbowDistance
+                                
+                                // Line 2: Vertical line from elbow to popup (270° = straight down)
+                                val popupTopY = size.height - 10.dp.toPx() // End just at bottom of canvas
+                                
+                                // Ensure elbow point is within screen bounds
+                                val constrainedElbowX = elbowX.coerceIn(20.dp.toPx(), size.width - 20.dp.toPx())
+                                
+                                // Draw Line 1 (angled, going down)
+                                drawLine(
+                                    color = selected.category.getColor(),
+                                    start = Offset(segmentCenterX, segmentCenterY),
+                                    end = Offset(constrainedElbowX, elbowY),
+                                    strokeWidth = 2.dp.toPx()
+                                )
+                                
+                                // Draw Line 2 (vertical down)
+                                drawLine(
+                                    color = selected.category.getColor(),
+                                    start = Offset(constrainedElbowX, elbowY),
+                                    end = Offset(constrainedElbowX, popupTopY),
+                                    strokeWidth = 2.dp.toPx()
+                                )
+                                
+                                // Draw arrow tip at the end of Line 2 (pointing down)
+                                val arrowSize = 6.dp.toPx()
+                                val arrowPath = Path().apply {
+                                    moveTo(constrainedElbowX, popupTopY) // Arrow tip (bottom)
+                                    lineTo(constrainedElbowX - arrowSize, popupTopY - arrowSize) // Left side
+                                    lineTo(constrainedElbowX + arrowSize, popupTopY - arrowSize) // Right side
                                     close()
                                 }
                                 
                                 drawPath(
-                                    path = path,
+                                    path = arrowPath,
                                     color = selected.category.getColor(),
                                     style = Fill
                                 )
