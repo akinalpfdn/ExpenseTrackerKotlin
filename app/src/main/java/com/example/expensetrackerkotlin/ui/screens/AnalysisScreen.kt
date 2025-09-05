@@ -191,16 +191,32 @@ fun AnalysisScreen(
                         currentAngle + (animatedPercentages[selectedSegment!!] * 360f / 2f) - 90f
                     }
                     
-                    // Popup Animation
+                    // Line and Popup Animation
+                    val line1Progress = remember { Animatable(0f) }
+                    val line2Progress = remember { Animatable(0f) }
                     val popupScale = remember { Animatable(0f) }
                     val popupAlpha = remember { Animatable(0f) }
                     
                     LaunchedEffect(selectedSegment) {
+                        // Reset all animations
+                        line1Progress.snapTo(0f)
+                        line2Progress.snapTo(0f)
+                        popupScale.snapTo(0f)
+                        popupAlpha.snapTo(0f)
+                        
+                        // Sequence animation: Line 1 → Line 2 → Popup
+                        // 1. Animate Line 1 growing
+                        line1Progress.animateTo(1f, animationSpec = tween(400, easing = EaseOutCubic))
+                        
+                        // 2. Animate Line 2 growing
+                        line2Progress.animateTo(1f, animationSpec = tween(300, easing = EaseOutCubic))
+                        
+                        // 3. Show popup with bounce
+                        popupAlpha.animateTo(1f, animationSpec = tween(200))
                         popupScale.animateTo(1f, animationSpec = spring(
                             dampingRatio = Spring.DampingRatioMediumBouncy,
                             stiffness = Spring.StiffnessMedium
                         ))
-                        popupAlpha.animateTo(1f, animationSpec = tween(300))
                     }
                     
                     // Absolute positioned popup
@@ -221,9 +237,7 @@ fun AnalysisScreen(
                                     .height(200.dp) // Constrained height to prevent extending out
                                     .offset(y = (-180).dp) // Position to align with pie chart
                                     .graphicsLayer {
-                                        alpha = popupAlpha.value
-                                        scaleX = popupScale.value
-                                        scaleY = popupScale.value
+                                        alpha = maxOf(line1Progress.value, line2Progress.value)
                                     }
                             ) {
                                 // Calculate pie chart center position (at top of canvas)
@@ -265,36 +279,52 @@ fun AnalysisScreen(
                                 // Ensure elbow point is within screen bounds
                                 val constrainedElbowX = elbowX.coerceIn(20.dp.toPx(), size.width - 20.dp.toPx())
                                 
-                                // Draw Line 1 (angled, going down)
-                                drawLine(
-                                    color = selected.category.getColor(),
-                                    start = Offset(segmentCenterX, segmentCenterY),
-                                    end = Offset(constrainedElbowX, elbowY),
-                                    strokeWidth = 2.dp.toPx()
-                                )
-                                
-                                // Draw Line 2 (vertical down)
-                                drawLine(
-                                    color = selected.category.getColor(),
-                                    start = Offset(constrainedElbowX, elbowY),
-                                    end = Offset(constrainedElbowX, popupTopY),
-                                    strokeWidth = 2.dp.toPx()
-                                )
-                                
-                                // Draw arrow tip at the end of Line 2 (pointing down)
-                                val arrowSize = 6.dp.toPx()
-                                val arrowPath = Path().apply {
-                                    moveTo(constrainedElbowX, popupTopY) // Arrow tip (bottom)
-                                    lineTo(constrainedElbowX - arrowSize, popupTopY - arrowSize) // Left side
-                                    lineTo(constrainedElbowX + arrowSize, popupTopY - arrowSize) // Right side
-                                    close()
+                                // Draw Line 1 (angled, going down) with animation
+                                if (line1Progress.value > 0f) {
+                                    val line1End = Offset(
+                                        x = segmentCenterX + (constrainedElbowX - segmentCenterX) * line1Progress.value,
+                                        y = segmentCenterY + (elbowY - segmentCenterY) * line1Progress.value
+                                    )
+                                    
+                                    drawLine(
+                                        color = selected.category.getColor(),
+                                        start = Offset(segmentCenterX, segmentCenterY),
+                                        end = line1End,
+                                        strokeWidth = 2.dp.toPx()
+                                    )
                                 }
                                 
-                                drawPath(
-                                    path = arrowPath,
-                                    color = selected.category.getColor(),
-                                    style = Fill
-                                )
+                                // Draw Line 2 (vertical down) with animation
+                                if (line2Progress.value > 0f && line1Progress.value >= 1f) {
+                                    val line2End = Offset(
+                                        x = constrainedElbowX,
+                                        y = elbowY + (popupTopY - elbowY) * line2Progress.value
+                                    )
+                                    
+                                    drawLine(
+                                        color = selected.category.getColor(),
+                                        start = Offset(constrainedElbowX, elbowY),
+                                        end = line2End,
+                                        strokeWidth = 2.dp.toPx()
+                                    )
+                                    
+                                    // Draw arrow tip only when Line 2 is complete
+                                    if (line2Progress.value >= 1f) {
+                                        val arrowSize = 6.dp.toPx()
+                                        val arrowPath = Path().apply {
+                                            moveTo(constrainedElbowX, popupTopY) // Arrow tip (bottom)
+                                            lineTo(constrainedElbowX - arrowSize, popupTopY - arrowSize) // Left side
+                                            lineTo(constrainedElbowX + arrowSize, popupTopY - arrowSize) // Right side
+                                            close()
+                                        }
+                                        
+                                        drawPath(
+                                            path = arrowPath,
+                                            color = selected.category.getColor(),
+                                            style = Fill
+                                        )
+                                    }
+                                }
                             }
                             
                             // Category Info Card with solid matte background
