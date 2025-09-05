@@ -21,6 +21,7 @@ import com.example.expensetrackerkotlin.ui.theme.AppColors
 import com.example.expensetrackerkotlin.ui.theme.ThemeColors
 import com.example.expensetrackerkotlin.data.DailyData
 import com.example.expensetrackerkotlin.data.Expense
+import com.example.expensetrackerkotlin.utils.NumberFormatter
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.YearMonth
@@ -292,7 +293,7 @@ fun MonthlyCalendarView(
 
                             // Amount
                             Text(
-                                text = "$defaultCurrency${String.format("%.0f", dayTotal)}",
+                                text = "$defaultCurrency${NumberFormatter.formatAmount(dayTotal)}",
                                 fontSize = 10.sp,
                                 fontWeight = FontWeight.Medium,
                                 color = when {

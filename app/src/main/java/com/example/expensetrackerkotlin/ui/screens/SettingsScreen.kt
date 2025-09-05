@@ -406,6 +406,23 @@ fun GeneralSettingsTab(
                 .padding(20.dp)
         ) {
             Button(
+                onClick = onDismiss,
+                modifier = Modifier
+                    .weight(1f)
+                    .height(36.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = ThemeColors.getButtonDisabledColor(isDarkTheme)
+                ),
+                shape = RoundedCornerShape(16.dp)
+            ) {
+                Text(
+                    text = "İptal",
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.Medium,
+                    color = ThemeColors.getTextColor(isDarkTheme)
+                )
+            }
+            Button(
                 onClick = {
                     onCurrencyChanged(newDefaultCurrency)
                     onDailyLimitChanged(newDailyLimit)
@@ -429,23 +446,7 @@ fun GeneralSettingsTab(
                 )
             }
             
-            Button(
-                onClick = onDismiss,
-                modifier = Modifier
-                    .weight(1f)
-                    .height(36.dp),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = ThemeColors.getButtonDisabledColor(isDarkTheme)
-                ),
-                shape = RoundedCornerShape(16.dp)
-            ) {
-                Text(
-                    text = "İptal",
-                    fontSize = 18.sp,
-                    fontWeight = FontWeight.Medium,
-                    color = ThemeColors.getTextColor(isDarkTheme)
-                )
-            }
+
         }
     }
 }

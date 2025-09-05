@@ -40,6 +40,7 @@ import com.example.expensetrackerkotlin.data.RecurrenceType
 import androidx.compose.runtime.collectAsState
 import com.example.expensetrackerkotlin.ui.theme.AppColors
 import com.example.expensetrackerkotlin.ui.theme.ThemeColors
+import com.example.expensetrackerkotlin.utils.NumberFormatter
 import com.example.expensetrackerkotlin.viewmodel.ExpenseViewModel
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -344,7 +345,7 @@ fun RecurringExpenseCard(
                             horizontalAlignment = Alignment.End
                         ) {
                             Text(
-                                text = "${expense.currency} ${String.format("%.0f", expense.amount)}",
+                                text = "${expense.currency} ${NumberFormatter.formatAmount(expense.amount)}",
                                 fontWeight = FontWeight.Bold,
                                 fontSize = 16.sp,
                                 color = ThemeColors.getTextColor(isDarkTheme)
@@ -594,6 +595,37 @@ fun RecurringExpenseCard(
                                 horizontalArrangement = Arrangement.spacedBy(8.dp),
                                 modifier = Modifier.fillMaxWidth()
                             ) {
+
+
+                                Button(
+                                    onClick = {
+                                        isEditing = false
+                                        editAmount = expense.amount.toString()
+                                        editDescription = expense.description
+                                        editExchangeRate = expense.exchangeRate?.toString() ?: ""
+                                        editEndDate = expense.endDate?.toLocalDate()?.toString() ?: ""
+                                    },
+                                    modifier = Modifier
+                                        .weight(1f)
+                                        .height(36.dp),
+                                    colors = ButtonDefaults.buttonColors(
+                                        containerColor = ThemeColors.getButtonDisabledColor(isDarkTheme)
+                                    ),
+                                    shape = RoundedCornerShape(26.dp)
+                                ) {
+                                    Row(
+                                        verticalAlignment = Alignment.CenterVertically
+                                    ) {
+                                        Icon(
+                                            imageVector = Icons.Default.Close,
+                                            contentDescription = "Cancel",
+                                            tint = ThemeColors.getTextColor(isDarkTheme),
+                                            modifier = Modifier.size(16.dp)
+                                        )
+                                        Spacer(modifier = Modifier.width(4.dp))
+                                        Text("İptal", fontSize = 12.sp, color = ThemeColors.getTextColor(isDarkTheme))
+                                    }
+                                }
                                 Button(
                                     onClick = {
                                         val newAmount = editAmount.toDoubleOrNull()
@@ -604,7 +636,7 @@ fun RecurringExpenseCard(
                                             } else {
                                                 null
                                             }
-                                            
+
                                             // Use the new method to handle end date changes properly
                                             viewModel.updateRecurringExpenseEndDate(
                                                 baseExpense = expense,
@@ -635,36 +667,6 @@ fun RecurringExpenseCard(
                                         )
                                         Spacer(modifier = Modifier.width(4.dp))
                                         Text("Kaydet", fontSize = 12.sp, color = ThemeColors.getTextColor(isDarkTheme))
-                                    }
-                                }
-
-                                Button(
-                                    onClick = {
-                                        isEditing = false
-                                        editAmount = expense.amount.toString()
-                                        editDescription = expense.description
-                                        editExchangeRate = expense.exchangeRate?.toString() ?: ""
-                                        editEndDate = expense.endDate?.toLocalDate()?.toString() ?: ""
-                                    },
-                                    modifier = Modifier
-                                        .weight(1f)
-                                        .height(36.dp),
-                                    colors = ButtonDefaults.buttonColors(
-                                        containerColor = ThemeColors.getButtonDisabledColor(isDarkTheme)
-                                    ),
-                                    shape = RoundedCornerShape(26.dp)
-                                ) {
-                                    Row(
-                                        verticalAlignment = Alignment.CenterVertically
-                                    ) {
-                                        Icon(
-                                            imageVector = Icons.Default.Close,
-                                            contentDescription = "Cancel",
-                                            tint = ThemeColors.getTextColor(isDarkTheme),
-                                            modifier = Modifier.size(16.dp)
-                                        )
-                                        Spacer(modifier = Modifier.width(4.dp))
-                                        Text("İptal", fontSize = 12.sp, color = ThemeColors.getTextColor(isDarkTheme))
                                     }
                                 }
                             }

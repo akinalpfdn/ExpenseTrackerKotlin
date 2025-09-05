@@ -532,11 +532,7 @@ private fun AddSubcategoryDialog(
                              .padding(12.dp)
                      )
                      
-                     Text(
-                         text = "Alt kategori eklenecek ana kategori",
-                         fontSize = 14.sp,
-                         color = ThemeColors.getTextGrayColor(isDarkTheme)
-                     )
+
                  }
                  
                  // Subcategory Name Input
@@ -745,12 +741,7 @@ private fun EditCategoryDialog(
                  Column(
                      verticalArrangement = Arrangement.spacedBy(8.dp)
                  ) {
-                     Text(
-                         text = "Ad",
-                         fontSize = 18.sp,
-                         fontWeight = FontWeight.Medium,
-                         color = ThemeColors.getTextColor(isDarkTheme)
-                     )
+
                      
                      Box(
                          modifier = Modifier

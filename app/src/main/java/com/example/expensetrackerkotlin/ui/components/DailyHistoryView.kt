@@ -18,6 +18,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.expensetrackerkotlin.data.DailyData
 import com.example.expensetrackerkotlin.ui.theme.ThemeColors
+import com.example.expensetrackerkotlin.utils.NumberFormatter
 import java.time.LocalDateTime
 
 @Composable
@@ -98,7 +99,7 @@ private fun DailyHistoryItem(
         
         // Amount
         Text(
-            text = "₺${String.format("%.0f", data.totalAmount)}",
+            text = "₺${NumberFormatter.formatAmount(data.totalAmount)}",
             fontSize = 10.sp,
             color = if (data.isOverLimit) Color.Red else ThemeColors.getTextColor(isDarkTheme),
             fontWeight = FontWeight.Medium

@@ -62,7 +62,6 @@ fun ExpensesScreen(
             expense.isActiveOnDate(selectedDate)
         }
     }
-    //TODO add a button to manage repeating expenses by changing from there all the future of that expensive will change
     
     val isDarkTheme = viewModel.theme == "dark"
     

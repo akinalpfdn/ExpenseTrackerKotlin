@@ -36,6 +36,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.expensetrackerkotlin.data.Expense
 import com.example.expensetrackerkotlin.data.RecurrenceType
+import com.example.expensetrackerkotlin.utils.NumberFormatter
 import androidx.compose.runtime.collectAsState
 import java.time.format.DateTimeFormatter
 import kotlin.math.abs
@@ -192,7 +193,7 @@ fun ExpenseRowView(
                             horizontalAlignment = Alignment.End
                         ) {
                             Text(
-                                text = "${expense.currency} ${String.format("%.0f", expense.amount)}",
+                                text = "${expense.currency} ${NumberFormatter.formatAmount(expense.amount)}",
                                 fontWeight = FontWeight.Bold,
                                 fontSize = 16.sp,
                                 color = ThemeColors.getTextColor(isDarkTheme)
@@ -400,6 +401,32 @@ fun ExpenseRowView(
                                 horizontalArrangement = Arrangement.spacedBy(8.dp),
                                 modifier = Modifier.fillMaxWidth()
                             ) {
+
+                                Button(
+                                    onClick = {
+                                        showDeleteConfirmation = true
+                                    },
+                                    modifier = Modifier
+                                        .weight(1f)
+                                        .height(36.dp),
+                                    colors = ButtonDefaults.buttonColors(
+                                        containerColor = Color.Red
+                                    ),
+                                    shape = RoundedCornerShape(26.dp)
+                                ) {
+                                    Row(
+                                        verticalAlignment = Alignment.CenterVertically
+                                    ) {
+                                        Icon(
+                                            imageVector = Icons.Default.Delete,
+                                            contentDescription = "Delete",
+                                            tint = Color.White,
+                                            modifier = Modifier.size(16.dp)
+                                        )
+                                        Spacer(modifier = Modifier.width(4.dp))
+                                        Text("Sil", fontSize = 12.sp, color = Color.White)
+                                    }
+                                }
                                 Button(
                                     onClick = {
                                         val newAmount = editAmount.toDoubleOrNull()
@@ -441,61 +468,9 @@ fun ExpenseRowView(
                                     }
                                 }
 
-                                Button(
-                                    onClick = {
-                                        isEditing = false
-                                        onEditingChanged(false)
-                                        editAmount = expense.amount.toString()
-                                        editDescription = expense.description
-                                        editExchangeRate = expense.exchangeRate?.toString() ?: ""
-                                    },
-                                    modifier = Modifier
-                                        .weight(1f)
-                                        .height(36.dp),
-                                    colors = ButtonDefaults.buttonColors(
-                                        containerColor = ThemeColors.getButtonDisabledColor(isDarkTheme)
-                                    ),
-                                    shape = RoundedCornerShape(26.dp)
-                                ) {
-                                    Row(
-                                        verticalAlignment = Alignment.CenterVertically
-                                    ) {
-                                        Icon(
-                                            imageVector = Icons.Default.Close,
-                                            contentDescription = "Cancel",
-                                            tint = ThemeColors.getTextColor(isDarkTheme),
-                                            modifier = Modifier.size(16.dp)
-                                        )
-                                        Spacer(modifier = Modifier.width(4.dp))
-                                        Text("İptal", fontSize = 12.sp, color = ThemeColors.getTextColor(isDarkTheme))
-                                    }
-                                }
+
                                 
-                                Button(
-                                    onClick = {
-                                        showDeleteConfirmation = true
-                                    },
-                                    modifier = Modifier
-                                        .weight(1f)
-                                        .height(36.dp),
-                                    colors = ButtonDefaults.buttonColors(
-                                        containerColor = Color.Red
-                                    ),
-                                    shape = RoundedCornerShape(26.dp)
-                                ) {
-                                    Row(
-                                        verticalAlignment = Alignment.CenterVertically
-                                    ) {
-                                        Icon(
-                                            imageVector = Icons.Default.Delete,
-                                            contentDescription = "Delete",
-                                            tint = Color.White,
-                                            modifier = Modifier.size(16.dp)
-                                        )
-                                        Spacer(modifier = Modifier.width(4.dp))
-                                        Text("Sil", fontSize = 12.sp, color = Color.White)
-                                    }
-                                }
+
                             }
                         }
                     }

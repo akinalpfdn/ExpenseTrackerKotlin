@@ -595,6 +595,24 @@ fun AddExpenseScreen(
                 .fillMaxWidth()
                 .padding(20.dp)
         ) {
+
+            Button(
+                onClick = onDismiss,
+                modifier = Modifier
+                    .weight(1f)
+                    .height(36.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = ThemeColors.getButtonDisabledColor(isDarkTheme)
+                ),
+                shape = RoundedCornerShape(16.dp)
+            ) {
+                Text(
+                    text = "İptal",
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.Medium,
+                    color = ThemeColors.getTextColor(isDarkTheme)
+                )
+            }
             Button(
                 onClick = {
                     val amountValue = amount.toDoubleOrNull()
@@ -640,16 +658,16 @@ fun AddExpenseScreen(
                         onDismiss()
                     }
                 },
-                enabled = amount.isNotEmpty() && amount.toDoubleOrNull() != null && amount.toDoubleOrNull()!! > 0 && 
-                         selectedSubCategoryId.isNotEmpty() &&
-                         (selectedCurrency == defaultCurrency || (exchangeRate.isNotEmpty() && exchangeRate.toDoubleOrNull() != null && exchangeRate.toDoubleOrNull()!! > 0)),
+                enabled = amount.isNotEmpty() && amount.toDoubleOrNull() != null && amount.toDoubleOrNull()!! > 0 &&
+                        selectedSubCategoryId.isNotEmpty() &&
+                        (selectedCurrency == defaultCurrency || (exchangeRate.isNotEmpty() && exchangeRate.toDoubleOrNull() != null && exchangeRate.toDoubleOrNull()!! > 0)),
                 modifier = Modifier
                     .weight(1f)
                     .height(36.dp),
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = if (amount.isNotEmpty() && amount.toDoubleOrNull() != null && amount.toDoubleOrNull()!! > 0 && 
-                                        selectedSubCategoryId.isNotEmpty() &&
-                                        (selectedCurrency == defaultCurrency || (exchangeRate.isNotEmpty() && exchangeRate.toDoubleOrNull() != null && exchangeRate.toDoubleOrNull()!! > 0))) {
+                    containerColor = if (amount.isNotEmpty() && amount.toDoubleOrNull() != null && amount.toDoubleOrNull()!! > 0 &&
+                        selectedSubCategoryId.isNotEmpty() &&
+                        (selectedCurrency == defaultCurrency || (exchangeRate.isNotEmpty() && exchangeRate.toDoubleOrNull() != null && exchangeRate.toDoubleOrNull()!! > 0))) {
                         AppColors.PrimaryOrange
                     } else {
                         ThemeColors.getButtonDisabledColor(isDarkTheme)
@@ -661,24 +679,6 @@ fun AddExpenseScreen(
                     text = if (editingExpense != null) "Güncelle" else "Harcama Ekle",
                     fontSize = 18.sp,
                     fontWeight = FontWeight.SemiBold,
-                    color = ThemeColors.getTextColor(isDarkTheme)
-                )
-            }
-
-            Button(
-                onClick = onDismiss,
-                modifier = Modifier
-                    .weight(1f)
-                    .height(36.dp),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = ThemeColors.getButtonDisabledColor(isDarkTheme)
-                ),
-                shape = RoundedCornerShape(16.dp)
-            ) {
-                Text(
-                    text = "İptal",
-                    fontSize = 18.sp,
-                    fontWeight = FontWeight.Medium,
                     color = ThemeColors.getTextColor(isDarkTheme)
                 )
             }

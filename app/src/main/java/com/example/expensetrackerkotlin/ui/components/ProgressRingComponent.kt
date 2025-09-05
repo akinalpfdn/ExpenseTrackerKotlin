@@ -21,6 +21,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.expensetrackerkotlin.ui.theme.ThemeColors
+import com.example.expensetrackerkotlin.utils.NumberFormatter
 import kotlin.math.cos
 import kotlin.math.sin
 
@@ -119,7 +120,7 @@ fun MonthlyProgressRingView(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(
-                    text = "$currency${String.format("%.0f", totalSpent)}",
+                    text = "$currency${NumberFormatter.formatAmount(totalSpent)}",
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Bold,
                     color = if (isOverLimit) Color.Red else ThemeColors.getTextColor(isDarkTheme)
@@ -161,7 +162,7 @@ fun DailyProgressRingView(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(
-                    text = "$currency${String.format("%.0f", selectedDateTotal)}",
+                    text = "$currency${NumberFormatter.formatAmount(selectedDateTotal)}",
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Bold,
                     color = if (isOverDailyLimit) Color.Red else ThemeColors.getTextColor(isDarkTheme)
