@@ -16,6 +16,8 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.*
+import androidx.compose.ui.graphics.drawscope.Fill
+import androidx.compose.ui.graphics.drawscope.rotate
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.text.font.FontWeight
@@ -61,6 +63,7 @@ fun AnalysisScreen(
     var selectedCategory by remember { mutableStateOf<CategoryAnalysisData?>(null) }
     var sortOption by remember { mutableStateOf(SortOption.DATE_DESC) }
     var showSortMenu by remember { mutableStateOf(false) }
+    var selectedSegment by remember { mutableStateOf<Int?>(null) }
 
     val expenses by viewModel.expenses.collectAsState()
     val categories by viewModel.categories.collectAsState()
@@ -112,6 +115,17 @@ fun AnalysisScreen(
 
     val totalMonthlyAmount = categoryAnalysisData.sumOf { it.totalAmount }
 
+    val animatedPercentages = categoryAnalysisData.map { data ->
+        val animatedValue = remember { Animatable(0f) }
+        LaunchedEffect(data.percentage) {
+            animatedValue.animateTo(
+                targetValue = data.percentage.toFloat(),
+                animationSpec = tween(durationMillis = 1000, easing = EaseInOutCubic)
+            )
+        }
+        animatedValue.value
+    }
+
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -126,37 +140,179 @@ fun AnalysisScreen(
         )
 
         if (categoryAnalysisData.isNotEmpty()) {
-            LazyColumn(
-                verticalArrangement = Arrangement.spacedBy(16.dp)
-            ) {
-                item {
-                    MonthlyAnalysisPieChart(
-                        categoryData = categoryAnalysisData,
-                        defaultCurrency = viewModel.defaultCurrency,
-                        isDarkTheme = isDarkTheme
-                    )
-                }
-
-                item {
-                    CategorySummarySection(
-                        categoryData = categoryAnalysisData,
-                        totalAmount = totalMonthlyAmount,
-                        defaultCurrency = viewModel.defaultCurrency,
-                        isDarkTheme = isDarkTheme,
-                        onCategoryClick = { categoryData ->
-                            selectedCategory = categoryData
-                            showCategoryDialog = true
-                        }
-                    )
-                }
-
-                if (recurringExpenseTotal > 0) {
+            Box(modifier = Modifier.fillMaxSize()) {
+                LazyColumn(
+                    verticalArrangement = Arrangement.spacedBy(16.dp)
+                ) {
                     item {
-                        RecurringExpenseCard(
-                            totalAmount = recurringExpenseTotal,
-                            defaultCurrency = viewModel.defaultCurrency,
-                            isDarkTheme = isDarkTheme
+                        MonthlyAnalysisPieChart(
+                            categoryData = categoryAnalysisData,
+                            animatedPercentages = animatedPercentages,
+                            isDarkTheme = isDarkTheme,
+                            selectedSegment = selectedSegment,
+                            onSegmentSelected = { selectedSegment = it }
                         )
+                    }
+
+                    item {
+                        CategorySummarySection(
+                            categoryData = categoryAnalysisData,
+                            totalAmount = totalMonthlyAmount,
+                            defaultCurrency = viewModel.defaultCurrency,
+                            isDarkTheme = isDarkTheme,
+                            onCategoryClick = { categoryData ->
+                                selectedCategory = categoryData
+                                showCategoryDialog = true
+                            }
+                        )
+                    }
+
+                    if (recurringExpenseTotal > 0) {
+                        item {
+                            RecurringExpenseCard(
+                                totalAmount = recurringExpenseTotal,
+                                defaultCurrency = viewModel.defaultCurrency,
+                                isDarkTheme = isDarkTheme
+                            )
+                        }
+                    }
+                }
+                
+                // Absolute positioned popup overlay
+                if (selectedSegment != null && selectedSegment!! < categoryAnalysisData.size) {
+                    val selected = categoryAnalysisData[selectedSegment!!]
+                    
+                    // Calculate arrow angle to point to selected segment
+                    val segmentAngle = remember(selectedSegment) {
+                        var currentAngle = 0f
+                        for (i in 0 until selectedSegment!!) {
+                            currentAngle += animatedPercentages[i] * 360f
+                        }
+                        currentAngle + (animatedPercentages[selectedSegment!!] * 360f / 2f) - 90f
+                    }
+                    
+                    // Popup Animation
+                    val popupScale = remember { Animatable(0f) }
+                    val popupAlpha = remember { Animatable(0f) }
+                    
+                    LaunchedEffect(selectedSegment) {
+                        popupScale.animateTo(1f, animationSpec = spring(
+                            dampingRatio = Spring.DampingRatioMediumBouncy,
+                            stiffness = Spring.StiffnessMedium
+                        ))
+                        popupAlpha.animateTo(1f, animationSpec = tween(300))
+                    }
+                    
+                    // Absolute positioned popup
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .align(Alignment.TopStart)
+                            .offset(y = 360.dp) // Position below pie chart
+                            .padding(horizontal = 16.dp)
+                    ) {
+                        Box(
+                            modifier = Modifier.align(Alignment.Center)
+                        ) {
+                            // Arrow pointing upward to the pie chart
+                            Canvas(
+                                modifier = Modifier
+                                    .size(20.dp)
+                                    .align(Alignment.TopCenter)
+                                    .offset(y = (-10).dp)
+                                    .graphicsLayer {
+                                        alpha = popupAlpha.value
+                                        scaleX = popupScale.value
+                                        scaleY = popupScale.value
+                                    }
+                            ) {
+                                val path = Path().apply {
+                                    moveTo(size.width / 2f, 0f)
+                                    lineTo(0f, size.height)
+                                    lineTo(size.width, size.height)
+                                    close()
+                                }
+                                
+                                drawPath(
+                                    path = path,
+                                    color = selected.category.getColor(),
+                                    style = Fill
+                                )
+                            }
+                            
+                            // Category Info Card with solid matte background
+                            Card(
+                                modifier = Modifier
+                                    .width(280.dp)
+                                    .height(100.dp)
+                                    .graphicsLayer {
+                                        alpha = popupAlpha.value
+                                        scaleX = popupScale.value
+                                        scaleY = popupScale.value
+                                        transformOrigin = TransformOrigin(0.5f, 0.5f)
+                                    },
+                                colors = CardDefaults.cardColors(
+                                    containerColor = selected.category.getColor().copy(alpha = 0.95f)
+                                ),
+                                shape = RoundedCornerShape(12.dp),
+                                elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
+                            ) {
+                                Row(
+                                    modifier = Modifier
+                                        .fillMaxSize()
+                                        .padding(12.dp),
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    horizontalArrangement = Arrangement.spacedBy(12.dp)
+                                ) {
+                                    // Icon
+                                    Box(
+                                        modifier = Modifier
+                                            .size(36.dp)
+                                            .background(
+                                                Color.White.copy(alpha = 0.3f),
+                                                CircleShape
+                                            ),
+                                        contentAlignment = Alignment.Center
+                                    ) {
+                                        Icon(
+                                            imageVector = selected.category.getIcon(),
+                                            contentDescription = null,
+                                            tint = Color.White,
+                                            modifier = Modifier.size(20.dp)
+                                        )
+                                    }
+                                    
+                                    // Content
+                                    Column(
+                                        modifier = Modifier.weight(1f),
+                                        verticalArrangement = Arrangement.Center
+                                    ) {
+                                        Text(
+                                            text = selected.category.name,
+                                            fontSize = 18.sp,
+                                            fontWeight = FontWeight.Bold,
+                                            color = Color.White,
+                                            maxLines = 1,
+                                            overflow = TextOverflow.Ellipsis
+                                        )
+                                        
+                                        Text(
+                                            text = "${selected.expenseCount} harcama • %${String.format("%.1f", selected.percentage * 100)}",
+                                            fontSize = 14.sp,
+                                            color = Color.White.copy(alpha = 0.8f)
+                                        )
+                                    }
+                                    
+                                    // Amount
+                                    Text(
+                                        text = "${viewModel.defaultCurrency} ${NumberFormatter.formatAmount(selected.totalAmount)}",
+                                        fontSize = 14.sp,
+                                        fontWeight = FontWeight.Bold,
+                                        color = Color.White
+                                    )
+                                }
+                            }
+                        }
                     }
                 }
             }
@@ -281,21 +437,12 @@ fun MonthYearSelector(
 @Composable
 fun MonthlyAnalysisPieChart(
     categoryData: List<CategoryAnalysisData>,
-    defaultCurrency: String,
+    animatedPercentages: List<Float>,
     isDarkTheme: Boolean,
+    selectedSegment: Int?,
+    onSegmentSelected: (Int?) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    var selectedSegment by remember { mutableStateOf<Int?>(null) }
-    val animatedPercentages = categoryData.map { data ->
-        val animatedValue = remember { Animatable(0f) }
-        LaunchedEffect(data.percentage) {
-            animatedValue.animateTo(
-                targetValue = data.percentage.toFloat(),
-                animationSpec = tween(durationMillis = 1000, easing = EaseInOutCubic)
-            )
-        }
-        animatedValue.value
-    }
 
     val segmentScales = categoryData.mapIndexed { index, _ ->
         val animatedScale = remember { Animatable(1f) }
@@ -338,19 +485,19 @@ fun MonthlyAnalysisPieChart(
                 color = ThemeColors.getTextColor(isDarkTheme),
                 modifier = Modifier.align(Alignment.CenterHorizontally)
             )
-            
-            Spacer(modifier = Modifier.height(16.dp))
+
 
             if (categoryData.isNotEmpty()) {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(280.dp),
+                    contentAlignment = Alignment.Center
                 ) {
                     // Pie Chart
                     Canvas(
                         modifier = Modifier
-                            .size(200.dp)
+                            .size(250.dp)
                             .pointerInput(categoryData) {
                                 detectTapGestures { tapOffset ->
                                     val center = Offset(size.width / 2f, size.height / 2f)
@@ -373,7 +520,7 @@ fun MonthlyAnalysisPieChart(
                                         for (i in animatedPercentages.indices) {
                                             val sweepAngle = animatedPercentages[i] * 360f
                                             if (normalizedAngle >= currentAngle && normalizedAngle <= currentAngle + sweepAngle) {
-                                                selectedSegment = if (selectedSegment == i) null else i
+                                                onSegmentSelected(if (selectedSegment == i) null else i)
                                                 break
                                             }
                                             currentAngle += sweepAngle
@@ -413,112 +560,28 @@ fun MonthlyAnalysisPieChart(
                         )
                     }
                     
-                    Spacer(modifier = Modifier.width(16.dp))
-                    
-                    // Selected Category Info
-                    Box(
-                        modifier = Modifier
-                            .weight(1f)
-                            .height(200.dp),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        if (selectedSegment != null && selectedSegment!! < categoryData.size) {
-                            val selected = categoryData[selectedSegment!!]
-                            androidx.compose.animation.AnimatedVisibility(
-                                visible = true,
-                                enter = fadeIn() + slideInHorizontally(),
-                                exit = fadeOut() + slideOutHorizontally()
-                            ) {
-                                Card(
-                                    colors = CardDefaults.cardColors(
-                                        containerColor = selected.category.getColor().copy(alpha = 0.1f)
-                                    ),
-                                    shape = RoundedCornerShape(12.dp),
-                                    border = BorderStroke(2.dp, selected.category.getColor().copy(alpha = 0.3f))
-                                ) {
-                                    Column(
-                                        modifier = Modifier.padding(16.dp),
-                                        horizontalAlignment = Alignment.CenterHorizontally
-                                    ) {
-                                        Box(
-                                            modifier = Modifier
-                                                .size(40.dp)
-                                                .background(
-                                                    selected.category.getColor().copy(alpha = 0.2f),
-                                                    CircleShape
-                                                ),
-                                            contentAlignment = Alignment.Center
-                                        ) {
-                                            Icon(
-                                                imageVector = selected.category.getIcon(),
-                                                contentDescription = null,
-                                                tint = selected.category.getColor(),
-                                                modifier = Modifier.size(24.dp)
-                                            )
-                                        }
-                                        
-                                        Spacer(modifier = Modifier.height(12.dp))
-                                        
-                                        Text(
-                                            text = selected.category.name,
-                                            fontSize = 14.sp,
-                                            fontWeight = FontWeight.Bold,
-                                            color = ThemeColors.getTextColor(isDarkTheme),
-                                            textAlign = TextAlign.Center,
-                                            maxLines = 2,
-                                            overflow = TextOverflow.Ellipsis
-                                        )
-                                        
-                                        Spacer(modifier = Modifier.height(8.dp))
-                                        
-                                        Text(
-                                            text = "${selected.expenseCount} harcama",
-                                            fontSize = 12.sp,
-                                            color = ThemeColors.getTextGrayColor(isDarkTheme),
-                                            textAlign = TextAlign.Center
-                                        )
-                                        
-                                        Spacer(modifier = Modifier.height(4.dp))
-                                        
-                                        Text(
-                                            text = "$defaultCurrency ${NumberFormatter.formatAmount(selected.totalAmount)}",
-                                            fontSize = 16.sp,
-                                            fontWeight = FontWeight.Bold,
-                                            color = selected.category.getColor(),
-                                            textAlign = TextAlign.Center
-                                        )
-                                        
-                                        Spacer(modifier = Modifier.height(4.dp))
-                                        
-                                        Text(
-                                            text = "%${String.format("%.1f", selected.percentage * 100)}",
-                                            fontSize = 12.sp,
-                                            fontWeight = FontWeight.Medium,
-                                            color = ThemeColors.getTextGrayColor(isDarkTheme),
-                                            textAlign = TextAlign.Center
-                                        )
-                                    }
-                                }
-                            }
-                        } else {
-                            Column(
-                                horizontalAlignment = Alignment.CenterHorizontally,
-                                verticalArrangement = Arrangement.Center
-                            ) {
-                                Icon(
-                                    imageVector = Icons.Default.TouchApp,
-                                    contentDescription = null,
-                                    tint = ThemeColors.getTextGrayColor(isDarkTheme).copy(alpha = 0.6f),
-                                    modifier = Modifier.size(32.dp)
-                                )
-                                Spacer(modifier = Modifier.height(8.dp))
-                                Text(
-                                    text = "Kategori seçmek için\ngrafiğe dokunun",
-                                    fontSize = 12.sp,
-                                    color = ThemeColors.getTextGrayColor(isDarkTheme).copy(alpha = 0.8f),
-                                    textAlign = TextAlign.Center
-                                )
-                            }
+                    // Hint text when nothing is selected
+                    if (selectedSegment == null) {
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.Center,
+                            modifier = Modifier
+                                .align(Alignment.BottomCenter)
+                                .padding(top = 220.dp)
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.TouchApp,
+                                contentDescription = null,
+                                tint = ThemeColors.getTextGrayColor(isDarkTheme).copy(alpha = 0.6f),
+                                modifier = Modifier.size(24.dp)
+                            )
+                            Spacer(modifier = Modifier.height(4.dp))
+                            Text(
+                                text = "Kategori seçmek için grafiğe dokunun",
+                                fontSize = 11.sp,
+                                color = ThemeColors.getTextGrayColor(isDarkTheme).copy(alpha = 0.8f),
+                                textAlign = TextAlign.Center
+                            )
                         }
                     }
                 }
