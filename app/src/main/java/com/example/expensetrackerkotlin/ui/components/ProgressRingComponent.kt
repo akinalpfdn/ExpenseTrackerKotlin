@@ -1,5 +1,6 @@
 package com.example.expensetrackerkotlin.ui.components
 
+import androidx.compose.animation.core.*
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -33,6 +34,16 @@ fun ProgressRing(
     strokeWidth: Dp = 8.dp,
     onClick: (() -> Unit)? = null
 ) {
+    // Animate progress
+    val animatedProgress = remember { Animatable(0f) }
+    
+    LaunchedEffect(progress) {
+        animatedProgress.animateTo(
+            targetValue = progress,
+            animationSpec = tween(durationMillis = 1500, easing = EaseOutCubic)
+        )
+    }
+    
     val colors = when {
         isLimitOver -> listOf(Color.Red, Color.Red, Color.Red, Color.Red)
         else -> {
@@ -64,7 +75,7 @@ fun ProgressRing(
             style = Stroke(width = strokeWidthPx, cap = StrokeCap.Round)
         )
         
-        val sweepAngle = 360f * progress
+        val sweepAngle = 360f * animatedProgress.value
         
         // Create gradient brush - start from right (0 degrees)
         val brush = if (colors.size > 1) {
