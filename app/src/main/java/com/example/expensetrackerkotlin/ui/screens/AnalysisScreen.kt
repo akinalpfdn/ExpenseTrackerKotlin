@@ -625,22 +625,16 @@ fun MonthlyAnalysisPieChart(
         shape = RoundedCornerShape(16.dp)
     ) {
         Column(
-            modifier = Modifier.padding(20.dp)
+            modifier = Modifier.padding(10.dp)
         ) {
-            Text(
-                text = "Kategori Dağılımı",
-                fontSize = 18.sp,
-                fontWeight = FontWeight.Bold,
-                color = ThemeColors.getTextColor(isDarkTheme),
-                modifier = Modifier.align(Alignment.CenterHorizontally)
-            )
+
 
 
             if (categoryData.isNotEmpty()) {
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(280.dp),
+                        .height(265.dp),
                     contentAlignment = Alignment.Center
                 ) {
                     // Pie Chart
@@ -760,7 +754,7 @@ fun CategorySummarySection(
         ) {
             Text(
                 text = "Kategori Detayları",
-                fontSize = 18.sp,
+                fontSize = 20.sp,
                 fontWeight = FontWeight.Bold,
                 color = ThemeColors.getTextColor(isDarkTheme),
                 modifier = Modifier.padding(bottom = 16.dp)
@@ -850,14 +844,14 @@ fun CategorySummaryRow(
                 Text(
                     text = categoryData.category.name,
                     fontWeight = FontWeight.Medium,
-                    fontSize = 14.sp,
+                    fontSize = 16.sp,
                     color = ThemeColors.getTextColor(isDarkTheme),
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
                 )
                 Text(
                     text = "${categoryData.expenseCount} harcama • %${String.format("%.1f", categoryData.percentage * 100)}",
-                    fontSize = 12.sp,
+                    fontSize = 14.sp,
                     color = ThemeColors.getTextGrayColor(isDarkTheme)
                 )
             }
@@ -869,7 +863,7 @@ fun CategorySummaryRow(
             Text(
                 text = "$defaultCurrency ${NumberFormatter.formatAmount(categoryData.totalAmount)}",
                 fontWeight = FontWeight.Bold,
-                fontSize = 14.sp,
+                fontSize = 16.sp,
                 color = ThemeColors.getTextColor(isDarkTheme)
             )
             

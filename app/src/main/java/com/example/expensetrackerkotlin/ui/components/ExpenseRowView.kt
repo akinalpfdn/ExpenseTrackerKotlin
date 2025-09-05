@@ -172,7 +172,7 @@ fun ExpenseRowView(
                                 Text(
                                     text = subCategory?.name ?: "Unknown",
                                     fontWeight = FontWeight.Medium,
-                                    fontSize = 15.sp,
+                                    fontSize = 16.sp,
                                     color = ThemeColors.getTextColor(isDarkTheme),
                                     maxLines = 1,
                                     overflow = TextOverflow.Ellipsis
@@ -180,7 +180,7 @@ fun ExpenseRowView(
                                 if (expense.description.isNotBlank()) {
                                     Text(
                                         text = expense.description,
-                                        fontSize = 13.sp,
+                                        fontSize = 14.sp,
                                         color = ThemeColors.getTextGrayColor(isDarkTheme),
                                         maxLines = 1,
                                         overflow = TextOverflow.Ellipsis
@@ -195,19 +195,19 @@ fun ExpenseRowView(
                             Text(
                                 text = "${expense.currency} ${NumberFormatter.formatAmount(expense.amount)}",
                                 fontWeight = FontWeight.Bold,
-                                fontSize = 16.sp,
+                                fontSize = 17.sp,
                                 color = ThemeColors.getTextColor(isDarkTheme)
                             )
                             if (expense.exchangeRate != null) {
                                 Text(
                                     text = "Kur: ${String.format("%.4f", expense.exchangeRate)}",
-                                    fontSize = 11.sp,
+                                    fontSize = 12.sp,
                                     color = ThemeColors.getTextGrayColor(isDarkTheme)
                                 )
                             }
                                                          Text(
                                  text = expense.date.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")),
-                                 fontSize = 12.sp,
+                                 fontSize = 13.sp,
                                  color = ThemeColors.getTextGrayColor(isDarkTheme)
                              )
                              if (expense.recurrenceType != RecurrenceType.NONE) {
@@ -229,7 +229,7 @@ fun ExpenseRowView(
                                              RecurrenceType.MONTHLY -> "Aylık"
                                              RecurrenceType.NONE -> ""
                                          },
-                                         fontSize = 10.sp,
+                                         fontSize = 11.sp,
                                          color = ThemeColors.getTextGrayColor(isDarkTheme)
                                      )
                                  }
