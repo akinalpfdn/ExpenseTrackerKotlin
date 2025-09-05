@@ -140,7 +140,41 @@ fun AnalysisScreen(
         )
 
         if (categoryAnalysisData.isNotEmpty()) {
-            Box(modifier = Modifier.fillMaxSize()) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .pointerInput(selectedSegment) {
+                        // Close popup when clicking outside
+                        detectTapGestures { tapOffset ->
+                            if (selectedSegment != null) {
+                                // Check if tap is outside the popup area
+                                val popupLeft = (size.width - 280.dp.toPx()) / 2f
+                                val popupRight = popupLeft + 280.dp.toPx()
+                                val popupTop = 360.dp.toPx()
+                                val popupBottom = popupTop + 100.dp.toPx()
+                                
+                                val isOutsidePopup = tapOffset.x < popupLeft || 
+                                                   tapOffset.x > popupRight ||
+                                                   tapOffset.y < popupTop ||
+                                                   tapOffset.y > popupBottom
+                                
+                                // Also check if tap is outside pie chart area
+                                val pieChartCenterX = size.width / 2f
+                                val pieChartCenterY = 200.dp.toPx() // Approximate pie chart center
+                                val pieRadius = 125.dp.toPx()
+                                val distanceFromPieCenter = sqrt(
+                                    (tapOffset.x - pieChartCenterX).pow(2) + 
+                                    (tapOffset.y - pieChartCenterY).pow(2)
+                                )
+                                val isOutsidePieChart = distanceFromPieCenter > pieRadius
+                                
+                                if (isOutsidePopup && isOutsidePieChart) {
+                                    selectedSegment = null
+                                }
+                            }
+                        }
+                    }
+            ) {
                 LazyColumn(
                     verticalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
@@ -198,25 +232,33 @@ fun AnalysisScreen(
                     val popupAlpha = remember { Animatable(0f) }
                     
                     LaunchedEffect(selectedSegment) {
-                        // Reset all animations
-                        line1Progress.snapTo(0f)
-                        line2Progress.snapTo(0f)
-                        popupScale.snapTo(0f)
-                        popupAlpha.snapTo(0f)
-                        
-                        // Sequence animation: Line 1 → Line 2 → Popup
-                        // 1. Animate Line 1 growing
-                        line1Progress.animateTo(1f, animationSpec = tween(400, easing = EaseOutCubic))
-                        
-                        // 2. Animate Line 2 growing
-                        line2Progress.animateTo(1f, animationSpec = tween(300, easing = EaseOutCubic))
-                        
-                        // 3. Show popup with bounce
-                        popupAlpha.animateTo(1f, animationSpec = tween(200))
-                        popupScale.animateTo(1f, animationSpec = spring(
-                            dampingRatio = Spring.DampingRatioMediumBouncy,
-                            stiffness = Spring.StiffnessMedium
-                        ))
+                        if (selectedSegment != null) {
+                            // Reset all animations
+                            line1Progress.snapTo(0f)
+                            line2Progress.snapTo(0f)
+                            popupScale.snapTo(0f)
+                            popupAlpha.snapTo(0f)
+                            
+                            // Sequence animation: Line 1 → Line 2 → Popup
+                            // 1. Animate Line 1 growing
+                            line1Progress.animateTo(1f, animationSpec = tween(400, easing = EaseOutCubic))
+                            
+                            // 2. Animate Line 2 growing
+                            line2Progress.animateTo(1f, animationSpec = tween(300, easing = EaseOutCubic))
+                            
+                            // 3. Show popup with bounce
+                            popupAlpha.animateTo(1f, animationSpec = tween(200))
+                            popupScale.animateTo(1f, animationSpec = spring(
+                                dampingRatio = Spring.DampingRatioMediumBouncy,
+                                stiffness = Spring.StiffnessMedium
+                            ))
+                        } else {
+                            // Animate out when closing
+                            popupAlpha.animateTo(0f, animationSpec = tween(150))
+                            popupScale.animateTo(0f, animationSpec = tween(150))
+                            line2Progress.animateTo(0f, animationSpec = tween(200, easing = EaseInCubic))
+                            line1Progress.animateTo(0f, animationSpec = tween(200, easing = EaseInCubic))
+                        }
                     }
                     
                     // Absolute positioned popup
@@ -437,21 +479,41 @@ fun AnalysisScreen(
     }
 
     if (showCategoryDialog && selectedCategory != null) {
-        CategoryDetailDialog(
-            categoryData = selectedCategory!!,
-            subCategories = subCategories,
-            defaultCurrency = viewModel.defaultCurrency,
-            isDarkTheme = isDarkTheme,
-            sortOption = sortOption,
-            showSortMenu = showSortMenu,
-            onSortOptionChanged = { sortOption = it },
-            onShowSortMenuChanged = { showSortMenu = it },
-            onDismiss = {
+        val categoryDetailSheetState = rememberModalBottomSheetState(
+            skipPartiallyExpanded = true,
+            confirmValueChange = { true }
+        )
+        
+        LaunchedEffect(Unit) {
+            categoryDetailSheetState.expand()
+        }
+        
+        ModalBottomSheet(
+            onDismissRequest = {
                 showCategoryDialog = false
                 selectedCategory = null
                 showSortMenu = false
+            },
+            sheetState = categoryDetailSheetState,
+            dragHandle = { BottomSheetDefaults.DragHandle() }
+        ) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .heightIn(max = 700.dp)
+            ) {
+                CategoryDetailBottomSheet(
+                    categoryData = selectedCategory!!,
+                    subCategories = subCategories,
+                    defaultCurrency = viewModel.defaultCurrency,
+                    isDarkTheme = isDarkTheme,
+                    sortOption = sortOption,
+                    showSortMenu = showSortMenu,
+                    onSortOptionChanged = { sortOption = it },
+                    onShowSortMenuChanged = { showSortMenu = it }
+                )
             }
-        )
+        }
     }
 }
 
@@ -879,7 +941,7 @@ fun RecurringExpenseCard(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CategoryDetailDialog(
+fun CategoryDetailBottomSheet(
     categoryData: CategoryAnalysisData,
     subCategories: List<SubCategory>,
     defaultCurrency: String,
@@ -887,8 +949,7 @@ fun CategoryDetailDialog(
     sortOption: SortOption,
     showSortMenu: Boolean,
     onSortOptionChanged: (SortOption) -> Unit,
-    onShowSortMenuChanged: (Boolean) -> Unit,
-    onDismiss: () -> Unit
+    onShowSortMenuChanged: (Boolean) -> Unit
 ) {
     val sortedExpenses = remember(categoryData.expenses, sortOption) {
         when (sortOption) {
@@ -899,190 +960,188 @@ fun CategoryDetailDialog(
         }
     }
 
-    AlertDialog(
-        onDismissRequest = onDismiss,
-        properties = DialogProperties(usePlatformDefaultWidth = false),
+    Column(
         modifier = Modifier
-            .fillMaxWidth(0.95f)
-            .fillMaxHeight(0.8f),
-        title = {
-            Column {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
+            .fillMaxWidth()
+            .background(ThemeColors.getBackgroundColor(isDarkTheme))
+            .padding(16.dp)
+    ) {
+        // Header
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Box(
+                    modifier = Modifier
+                        .size(32.dp)
+                        .background(
+                            categoryData.category.getColor().copy(alpha = 0.2f),
+                            CircleShape
+                        ),
+                    contentAlignment = Alignment.Center
                 ) {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Box(
-                            modifier = Modifier
-                                .size(24.dp)
-                                .background(
-                                    categoryData.category.getColor().copy(alpha = 0.2f),
-                                    CircleShape
-                                ),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Icon(
-                                imageVector = categoryData.category.getIcon(),
-                                contentDescription = null,
-                                tint = categoryData.category.getColor(),
-                                modifier = Modifier.size(14.dp)
-                            )
-                        }
-                        Spacer(modifier = Modifier.width(8.dp))
-                        Column {
-                            Text(
-                                text = categoryData.category.name,
-                                fontSize = 16.sp,
-                                fontWeight = FontWeight.Bold,
-                                color = ThemeColors.getTextColor(isDarkTheme)
-                            )
-                            Text(
-                                text = "$defaultCurrency ${NumberFormatter.formatAmount(categoryData.totalAmount)}",
-                                fontSize = 12.sp,
-                                color = ThemeColors.getTextGrayColor(isDarkTheme)
-                            )
-                        }
-                    }
-                    
-                    IconButton(
-                        onClick = onDismiss
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Close,
-                            contentDescription = "Kapat",
-                            tint = ThemeColors.getTextColor(isDarkTheme)
-                        )
-                    }
+                    Icon(
+                        imageVector = categoryData.category.getIcon(),
+                        contentDescription = null,
+                        tint = categoryData.category.getColor(),
+                        modifier = Modifier.size(18.dp)
+                    )
                 }
-                
-                Spacer(modifier = Modifier.height(8.dp))
-                
-                Box {
-                    OutlinedButton(
-                        onClick = { onShowSortMenuChanged(true) },
-                        modifier = Modifier.fillMaxWidth(),
-                        colors = ButtonDefaults.outlinedButtonColors(
-                            containerColor = Color.Transparent,
-                            contentColor = ThemeColors.getTextColor(isDarkTheme)
-                        )
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Sort,
-                            contentDescription = null,
-                            modifier = Modifier.size(16.dp)
-                        )
-                        Spacer(modifier = Modifier.width(8.dp))
-                        Text(
-                            text = sortOption.displayName,
-                            fontSize = 12.sp
-                        )
-                        Spacer(modifier = Modifier.width(8.dp))
-                        Icon(
-                            imageVector = Icons.Default.ExpandMore,
-                            contentDescription = null,
-                            modifier = Modifier.size(16.dp)
-                        )
-                    }
-                    
-                    DropdownMenu(
-                        expanded = showSortMenu,
-                        onDismissRequest = { onShowSortMenuChanged(false) },
-                        modifier = Modifier.background(ThemeColors.getCardBackgroundColor(isDarkTheme))
-                    ) {
-                        SortOption.values().forEach { option ->
-                            DropdownMenuItem(
-                                text = {
-                                    Text(
-                                        text = option.displayName,
-                                        color = ThemeColors.getTextColor(isDarkTheme),
-                                        fontSize = 12.sp
-                                    )
-                                },
-                                onClick = {
-                                    onSortOptionChanged(option)
-                                    onShowSortMenuChanged(false)
-                                }
-                            )
-                        }
-                    }
+                Spacer(modifier = Modifier.width(12.dp))
+                Column {
+                    Text(
+                        text = categoryData.category.name,
+                        fontSize = 22.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = ThemeColors.getTextColor(isDarkTheme)
+                    )
+                    Text(
+                        text = "$defaultCurrency ${NumberFormatter.formatAmount(categoryData.totalAmount)}",
+                        fontSize = 18.sp,
+                        color = ThemeColors.getTextGrayColor(isDarkTheme)
+                    )
+                    Text(
+                        text = "${categoryData.expenseCount} harcama • %${String.format("%.1f", categoryData.percentage * 100)}",
+                        fontSize = 16.sp,
+                        color = ThemeColors.getTextGrayColor(isDarkTheme)
+                    )
                 }
             }
-        },
-        text = {
-            LazyColumn(
-                verticalArrangement = Arrangement.spacedBy(8.dp)
+        }
+        
+        Spacer(modifier = Modifier.height(16.dp))
+        
+        // Sort Button
+        Box {
+            OutlinedButton(
+                onClick = { onShowSortMenuChanged(true) },
+                modifier = Modifier.fillMaxWidth(),
+                colors = ButtonDefaults.outlinedButtonColors(
+                    containerColor = Color.Transparent,
+                    contentColor = ThemeColors.getTextColor(isDarkTheme)
+                )
             ) {
-                items(sortedExpenses) { expense ->
-                    val subCategory = subCategories.find { it.id == expense.subCategoryId }
-                    
-                    Card(
-                        colors = CardDefaults.cardColors(
-                            containerColor = ThemeColors.getCardBackgroundColor(isDarkTheme)
-                        ),
-                        shape = RoundedCornerShape(8.dp)
-                    ) {
-                        Column(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(12.dp)
+                Icon(
+                    imageVector = Icons.Default.Sort,
+                    contentDescription = null,
+                    modifier = Modifier.size(16.dp)
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                Text(
+                    text = sortOption.displayName,
+                    fontSize = 14.sp
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                Icon(
+                    imageVector = Icons.Default.ExpandMore,
+                    contentDescription = null,
+                    modifier = Modifier.size(16.dp)
+                )
+            }
+            
+            DropdownMenu(
+                expanded = showSortMenu,
+                onDismissRequest = { onShowSortMenuChanged(false) },
+                modifier = Modifier.background(ThemeColors.getCardBackgroundColor(isDarkTheme))
+            ) {
+                SortOption.values().forEach { option ->
+                    DropdownMenuItem(
+                        text = {
+                            Text(
+                                text = option.displayName,
+                                color = ThemeColors.getTextColor(isDarkTheme),
+                                fontSize = 14.sp
+                            )
+                        },
+                        onClick = {
+                            onSortOptionChanged(option)
+                            onShowSortMenuChanged(false)
+                        }
+                    )
+                }
+            }
+        }
+        
+        Spacer(modifier = Modifier.height(16.dp))
+        
+        // Expenses List
+        LazyColumn(
+            verticalArrangement = Arrangement.spacedBy(12.dp),
+            modifier = Modifier.weight(1f)
+        ) {
+            items(sortedExpenses) { expense ->
+                val subCategory = subCategories.find { it.id == expense.subCategoryId }
+                
+                Card(
+                    colors = CardDefaults.cardColors(
+                        containerColor = ThemeColors.getCardBackgroundColor(isDarkTheme)
+                    ),
+                    shape = RoundedCornerShape(12.dp)
+                ) {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(12.dp)
+                    )
+                    {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.Top
                         ) {
-                            Row(
-                                modifier = Modifier.fillMaxWidth(),
-                                horizontalArrangement = Arrangement.SpaceBetween,
-                                verticalAlignment = Alignment.Top
+                            Column(
+                                modifier = Modifier.weight(1f)
                             ) {
-                                Column(
-                                    modifier = Modifier.weight(1f)
-                                ) {
+                                Text(
+                                    text = subCategory?.name ?: "Bilinmeyen",
+                                    fontWeight = FontWeight.Medium,
+                                    fontSize = 17.sp,
+                                    color = ThemeColors.getTextColor(isDarkTheme)
+                                )
+                                if (expense.description.isNotBlank()) {
                                     Text(
-                                        text = subCategory?.name ?: "Bilinmeyen",
-                                        fontWeight = FontWeight.Medium,
-                                        fontSize = 14.sp,
-                                        color = ThemeColors.getTextColor(isDarkTheme)
-                                    )
-                                    if (expense.description.isNotBlank()) {
-                                        Text(
-                                            text = expense.description,
-                                            fontSize = 12.sp,
-                                            color = ThemeColors.getTextGrayColor(isDarkTheme),
-                                            modifier = Modifier.padding(top = 2.dp)
-                                        )
-                                    }
-                                    Text(
-                                        text = expense.date.format(DateTimeFormatter.ofPattern("dd MMMM yyyy, HH:mm")),
-                                        fontSize = 11.sp,
+                                        text = expense.description,
+                                        fontSize = 15.sp,
                                         color = ThemeColors.getTextGrayColor(isDarkTheme),
                                         modifier = Modifier.padding(top = 4.dp)
                                     )
                                 }
-                                
-                                Column(
-                                    horizontalAlignment = Alignment.End
-                                ) {
+                                Text(
+                                    text = expense.date.format(DateTimeFormatter.ofPattern("dd MMMM yyyy")),
+                                    fontSize = 14.sp,
+                                    color = ThemeColors.getTextGrayColor(isDarkTheme),
+                                    modifier = Modifier.padding(top = 4.dp)
+                                )
+                            }
+                            
+                            Column(
+                                horizontalAlignment = Alignment.End
+                            ) {
+                                Text(
+                                    text = "$defaultCurrency ${NumberFormatter.formatAmount(expense.amount)}",
+                                    fontWeight = FontWeight.Bold,
+                                    fontSize = 17.sp,
+                                    color = ThemeColors.getTextColor(isDarkTheme)
+                                )
+                                if (expense.exchangeRate != null && expense.currency != defaultCurrency) {
                                     Text(
-                                        text = "$defaultCurrency ${NumberFormatter.formatAmount(expense.amount)}",
-                                        fontWeight = FontWeight.Bold,
-                                        fontSize = 14.sp,
-                                        color = ThemeColors.getTextColor(isDarkTheme)
+                                        text = "${expense.currency} ${NumberFormatter.formatAmount(expense.amount)}",
+                                        fontSize = 12.sp,
+                                        color = ThemeColors.getTextGrayColor(isDarkTheme),
+                                        modifier = Modifier.padding(top = 2.dp)
                                     )
-                                    if (expense.exchangeRate != null && expense.currency != defaultCurrency) {
-                                        Text(
-                                            text = "${expense.currency} ${NumberFormatter.formatAmount(expense.amount)}",
-                                            fontSize = 11.sp,
-                                            color = ThemeColors.getTextGrayColor(isDarkTheme)
-                                        )
-                                    }
                                 }
                             }
                         }
                     }
                 }
             }
-        },
-        confirmButton = {},
-        containerColor = ThemeColors.getDialogBackgroundColor(isDarkTheme)
-    )
+        }
+        
+        // Add some bottom padding for better UX
+    }
 }
