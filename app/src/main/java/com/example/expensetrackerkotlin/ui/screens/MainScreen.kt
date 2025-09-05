@@ -42,7 +42,7 @@ fun MainScreen(
         ) { page ->
             when (page) {
                 0 -> ExpensesScreen(viewModel = viewModel)
-                1 -> AnalysisScreen(isDarkTheme = isDarkTheme)
+                1 -> AnalysisScreen(viewModel = viewModel,isDarkTheme = isDarkTheme)
                 2-> PlanningScreen(isDarkTheme = isDarkTheme)
             }
         }

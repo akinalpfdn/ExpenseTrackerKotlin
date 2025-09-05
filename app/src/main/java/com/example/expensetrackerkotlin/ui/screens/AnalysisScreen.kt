@@ -1,48 +1,759 @@
 package com.example.expensetrackerkotlin.ui.screens
 
-import androidx.compose.foundation.background
+import androidx.compose.animation.*
+import androidx.compose.animation.core.*
+import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.*
+import androidx.compose.foundation.shape.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.*
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.*
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import com.example.expensetrackerkotlin.ui.theme.AppColors
-import com.example.expensetrackerkotlin.ui.theme.ThemeColors
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.*
+import androidx.compose.ui.window.DialogProperties
+import com.example.expensetrackerkotlin.data.*
+import com.example.expensetrackerkotlin.ui.components.*
+import com.example.expensetrackerkotlin.ui.theme.*
+import com.example.expensetrackerkotlin.utils.NumberFormatter
+import com.example.expensetrackerkotlin.viewmodel.ExpenseViewModel
+import java.time.*
+import java.time.format.DateTimeFormatter
+import java.time.temporal.ChronoUnit
+import kotlinx.coroutines.launch
 
+data class CategoryAnalysisData(
+    val category: Category,
+    val totalAmount: Double,
+    val expenseCount: Int,
+    val percentage: Double,
+    val expenses: List<Expense>
+)
+
+enum class SortOption(val displayName: String) {
+    AMOUNT_DESC("Tutara Göre (Yüksek → Düşük)"),
+    AMOUNT_ASC("Tutara Göre (Düşük → Yüksek)"),
+    DATE_DESC("Tarihe Göre (Yeni → Eski)"),
+    DATE_ASC("Tarihe Göre (Eski → Yeni)")
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AnalysisScreen(
+    viewModel: ExpenseViewModel,
     modifier: Modifier = Modifier,
     isDarkTheme: Boolean = true
 ) {
-    Box(
+    var selectedMonth by remember { mutableStateOf(YearMonth.now()) }
+    var showCategoryDialog by remember { mutableStateOf(false) }
+    var selectedCategory by remember { mutableStateOf<CategoryAnalysisData?>(null) }
+    var sortOption by remember { mutableStateOf(SortOption.DATE_DESC) }
+    var showSortMenu by remember { mutableStateOf(false) }
+
+    val expenses by viewModel.expenses.collectAsState()
+    val categories by viewModel.categories.collectAsState()
+    val subCategories by viewModel.subCategories.collectAsState()
+
+    val monthlyExpenses = remember(expenses, selectedMonth) {
+        val startOfMonth = selectedMonth.atDay(1).atStartOfDay()
+        val endOfMonth = selectedMonth.atEndOfMonth().atTime(23, 59, 59)
+
+        expenses.filter { expense ->
+            expense.date.toLocalDate().let { expenseDate ->
+                !expenseDate.isBefore(startOfMonth.toLocalDate()) && 
+                !expenseDate.isAfter(endOfMonth.toLocalDate())
+            }
+        }
+    }
+
+    val categoryAnalysisData = remember(monthlyExpenses, categories, subCategories) {
+        if (monthlyExpenses.isEmpty()) return@remember emptyList()
+
+        val totalAmount = monthlyExpenses.sumOf { it.getAmountInDefaultCurrency(viewModel.defaultCurrency) }
+        
+        val categoryTotals = monthlyExpenses.groupBy { it.categoryId }
+            .mapNotNull { (categoryId, categoryExpenses) ->
+                val category = categories.find { it.id == categoryId }
+                if (category != null) {
+                    val amount = categoryExpenses.sumOf { it.getAmountInDefaultCurrency(viewModel.defaultCurrency) }
+                    CategoryAnalysisData(
+                        category = category,
+                        totalAmount = amount,
+                        expenseCount = categoryExpenses.size,
+                        percentage = if (totalAmount > 0) amount / totalAmount else 0.0,
+                        expenses = categoryExpenses.sortedByDescending { it.date }
+                    )
+                } else null
+            }
+            .sortedByDescending { it.totalAmount }
+
+        categoryTotals
+    }
+
+    val recurringExpenseTotal = remember(expenses) {
+        val threeMonthsFromNow = LocalDateTime.now().plusMonths(3)
+        expenses.filter { expense ->
+            expense.recurrenceType != RecurrenceType.NONE && 
+            (expense.endDate == null || expense.endDate.isAfter(threeMonthsFromNow))
+        }.sumOf { it.getAmountInDefaultCurrency(viewModel.defaultCurrency) }
+    }
+
+    val totalMonthlyAmount = categoryAnalysisData.sumOf { it.totalAmount }
+
+    Column(
         modifier = modifier
             .fillMaxSize()
-            .background(ThemeColors.getBackgroundColor(isDarkTheme)),
-        contentAlignment = Alignment.Center
+            .background(ThemeColors.getBackgroundColor(isDarkTheme))
+            .padding(16.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(16.dp)
+        MonthYearSelector(
+            selectedMonth = selectedMonth,
+            onMonthYearChanged = { selectedMonth = it },
+            isDarkTheme = isDarkTheme
+        )
+
+        if (categoryAnalysisData.isNotEmpty()) {
+            LazyColumn(
+                verticalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
+                item {
+                    MonthlyAnalysisPieChart(
+                        categoryData = categoryAnalysisData,
+                        isDarkTheme = isDarkTheme
+                    )
+                }
+
+                item {
+                    CategorySummarySection(
+                        categoryData = categoryAnalysisData,
+                        totalAmount = totalMonthlyAmount,
+                        defaultCurrency = viewModel.defaultCurrency,
+                        isDarkTheme = isDarkTheme,
+                        onCategoryClick = { categoryData ->
+                            selectedCategory = categoryData
+                            showCategoryDialog = true
+                        }
+                    )
+                }
+
+                if (recurringExpenseTotal > 0) {
+                    item {
+                        RecurringExpenseCard(
+                            totalAmount = recurringExpenseTotal,
+                            defaultCurrency = viewModel.defaultCurrency,
+                            isDarkTheme = isDarkTheme
+                        )
+                    }
+                }
+            }
+        } else {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(32.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.spacedBy(16.dp)
+                ) {
+                    Text(
+                        text = "📊",
+                        fontSize = 64.sp
+                    )
+                    Text(
+                        text = "Bu ay henüz harcama yok",
+                        fontSize = 20.sp,
+                        fontWeight = FontWeight.Medium,
+                        color = ThemeColors.getTextColor(isDarkTheme),
+                        textAlign = TextAlign.Center
+                    )
+                    Text(
+                        text = "Harcama eklediğinizde analiz burada görünecek",
+                        fontSize = 14.sp,
+                        color = ThemeColors.getTextGrayColor(isDarkTheme),
+                        textAlign = TextAlign.Center
+                    )
+                }
+            }
+        }
+    }
+
+    if (showCategoryDialog && selectedCategory != null) {
+        CategoryDetailDialog(
+            categoryData = selectedCategory!!,
+            subCategories = subCategories,
+            defaultCurrency = viewModel.defaultCurrency,
+            isDarkTheme = isDarkTheme,
+            sortOption = sortOption,
+            showSortMenu = showSortMenu,
+            onSortOptionChanged = { sortOption = it },
+            onShowSortMenuChanged = { showSortMenu = it },
+            onDismiss = {
+                showCategoryDialog = false
+                selectedCategory = null
+                showSortMenu = false
+            }
+        )
+    }
+}
+
+@Composable
+fun MonthYearSelector(
+    selectedMonth: YearMonth,
+    onMonthYearChanged: (YearMonth) -> Unit,
+    isDarkTheme: Boolean
+) {
+    var showMonthPicker by remember { mutableStateOf(false) }
+    val currentMonth = YearMonth.now()
+
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        IconButton(
+            onClick = {
+                val previousMonth = selectedMonth.minusMonths(1)
+                onMonthYearChanged(previousMonth)
+            }
+        ) {
+            Icon(
+                imageVector = Icons.Default.ChevronLeft,
+                contentDescription = "Önceki ay",
+                tint = ThemeColors.getTextColor(isDarkTheme)
+            )
+        }
+
+        Card(
+            modifier = Modifier
+                .weight(1f)
+                .clickable { showMonthPicker = true },
+            colors = CardDefaults.cardColors(
+                containerColor = ThemeColors.getCardBackgroundColor(isDarkTheme)
+            ),
+            shape = RoundedCornerShape(12.dp)
         ) {
             Text(
-                text = "📊",
-                fontSize = 64.sp
+                text = selectedMonth.format(DateTimeFormatter.ofPattern("MMMM yyyy")),
+                modifier = Modifier.padding(16.dp),
+                textAlign = TextAlign.Center,
+                color = ThemeColors.getTextColor(isDarkTheme),
+                fontWeight = FontWeight.Medium,
+                fontSize = 18.sp
             )
-            Text(
-                text = "Analiz",
-                fontSize = 32.sp,
-                fontWeight = FontWeight.Bold,
-                color = ThemeColors.getTextColor(isDarkTheme)
-            )
-            Text(
-                text = "Harcama analizleri burada görünecek",
-                fontSize = 16.sp,
-                color = ThemeColors.getTextGrayColor(isDarkTheme)
+        }
+
+        IconButton(
+            onClick = {
+                val nextMonth = selectedMonth.plusMonths(1)
+                if (!nextMonth.isAfter(currentMonth)) {
+                    onMonthYearChanged(nextMonth)
+                }
+            },
+            enabled = !selectedMonth.plusMonths(1).isAfter(currentMonth)
+        ) {
+            Icon(
+                imageVector = Icons.Default.ChevronRight,
+                contentDescription = "Sonraki ay",
+                tint = if (!selectedMonth.plusMonths(1).isAfter(currentMonth)) 
+                    ThemeColors.getTextColor(isDarkTheme) 
+                else ThemeColors.getTextGrayColor(isDarkTheme)
             )
         }
     }
+}
+
+@Composable
+fun MonthlyAnalysisPieChart(
+    categoryData: List<CategoryAnalysisData>,
+    isDarkTheme: Boolean,
+    modifier: Modifier = Modifier
+) {
+    val animatedPercentages = categoryData.map { data ->
+        val animatedValue = remember { Animatable(0f) }
+        LaunchedEffect(data.percentage) {
+            animatedValue.animateTo(
+                targetValue = data.percentage.toFloat(),
+                animationSpec = tween(durationMillis = 1000, easing = EaseInOutCubic)
+            )
+        }
+        animatedValue.value
+    }
+
+    Card(
+        modifier = modifier.fillMaxWidth(),
+        colors = CardDefaults.cardColors(
+            containerColor = ThemeColors.getCardBackgroundColor(isDarkTheme)
+        ),
+        shape = RoundedCornerShape(16.dp)
+    ) {
+        Column(
+            modifier = Modifier.padding(20.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text(
+                text = "Kategori Dağılımı",
+                fontSize = 18.sp,
+                fontWeight = FontWeight.Bold,
+                color = ThemeColors.getTextColor(isDarkTheme)
+            )
+            
+            Spacer(modifier = Modifier.height(16.dp))
+
+            if (categoryData.isNotEmpty()) {
+                Canvas(
+                    modifier = Modifier.size(200.dp)
+                ) {
+                    val center = Offset(size.width / 2, size.height / 2)
+                    val radius = size.minDimension / 2 - 20.dp.toPx()
+                    
+                    var currentAngle = -90f
+                    
+                    animatedPercentages.forEachIndexed { index, animatedPercentage ->
+                        val sweepAngle = animatedPercentage * 360f
+                        val color = categoryData[index].category.getColor()
+                        
+                        drawArc(
+                            color = color,
+                            startAngle = currentAngle,
+                            sweepAngle = sweepAngle,
+                            useCenter = true,
+                            topLeft = Offset(center.x - radius, center.y - radius),
+                            size = Size(radius * 2, radius * 2)
+                        )
+                        
+                        currentAngle += sweepAngle
+                    }
+                    
+                    drawCircle(
+                        color = Color.Transparent,
+                        radius = radius * 0.45f,
+                        center = center,
+                        blendMode = BlendMode.Clear
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun CategorySummarySection(
+    categoryData: List<CategoryAnalysisData>,
+    totalAmount: Double,
+    defaultCurrency: String,
+    isDarkTheme: Boolean,
+    onCategoryClick: (CategoryAnalysisData) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Card(
+        modifier = modifier.fillMaxWidth(),
+        colors = CardDefaults.cardColors(
+            containerColor = ThemeColors.getCardBackgroundColor(isDarkTheme)
+        ),
+        shape = RoundedCornerShape(16.dp)
+    ) {
+        Column(
+            modifier = Modifier.padding(16.dp)
+        ) {
+            Text(
+                text = "Kategori Detayları",
+                fontSize = 18.sp,
+                fontWeight = FontWeight.Bold,
+                color = ThemeColors.getTextColor(isDarkTheme),
+                modifier = Modifier.padding(bottom = 16.dp)
+            )
+
+            categoryData.forEach { data ->
+                CategorySummaryRow(
+                    categoryData = data,
+                    defaultCurrency = defaultCurrency,
+                    isDarkTheme = isDarkTheme,
+                    onClick = { onCategoryClick(data) }
+                )
+                
+                if (data != categoryData.last()) {
+                    Divider(
+                        modifier = Modifier.padding(vertical = 8.dp),
+                        color = ThemeColors.getTextGrayColor(isDarkTheme).copy(alpha = 0.3f)
+                    )
+                }
+            }
+            
+            Spacer(modifier = Modifier.height(12.dp))
+            
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 8.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = "TOPLAM",
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = ThemeColors.getTextColor(isDarkTheme)
+                )
+                Text(
+                    text = "$defaultCurrency ${NumberFormatter.formatAmount(totalAmount)}",
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = AppColors.PrimaryOrange
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun CategorySummaryRow(
+    categoryData: CategoryAnalysisData,
+    defaultCurrency: String,
+    isDarkTheme: Boolean,
+    onClick: () -> Unit
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable { onClick() }
+            .padding(vertical = 8.dp),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.weight(1f)
+        ) {
+            Box(
+                modifier = Modifier
+                    .size(32.dp)
+                    .background(
+                        categoryData.category.getColor().copy(alpha = 0.2f),
+                        CircleShape
+                    ),
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(
+                    imageVector = categoryData.category.getIcon(),
+                    contentDescription = categoryData.category.name,
+                    tint = categoryData.category.getColor(),
+                    modifier = Modifier.size(16.dp)
+                )
+            }
+            
+            Spacer(modifier = Modifier.width(12.dp))
+            
+            Column {
+                Text(
+                    text = categoryData.category.name,
+                    fontWeight = FontWeight.Medium,
+                    fontSize = 14.sp,
+                    color = ThemeColors.getTextColor(isDarkTheme),
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+                Text(
+                    text = "${categoryData.expenseCount} harcama • %${String.format("%.1f", categoryData.percentage * 100)}",
+                    fontSize = 12.sp,
+                    color = ThemeColors.getTextGrayColor(isDarkTheme)
+                )
+            }
+        }
+        
+        Column(
+            horizontalAlignment = Alignment.End
+        ) {
+            Text(
+                text = "$defaultCurrency ${NumberFormatter.formatAmount(categoryData.totalAmount)}",
+                fontWeight = FontWeight.Bold,
+                fontSize = 14.sp,
+                color = ThemeColors.getTextColor(isDarkTheme)
+            )
+            
+            Icon(
+                imageVector = Icons.Default.ChevronRight,
+                contentDescription = "Detayları gör",
+                tint = ThemeColors.getTextGrayColor(isDarkTheme),
+                modifier = Modifier.size(16.dp)
+            )
+        }
+    }
+}
+
+@Composable
+fun RecurringExpenseCard(
+    totalAmount: Double,
+    defaultCurrency: String,
+    isDarkTheme: Boolean,
+    modifier: Modifier = Modifier
+) {
+    Card(
+        modifier = modifier.fillMaxWidth(),
+        colors = CardDefaults.cardColors(
+            containerColor = AppColors.PrimaryOrange.copy(alpha = 0.1f)
+        ),
+        shape = RoundedCornerShape(16.dp)
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Refresh,
+                    contentDescription = "Tekrarlayan harcamalar",
+                    tint = AppColors.PrimaryOrange,
+                    modifier = Modifier.size(24.dp)
+                )
+                Spacer(modifier = Modifier.width(12.dp))
+                Column {
+                    Text(
+                        text = "Sabit Harcamalar",
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 16.sp,
+                        color = ThemeColors.getTextColor(isDarkTheme)
+                    )
+                    Text(
+                        text = "3+ ay devam edecek tekrarlayan",
+                        fontSize = 12.sp,
+                        color = ThemeColors.getTextGrayColor(isDarkTheme)
+                    )
+                }
+            }
+            
+            Text(
+                text = "$defaultCurrency ${NumberFormatter.formatAmount(totalAmount)}",
+                fontWeight = FontWeight.Bold,
+                fontSize = 16.sp,
+                color = AppColors.PrimaryOrange
+            )
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun CategoryDetailDialog(
+    categoryData: CategoryAnalysisData,
+    subCategories: List<SubCategory>,
+    defaultCurrency: String,
+    isDarkTheme: Boolean,
+    sortOption: SortOption,
+    showSortMenu: Boolean,
+    onSortOptionChanged: (SortOption) -> Unit,
+    onShowSortMenuChanged: (Boolean) -> Unit,
+    onDismiss: () -> Unit
+) {
+    val sortedExpenses = remember(categoryData.expenses, sortOption) {
+        when (sortOption) {
+            SortOption.AMOUNT_DESC -> categoryData.expenses.sortedByDescending { it.amount }
+            SortOption.AMOUNT_ASC -> categoryData.expenses.sortedBy { it.amount }
+            SortOption.DATE_DESC -> categoryData.expenses.sortedByDescending { it.date }
+            SortOption.DATE_ASC -> categoryData.expenses.sortedBy { it.date }
+        }
+    }
+
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        properties = DialogProperties(usePlatformDefaultWidth = false),
+        modifier = Modifier
+            .fillMaxWidth(0.95f)
+            .fillMaxHeight(0.8f),
+        title = {
+            Column {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .size(24.dp)
+                                .background(
+                                    categoryData.category.getColor().copy(alpha = 0.2f),
+                                    CircleShape
+                                ),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Icon(
+                                imageVector = categoryData.category.getIcon(),
+                                contentDescription = null,
+                                tint = categoryData.category.getColor(),
+                                modifier = Modifier.size(14.dp)
+                            )
+                        }
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Column {
+                            Text(
+                                text = categoryData.category.name,
+                                fontSize = 16.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = ThemeColors.getTextColor(isDarkTheme)
+                            )
+                            Text(
+                                text = "$defaultCurrency ${NumberFormatter.formatAmount(categoryData.totalAmount)}",
+                                fontSize = 12.sp,
+                                color = ThemeColors.getTextGrayColor(isDarkTheme)
+                            )
+                        }
+                    }
+                    
+                    IconButton(
+                        onClick = onDismiss
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Close,
+                            contentDescription = "Kapat",
+                            tint = ThemeColors.getTextColor(isDarkTheme)
+                        )
+                    }
+                }
+                
+                Spacer(modifier = Modifier.height(8.dp))
+                
+                Box {
+                    OutlinedButton(
+                        onClick = { onShowSortMenuChanged(true) },
+                        modifier = Modifier.fillMaxWidth(),
+                        colors = ButtonDefaults.outlinedButtonColors(
+                            containerColor = Color.Transparent,
+                            contentColor = ThemeColors.getTextColor(isDarkTheme)
+                        )
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Sort,
+                            contentDescription = null,
+                            modifier = Modifier.size(16.dp)
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text(
+                            text = sortOption.displayName,
+                            fontSize = 12.sp
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Icon(
+                            imageVector = Icons.Default.ExpandMore,
+                            contentDescription = null,
+                            modifier = Modifier.size(16.dp)
+                        )
+                    }
+                    
+                    DropdownMenu(
+                        expanded = showSortMenu,
+                        onDismissRequest = { onShowSortMenuChanged(false) },
+                        modifier = Modifier.background(ThemeColors.getCardBackgroundColor(isDarkTheme))
+                    ) {
+                        SortOption.values().forEach { option ->
+                            DropdownMenuItem(
+                                text = {
+                                    Text(
+                                        text = option.displayName,
+                                        color = ThemeColors.getTextColor(isDarkTheme),
+                                        fontSize = 12.sp
+                                    )
+                                },
+                                onClick = {
+                                    onSortOptionChanged(option)
+                                    onShowSortMenuChanged(false)
+                                }
+                            )
+                        }
+                    }
+                }
+            }
+        },
+        text = {
+            LazyColumn(
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                items(sortedExpenses) { expense ->
+                    val subCategory = subCategories.find { it.id == expense.subCategoryId }
+                    
+                    Card(
+                        colors = CardDefaults.cardColors(
+                            containerColor = ThemeColors.getCardBackgroundColor(isDarkTheme)
+                        ),
+                        shape = RoundedCornerShape(8.dp)
+                    ) {
+                        Column(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(12.dp)
+                        ) {
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                verticalAlignment = Alignment.Top
+                            ) {
+                                Column(
+                                    modifier = Modifier.weight(1f)
+                                ) {
+                                    Text(
+                                        text = subCategory?.name ?: "Bilinmeyen",
+                                        fontWeight = FontWeight.Medium,
+                                        fontSize = 14.sp,
+                                        color = ThemeColors.getTextColor(isDarkTheme)
+                                    )
+                                    if (expense.description.isNotBlank()) {
+                                        Text(
+                                            text = expense.description,
+                                            fontSize = 12.sp,
+                                            color = ThemeColors.getTextGrayColor(isDarkTheme),
+                                            modifier = Modifier.padding(top = 2.dp)
+                                        )
+                                    }
+                                    Text(
+                                        text = expense.date.format(DateTimeFormatter.ofPattern("dd MMMM yyyy, HH:mm")),
+                                        fontSize = 11.sp,
+                                        color = ThemeColors.getTextGrayColor(isDarkTheme),
+                                        modifier = Modifier.padding(top = 4.dp)
+                                    )
+                                }
+                                
+                                Column(
+                                    horizontalAlignment = Alignment.End
+                                ) {
+                                    Text(
+                                        text = "$defaultCurrency ${NumberFormatter.formatAmount(expense.amount)}",
+                                        fontWeight = FontWeight.Bold,
+                                        fontSize = 14.sp,
+                                        color = ThemeColors.getTextColor(isDarkTheme)
+                                    )
+                                    if (expense.exchangeRate != null && expense.currency != defaultCurrency) {
+                                        Text(
+                                            text = "${expense.currency} ${NumberFormatter.formatAmount(expense.amount)}",
+                                            fontSize = 11.sp,
+                                            color = ThemeColors.getTextGrayColor(isDarkTheme)
+                                        )
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        confirmButton = {},
+        containerColor = ThemeColors.getDialogBackgroundColor(isDarkTheme)
+    )
 }
