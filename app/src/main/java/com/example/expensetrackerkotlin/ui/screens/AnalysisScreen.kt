@@ -1,6 +1,5 @@
 package com.example.expensetrackerkotlin.ui.screens
 
-import androidx.compose.animation.*
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.*
 import androidx.compose.foundation.gestures.detectTapGestures
@@ -12,19 +11,15 @@ import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.*
-import androidx.compose.ui.draw.clip
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.*
 import androidx.compose.ui.graphics.drawscope.Fill
-import androidx.compose.ui.graphics.drawscope.rotate
 import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.*
-import androidx.compose.ui.window.DialogProperties
 import kotlin.math.*
 import com.example.expensetrackerkotlin.data.*
 import com.example.expensetrackerkotlin.ui.components.*
@@ -36,9 +31,6 @@ import com.example.expensetrackerkotlin.utils.NumberFormatter
 import com.example.expensetrackerkotlin.viewmodel.ExpenseViewModel
 import java.time.*
 import java.time.format.DateTimeFormatter
-import java.time.temporal.ChronoUnit
-import kotlinx.coroutines.launch
-import java.time.chrono.ChronoLocalDateTime
 
 
 fun getMonthlyChartData(viewModel: ExpenseViewModel, selectedMonth: YearMonth): List<ChartDataPoint> {
@@ -297,179 +289,24 @@ fun AnalysisScreen(
                             .align(Alignment.TopStart)
                             .offset(y = 360.dp) // Position below pie chart
                             .padding(horizontal = 16.dp)
-                    ) {
+                    )
+                    {
                         Box(
                             modifier = Modifier.align(Alignment.Center)
-                        ) {
-                            // Two-line connector from pie segment to popup
-                            Canvas(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .height(200.dp) // Constrained height to prevent extending out
-                                    .offset(y = (-180).dp) // Position to align with pie chart
-                                    .graphicsLayer {
-                                        alpha = maxOf(line1Progress.value, line2Progress.value)
-                                    }
-                            ) {
-                                // Calculate pie chart center position (at top of canvas)
-                                val pieChartCenterX = size.width / 2f
-                                val pieChartCenterY = 40.dp.toPx() // Pie chart center position
-                                val pieRadius = 125.dp.toPx() // Half of 250dp pie chart size
-                                
-                                // Calculate the actual center point of the selected segment
-                                // First calculate the middle angle of the segment
-                                val segmentIndex = selectedSegment!!
-                                var segmentStartAngle = -90f // Start from top
-                                for (i in 0 until segmentIndex) {
-                                    segmentStartAngle += animatedPercentages[i] * 360f
-                                }
-                                val segmentMiddleAngle = segmentStartAngle + (animatedPercentages[segmentIndex] * 360f / 2f)
-                                val segmentAngleRad = segmentMiddleAngle * PI.toFloat() / 180f
-                                
-                                // Position at the middle of the segment thickness (between inner and outer radius)
-                                val segmentRadius = pieRadius * 0.725f // Middle of donut (between 0.45f inner and 1.0f outer)
-                                val segmentCenterX = pieChartCenterX + cos(segmentAngleRad) * segmentRadius
-                                val segmentCenterY = pieChartCenterY + sin(segmentAngleRad) * segmentRadius
-                                
-                                // Line 1: Angled connector going DOWN from segment center
-                                val elbowDistance = 35.dp.toPx()
-                                // Always go down and slightly outward based on which side of the chart we're on
-                                val elbowAngle = if (segmentCenterX < pieChartCenterX) {
-                                    150f // Down and left
-                                } else {
-                                    30f // Down and right
-                                }
-                                val elbowAngleRad = elbowAngle * PI.toFloat() / 180f
-                                
-                                val elbowX = segmentCenterX + cos(elbowAngleRad) * elbowDistance
-                                val elbowY = segmentCenterY + sin(elbowAngleRad) * elbowDistance
-                                
-                                // Line 2: Vertical line from elbow to popup (270° = straight down)
-                                val popupTopY = size.height - 10.dp.toPx() // End just at bottom of canvas
-                                
-                                // Ensure elbow point is within screen bounds
-                                val constrainedElbowX = elbowX.coerceIn(20.dp.toPx(), size.width - 20.dp.toPx())
-                                
-                                // Draw Line 1 (angled, going down) with animation
-                                if (line1Progress.value > 0f) {
-                                    val line1End = Offset(
-                                        x = segmentCenterX + (constrainedElbowX - segmentCenterX) * line1Progress.value,
-                                        y = segmentCenterY + (elbowY - segmentCenterY) * line1Progress.value
-                                    )
-                                    
-                                    drawLine(
-                                        color = selected.category.getColor(),
-                                        start = Offset(segmentCenterX, segmentCenterY),
-                                        end = line1End,
-                                        strokeWidth = 2.dp.toPx()
-                                    )
-                                }
-                                
-                                // Draw Line 2 (vertical down) with animation
-                                if (line2Progress.value > 0f && line1Progress.value >= 1f) {
-                                    val line2End = Offset(
-                                        x = constrainedElbowX,
-                                        y = elbowY + (popupTopY - elbowY) * line2Progress.value
-                                    )
-                                    
-                                    drawLine(
-                                        color = selected.category.getColor(),
-                                        start = Offset(constrainedElbowX, elbowY),
-                                        end = line2End,
-                                        strokeWidth = 2.dp.toPx()
-                                    )
-                                    
-                                    // Draw arrow tip only when Line 2 is complete
-                                    if (line2Progress.value >= 1f) {
-                                        val arrowSize = 6.dp.toPx()
-                                        val arrowPath = Path().apply {
-                                            moveTo(constrainedElbowX, popupTopY) // Arrow tip (bottom)
-                                            lineTo(constrainedElbowX - arrowSize, popupTopY - arrowSize) // Left side
-                                            lineTo(constrainedElbowX + arrowSize, popupTopY - arrowSize) // Right side
-                                            close()
-                                        }
-                                        
-                                        drawPath(
-                                            path = arrowPath,
-                                            color = selected.category.getColor(),
-                                            style = Fill
-                                        )
-                                    }
-                                }
-                            }
-                            
-                            // Category Info Card with solid matte background
-                            Card(
-                                modifier = Modifier
-                                    .width(280.dp)
-                                    .height(100.dp)
-                                    .graphicsLayer {
-                                        alpha = popupAlpha.value
-                                        scaleX = popupScale.value
-                                        scaleY = popupScale.value
-                                        transformOrigin = TransformOrigin(0.5f, 0.5f)
-                                    },
-                                colors = CardDefaults.cardColors(
-                                    containerColor = selected.category.getColor().copy(alpha = 0.95f)
-                                ),
-                                shape = RoundedCornerShape(12.dp),
-                                elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
-                            ) {
-                                Row(
-                                    modifier = Modifier
-                                        .fillMaxSize()
-                                        .padding(12.dp),
-                                    verticalAlignment = Alignment.CenterVertically,
-                                    horizontalArrangement = Arrangement.spacedBy(12.dp)
-                                ) {
-                                    // Icon
-                                    Box(
-                                        modifier = Modifier
-                                            .size(36.dp)
-                                            .background(
-                                                Color.White.copy(alpha = 0.3f),
-                                                CircleShape
-                                            ),
-                                        contentAlignment = Alignment.Center
-                                    ) {
-                                        Icon(
-                                            imageVector = selected.category.getIcon(),
-                                            contentDescription = null,
-                                            tint = Color.White,
-                                            modifier = Modifier.size(20.dp)
-                                        )
-                                    }
-                                    
-                                    // Content
-                                    Column(
-                                        modifier = Modifier.weight(1f),
-                                        verticalArrangement = Arrangement.Center
-                                    ) {
-                                        Text(
-                                            text = selected.category.name,
-                                            fontSize = 18.sp,
-                                            fontWeight = FontWeight.Bold,
-                                            color = Color.White,
-                                            maxLines = 1,
-                                            overflow = TextOverflow.Ellipsis
-                                        )
-                                        
-                                        Text(
-                                            text = "${selected.expenseCount} harcama • %${String.format("%.1f", selected.percentage * 100)}",
-                                            fontSize = 14.sp,
-                                            color = Color.White.copy(alpha = 0.8f)
-                                        )
-                                    }
-                                    
-                                    // Amount
-                                    Text(
-                                        text = "${viewModel.defaultCurrency} ${NumberFormatter.formatAmount(selected.totalAmount)}",
-                                        fontSize = 14.sp,
-                                        fontWeight = FontWeight.Bold,
-                                        color = Color.White
-                                    )
-                                }
-                            }
+                        )
+                        {
+                            val segmentIndex = selectedSegment!!
+                            CategoryPopupLines(
+                                line1Progress,
+                                line2Progress,
+                                segmentIndex,
+                                animatedPercentages,selected
+                            )
+                            CategoryPopupCard(popupScale,selected,viewModel, onCategoryClick = { categoryData ->
+                                selectedCategory = categoryData
+                                showCategoryDialog = true
+                            })
+
                         }
                     }
                 }
@@ -612,292 +449,8 @@ fun MonthYearSelector(
     }
 }
 
-@Composable
-fun MonthlyAnalysisPieChart(
-    categoryData: List<CategoryAnalysisData>,
-    animatedPercentages: List<Float>,
-    isDarkTheme: Boolean,
-    selectedSegment: Int?,
-    onSegmentSelected: (Int?) -> Unit,
-    modifier: Modifier = Modifier
-) {
-
-    val segmentScales = categoryData.mapIndexed { index, _ ->
-        val animatedScale = remember { Animatable(1f) }
-        LaunchedEffect(selectedSegment) {
-            if (selectedSegment == index) {
-                animatedScale.animateTo(
-                    targetValue = 1.1f,
-                    animationSpec = spring(
-                        dampingRatio = Spring.DampingRatioMediumBouncy,
-                        stiffness = Spring.StiffnessMedium
-                    )
-                )
-            } else {
-                animatedScale.animateTo(
-                    targetValue = 1f,
-                    animationSpec = spring(
-                        dampingRatio = Spring.DampingRatioMediumBouncy,
-                        stiffness = Spring.StiffnessMedium
-                    )
-                )
-            }
-        }
-        animatedScale.value
-    }
-
-    Card(
-        modifier = modifier.fillMaxWidth(),
-        colors = CardDefaults.cardColors(
-            containerColor = ThemeColors.getCardBackgroundColor(isDarkTheme)
-        ),
-        shape = RoundedCornerShape(16.dp)
-    ) {
-        Column(
-            modifier = Modifier.padding(10.dp)
-        ) {
 
 
-
-            if (categoryData.isNotEmpty()) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(265.dp),
-                    contentAlignment = Alignment.Center
-                ) {
-                    // Pie Chart
-                    Canvas(
-                        modifier = Modifier
-                            .size(250.dp)
-                            .pointerInput(categoryData) {
-                                detectTapGestures { tapOffset ->
-                                    val center = Offset(size.width / 2f, size.height / 2f)
-                                    val radius = minOf(size.width, size.height) / 2f - 20.dp.toPx()
-                                    
-                                    val distance = sqrt(
-                                        (tapOffset.x - center.x).pow(2) + 
-                                        (tapOffset.y - center.y).pow(2)
-                                    )
-                                    
-                                    if (distance <= radius && distance >= radius * 0.45f) {
-                                        val angle = atan2(
-                                            tapOffset.y - center.y,
-                                            tapOffset.x - center.x
-                                        )
-                                        var normalizedAngle = ((angle * 180f / PI.toFloat()) + 90f) % 360f
-                                        if (normalizedAngle < 0) normalizedAngle += 360f
-                                        
-                                        var currentAngle = 0f
-                                        for (i in animatedPercentages.indices) {
-                                            val sweepAngle = animatedPercentages[i] * 360f
-                                            if (normalizedAngle >= currentAngle && normalizedAngle <= currentAngle + sweepAngle) {
-                                                onSegmentSelected(if (selectedSegment == i) null else i)
-                                                break
-                                            }
-                                            currentAngle += sweepAngle
-                                        }
-                                    }
-                                }
-                            }
-                    ) {
-                        val center = Offset(size.width / 2, size.height / 2)
-                        val baseRadius = minOf(size.width, size.height) / 2 - 20.dp.toPx()
-                        
-                        var currentAngle = -90f
-                        
-                        animatedPercentages.forEachIndexed { index, animatedPercentage ->
-                            val sweepAngle = animatedPercentage * 360f
-                            val color = categoryData[index].category.getColor()
-                            val scale = segmentScales[index]
-                            val radius = baseRadius * scale
-                            
-                            drawArc(
-                                color = color,
-                                startAngle = currentAngle,
-                                sweepAngle = sweepAngle,
-                                useCenter = true,
-                                topLeft = Offset(center.x - radius, center.y - radius),
-                                size = Size(radius * 2, radius * 2)
-                            )
-                            
-                            currentAngle += sweepAngle
-                        }
-                        
-                        drawCircle(
-                            color = Color.Transparent,
-                            radius = baseRadius * 0.45f,
-                            center = center,
-                            blendMode = BlendMode.Clear
-                        )
-                    }
-                    
-                    // Hint text when nothing is selected
-                    if (selectedSegment == null) {
-                        Column(
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            verticalArrangement = Arrangement.Center,
-                            modifier = Modifier
-                                .align(Alignment.BottomCenter)
-                                .padding(top = 220.dp)
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.TouchApp,
-                                contentDescription = null,
-                                tint = ThemeColors.getTextGrayColor(isDarkTheme).copy(alpha = 0.6f),
-                                modifier = Modifier.size(24.dp)
-                            )
-                            Spacer(modifier = Modifier.height(4.dp))
-                            Text(
-                                text = "Kategori seçmek için grafiğe dokunun",
-                                fontSize = 11.sp,
-                                color = ThemeColors.getTextGrayColor(isDarkTheme).copy(alpha = 0.8f),
-                                textAlign = TextAlign.Center
-                            )
-                        }
-                    }
-                }
-            }
-        }
-    }
-}
-
-@Composable
-fun CategorySummarySection(
-    categoryData: List<CategoryAnalysisData>,
-    totalAmount: Double,
-    defaultCurrency: String,
-    isDarkTheme: Boolean,
-    onCategoryClick: (CategoryAnalysisData) -> Unit,
-    modifier: Modifier = Modifier
-) {
-
-        Column(
-            modifier = Modifier.padding(6.dp)
-        ) {
-
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = 18.dp),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    text = "Kategori Detayları",
-                    fontSize = 20.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = ThemeColors.getTextColor(isDarkTheme),
-                )
-                Text(
-                    text = "$defaultCurrency ${NumberFormatter.formatAmount(totalAmount)}",
-                    fontSize = 18.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = AppColors.PrimaryOrange
-                )
-            }
-
-            categoryData.forEach { data ->
-                CategorySummaryRow(
-                    categoryData = data,
-                    defaultCurrency = defaultCurrency,
-                    isDarkTheme = isDarkTheme,
-                    onClick = { onCategoryClick(data) }
-                )
-                
-
-            }
-
-            
-
-        }
-
-}
-
-@Composable
-fun CategorySummaryRow(
-    categoryData: CategoryAnalysisData,
-    defaultCurrency: String,
-    isDarkTheme: Boolean,
-    onClick: () -> Unit
-) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable { onClick() }
-            .padding(vertical = 2.dp)
-            .background(
-                categoryData.category.getColor().copy(alpha = 0.1f),
-                        shape = RoundedCornerShape(12.dp),
-            ),
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically
-    )
-
-    {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.weight(1f)
-                .padding( 12.dp)
-        )
-        {
-            Box(
-                modifier = Modifier
-                    .size(32.dp)
-                    .background(
-                        categoryData.category.getColor().copy(alpha = 0.2f),
-                        CircleShape
-                    ),
-                contentAlignment = Alignment.Center
-            ) {
-                Icon(
-                    imageVector = categoryData.category.getIcon(),
-                    contentDescription = categoryData.category.name,
-                    tint = categoryData.category.getColor(),
-                    modifier = Modifier.size(16.dp)
-                )
-            }
-            
-            Spacer(modifier = Modifier.width(12.dp))
-            
-            Column {
-                Text(
-                    text = categoryData.category.name,
-                    fontWeight = FontWeight.Medium,
-                    fontSize = 16.sp,
-                    color = ThemeColors.getTextColor(isDarkTheme),
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
-                )
-                Text(
-                    text = "${categoryData.expenseCount} harcama • %${String.format("%.1f", categoryData.percentage * 100)}",
-                    fontSize = 14.sp,
-                    color = ThemeColors.getTextGrayColor(isDarkTheme)
-                )
-            }
-        }
-        
-        Column(
-            horizontalAlignment = Alignment.End,
-            modifier = Modifier
-                .padding( 12.dp)
-        ) {
-            Text(
-                text = "$defaultCurrency ${NumberFormatter.formatAmount(categoryData.totalAmount)}",
-                fontWeight = FontWeight.Bold,
-                fontSize = 16.sp,
-                color = ThemeColors.getTextColor(isDarkTheme)
-            )
-            
-            Icon(
-                imageVector = Icons.Default.ChevronRight,
-                contentDescription = "Detayları gör",
-                tint = ThemeColors.getTextGrayColor(isDarkTheme),
-                modifier = Modifier.size(16.dp)
-            )
-        }
-    }
-}
 
 @Composable
 fun RecurringExpenseCard(
