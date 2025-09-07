@@ -1,16 +1,24 @@
 package com.example.expensetrackerkotlin.ui.screens
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.Sort
 import androidx.compose.material3.*
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.rememberModalBottomSheetState
@@ -37,6 +45,18 @@ import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
+import kotlin.math.min
+
+enum class ExpenseSortType {
+    AMOUNT_HIGH_TO_LOW,
+    AMOUNT_LOW_TO_HIGH, 
+    DESCRIPTION_A_TO_Z,
+    DESCRIPTION_Z_TO_A,
+    CATEGORY_A_TO_Z,
+    CATEGORY_Z_TO_A,
+    TIME_NEWEST_FIRST,
+    TIME_OLDEST_FIRST
+}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -47,6 +67,8 @@ fun ExpensesScreen(
     val selectedDate by viewModel.selectedDate.collectAsState()
     val showingOverLimitAlert by viewModel.showingOverLimitAlert.collectAsState()
     val editingExpenseId by viewModel.editingExpenseId.collectAsState()
+    val categories by viewModel.categories.collectAsState()
+    val subCategories by viewModel.subCategories.collectAsState()
     
     var showingAddExpense by remember { mutableStateOf(false) }
     var showingSettings by remember { mutableStateOf(false) }
@@ -54,12 +76,54 @@ fun ExpensesScreen(
     var showingRecurringExpenses by remember { mutableStateOf(false) }
     var currentCalendarMonth by remember { mutableStateOf(java.time.YearMonth.from(selectedDate)) }
     
+    // Search and sorting state
+    var searchText by remember { mutableStateOf("") }
+    var showSortMenu by remember { mutableStateOf(false) }
+    var currentSortType by remember { mutableStateOf(ExpenseSortType.TIME_NEWEST_FIRST) }
+    var showSearchBar by remember { mutableStateOf(false) }
+    
     val scope = rememberCoroutineScope()
     
     // Get selected date expenses (including recurring expenses)
-    val selectedDateExpenses = remember(expenses, selectedDate) {
+    val baseSelectedDateExpenses = remember(expenses, selectedDate) {
         expenses.filter { expense ->
             expense.isActiveOnDate(selectedDate)
+        }
+    }
+    
+    // Filter and sort expenses
+    val selectedDateExpenses = remember(baseSelectedDateExpenses, searchText, currentSortType, categories, subCategories) {
+        var filteredExpenses = baseSelectedDateExpenses
+        
+        // Apply search filter
+        if (searchText.isNotBlank()) {
+            filteredExpenses = filteredExpenses.filter { expense ->
+                val category = categories.find { it.id == expense.categoryId }
+                val subCategory = subCategories.find { it.id == expense.subCategoryId }
+                
+                expense.description.contains(searchText, ignoreCase = true) ||
+                expense.amount.toString().contains(searchText) ||
+                (category?.name?.contains(searchText, ignoreCase = true) == true) ||
+                (subCategory?.name?.contains(searchText, ignoreCase = true) == true)
+            }
+        }
+        
+        // Apply sorting
+        when (currentSortType) {
+            ExpenseSortType.AMOUNT_HIGH_TO_LOW -> filteredExpenses.sortedByDescending { it.getAmountInDefaultCurrency(viewModel.defaultCurrency) }
+            ExpenseSortType.AMOUNT_LOW_TO_HIGH -> filteredExpenses.sortedBy { it.getAmountInDefaultCurrency(viewModel.defaultCurrency) }
+            ExpenseSortType.DESCRIPTION_A_TO_Z -> filteredExpenses.sortedBy { it.description.lowercase() }
+            ExpenseSortType.DESCRIPTION_Z_TO_A -> filteredExpenses.sortedByDescending { it.description.lowercase() }
+            ExpenseSortType.CATEGORY_A_TO_Z -> filteredExpenses.sortedBy { expense ->
+                val subCategory = subCategories.find { it.id == expense.subCategoryId }
+                subCategory?.name?.lowercase() ?: "zzz"
+            }
+            ExpenseSortType.CATEGORY_Z_TO_A -> filteredExpenses.sortedByDescending { expense ->
+                val subCategory = subCategories.find { it.id == expense.subCategoryId }
+                subCategory?.name?.lowercase() ?: ""
+            }
+            ExpenseSortType.TIME_NEWEST_FIRST -> filteredExpenses.sortedByDescending { it.date }
+            ExpenseSortType.TIME_OLDEST_FIRST -> filteredExpenses.sortedBy { it.date }
         }
     }
     
@@ -137,6 +201,178 @@ fun ExpensesScreen(
                 }
             }
             
+            // Search and Sort controls
+            if (baseSelectedDateExpenses.isNotEmpty()) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp, vertical = 8.dp),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    // Search toggle button
+                    IconButton(
+                        onClick = { 
+                            showSearchBar = !showSearchBar 
+                            if (!showSearchBar) {
+                                searchText = ""
+                            }
+                        }
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Search,
+                            contentDescription = "Search",
+                            tint = if (showSearchBar) AppColors.PrimaryOrange else ThemeColors.getTextColor(isDarkTheme)
+                        )
+                    }
+                    
+                    // Sort button
+                    Box {
+                        IconButton(
+                            onClick = { showSortMenu = true }
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Sort,
+                                contentDescription = "Sort",
+                                tint = ThemeColors.getTextColor(isDarkTheme)
+                            )
+                        }
+                        
+                        DropdownMenu(
+                            expanded = showSortMenu,
+                            onDismissRequest = { showSortMenu = false },
+                            modifier = Modifier.background(ThemeColors.getCardBackgroundColor(isDarkTheme))
+                        ) {
+                            DropdownMenuItem(
+                                text = { Text("Zaman: Yeniden Eskiye", color = ThemeColors.getTextColor(isDarkTheme)) },
+                                onClick = { 
+                                    currentSortType = ExpenseSortType.TIME_NEWEST_FIRST
+                                    showSortMenu = false 
+                                }
+                            )
+                            DropdownMenuItem(
+                                text = { Text("Zaman: Eskiden Yeniye", color = ThemeColors.getTextColor(isDarkTheme)) },
+                                onClick = { 
+                                    currentSortType = ExpenseSortType.TIME_OLDEST_FIRST
+                                    showSortMenu = false 
+                                }
+                            )
+                            DropdownMenuItem(
+                                text = { Text("Miktar: Büyükten Küçüğe", color = ThemeColors.getTextColor(isDarkTheme)) },
+                                onClick = { 
+                                    currentSortType = ExpenseSortType.AMOUNT_HIGH_TO_LOW
+                                    showSortMenu = false 
+                                }
+                            )
+                            DropdownMenuItem(
+                                text = { Text("Miktar: Küçükten Büyüğe", color = ThemeColors.getTextColor(isDarkTheme)) },
+                                onClick = { 
+                                    currentSortType = ExpenseSortType.AMOUNT_LOW_TO_HIGH
+                                    showSortMenu = false 
+                                }
+                            )
+                            DropdownMenuItem(
+                                text = { Text("Açıklama: A-Z", color = ThemeColors.getTextColor(isDarkTheme)) },
+                                onClick = { 
+                                    currentSortType = ExpenseSortType.DESCRIPTION_A_TO_Z
+                                    showSortMenu = false 
+                                }
+                            )
+                            DropdownMenuItem(
+                                text = { Text("Açıklama: Z-A", color = ThemeColors.getTextColor(isDarkTheme)) },
+                                onClick = { 
+                                    currentSortType = ExpenseSortType.DESCRIPTION_Z_TO_A
+                                    showSortMenu = false 
+                                }
+                            )
+                            DropdownMenuItem(
+                                text = { Text("Kategori: A-Z", color = ThemeColors.getTextColor(isDarkTheme)) },
+                                onClick = { 
+                                    currentSortType = ExpenseSortType.CATEGORY_A_TO_Z
+                                    showSortMenu = false 
+                                }
+                            )
+                            DropdownMenuItem(
+                                text = { Text("Kategori: Z-A", color = ThemeColors.getTextColor(isDarkTheme)) },
+                                onClick = { 
+                                    currentSortType = ExpenseSortType.CATEGORY_Z_TO_A
+                                    showSortMenu = false 
+                                }
+                            )
+                        }
+                    }
+                    
+                    // Search results count
+                    if (searchText.isNotBlank()) {
+                        Text(
+                            text = "${selectedDateExpenses.size} sonuç",
+                            fontSize = 12.sp,
+                            color = ThemeColors.getTextGrayColor(isDarkTheme)
+                        )
+                    }
+                }
+                
+                // Search bar
+                AnimatedVisibility(
+                    visible = showSearchBar,
+                    enter = expandVertically(),
+                    exit = shrinkVertically()
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp, vertical = 4.dp)
+                            .background(
+                                ThemeColors.getInputBackgroundColor(isDarkTheme),
+                                RoundedCornerShape(12.dp)
+                            )
+                            .border(
+                                width = 1.dp,
+                                color = ThemeColors.getTextGrayColor(isDarkTheme).copy(alpha = 0.3f),
+                                shape = RoundedCornerShape(12.dp)
+                            )
+                    ) {
+                        BasicTextField(
+                            value = searchText,
+                            onValueChange = { searchText = it },
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 16.dp, vertical = 12.dp),
+                            singleLine = true,
+                            textStyle = androidx.compose.ui.text.TextStyle(
+                                fontSize = 14.sp,
+                                color = ThemeColors.getTextColor(isDarkTheme)
+                            ),
+                            decorationBox = { innerTextField ->
+                                Row(
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Default.Search,
+                                        contentDescription = "Search",
+                                        tint = ThemeColors.getTextGrayColor(isDarkTheme),
+                                        modifier = Modifier.size(20.dp)
+                                    )
+                                    
+                                    Spacer(modifier = Modifier.width(8.dp))
+                                    
+                                    Box(modifier = Modifier.weight(1f)) {
+                                        if (searchText.isEmpty()) {
+                                            Text(
+                                                text = "Açıklama, miktar veya kategoriye göre ara...",
+                                                fontSize = 14.sp,
+                                                color = ThemeColors.getTextGrayColor(isDarkTheme)
+                                            )
+                                        }
+                                        innerTextField()
+                                    }
+                                }
+                            }
+                        )
+                    }
+                }
+            }
+            
             // Expenses List
             if (selectedDateExpenses.isEmpty()) {
                 Column(
@@ -157,7 +393,9 @@ fun ExpensesScreen(
                     Spacer(modifier = Modifier.height(16.dp))
                     
                     Text(
-                        text = if (selectedDate.toLocalDate() == LocalDateTime.now().toLocalDate()) {
+                        text = if (searchText.isNotBlank()) {
+                            "Arama sonucu bulunamadı"
+                        } else if (selectedDate.toLocalDate() == LocalDateTime.now().toLocalDate()) {
                             "Henüz harcama yok"
                         } else {
                             "Bu günde harcama yok"
@@ -171,7 +409,9 @@ fun ExpensesScreen(
                     Spacer(modifier = Modifier.height(8.dp))
                     
                     Text(
-                        text = if (selectedDate.toLocalDate() == LocalDateTime.now().toLocalDate()) {
+                        text = if (searchText.isNotBlank()) {
+                            "\"$searchText\" için sonuç bulunamadı. Farklı bir arama terimi deneyin."
+                        } else if (selectedDate.toLocalDate() == LocalDateTime.now().toLocalDate()) {
                             "İlk harcamanızı eklemek için + butonuna basın"
                         } else {
                             "Bu güne harcama eklemek için + butonuna basın"
