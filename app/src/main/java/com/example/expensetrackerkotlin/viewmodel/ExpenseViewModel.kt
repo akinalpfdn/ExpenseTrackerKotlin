@@ -179,6 +179,8 @@ class ExpenseViewModel(
                 val date = startOfWeek.plusDays(dayOffset.toLong())
                 val dayExpenses = getExpensesForDate(date)
                 val totalAmount = dayExpenses.sumOf { it.getAmountInDefaultCurrency(defaultCurrency) }
+                val progressAmount = dayExpenses.filter { it.recurrenceType == RecurrenceType.NONE }
+                    .sumOf { it.getAmountInDefaultCurrency(defaultCurrency) }
                 val expenseCount = dayExpenses.size
                 
                 val averageDailyLimit = dailyLimitValue
@@ -186,6 +188,7 @@ class ExpenseViewModel(
                 DailyData(
                     date = date,
                     totalAmount = totalAmount,
+                    progressAmount = progressAmount,
                     expenseCount = expenseCount,
                     dailyLimit = averageDailyLimit
                 )

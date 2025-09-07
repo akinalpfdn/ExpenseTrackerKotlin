@@ -17,10 +17,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.expensetrackerkotlin.ui.theme.AppColors
 import com.example.expensetrackerkotlin.ui.theme.ThemeColors
 import com.example.expensetrackerkotlin.data.DailyData
 import com.example.expensetrackerkotlin.data.Expense
+import com.example.expensetrackerkotlin.data.RecurrenceType
 import com.example.expensetrackerkotlin.utils.NumberFormatter
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -220,9 +222,13 @@ fun MonthlyCalendarView(
                     val isToday = date == LocalDate.now()
 
                     // Create DailyData-like object for consistent styling
+                    val progressTotal = dayExpenses.filter { it.recurrenceType == RecurrenceType.NONE }
+                        .sumOf { it.getAmountInDefaultCurrency(defaultCurrency) }
+                    
                     val dailyData = DailyData(
                         date = date.atStartOfDay(),
                         totalAmount = dayTotal,
+                        progressAmount = progressTotal,
                         expenseCount = dayExpenses.size,
                         dailyLimit = dailyLimitValue
                     )
