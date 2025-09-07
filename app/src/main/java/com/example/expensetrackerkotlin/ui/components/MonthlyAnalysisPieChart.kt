@@ -8,17 +8,22 @@ import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.TouchApp
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.RadioButton
+import androidx.compose.material3.RadioButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -33,6 +38,7 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.expensetrackerkotlin.ui.theme.AppColors
 import com.example.expensetrackerkotlin.ui.theme.ThemeColors
 import kotlin.math.PI
 import kotlin.math.atan2
@@ -46,6 +52,8 @@ fun MonthlyAnalysisPieChart(
     isDarkTheme: Boolean,
     selectedSegment: Int?,
     onSegmentSelected: (Int?) -> Unit,
+    selectedFilter: ExpenseFilterType = ExpenseFilterType.ALL,
+    onFilterChanged: (ExpenseFilterType) -> Unit = {},
     modifier: Modifier = Modifier
 ) {
 
@@ -83,8 +91,49 @@ fun MonthlyAnalysisPieChart(
         Column(
             modifier = Modifier.padding(10.dp)
         ) {
+            // Title
+            Text(
+                text = "Kategori Dağılımı",
+                fontSize = 18.sp,
+                fontWeight = androidx.compose.ui.text.font.FontWeight.Bold,
+                color = ThemeColors.getTextColor(isDarkTheme),
+                modifier = Modifier.padding(bottom = 8.dp)
+            )
 
-
+            // Radio button menu for filter options
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.Start
+            ) {
+                ExpenseFilterType.values().forEach { filterType ->
+                    Row(
+                        modifier = Modifier
+                            .selectable(
+                                selected = selectedFilter == filterType,
+                                onClick = { onFilterChanged(filterType) }
+                            )
+                            .padding(horizontal = 1.dp, vertical = 4.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        RadioButton(
+                            selected = selectedFilter == filterType,
+                            onClick = { onFilterChanged(filterType) },
+                            colors = RadioButtonDefaults.colors(
+                                selectedColor = AppColors.PrimaryOrange,
+                                unselectedColor = ThemeColors.getTextGrayColor(isDarkTheme)
+                            )
+                        )
+                        Spacer(modifier = Modifier.width(1.dp))
+                        Text(
+                            text = filterType.displayName,
+                            fontSize = 12.sp,
+                            color = if (selectedFilter == filterType) 
+                                ThemeColors.getTextColor(isDarkTheme) 
+                            else ThemeColors.getTextGrayColor(isDarkTheme)
+                        )
+                    }
+                }
+            }
 
             if (categoryData.isNotEmpty()) {
                 Box(

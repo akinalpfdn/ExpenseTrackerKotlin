@@ -1,5 +1,6 @@
 package com.example.expensetrackerkotlin.ui.components
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -7,8 +8,8 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.Sort
 import androidx.compose.material.icons.filled.ExpandMore
-import androidx.compose.material.icons.filled.Sort
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -37,6 +38,7 @@ enum class SortOption(val displayName: String) {
     DATE_ASC("Tarihe Göre (Eski → Yeni)")
 }
 
+@SuppressLint("DefaultLocale")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CategoryDetailBottomSheet(
@@ -124,7 +126,7 @@ fun CategoryDetailBottomSheet(
                 )
             ) {
                 Icon(
-                    imageVector = Icons.Default.Sort,
+                    imageVector = Icons.AutoMirrored.Filled.Sort,
                     contentDescription = null,
                     modifier = Modifier.size(16.dp)
                 )
@@ -146,7 +148,7 @@ fun CategoryDetailBottomSheet(
                 onDismissRequest = { onShowSortMenuChanged(false) },
                 modifier = Modifier.background(ThemeColors.getCardBackgroundColor(isDarkTheme))
             ) {
-                SortOption.values().forEach { option ->
+                SortOption.entries.forEach { option ->
                     DropdownMenuItem(
                         text = {
                             Text(

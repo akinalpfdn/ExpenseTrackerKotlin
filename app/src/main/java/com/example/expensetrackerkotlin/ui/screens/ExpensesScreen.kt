@@ -18,7 +18,6 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material.icons.filled.Sort
 import androidx.compose.material3.*
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.rememberModalBottomSheetState
@@ -35,17 +34,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.expensetrackerkotlin.ui.components.*
 import com.example.expensetrackerkotlin.viewmodel.ExpenseViewModel
-import com.example.expensetrackerkotlin.data.RecurrenceType
 import kotlinx.coroutines.launch
 import java.time.LocalDateTime
-import java.util.UUID
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.windowInsetsPadding
-import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.unit.Dp
-import kotlin.math.min
+import androidx.compose.material.icons.automirrored.filled.Sort
 
 enum class ExpenseSortType {
     AMOUNT_HIGH_TO_LOW,
@@ -232,7 +227,7 @@ fun ExpensesScreen(
                             onClick = { showSortMenu = true }
                         ) {
                             Icon(
-                                imageVector = Icons.Default.Sort,
+                                imageVector = Icons.AutoMirrored.Filled.Sort,
                                 contentDescription = "Sort",
                                 tint = ThemeColors.getTextColor(isDarkTheme)
                             )

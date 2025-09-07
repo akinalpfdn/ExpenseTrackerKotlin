@@ -12,13 +12,9 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.*
-import androidx.compose.ui.graphics.drawscope.Fill
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.*
 import kotlin.math.*
 import com.example.expensetrackerkotlin.data.*
@@ -26,6 +22,7 @@ import com.example.expensetrackerkotlin.ui.components.*
 import com.example.expensetrackerkotlin.ui.components.ChartDataPoint
 import com.example.expensetrackerkotlin.ui.components.CategoryAnalysisData
 import com.example.expensetrackerkotlin.ui.components.SortOption
+import com.example.expensetrackerkotlin.ui.components.ExpenseFilterType
 import com.example.expensetrackerkotlin.ui.theme.*
 import com.example.expensetrackerkotlin.utils.NumberFormatter
 import com.example.expensetrackerkotlin.viewmodel.ExpenseViewModel
@@ -33,7 +30,7 @@ import java.time.*
 import java.time.format.DateTimeFormatter
 
 
-fun getMonthlyChartData(viewModel: ExpenseViewModel, selectedMonth: YearMonth): List<ChartDataPoint> {
+fun getMonthlyChartData(viewModel: ExpenseViewModel, selectedMonth: YearMonth, filterType: ExpenseFilterType = ExpenseFilterType.ALL): List<ChartDataPoint> {
     val expenses = viewModel.expenses.value
     val startOfMonth = selectedMonth.atDay(1).atStartOfDay()
     val endOfMonth = selectedMonth.atEndOfMonth().atTime(23, 59, 59)
@@ -45,8 +42,15 @@ fun getMonthlyChartData(viewModel: ExpenseViewModel, selectedMonth: YearMonth): 
         }
     }
     
+    // Apply filter based on expense type
+    val filteredExpenses = when (filterType) {
+        ExpenseFilterType.ALL -> monthlyExpenses
+        ExpenseFilterType.RECURRING -> monthlyExpenses.filter { it.recurrenceType != RecurrenceType.NONE }
+        ExpenseFilterType.ONE_TIME -> monthlyExpenses.filter { it.recurrenceType == RecurrenceType.NONE }
+    }
+    
     // Group expenses by day and sum amounts
-    val dailyExpenses = monthlyExpenses.groupBy { expense ->
+    val dailyExpenses = filteredExpenses.groupBy { expense ->
         expense.date.toLocalDate().dayOfMonth
     }.map { (day, dayExpenses) ->
         ChartDataPoint(
@@ -62,6 +66,43 @@ fun getMonthlyChartData(viewModel: ExpenseViewModel, selectedMonth: YearMonth): 
     }
 }
 
+fun getFilteredCategoryAnalysisData(
+    monthlyExpenses: List<Expense>,
+    categories: List<Category>,
+    subCategories: List<SubCategory>,
+    defaultCurrency: String,
+    filterType: ExpenseFilterType = ExpenseFilterType.ALL
+): List<CategoryAnalysisData> {
+    if (monthlyExpenses.isEmpty()) return emptyList()
+
+    // Apply filter based on expense type
+    val filteredExpenses = when (filterType) {
+        ExpenseFilterType.ALL -> monthlyExpenses
+        ExpenseFilterType.RECURRING -> monthlyExpenses.filter { it.recurrenceType != RecurrenceType.NONE }
+        ExpenseFilterType.ONE_TIME -> monthlyExpenses.filter { it.recurrenceType == RecurrenceType.NONE }
+    }
+
+    val totalAmount = filteredExpenses.sumOf { it.getAmountInDefaultCurrency(defaultCurrency) }
+    
+    val categoryTotals = filteredExpenses.groupBy { it.categoryId }
+        .mapNotNull { (categoryId, categoryExpenses) ->
+            val category = categories.find { it.id == categoryId }
+            if (category != null) {
+                val amount = categoryExpenses.sumOf { it.getAmountInDefaultCurrency(defaultCurrency) }
+                CategoryAnalysisData(
+                    category = category,
+                    totalAmount = amount,
+                    expenseCount = categoryExpenses.size,
+                    percentage = if (totalAmount > 0) amount / totalAmount else 0.0,
+                    expenses = categoryExpenses.sortedByDescending { it.date }
+                )
+            } else null
+        }
+        .sortedByDescending { it.totalAmount }
+
+    return categoryTotals
+}
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AnalysisScreen(
@@ -75,6 +116,8 @@ fun AnalysisScreen(
     var sortOption by remember { mutableStateOf(SortOption.DATE_DESC) }
     var showSortMenu by remember { mutableStateOf(false) }
     var selectedSegment by remember { mutableStateOf<Int?>(null) }
+    var selectedExpenseFilter by remember { mutableStateOf(ExpenseFilterType.ALL) }
+    var selectedPieChartFilter by remember { mutableStateOf(ExpenseFilterType.ALL) }
 
     val expenses by viewModel.expenses.collectAsState()
     val categories by viewModel.categories.collectAsState()
@@ -92,28 +135,14 @@ fun AnalysisScreen(
         }
     }
 
-    val categoryAnalysisData = remember(monthlyExpenses, categories, subCategories) {
-        if (monthlyExpenses.isEmpty()) return@remember emptyList()
-
-        val totalAmount = monthlyExpenses.sumOf { it.getAmountInDefaultCurrency(viewModel.defaultCurrency) }
-        
-        val categoryTotals = monthlyExpenses.groupBy { it.categoryId }
-            .mapNotNull { (categoryId, categoryExpenses) ->
-                val category = categories.find { it.id == categoryId }
-                if (category != null) {
-                    val amount = categoryExpenses.sumOf { it.getAmountInDefaultCurrency(viewModel.defaultCurrency) }
-                    CategoryAnalysisData(
-                        category = category,
-                        totalAmount = amount,
-                        expenseCount = categoryExpenses.size,
-                        percentage = if (totalAmount > 0) amount / totalAmount else 0.0,
-                        expenses = categoryExpenses.sortedByDescending { it.date }
-                    )
-                } else null
-            }
-            .sortedByDescending { it.totalAmount }
-
-        categoryTotals
+    val categoryAnalysisData = remember(monthlyExpenses, categories, subCategories, selectedPieChartFilter) {
+        getFilteredCategoryAnalysisData(
+            monthlyExpenses = monthlyExpenses,
+            categories = categories,
+            subCategories = subCategories,
+            defaultCurrency = viewModel.defaultCurrency,
+            filterType = selectedPieChartFilter
+        )
     }
 
     val recurringExpenseTotal = remember(expenses) {
@@ -198,14 +227,18 @@ fun AnalysisScreen(
                             animatedPercentages = animatedPercentages,
                             isDarkTheme = isDarkTheme,
                             selectedSegment = selectedSegment,
-                            onSegmentSelected = { selectedSegment = it }
+                            onSegmentSelected = { selectedSegment = it },
+                            selectedFilter = selectedPieChartFilter,
+                            onFilterChanged = { selectedPieChartFilter = it }
                         )
                     }
                     item {
                         MonthlyLineChart(
-                            data = getMonthlyChartData(viewModel, selectedMonth),
+                            data = getMonthlyChartData(viewModel, selectedMonth, selectedExpenseFilter),
                             currency = viewModel.defaultCurrency,
-                            isDarkTheme = isDarkTheme
+                            isDarkTheme = isDarkTheme,
+                            selectedFilter = selectedExpenseFilter,
+                            onFilterChanged = { selectedExpenseFilter = it }
                         )
                     }
                     if (recurringExpenseTotal > 0) {
@@ -238,7 +271,7 @@ fun AnalysisScreen(
                     val selected = categoryAnalysisData[selectedSegment!!]
                     
                     // Calculate arrow angle to point to selected segment
-                    val segmentAngle = remember(selectedSegment) {
+                    remember(selectedSegment) {
                         var currentAngle = 0f
                         for (i in 0 until selectedSegment!!) {
                             currentAngle += animatedPercentages[i] * 360f
@@ -389,7 +422,6 @@ fun MonthYearSelector(
     onMonthYearChanged: (YearMonth) -> Unit,
     isDarkTheme: Boolean
 ) {
-    var showMonthPicker by remember { mutableStateOf(false) }
     val currentMonth = YearMonth.now()
 
     Row(
@@ -413,7 +445,7 @@ fun MonthYearSelector(
         Card(
             modifier = Modifier
                 .weight(1f)
-                .clickable { showMonthPicker = true },
+                .clickable { },
             colors = CardDefaults.cardColors(
                 containerColor = ThemeColors.getCardBackgroundColor(isDarkTheme)
             ),
@@ -457,7 +489,6 @@ fun RecurringExpenseCard(
     totalAmount: Double,
     defaultCurrency: String,
     isDarkTheme: Boolean,
-    modifier: Modifier = Modifier
 ) {
         Row(
             modifier = Modifier

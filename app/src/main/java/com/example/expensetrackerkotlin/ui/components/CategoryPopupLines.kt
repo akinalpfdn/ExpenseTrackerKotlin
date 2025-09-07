@@ -1,4 +1,5 @@
 package com.example.expensetrackerkotlin.ui.components
+import android.annotation.SuppressLint
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
@@ -29,8 +30,8 @@ fun CategoryPopupLines(
     Canvas(
         modifier = Modifier
             .fillMaxWidth()
-            .height(260.dp) // Constrained height to prevent extending out
-            .offset(y = (-250).dp) // Position to align with pie chart
+            .height(180.dp) // Constrained height to prevent extending out
+            .offset(y = (-170).dp) // Position to align with pie chart
             .graphicsLayer {
                 alpha = maxOf(line1Progress.value, line2Progress.value)
             }
@@ -123,6 +124,7 @@ fun CategoryPopupLines(
         }
     }
 }
+@SuppressLint("DefaultLocale")
 @Composable
 fun   CategoryPopupCard(popupScale:  Animatable<Float,
         AnimationVector1D>, selected:  CategoryAnalysisData,

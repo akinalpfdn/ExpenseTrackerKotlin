@@ -3,9 +3,11 @@ package com.example.expensetrackerkotlin.ui.components
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -16,12 +18,9 @@ import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.graphics.toArgb
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.draw.rotate
 import com.example.expensetrackerkotlin.ui.theme.AppColors
 import com.example.expensetrackerkotlin.ui.theme.ThemeColors
 import com.example.expensetrackerkotlin.utils.NumberFormatter
@@ -32,15 +31,22 @@ data class ChartDataPoint(
     val amount: Double
 )
 
+enum class ExpenseFilterType(val displayName: String) {
+    ALL("Tümü"),
+    RECURRING("Tekrarlayan"),
+    ONE_TIME("Tek Seferlik")
+}
+
 @Composable
 fun MonthlyLineChart(
     data: List<ChartDataPoint>,
     currency: String,
     isDarkTheme: Boolean,
+    selectedFilter: ExpenseFilterType = ExpenseFilterType.ALL,
+    onFilterChanged: (ExpenseFilterType) -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     val maxAmount = data.maxOfOrNull { it.amount } ?: 0.0
-    val density = LocalDensity.current
     
     Column(
         modifier = modifier
@@ -56,6 +62,41 @@ fun MonthlyLineChart(
             color = ThemeColors.getTextColor(isDarkTheme)
         )
 
+        // Radio button menu for filter options
+        Spacer(modifier = Modifier.height(8.dp))
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.Start
+        ) {
+            ExpenseFilterType.values().forEach { filterType ->
+                Row(
+                    modifier = Modifier
+                        .selectable(
+                            selected = selectedFilter == filterType,
+                            onClick = { onFilterChanged(filterType) }
+                        )
+                        .padding(horizontal = 1.dp, vertical = 4.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    RadioButton(
+                        selected = selectedFilter == filterType,
+                        onClick = { onFilterChanged(filterType) },
+                        colors = RadioButtonDefaults.colors(
+                            selectedColor = AppColors.PrimaryOrange,
+                            unselectedColor = ThemeColors.getTextGrayColor(isDarkTheme)
+                        )
+                    )
+                    Spacer(modifier = Modifier.width(1.dp))
+                    Text(
+                        text = filterType.displayName,
+                        fontSize = 12.sp,
+                        color = if (selectedFilter == filterType) 
+                            ThemeColors.getTextColor(isDarkTheme) 
+                        else ThemeColors.getTextGrayColor(isDarkTheme)
+                    )
+                }
+            }
+        }
         
         if (data.isEmpty()) {
             Box(
@@ -85,8 +126,7 @@ fun MonthlyLineChart(
                     drawLineChart(
                         data = data,
                         maxAmount = maxAmount,
-                        isDarkTheme = isDarkTheme,
-                        density = density
+                        isDarkTheme = isDarkTheme
                     )
                 }
             }
@@ -123,7 +163,6 @@ private fun DrawScope.drawLineChart(
     data: List<ChartDataPoint>,
     maxAmount: Double,
     isDarkTheme: Boolean,
-    density: androidx.compose.ui.unit.Density
 ) {
     val width = size.width
     val height = size.height

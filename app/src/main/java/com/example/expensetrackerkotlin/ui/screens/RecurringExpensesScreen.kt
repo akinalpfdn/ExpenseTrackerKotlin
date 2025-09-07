@@ -17,15 +17,14 @@ import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.Sort
 import androidx.compose.material.icons.filled.CalendarToday
 import androidx.compose.material.icons.filled.Category
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.FilterList
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material.icons.filled.Sort
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -143,7 +142,7 @@ fun RecurringExpensesScreen(
                     onClick = onDismiss
                 ) {
                     Icon(
-                        imageVector = Icons.Default.ArrowBack,
+                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                         contentDescription = "Back",
                         tint = ThemeColors.getTextColor(isDarkTheme)
                     )
@@ -165,7 +164,7 @@ fun RecurringExpensesScreen(
                         onClick = { showSortMenu = true }
                     ) {
                         Icon(
-                            imageVector = Icons.Default.Sort,
+                            imageVector = Icons.AutoMirrored.Filled.Sort,
                             contentDescription = "Sort",
                             tint = ThemeColors.getTextColor(isDarkTheme)
                         )
@@ -375,10 +374,9 @@ fun RecurringExpenseCard(
     var editAmount by remember { mutableStateOf(expense.amount.toString()) }
     var editDescription by remember { mutableStateOf(expense.description) }
     var editExchangeRate by remember { mutableStateOf(expense.exchangeRate?.toString() ?: "") }
-    var editEndDate by remember { mutableStateOf(expense.endDate?.toLocalDate()?.toString() ?: "") }
     var showDeleteConfirmation by remember { mutableStateOf(false) }
     var showEndDatePicker by remember { mutableStateOf(false) }
-    var tempEndDate by remember { mutableStateOf(expense.endDate ?: java.time.LocalDateTime.now().plusYears(1)) }
+    var tempEndDate by remember { mutableStateOf(expense.endDate ?: LocalDateTime.now().plusYears(1)) }
     
     // Collect categories and subcategories from ViewModel
     val categories by viewModel.categories.collectAsState()
@@ -476,7 +474,6 @@ fun RecurringExpenseCard(
                                 editAmount = expense.amount.toString()
                                 editDescription = expense.description
                                 editExchangeRate = expense.exchangeRate?.toString() ?: ""
-                                editEndDate = expense.endDate?.toLocalDate()?.toString() ?: ""
                             } else {
                                 // If not editing, open edit mode
                                 isEditing = true
@@ -512,7 +509,7 @@ fun RecurringExpenseCard(
                                 contentAlignment = Alignment.Center
                             ) {
                                 Icon(
-                                    imageVector = category?.getIcon() ?: androidx.compose.material.icons.Icons.Default.Category,
+                                    imageVector = category?.getIcon() ?: Icons.Default.Category,
                                     contentDescription = category?.name ?: "Category",
                                     tint = category?.getColor() ?: Color.Gray,
                                     modifier = Modifier.size(16.dp)
@@ -776,7 +773,7 @@ fun RecurringExpenseCard(
                                     horizontalArrangement = Arrangement.SpaceBetween
                                 ) {
                                     Text(
-                                        text = tempEndDate.format(java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy")),
+                                        text = tempEndDate.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")),
                                         fontSize = 14.sp,
                                         color = ThemeColors.getTextColor(isDarkTheme)
                                     )
@@ -804,7 +801,6 @@ fun RecurringExpenseCard(
                                         editAmount = expense.amount.toString()
                                         editDescription = expense.description
                                         editExchangeRate = expense.exchangeRate?.toString() ?: ""
-                                        editEndDate = expense.endDate?.toLocalDate()?.toString() ?: ""
                                     },
                                     modifier = Modifier
                                         .weight(1f)
