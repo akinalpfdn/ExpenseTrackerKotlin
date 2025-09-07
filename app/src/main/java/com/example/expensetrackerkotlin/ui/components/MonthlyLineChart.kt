@@ -14,9 +14,14 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.nativeCanvas
+import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.draw.rotate
 import com.example.expensetrackerkotlin.ui.theme.AppColors
 import com.example.expensetrackerkotlin.ui.theme.ThemeColors
 import com.example.expensetrackerkotlin.utils.NumberFormatter
@@ -35,6 +40,7 @@ fun MonthlyLineChart(
     modifier: Modifier = Modifier
 ) {
     val maxAmount = data.maxOfOrNull { it.amount } ?: 0.0
+    val density = LocalDensity.current
     
     Column(
         modifier = modifier
@@ -50,13 +56,12 @@ fun MonthlyLineChart(
             color = ThemeColors.getTextColor(isDarkTheme)
         )
 
-        Spacer(modifier = Modifier.height(16.dp))
         
         if (data.isEmpty()) {
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(240.dp),
+                    .height(250.dp),
                 contentAlignment = Alignment.Center
             ) {
                 Text(
@@ -65,17 +70,28 @@ fun MonthlyLineChart(
                 )
             }
         } else {
-            Canvas(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(240.dp)
+            // Y-axis label
+            Row(
+                modifier = Modifier.fillMaxWidth()
             ) {
-                drawLineChart(
-                    data = data,
-                    maxAmount = maxAmount,
-                    isDarkTheme = isDarkTheme
-                )
+
+                
+                // Chart area
+                Canvas(
+                    modifier = Modifier
+                        .weight(1f)
+                        .height(250.dp)
+                ) {
+                    drawLineChart(
+                        data = data,
+                        maxAmount = maxAmount,
+                        isDarkTheme = isDarkTheme,
+                        density = density
+                    )
+                }
             }
+            
+
         }
         
         // Legend
@@ -106,25 +122,71 @@ fun MonthlyLineChart(
 private fun DrawScope.drawLineChart(
     data: List<ChartDataPoint>,
     maxAmount: Double,
-    isDarkTheme: Boolean
+    isDarkTheme: Boolean,
+    density: androidx.compose.ui.unit.Density
 ) {
     val width = size.width
     val height = size.height
-    val padding = 10.dp.toPx()
+    val padding = 25.dp.toPx()
     
     val chartWidth = width - padding * 2
     val chartHeight = height - padding * 2
     
-    // Draw grid lines
+    val textColor = if (isDarkTheme) Color.White else Color.Black
+    val textColorArgb = textColor.toArgb()
+    
+    // Draw Y-axis labels and grid lines
     val gridColor = if (isDarkTheme) Color.White.copy(alpha = 0.1f) else Color.Black.copy(alpha = 0.1f)
-    for (i in 1..4) {
+    for (i in 0..4) {
         val y = padding + (chartHeight / 4) * i
-        drawLine(
-            color = gridColor,
-            start = Offset(padding, y),
-            end = Offset(width - padding, y),
-            strokeWidth = 1.dp.toPx()
-        )
+        val amount = maxAmount * (4 - i) / 4
+        
+        // Draw grid line
+        if (i > 0) {
+            drawLine(
+                color = gridColor,
+                start = Offset(padding, y),
+                end = Offset(width - padding, y),
+                strokeWidth = 1.dp.toPx()
+            )
+        }
+        
+        // Draw Y-axis label
+        drawContext.canvas.nativeCanvas.apply {
+            val paint = android.graphics.Paint().apply {
+                color = textColorArgb
+                textSize = 10.dp.toPx()
+                textAlign = android.graphics.Paint.Align.RIGHT
+            }
+            drawText(
+                NumberFormatter.formatAmount(amount),
+                padding - 1.dp.toPx(),
+                y + 4.dp.toPx(),
+                paint
+            )
+        }
+    }
+    
+    // Draw X-axis labels (every 3rd day)
+    val xAxisStep = max(1, data.size / 10) // Show about 10 labels max
+    for (i in data.indices step xAxisStep) {
+        val x = padding + (chartWidth / max(1, data.size - 1)) * i
+        val day = data[i].day
+        
+        // Draw X-axis label
+        drawContext.canvas.nativeCanvas.apply {
+            val paint = android.graphics.Paint().apply {
+                color = textColorArgb
+                textSize = 10.dp.toPx()
+                textAlign = android.graphics.Paint.Align.CENTER
+            }
+            drawText(
+                day.toString(),
+                x,
+                height - padding + 15.dp.toPx(),
+                paint
+            )
+        }
     }
     
     if (data.isEmpty() || maxAmount == 0.0) return
@@ -164,5 +226,18 @@ private fun DrawScope.drawLineChart(
         color = AppColors.PrimaryOrange,
         style = Stroke(width = 3.dp.toPx())
     )
-
+    
+    // Draw points
+    points.forEach { point ->
+        drawCircle(
+            color = AppColors.PrimaryOrange,
+            radius = 3.dp.toPx(),
+            center = point
+        )
+        drawCircle(
+            color = if (isDarkTheme) Color.Black else Color.White,
+            radius = 1.dp.toPx(),
+            center = point
+        )
+    }
 }
