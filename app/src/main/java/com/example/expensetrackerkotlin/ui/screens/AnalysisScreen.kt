@@ -28,6 +28,7 @@ import androidx.compose.ui.window.DialogProperties
 import kotlin.math.*
 import com.example.expensetrackerkotlin.data.*
 import com.example.expensetrackerkotlin.ui.components.*
+import com.example.expensetrackerkotlin.ui.components.ChartDataPoint
 import com.example.expensetrackerkotlin.ui.theme.*
 import com.example.expensetrackerkotlin.utils.NumberFormatter
 import com.example.expensetrackerkotlin.viewmodel.ExpenseViewModel
@@ -49,6 +50,35 @@ enum class SortOption(val displayName: String) {
     AMOUNT_ASC("Tutara Göre (Düşük → Yüksek)"),
     DATE_DESC("Tarihe Göre (Yeni → Eski)"),
     DATE_ASC("Tarihe Göre (Eski → Yeni)")
+}
+
+fun getMonthlyChartData(viewModel: ExpenseViewModel, selectedMonth: YearMonth): List<ChartDataPoint> {
+    val expenses = viewModel.expenses.value
+    val startOfMonth = selectedMonth.atDay(1).atStartOfDay()
+    val endOfMonth = selectedMonth.atEndOfMonth().atTime(23, 59, 59)
+    
+    val monthlyExpenses = expenses.filter { expense ->
+        expense.date.toLocalDate().let { expenseDate ->
+            !expenseDate.isBefore(startOfMonth.toLocalDate()) && 
+            !expenseDate.isAfter(endOfMonth.toLocalDate())
+        }
+    }
+    
+    // Group expenses by day and sum amounts
+    val dailyExpenses = monthlyExpenses.groupBy { expense ->
+        expense.date.toLocalDate().dayOfMonth
+    }.map { (day, dayExpenses) ->
+        ChartDataPoint(
+            day = day,
+            amount = dayExpenses.sumOf { it.getAmountInDefaultCurrency(viewModel.defaultCurrency) }
+        )
+    }
+    
+    // Create a complete list for all days in the month, filling missing days with 0
+    val daysInMonth = selectedMonth.lengthOfMonth()
+    return (1..daysInMonth).map { day ->
+        dailyExpenses.find { it.day == day } ?: ChartDataPoint(day = day, amount = 0.0)
+    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -187,7 +217,13 @@ fun AnalysisScreen(
                             onSegmentSelected = { selectedSegment = it }
                         )
                     }
-
+                    item {
+                        MonthlyLineChart(
+                            data = getMonthlyChartData(viewModel, selectedMonth),
+                            currency = viewModel.defaultCurrency,
+                            isDarkTheme = isDarkTheme
+                        )
+                    }
                     item {
                         CategorySummarySection(
                             categoryData = categoryAnalysisData,
