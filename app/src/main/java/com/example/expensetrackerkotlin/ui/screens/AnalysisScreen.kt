@@ -29,6 +29,8 @@ import kotlin.math.*
 import com.example.expensetrackerkotlin.data.*
 import com.example.expensetrackerkotlin.ui.components.*
 import com.example.expensetrackerkotlin.ui.components.ChartDataPoint
+import com.example.expensetrackerkotlin.ui.components.CategoryAnalysisData
+import com.example.expensetrackerkotlin.ui.components.SortOption
 import com.example.expensetrackerkotlin.ui.theme.*
 import com.example.expensetrackerkotlin.utils.NumberFormatter
 import com.example.expensetrackerkotlin.viewmodel.ExpenseViewModel
@@ -36,21 +38,8 @@ import java.time.*
 import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
 import kotlinx.coroutines.launch
+import java.time.chrono.ChronoLocalDateTime
 
-data class CategoryAnalysisData(
-    val category: Category,
-    val totalAmount: Double,
-    val expenseCount: Int,
-    val percentage: Double,
-    val expenses: List<Expense>
-)
-
-enum class SortOption(val displayName: String) {
-    AMOUNT_DESC("Tutara Göre (Yüksek → Düşük)"),
-    AMOUNT_ASC("Tutara Göre (Düşük → Yüksek)"),
-    DATE_DESC("Tarihe Göre (Yeni → Eski)"),
-    DATE_ASC("Tarihe Göre (Eski → Yeni)")
-}
 
 fun getMonthlyChartData(viewModel: ExpenseViewModel, selectedMonth: YearMonth): List<ChartDataPoint> {
     val expenses = viewModel.expenses.value
@@ -136,10 +125,13 @@ fun AnalysisScreen(
     }
 
     val recurringExpenseTotal = remember(expenses) {
-        val threeMonthsFromNow = LocalDateTime.now().plusMonths(3)
+
+        val threeMonthsFromNow = selectedMonth.atEndOfMonth().plusMonths(3).atStartOfDay().plusDays(1)
         expenses.filter { expense ->
             expense.recurrenceType != RecurrenceType.NONE && 
             (expense.endDate == null || expense.endDate.isAfter(threeMonthsFromNow))
+                    && expense.date<selectedMonth.atEndOfMonth().atStartOfDay().plusDays(1)
+                    &&  selectedMonth.atEndOfMonth().plusMonths(-1).atStartOfDay().plusDays(1)<=expense.date
         }.sumOf { it.getAmountInDefaultCurrency(viewModel.defaultCurrency) }
     }
 
@@ -224,6 +216,15 @@ fun AnalysisScreen(
                             isDarkTheme = isDarkTheme
                         )
                     }
+                    if (recurringExpenseTotal > 0) {
+                        item {
+                            RecurringExpenseCard(
+                                totalAmount = recurringExpenseTotal,
+                                defaultCurrency = viewModel.defaultCurrency,
+                                isDarkTheme = isDarkTheme
+                            )
+                        }
+                    }
                     item {
                         CategorySummarySection(
                             categoryData = categoryAnalysisData,
@@ -237,15 +238,7 @@ fun AnalysisScreen(
                         )
                     }
 
-                    if (recurringExpenseTotal > 0) {
-                        item {
-                            RecurringExpenseCard(
-                                totalAmount = recurringExpenseTotal,
-                                defaultCurrency = viewModel.defaultCurrency,
-                                isDarkTheme = isDarkTheme
-                            )
-                        }
-                    }
+
                 }
                 
                 // Absolute positioned popup overlay
@@ -778,21 +771,15 @@ fun CategorySummarySection(
     onCategoryClick: (CategoryAnalysisData) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    Card(
-        modifier = modifier.fillMaxWidth(),
-        colors = CardDefaults.cardColors(
-            containerColor = ThemeColors.getCardBackgroundColor(isDarkTheme)
-        ),
-        shape = RoundedCornerShape(16.dp)
-    ) {
+
         Column(
-            modifier = Modifier.padding(16.dp)
+            modifier = Modifier.padding(6.dp)
         ) {
 
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(bottom = 8.dp),
+                    .padding(bottom = 18.dp),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
@@ -824,7 +811,7 @@ fun CategorySummarySection(
             
 
         }
-    }
+
 }
 
 @Composable
@@ -919,17 +906,10 @@ fun RecurringExpenseCard(
     isDarkTheme: Boolean,
     modifier: Modifier = Modifier
 ) {
-    Card(
-        modifier = modifier.fillMaxWidth(),
-        colors = CardDefaults.cardColors(
-            containerColor = AppColors.PrimaryOrange.copy(alpha = 0.1f)
-        ),
-        shape = RoundedCornerShape(16.dp)
-    ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp),
+                .padding(6.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -940,7 +920,7 @@ fun RecurringExpenseCard(
                     imageVector = Icons.Default.Refresh,
                     contentDescription = "Tekrarlayan harcamalar",
                     tint = AppColors.PrimaryOrange,
-                    modifier = Modifier.size(24.dp)
+                    modifier = Modifier.size(18.dp)
                 )
                 Spacer(modifier = Modifier.width(12.dp))
                 Column {
@@ -951,7 +931,7 @@ fun RecurringExpenseCard(
                         color = ThemeColors.getTextColor(isDarkTheme)
                     )
                     Text(
-                        text = "3+ ay devam edecek tekrarlayan",
+                        text = "3+ ay devam edecek olan harcamalar",
                         fontSize = 12.sp,
                         color = ThemeColors.getTextGrayColor(isDarkTheme)
                     )
@@ -965,212 +945,6 @@ fun RecurringExpenseCard(
                 color = AppColors.PrimaryOrange
             )
         }
-    }
+
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun CategoryDetailBottomSheet(
-    categoryData: CategoryAnalysisData,
-    subCategories: List<SubCategory>,
-    defaultCurrency: String,
-    isDarkTheme: Boolean,
-    sortOption: SortOption,
-    showSortMenu: Boolean,
-    onSortOptionChanged: (SortOption) -> Unit,
-    onShowSortMenuChanged: (Boolean) -> Unit
-) {
-    val sortedExpenses = remember(categoryData.expenses, sortOption) {
-        when (sortOption) {
-            SortOption.AMOUNT_DESC -> categoryData.expenses.sortedByDescending { it.amount }
-            SortOption.AMOUNT_ASC -> categoryData.expenses.sortedBy { it.amount }
-            SortOption.DATE_DESC -> categoryData.expenses.sortedByDescending { it.date }
-            SortOption.DATE_ASC -> categoryData.expenses.sortedBy { it.date }
-        }
-    }
-
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .background(categoryData.category.getColor().copy(alpha = 0.1f))
-            .padding(16.dp)
-    ) {
-        // Header
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Box(
-                    modifier = Modifier
-                        .size(32.dp)
-                        .background(
-                            categoryData.category.getColor().copy(alpha = 0.2f),
-                            CircleShape
-                        ),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Icon(
-                        imageVector = categoryData.category.getIcon(),
-                        contentDescription = null,
-                        tint = categoryData.category.getColor(),
-                        modifier = Modifier.size(18.dp)
-                    )
-                }
-                Spacer(modifier = Modifier.width(12.dp))
-                Column {
-                    Text(
-                        text = categoryData.category.name,
-                        fontSize = 22.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = ThemeColors.getTextColor(isDarkTheme)
-                    )
-                    Text(
-                        text = "$defaultCurrency ${NumberFormatter.formatAmount(categoryData.totalAmount)}",
-                        fontSize = 18.sp,
-                        color = ThemeColors.getTextGrayColor(isDarkTheme)
-                    )
-                    Text(
-                        text = "${categoryData.expenseCount} harcama • %${String.format("%.1f", categoryData.percentage * 100)}",
-                        fontSize = 16.sp,
-                        color = ThemeColors.getTextGrayColor(isDarkTheme)
-                    )
-                }
-            }
-        }
-        
-        Spacer(modifier = Modifier.height(16.dp))
-        
-        // Sort Button
-        Box {
-            OutlinedButton(
-                onClick = { onShowSortMenuChanged(true) },
-                modifier = Modifier.fillMaxWidth(),
-                colors = ButtonDefaults.outlinedButtonColors(
-                    containerColor = Color.Transparent,
-                    contentColor = ThemeColors.getTextColor(isDarkTheme)
-                )
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Sort,
-                    contentDescription = null,
-                    modifier = Modifier.size(16.dp)
-                )
-                Spacer(modifier = Modifier.width(8.dp))
-                Text(
-                    text = sortOption.displayName,
-                    fontSize = 14.sp
-                )
-                Spacer(modifier = Modifier.width(8.dp))
-                Icon(
-                    imageVector = Icons.Default.ExpandMore,
-                    contentDescription = null,
-                    modifier = Modifier.size(16.dp)
-                )
-            }
-            
-            DropdownMenu(
-                expanded = showSortMenu,
-                onDismissRequest = { onShowSortMenuChanged(false) },
-                modifier = Modifier.background(ThemeColors.getCardBackgroundColor(isDarkTheme))
-            ) {
-                SortOption.values().forEach { option ->
-                    DropdownMenuItem(
-                        text = {
-                            Text(
-                                text = option.displayName,
-                                color = ThemeColors.getTextColor(isDarkTheme),
-                                fontSize = 14.sp
-                            )
-                        },
-                        onClick = {
-                            onSortOptionChanged(option)
-                            onShowSortMenuChanged(false)
-                        }
-                    )
-                }
-            }
-        }
-        
-        Spacer(modifier = Modifier.height(16.dp))
-        
-        // Expenses List
-        LazyColumn(
-            verticalArrangement = Arrangement.spacedBy(12.dp),
-            modifier = Modifier.weight(1f)
-        ) {
-            items(sortedExpenses) { expense ->
-                val subCategory = subCategories.find { it.id == expense.subCategoryId }
-                
-                Card(
-                    colors = CardDefaults.cardColors(
-                        containerColor = ThemeColors.getCardBackgroundColor(isDarkTheme)
-                    ),
-                    shape = RoundedCornerShape(12.dp)
-                ) {
-                    Column(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(12.dp)
-                    )
-                    {
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                            verticalAlignment = Alignment.Top
-                        ) {
-                            Column(
-                                modifier = Modifier.weight(1f)
-                            ) {
-                                Text(
-                                    text = subCategory?.name ?: "Bilinmeyen",
-                                    fontWeight = FontWeight.Medium,
-                                    fontSize = 17.sp,
-                                    color = ThemeColors.getTextColor(isDarkTheme)
-                                )
-                                if (expense.description.isNotBlank()) {
-                                    Text(
-                                        text = expense.description,
-                                        fontSize = 15.sp,
-                                        color = ThemeColors.getTextGrayColor(isDarkTheme),
-                                        modifier = Modifier.padding(top = 4.dp)
-                                    )
-                                }
-                                Text(
-                                    text = expense.date.format(DateTimeFormatter.ofPattern("dd MMMM yyyy")),
-                                    fontSize = 14.sp,
-                                    color = ThemeColors.getTextGrayColor(isDarkTheme),
-                                    modifier = Modifier.padding(top = 4.dp)
-                                )
-                            }
-                            
-                            Column(
-                                horizontalAlignment = Alignment.End
-                            ) {
-                                Text(
-                                    text = "$defaultCurrency ${NumberFormatter.formatAmount(expense.amount)}",
-                                    fontWeight = FontWeight.Bold,
-                                    fontSize = 17.sp,
-                                    color = ThemeColors.getTextColor(isDarkTheme)
-                                )
-                                if (expense.exchangeRate != null && expense.currency != defaultCurrency) {
-                                    Text(
-                                        text = "${expense.currency} ${NumberFormatter.formatAmount(expense.amount)}",
-                                        fontSize = 12.sp,
-                                        color = ThemeColors.getTextGrayColor(isDarkTheme),
-                                        modifier = Modifier.padding(top = 2.dp)
-                                    )
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        
-        // Add some bottom padding for better UX
-    }
-}
