@@ -182,22 +182,22 @@ fun AnalysisScreen(
                                 val popupRight = popupLeft + 280.dp.toPx()
                                 val popupTop = 360.dp.toPx()
                                 val popupBottom = popupTop + 100.dp.toPx()
-                                
-                                val isOutsidePopup = tapOffset.x < popupLeft || 
-                                                   tapOffset.x > popupRight ||
-                                                   tapOffset.y < popupTop ||
-                                                   tapOffset.y > popupBottom
-                                
+
+                                val isOutsidePopup = tapOffset.x < popupLeft ||
+                                        tapOffset.x > popupRight ||
+                                        tapOffset.y < popupTop ||
+                                        tapOffset.y > popupBottom
+
                                 // Also check if tap is outside pie chart area
                                 val pieChartCenterX = size.width / 2f
                                 val pieChartCenterY = 200.dp.toPx() // Approximate pie chart center
                                 val pieRadius = 125.dp.toPx()
                                 val distanceFromPieCenter = sqrt(
-                                    (tapOffset.x - pieChartCenterX).pow(2) + 
-                                    (tapOffset.y - pieChartCenterY).pow(2)
+                                    (tapOffset.x - pieChartCenterX).pow(2) +
+                                            (tapOffset.y - pieChartCenterY).pow(2)
                                 )
                                 val isOutsidePieChart = distanceFromPieCenter > pieRadius
-                                
+
                                 if (isOutsidePopup && isOutsidePieChart) {
                                     selectedSegment = null
                                 }
@@ -788,13 +788,27 @@ fun CategorySummarySection(
         Column(
             modifier = Modifier.padding(16.dp)
         ) {
-            Text(
-                text = "Kategori Detayları",
-                fontSize = 20.sp,
-                fontWeight = FontWeight.Bold,
-                color = ThemeColors.getTextColor(isDarkTheme),
-                modifier = Modifier.padding(bottom = 16.dp)
-            )
+
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 8.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = "Kategori Detayları",
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = ThemeColors.getTextColor(isDarkTheme),
+                )
+                Text(
+                    text = "$defaultCurrency ${NumberFormatter.formatAmount(totalAmount)}",
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = AppColors.PrimaryOrange
+                )
+            }
 
             categoryData.forEach { data ->
                 CategorySummaryRow(
@@ -804,36 +818,11 @@ fun CategorySummarySection(
                     onClick = { onCategoryClick(data) }
                 )
                 
-                if (data != categoryData.last()) {
-                    Divider(
-                        modifier = Modifier.padding(vertical = 8.dp),
-                        color = ThemeColors.getTextGrayColor(isDarkTheme).copy(alpha = 0.3f)
-                    )
-                }
+
             }
+
             
-            Spacer(modifier = Modifier.height(12.dp))
-            
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 8.dp),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    text = "TOPLAM",
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = ThemeColors.getTextColor(isDarkTheme)
-                )
-                Text(
-                    text = "$defaultCurrency ${NumberFormatter.formatAmount(totalAmount)}",
-                    fontSize = 18.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = AppColors.PrimaryOrange
-                )
-            }
+
         }
     }
 }
@@ -849,14 +838,22 @@ fun CategorySummaryRow(
         modifier = Modifier
             .fillMaxWidth()
             .clickable { onClick() }
-            .padding(vertical = 8.dp),
+            .padding(vertical = 2.dp)
+            .background(
+                categoryData.category.getColor().copy(alpha = 0.1f),
+                        shape = RoundedCornerShape(12.dp),
+            ),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
-    ) {
+    )
+
+    {
         Row(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier.weight(1f)
-        ) {
+                .padding( 12.dp)
+        )
+        {
             Box(
                 modifier = Modifier
                     .size(32.dp)
@@ -894,7 +891,9 @@ fun CategorySummaryRow(
         }
         
         Column(
-            horizontalAlignment = Alignment.End
+            horizontalAlignment = Alignment.End,
+            modifier = Modifier
+                .padding( 12.dp)
         ) {
             Text(
                 text = "$defaultCurrency ${NumberFormatter.formatAmount(categoryData.totalAmount)}",
@@ -993,7 +992,7 @@ fun CategoryDetailBottomSheet(
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .background(ThemeColors.getBackgroundColor(isDarkTheme))
+            .background(categoryData.category.getColor().copy(alpha = 0.1f))
             .padding(16.dp)
     ) {
         // Header
