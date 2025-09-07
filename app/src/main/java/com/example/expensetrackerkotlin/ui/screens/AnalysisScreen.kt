@@ -13,6 +13,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.font.FontWeight
@@ -242,7 +243,7 @@ fun AnalysisScreen(
                                         selected = selectedMonthlyExpenseType == filterType,
                                         onClick = { selectedMonthlyExpenseType = filterType }
                                     )
-                                    .padding(horizontal = 1.dp, vertical = 4.dp),
+                                    .padding(horizontal = 1.dp),
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
                                 RadioButton(
@@ -265,6 +266,43 @@ fun AnalysisScreen(
                         }
                     }
                 }
+
+                    item {
+                        val totalComparison = remember(totalMonthlyAmount, selectedMonth, selectedMonthlyExpenseType) {
+                            calculateTotalComparison(viewModel, selectedMonth, selectedMonthlyExpenseType)
+                        }
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(bottom = 18.dp),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(
+                                text = "Bu Ayki Toplam Harcama",
+                                fontSize = 20.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = ThemeColors.getTextColor(isDarkTheme),
+                            )
+                            Text(
+                                text = "${viewModel.defaultCurrency} ${NumberFormatter.formatAmount(totalMonthlyAmount)}",
+                                fontSize = 18.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = AppColors.PrimaryOrange
+                            )
+                        }
+                        TotalComparisonIndicator(
+                            percentage = totalComparison.vsLastMonth,
+                            label = "Önceki aya göre",
+                            isDarkTheme = isDarkTheme
+                        )
+                        TotalComparisonIndicator(
+                            percentage = totalComparison.vsAverage,
+                            label = "6 ay ortalamasına göre",
+                            isDarkTheme = isDarkTheme
+                        )
+                    }
+
                     item {
                         MonthlyAnalysisPieChart(
                             categoryData = categoryAnalysisData,
@@ -344,7 +382,7 @@ fun AnalysisScreen(
                         // Fixed position relative to pie chart center
                         val pieChartTop = pieChartItemInfo.offset
                         val pieChartHeight = pieChartItemInfo.size
-                        val popupY = pieChartTop + pieChartHeight + 175 // 20dp below pie chart
+                        val popupY = pieChartTop + pieChartHeight + 800// 20dp below pie chart
                         
                         Box(
                             modifier = Modifier
@@ -646,5 +684,115 @@ fun calculateCategoryComparison(
     }
     
     return CategoryComparison(vsLastMonth, vsAverage)
+}
+
+fun calculateTotalComparison(
+    viewModel: ExpenseViewModel,
+    currentMonth: YearMonth,
+    filterType: ExpenseFilterType = ExpenseFilterType.ALL
+): CategoryComparison {
+    val expenses = viewModel.expenses.value
+    val defaultCurrency = viewModel.defaultCurrency
+    
+    // Current month total
+    val currentMonthExpenses = expenses.filter { expense ->
+        val expenseDate = expense.date.toLocalDate()
+        expenseDate.year == currentMonth.year && expenseDate.month == currentMonth.month
+    }.let { expenseList ->
+        when (filterType) {
+            ExpenseFilterType.ALL -> expenseList
+            ExpenseFilterType.RECURRING -> expenseList.filter { it.recurrenceType != RecurrenceType.NONE }
+            ExpenseFilterType.ONE_TIME -> expenseList.filter { it.recurrenceType == RecurrenceType.NONE }
+        }
+    }
+    val currentAmount = currentMonthExpenses.sumOf { it.getAmountInDefaultCurrency(defaultCurrency) }
+    
+    // Previous month total
+    val previousMonth = currentMonth.minusMonths(1)
+    val previousMonthExpenses = expenses.filter { expense ->
+        val expenseDate = expense.date.toLocalDate()
+        expenseDate.year == previousMonth.year && expenseDate.month == previousMonth.month
+    }.let { expenseList ->
+        when (filterType) {
+            ExpenseFilterType.ALL -> expenseList
+            ExpenseFilterType.RECURRING -> expenseList.filter { it.recurrenceType != RecurrenceType.NONE }
+            ExpenseFilterType.ONE_TIME -> expenseList.filter { it.recurrenceType == RecurrenceType.NONE }
+        }
+    }
+    val previousAmount = previousMonthExpenses.sumOf { it.getAmountInDefaultCurrency(defaultCurrency) }
+    
+    // Calculate percentage change vs previous month
+    val vsLastMonth = if (previousAmount > 0) {
+        ((currentAmount - previousAmount) / previousAmount) * 100
+    } else if (currentAmount > 0) {
+        100.0
+    } else {
+        0.0
+    }
+    
+    // Calculate 6-month average
+    val monthsToCheck = listOf(currentMonth, currentMonth.minusMonths(1), currentMonth.minusMonths(2), currentMonth.minusMonths(3), currentMonth.minusMonths(4), currentMonth.minusMonths(5))
+    val totalAmountLast6Months = monthsToCheck.sumOf { month ->
+        expenses.filter { expense ->
+            val expenseDate = expense.date.toLocalDate()
+            expenseDate.year == month.year && expenseDate.month == month.month
+        }.let { expenseList ->
+            when (filterType) {
+                ExpenseFilterType.ALL -> expenseList
+                ExpenseFilterType.RECURRING -> expenseList.filter { it.recurrenceType != RecurrenceType.NONE }
+                ExpenseFilterType.ONE_TIME -> expenseList.filter { it.recurrenceType == RecurrenceType.NONE }
+            }
+        }.sumOf { it.getAmountInDefaultCurrency(defaultCurrency) }
+    }
+    val avgAmount = totalAmountLast6Months / 6.0
+    
+    // Calculate percentage change vs average
+    val vsAverage = if (avgAmount > 0) {
+        ((currentAmount - avgAmount) / avgAmount) * 100
+    } else if (currentAmount > 0) {
+        100.0
+    } else {
+        0.0
+    }
+    
+    return CategoryComparison(vsLastMonth, vsAverage)
+}
+
+
+
+@Composable
+private fun TotalComparisonIndicator(
+    percentage: Double,
+    label: String,
+    isDarkTheme: Boolean
+) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(2.dp)
+    ) {
+        Text(
+            text = label,
+            fontSize = 16.sp,
+            color = ThemeColors.getTextGrayColor(isDarkTheme),
+            textAlign = TextAlign.Center,
+                    fontWeight = FontWeight.Bold,
+        )
+        
+        Spacer(modifier = Modifier.height(14.dp))
+        
+        Text(
+            text = if (percentage == 0.0) "±0%" else "${if (percentage > 0) "+" else ""}${String.format("%.1f", percentage)}%",
+            fontSize = 16.sp,
+            color = when {
+                percentage > 0 -> Color.Red
+                percentage < 0 -> Color.Green 
+                else -> ThemeColors.getTextColor(isDarkTheme)
+            },
+            fontWeight = FontWeight.Bold,
+            textAlign = TextAlign.Center
+        )
+
+
+}
 }
 

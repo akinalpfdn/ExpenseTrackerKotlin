@@ -38,8 +38,8 @@ fun CategoryPopupLines(
     Canvas(
         modifier = Modifier
             .fillMaxWidth()
-            .height(260.dp) // Constrained height to prevent extending out
-            .offset(y = (-250).dp) // Position to align with pie chart
+            .height(160.dp) // Constrained height to prevent extending out
+            .offset(y = (-150).dp) // Position to align with pie chart
             .graphicsLayer {
                 alpha = maxOf(line1Progress.value, line2Progress.value)
             }
