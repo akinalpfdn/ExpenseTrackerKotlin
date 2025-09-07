@@ -67,6 +67,8 @@ fun AddExpenseScreen(
     var showCurrencyMenu by remember { mutableStateOf(false) }
     var showCategoryMenu by remember { mutableStateOf(false) }
     var showRecurrenceMenu by remember { mutableStateOf(false) }
+    var categorySearchText by remember { mutableStateOf("") }
+    var selectedCategoryFilter by remember { mutableStateOf("ALL") }
     var selectedRecurrenceType by remember { 
         mutableStateOf(editingExpense?.recurrenceType ?: RecurrenceType.NONE) 
     }
@@ -89,6 +91,22 @@ fun AddExpenseScreen(
     // Get the category ID from the selected subcategory
     val selectedCategoryId = remember(selectedSubCategoryId) {
         subCategories.find { it.id == selectedSubCategoryId }?.categoryId ?: ""
+    }
+    
+    // Filter subcategories based on search and filter
+    val filteredSubCategories = remember(subCategories, categories, categorySearchText, selectedCategoryFilter) {
+        var filtered = subCategories
+        
+
+        // Apply search filter
+        if (categorySearchText.isNotBlank()) {
+            filtered = filtered.filter { subCategory ->
+                val category = categories.find { it.id == subCategory.categoryId }
+                subCategory.name.contains(categorySearchText, ignoreCase = true)
+            }
+        }
+        
+        filtered.sortedBy { it.name }
     }
     
     val currencies = listOf("₺", "$", "€", "£")
@@ -310,12 +328,47 @@ fun AddExpenseScreen(
                     
                     ExposedDropdownMenu(
                         expanded = showCategoryMenu,
-                        onDismissRequest = { showCategoryMenu = false },
+                        onDismissRequest = { 
+                            showCategoryMenu = false
+                            categorySearchText = ""
+                            selectedCategoryFilter = "ALL"
+                        },
                         modifier = Modifier
                             .background(ThemeColors.getInputBackgroundColor(isDarkTheme))
-                            .heightIn(max = 350.dp)
+                            .heightIn(max = 400.dp)
                     ) {
-                        subCategories.sortedBy { it.name }.forEach { subCategory ->
+                        // Search TextField
+
+                        BasicTextField(
+                            value = categorySearchText,
+                            onValueChange = { categorySearchText = it },
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(horizontal = 2.dp),
+                            singleLine = true,
+                              textStyle = androidx.compose.ui.text.TextStyle(
+                                fontSize = 12.sp,
+                                color = ThemeColors.getTextColor(isDarkTheme)
+                            ),
+                            decorationBox = { innerTextField ->
+                                Box(
+                                    contentAlignment = Alignment.CenterStart
+                                ) {
+                                    if (categorySearchText.isEmpty()) {
+                                        Text(
+                                            text = "ara...",
+                                            fontSize = 12.sp,
+                                            color = ThemeColors.getTextGrayColor(isDarkTheme)
+                                        )
+                                    }
+                                    innerTextField()
+                                }
+                            }
+                        )
+                        
+                        Spacer(modifier = Modifier.height(4.dp))
+                        
+                        filteredSubCategories.forEach { subCategory ->
                             DropdownMenuItem(
                                 text = { 
                                     Text(
@@ -327,6 +380,8 @@ fun AddExpenseScreen(
                                 onClick = {
                                     selectedSubCategoryId = subCategory.id
                                     showCategoryMenu = false
+                                    categorySearchText = ""
+                                    selectedCategoryFilter = "ALL"
                                 },
                                 modifier = Modifier.background(ThemeColors.getInputBackgroundColor(isDarkTheme))
                             )
