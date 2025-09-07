@@ -1,4 +1,5 @@
 package com.example.expensetrackerkotlin.ui.components
+import android.annotation.SuppressLint
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
@@ -123,6 +124,7 @@ fun CategoryPopupLines(
         }
     }
 }
+@SuppressLint("DefaultLocale")
 @Composable
 fun   CategoryPopupCard(popupScale:  Animatable<Float,
         AnimationVector1D>, selected:  CategoryAnalysisData,

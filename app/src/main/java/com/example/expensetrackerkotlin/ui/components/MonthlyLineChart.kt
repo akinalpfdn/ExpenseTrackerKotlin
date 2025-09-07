@@ -18,10 +18,8 @@ import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.draw.rotate
 import com.example.expensetrackerkotlin.ui.theme.AppColors
 import com.example.expensetrackerkotlin.ui.theme.ThemeColors
 import com.example.expensetrackerkotlin.utils.NumberFormatter
@@ -40,7 +38,6 @@ fun MonthlyLineChart(
     modifier: Modifier = Modifier
 ) {
     val maxAmount = data.maxOfOrNull { it.amount } ?: 0.0
-    val density = LocalDensity.current
     
     Column(
         modifier = modifier
@@ -85,8 +82,7 @@ fun MonthlyLineChart(
                     drawLineChart(
                         data = data,
                         maxAmount = maxAmount,
-                        isDarkTheme = isDarkTheme,
-                        density = density
+                        isDarkTheme = isDarkTheme
                     )
                 }
             }
@@ -123,7 +119,6 @@ private fun DrawScope.drawLineChart(
     data: List<ChartDataPoint>,
     maxAmount: Double,
     isDarkTheme: Boolean,
-    density: androidx.compose.ui.unit.Density
 ) {
     val width = size.width
     val height = size.height

@@ -1,5 +1,6 @@
 package com.example.expensetrackerkotlin.ui.components
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -25,8 +26,7 @@ fun CategorySummarySection(
     totalAmount: Double,
     defaultCurrency: String,
     isDarkTheme: Boolean,
-    onCategoryClick: (CategoryAnalysisData) -> Unit,
-    modifier: Modifier = Modifier
+    onCategoryClick: (CategoryAnalysisData) -> Unit
 ) {
     Column(
         modifier = Modifier.padding(6.dp)
@@ -63,6 +63,7 @@ fun CategorySummarySection(
     }
 }
 
+@SuppressLint("DefaultLocale")
 @Composable
 fun CategorySummaryRow(
     categoryData: CategoryAnalysisData,

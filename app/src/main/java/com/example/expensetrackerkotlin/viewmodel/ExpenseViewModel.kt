@@ -3,7 +3,6 @@ package com.example.expensetrackerkotlin.viewmodel
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.expensetrackerkotlin.data.*
@@ -13,7 +12,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import java.time.LocalDateTime
-import java.time.temporal.ChronoUnit
 import java.util.UUID
 import kotlin.math.min
 
@@ -114,14 +112,7 @@ class ExpenseViewModel(
     val isOverLimit: Boolean
         get() = totalSpent > monthlyLimitValue && monthlyLimitValue > 0
     
-    val progressColors: List<Color>
-        get() = when {
-            isOverLimit -> listOf(Color.Red, Color.Red, Color.Red, Color.Red)
-            progressPercentage < 0.3 -> listOf(Color.Green, Color.Green, Color.Green, Color.Green)
-            progressPercentage < 0.6 -> listOf(Color.Green, Color.Green, Color.Yellow, Color.Yellow)
-            progressPercentage < 0.9 -> listOf(Color.Green, Color.Yellow, Color(0xFFFFA500), Color(0xFFFFA500))
-            else -> listOf(Color.Green, Color.Yellow, Color(0xFFFFA500), Color.Red)
-        }
+
     
     private val dailyLimitValue: Double
         get() = dailyLimit.toDoubleOrNull() ?: 0.0
@@ -269,7 +260,7 @@ class ExpenseViewModel(
                 val startWeek = expense.date.toLocalDate().with(java.time.DayOfWeek.MONDAY)
                 val targetWeek = targetDate.toLocalDate().with(java.time.DayOfWeek.MONDAY)
                 val weeksBetween = java.time.temporal.ChronoUnit.WEEKS.between(startWeek, targetWeek)
-                weeksBetween >= 0 && weeksBetween % 1 == 0L
+                weeksBetween >= 0
             }
             RecurrenceType.MONTHLY -> {
                 val startDayOfMonth = expense.date.dayOfMonth
@@ -284,7 +275,7 @@ class ExpenseViewModel(
                 val startMonth = expense.date.toLocalDate().withDayOfMonth(1)
                 val targetMonth = targetDate.toLocalDate().withDayOfMonth(1)
                 val monthsBetween = java.time.temporal.ChronoUnit.MONTHS.between(startMonth, targetMonth)
-                monthsBetween >= 0 && monthsBetween % 1 == 0L
+                monthsBetween >= 0
             }
             RecurrenceType.NONE -> false
         }
@@ -318,7 +309,7 @@ class ExpenseViewModel(
                 val startWeek = expense.date.toLocalDate().with(java.time.DayOfWeek.MONDAY)
                 val targetWeek = targetDate.toLocalDate().with(java.time.DayOfWeek.MONDAY)
                 val weeksBetween = java.time.temporal.ChronoUnit.WEEKS.between(startWeek, targetWeek)
-                weeksBetween >= 0 && weeksBetween % 1 == 0L
+                weeksBetween >= 0
             }
             RecurrenceType.MONTHLY -> {
                 val startDayOfMonth = expense.date.dayOfMonth
@@ -333,7 +324,7 @@ class ExpenseViewModel(
                 val startMonth = expense.date.toLocalDate().withDayOfMonth(1)
                 val targetMonth = targetDate.toLocalDate().withDayOfMonth(1)
                 val monthsBetween = java.time.temporal.ChronoUnit.MONTHS.between(startMonth, targetMonth)
-                monthsBetween >= 0 && monthsBetween % 1 == 0L
+                monthsBetween >= 0
             }
             RecurrenceType.NONE -> false
         }
@@ -466,30 +457,7 @@ class ExpenseViewModel(
             expense.isActiveOnDate(date)
         }
     }
-    
-    // Get all expenses that are active on any date (for display in list)
-    private fun getAllActiveExpenses(): List<Expense> {
-        val today = LocalDateTime.now()
-        val endDate = today.plusYears(1) // Show expenses for next year
-        
-        return _expenses.value.filter { expense ->
-            if (expense.recurrenceType == RecurrenceType.NONE) {
-                // Single expense: show if it's today or in the future
-                expense.date.toLocalDate() >= today.toLocalDate()
-            } else {
-                // Recurring expense: show if it's active on any date from today onwards
-                var currentDate = today
-                while (!currentDate.isAfter(endDate)) {
-                    if (expense.isActiveOnDate(currentDate)) {
-                        return@filter true
-                    }
-                    currentDate = currentDate.plusDays(1)
-                }
-                false
-            }
-        }
-    }
-    
+
     fun getDailyExpenseRatio(expense: Expense): Double {
         val sameDayExpenses = getExpensesForDate(expense.date)
         val dailyTotal = sameDayExpenses.sumOf { it.getAmountInDefaultCurrency(defaultCurrency) }
@@ -563,12 +531,7 @@ class ExpenseViewModel(
         val monthlyTotal = getMonthlyTotal(yearMonth)
         return monthlyTotal > monthlyLimitValue && monthlyLimitValue > 0
     }
-    
-    // Category management methods
-    fun getSubCategoriesForCategory(categoryId: String): List<SubCategory> {
-        return _subCategories.value.filter { it.categoryId == categoryId }
-    }
-    
+
     fun createCustomCategory(name: String, colorHex: String, iconName: String) {
         viewModelScope.launch {
             categoryRepository.createCustomCategory(name, colorHex, iconName)
@@ -605,12 +568,6 @@ class ExpenseViewModel(
         }
     }
     
-    suspend fun getCategoryById(categoryId: String): Category? {
-        return categoryRepository.getCategoryById(categoryId)
-    }
-    
-    suspend fun getSubCategoryById(subCategoryId: String): SubCategory? {
-        return categoryRepository.getSubCategoryById(subCategoryId)
-    }
+
 
 }

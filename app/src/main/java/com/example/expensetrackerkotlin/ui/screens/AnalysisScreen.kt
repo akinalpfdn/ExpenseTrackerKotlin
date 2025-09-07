@@ -12,13 +12,9 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.*
-import androidx.compose.ui.graphics.drawscope.Fill
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.*
 import kotlin.math.*
 import com.example.expensetrackerkotlin.data.*
@@ -238,7 +234,7 @@ fun AnalysisScreen(
                     val selected = categoryAnalysisData[selectedSegment!!]
                     
                     // Calculate arrow angle to point to selected segment
-                    val segmentAngle = remember(selectedSegment) {
+                    remember(selectedSegment) {
                         var currentAngle = 0f
                         for (i in 0 until selectedSegment!!) {
                             currentAngle += animatedPercentages[i] * 360f
@@ -389,7 +385,6 @@ fun MonthYearSelector(
     onMonthYearChanged: (YearMonth) -> Unit,
     isDarkTheme: Boolean
 ) {
-    var showMonthPicker by remember { mutableStateOf(false) }
     val currentMonth = YearMonth.now()
 
     Row(
@@ -413,7 +408,7 @@ fun MonthYearSelector(
         Card(
             modifier = Modifier
                 .weight(1f)
-                .clickable { showMonthPicker = true },
+                .clickable { },
             colors = CardDefaults.cardColors(
                 containerColor = ThemeColors.getCardBackgroundColor(isDarkTheme)
             ),
@@ -457,7 +452,6 @@ fun RecurringExpenseCard(
     totalAmount: Double,
     defaultCurrency: String,
     isDarkTheme: Boolean,
-    modifier: Modifier = Modifier
 ) {
         Row(
             modifier = Modifier

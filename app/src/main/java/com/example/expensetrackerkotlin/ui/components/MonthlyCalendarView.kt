@@ -5,7 +5,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
@@ -17,7 +16,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.expensetrackerkotlin.ui.theme.AppColors
 import com.example.expensetrackerkotlin.ui.theme.ThemeColors
 import com.example.expensetrackerkotlin.data.DailyData
@@ -32,6 +30,7 @@ import java.util.*
 
 @Composable
 fun MonthlyCalendarView(
+    modifier: Modifier = Modifier,
     selectedDate: LocalDateTime,
     expenses: List<Expense>,
     onDateSelected: (LocalDateTime) -> Unit,
@@ -39,10 +38,9 @@ fun MonthlyCalendarView(
     dailyLimit: String,
     isDarkTheme: Boolean = true,
     onMonthChanged: (YearMonth) -> Unit = {},
-    modifier: Modifier = Modifier
 ) {
     var currentMonth by remember { mutableStateOf(YearMonth.from(selectedDate)) }
-    val daysInMonth = currentMonth.lengthOfMonth()
+    currentMonth.lengthOfMonth()
 
     // Notify parent of initial month
     LaunchedEffect(Unit) {
@@ -224,7 +222,7 @@ fun MonthlyCalendarView(
                     val isToday = date == LocalDate.now()
 
                     // Create DailyData-like object for consistent styling
-                    val dailyData = DailyData(
+                    DailyData(
                         date = date.atStartOfDay(),
                         totalAmount = dayTotal,
                         progressAmount = dayProgressTotal,

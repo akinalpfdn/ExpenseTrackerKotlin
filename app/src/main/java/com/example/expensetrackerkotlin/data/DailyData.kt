@@ -1,6 +1,5 @@
 package com.example.expensetrackerkotlin.data
 
-import androidx.compose.ui.graphics.Color
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.*
@@ -37,9 +36,4 @@ data class DailyData(
             return date.format(formatter)
         }
 
-    val isToday: Boolean
-        get() {
-            val today = LocalDateTime.now()
-            return date.toLocalDate() == today.toLocalDate()
-        }
 }
