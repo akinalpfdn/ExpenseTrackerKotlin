@@ -47,6 +47,7 @@ import kotlin.math.sqrt
 
 @Composable
 fun MonthlyAnalysisPieChart(
+    modifier: Modifier = Modifier,
     categoryData: List<CategoryAnalysisData>,
     animatedPercentages: List<Float>,
     isDarkTheme: Boolean,
@@ -54,7 +55,6 @@ fun MonthlyAnalysisPieChart(
     onSegmentSelected: (Int?) -> Unit,
     selectedFilter: ExpenseFilterType = ExpenseFilterType.ALL,
     onFilterChanged: (ExpenseFilterType) -> Unit = {},
-    modifier: Modifier = Modifier
 ) {
 
     val segmentScales = categoryData.mapIndexed { index, _ ->
@@ -105,7 +105,7 @@ fun MonthlyAnalysisPieChart(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.Start
             ) {
-                ExpenseFilterType.values().forEach { filterType ->
+                ExpenseFilterType.entries.forEach { filterType ->
                     Row(
                         modifier = Modifier
                             .selectable(

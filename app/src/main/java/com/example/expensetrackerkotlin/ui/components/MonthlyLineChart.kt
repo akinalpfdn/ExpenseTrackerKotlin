@@ -68,7 +68,7 @@ fun MonthlyLineChart(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.Start
         ) {
-            ExpenseFilterType.values().forEach { filterType ->
+            ExpenseFilterType.entries.forEach { filterType ->
                 Row(
                     modifier = Modifier
                         .selectable(

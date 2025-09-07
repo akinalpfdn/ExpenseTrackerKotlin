@@ -69,7 +69,6 @@ fun getMonthlyChartData(viewModel: ExpenseViewModel, selectedMonth: YearMonth, f
 fun getFilteredCategoryAnalysisData(
     monthlyExpenses: List<Expense>,
     categories: List<Category>,
-    subCategories: List<SubCategory>,
     defaultCurrency: String,
     filterType: ExpenseFilterType = ExpenseFilterType.ALL
 ): List<CategoryAnalysisData> {
@@ -139,7 +138,6 @@ fun AnalysisScreen(
         getFilteredCategoryAnalysisData(
             monthlyExpenses = monthlyExpenses,
             categories = categories,
-            subCategories = subCategories,
             defaultCurrency = viewModel.defaultCurrency,
             filterType = selectedPieChartFilter
         )

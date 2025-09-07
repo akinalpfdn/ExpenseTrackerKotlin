@@ -204,6 +204,11 @@ fun ExpenseRowView(
                                     fontSize = 12.sp,
                                     color = ThemeColors.getTextGrayColor(isDarkTheme)
                                 )
+                                Text(
+                                    text = "$defaultCurrency ${NumberFormatter.formatAmount(expense.getAmountInDefaultCurrency(defaultCurrency))}",
+                                    fontSize = 12.sp,
+                                    color = ThemeColors.getTextGrayColor(isDarkTheme)
+                                )
                             }
                                                          Text(
                                  text = expense.date.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")),
