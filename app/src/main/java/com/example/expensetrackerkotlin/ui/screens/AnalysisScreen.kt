@@ -5,6 +5,7 @@ import androidx.compose.foundation.*
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.*
+import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.shape.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
@@ -116,7 +117,7 @@ fun AnalysisScreen(
     var showSortMenu by remember { mutableStateOf(false) }
     var selectedSegment by remember { mutableStateOf<Int?>(null) }
     var selectedExpenseFilter by remember { mutableStateOf(ExpenseFilterType.ALL) }
-    var selectedPieChartFilter by remember { mutableStateOf(ExpenseFilterType.ALL) }
+    var selectedMonthlyExpenseType by remember { mutableStateOf(ExpenseFilterType.ALL) }
 
     val expenses by viewModel.expenses.collectAsState()
     val categories by viewModel.categories.collectAsState()
@@ -134,12 +135,12 @@ fun AnalysisScreen(
         }
     }
 
-    val categoryAnalysisData = remember(monthlyExpenses, categories, subCategories, selectedPieChartFilter) {
+    val categoryAnalysisData = remember(monthlyExpenses, categories, subCategories, selectedMonthlyExpenseType) {
         getFilteredCategoryAnalysisData(
             monthlyExpenses = monthlyExpenses,
             categories = categories,
             defaultCurrency = viewModel.defaultCurrency,
-            filterType = selectedPieChartFilter
+            filterType = selectedMonthlyExpenseType
         )
     }
 
@@ -220,23 +221,55 @@ fun AnalysisScreen(
                     verticalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
                     item {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.Start
+                    )
+                    {
+                        ExpenseFilterType.entries.forEach { filterType ->
+                            Row(
+                                modifier = Modifier
+                                    .selectable(
+                                        selected = selectedMonthlyExpenseType == filterType,
+                                        onClick = { selectedMonthlyExpenseType = filterType }
+                                    )
+                                    .padding(horizontal = 1.dp, vertical = 4.dp),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                RadioButton(
+                                    selected = selectedMonthlyExpenseType == filterType,
+                                    onClick = { selectedMonthlyExpenseType = filterType },
+                                    colors = RadioButtonDefaults.colors(
+                                        selectedColor = AppColors.PrimaryOrange,
+                                        unselectedColor = ThemeColors.getTextGrayColor(isDarkTheme)
+                                    )
+                                )
+                                Spacer(modifier = Modifier.width(1.dp))
+                                Text(
+                                    text = filterType.displayName,
+                                    fontSize = 12.sp,
+                                    color = if (selectedMonthlyExpenseType == filterType)
+                                        ThemeColors.getTextColor(isDarkTheme)
+                                    else ThemeColors.getTextGrayColor(isDarkTheme)
+                                )
+                            }
+                        }
+                    }
+                }
+                    item {
                         MonthlyAnalysisPieChart(
                             categoryData = categoryAnalysisData,
                             animatedPercentages = animatedPercentages,
                             isDarkTheme = isDarkTheme,
                             selectedSegment = selectedSegment,
                             onSegmentSelected = { selectedSegment = it },
-                            selectedFilter = selectedPieChartFilter,
-                            onFilterChanged = { selectedPieChartFilter = it }
                         )
                     }
                     item {
                         MonthlyLineChart(
-                            data = getMonthlyChartData(viewModel, selectedMonth, selectedExpenseFilter),
+                            data = getMonthlyChartData(viewModel, selectedMonth, selectedMonthlyExpenseType),
                             currency = viewModel.defaultCurrency,
-                            isDarkTheme = isDarkTheme,
-                            selectedFilter = selectedExpenseFilter,
-                            onFilterChanged = { selectedExpenseFilter = it }
+                            isDarkTheme = isDarkTheme
                         )
                     }
                     if (recurringExpenseTotal > 0) {
