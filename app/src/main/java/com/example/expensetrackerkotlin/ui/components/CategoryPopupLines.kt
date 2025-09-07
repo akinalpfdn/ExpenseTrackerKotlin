@@ -30,8 +30,8 @@ fun CategoryPopupLines(
     Canvas(
         modifier = Modifier
             .fillMaxWidth()
-            .height(180.dp) // Constrained height to prevent extending out
-            .offset(y = (-170).dp) // Position to align with pie chart
+            .height(260.dp) // Constrained height to prevent extending out
+            .offset(y = (-250).dp) // Position to align with pie chart
             .graphicsLayer {
                 alpha = maxOf(line1Progress.value, line2Progress.value)
             }
@@ -126,10 +126,13 @@ fun CategoryPopupLines(
 }
 @SuppressLint("DefaultLocale")
 @Composable
-fun   CategoryPopupCard(popupScale:  Animatable<Float,
-        AnimationVector1D>, selected:  CategoryAnalysisData,
-                        viewModel: ExpenseViewModel,
-                        onCategoryClick: (CategoryAnalysisData) -> Unit,)
+fun   CategoryPopupCard(
+    popupScale: Animatable<Float,
+            AnimationVector1D>,
+    selected: CategoryAnalysisData,
+    viewModel: ExpenseViewModel,
+    onCategoryClick: (CategoryAnalysisData) -> Unit,
+    )
 {// Category Info Card with solid matte background
     Card(
         modifier = Modifier
@@ -142,10 +145,10 @@ fun   CategoryPopupCard(popupScale:  Animatable<Float,
             }, onClick = {  onCategoryClick(selected)
         },
         colors = CardDefaults.cardColors(
-            containerColor = selected.category.getColor().copy(alpha = 0.95f)
+            containerColor = selected.category.getColor()
         ),
         shape = RoundedCornerShape(12.dp),
-        elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
+        //elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
     )
     {
         Row(

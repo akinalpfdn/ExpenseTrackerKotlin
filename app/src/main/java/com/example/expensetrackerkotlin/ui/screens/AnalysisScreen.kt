@@ -1,5 +1,6 @@
 package com.example.expensetrackerkotlin.ui.screens
 
+import android.R.attr.translationZ
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.*
 import androidx.compose.foundation.gestures.detectTapGestures
@@ -13,7 +14,9 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.*
@@ -217,7 +220,10 @@ fun AnalysisScreen(
                         }
                     }
             ) {
+                val scrollState = rememberLazyListState()
+                
                 LazyColumn(
+                    state = scrollState,
                     verticalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
                     item {
@@ -297,80 +303,74 @@ fun AnalysisScreen(
 
                 }
                 
-                // Absolute positioned popup overlay
+                // Overlay popup that appears above everything
                 if (selectedSegment != null && selectedSegment!! < categoryAnalysisData.size) {
                     val selected = categoryAnalysisData[selectedSegment!!]
                     
-                    // Calculate arrow angle to point to selected segment
-                    remember(selectedSegment) {
-                        var currentAngle = 0f
-                        for (i in 0 until selectedSegment!!) {
-                            currentAngle += animatedPercentages[i] * 360f
+                    // Get pie chart item position
+                    val pieChartItemIndex = 1
+                    val pieChartItemInfo = scrollState.layoutInfo.visibleItemsInfo
+                        .find { it.index == pieChartItemIndex }
+                    
+                    // Only show popup if pie chart is visible
+                    if (pieChartItemInfo != null) {
+                        // Line and Popup Animation
+                        val line1Progress = remember { Animatable(0f) }
+                        val line2Progress = remember { Animatable(0f) }
+                        val popupScale = remember { Animatable(0f) }
+                        
+                        LaunchedEffect(selectedSegment) {
+                            if (selectedSegment != null) {
+                                line1Progress.snapTo(0f)
+                                line2Progress.snapTo(0f)
+                                popupScale.snapTo(0f)
+                                
+                                line1Progress.animateTo(1f, animationSpec = tween(400, easing = EaseOutCubic))
+                                line2Progress.animateTo(1f, animationSpec = tween(300, easing = EaseOutCubic))
+                                popupScale.animateTo(1f, animationSpec = spring(
+                                    dampingRatio = Spring.DampingRatioMediumBouncy,
+                                    stiffness = Spring.StiffnessMedium
+                                ))
+                            } else {
+                                popupScale.animateTo(0f, animationSpec = tween(150))
+                                line2Progress.animateTo(0f, animationSpec = tween(200, easing = EaseInCubic))
+                                line1Progress.animateTo(0f, animationSpec = tween(200, easing = EaseInCubic))
+                            }
                         }
-                        currentAngle + (animatedPercentages[selectedSegment!!] * 360f / 2f) - 90f
-                    }
-                    
-                    // Line and Popup Animation
-                    val line1Progress = remember { Animatable(0f) }
-                    val line2Progress = remember { Animatable(0f) }
-                    val popupScale = remember { Animatable(0f) }
-                    val popupAlpha = remember { Animatable(0f) }
-                    
-                    LaunchedEffect(selectedSegment) {
-                        if (selectedSegment != null) {
-                            // Reset all animations
-                            line1Progress.snapTo(0f)
-                            line2Progress.snapTo(0f)
-                            popupScale.snapTo(0f)
-                            popupAlpha.snapTo(0f)
-                            
-                            // Sequence animation: Line 1 → Line 2 → Popup
-                            // 1. Animate Line 1 growing
-                            line1Progress.animateTo(1f, animationSpec = tween(400, easing = EaseOutCubic))
-                            
-                            // 2. Animate Line 2 growing
-                            line2Progress.animateTo(1f, animationSpec = tween(300, easing = EaseOutCubic))
-                            
-                            // 3. Show popup with bounce
-                            popupAlpha.animateTo(1f, animationSpec = tween(200))
-                            popupScale.animateTo(1f, animationSpec = spring(
-                                dampingRatio = Spring.DampingRatioMediumBouncy,
-                                stiffness = Spring.StiffnessMedium
-                            ))
-                        } else {
-                            // Animate out when closing
-                            popupAlpha.animateTo(0f, animationSpec = tween(150))
-                            popupScale.animateTo(0f, animationSpec = tween(150))
-                            line2Progress.animateTo(0f, animationSpec = tween(200, easing = EaseInCubic))
-                            line1Progress.animateTo(0f, animationSpec = tween(200, easing = EaseInCubic))
-                        }
-                    }
-                    
-                    // Absolute positioned popup
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .align(Alignment.TopStart)
-                            .offset(y = 360.dp) // Position below pie chart
-                            .padding(horizontal = 16.dp)
-                    )
-                    {
+                        
+                        // Fixed position relative to pie chart center
+                        val pieChartTop = pieChartItemInfo.offset
+                        val pieChartHeight = pieChartItemInfo.size
+                        val popupY = pieChartTop + pieChartHeight + 175 // 20dp below pie chart
+                        
                         Box(
-                            modifier = Modifier.align(Alignment.Center)
-                        )
-                        {
-                            val segmentIndex = selectedSegment!!
-                            CategoryPopupLines(
-                                line1Progress,
-                                line2Progress,
-                                segmentIndex,
-                                animatedPercentages,selected
-                            )
-                            CategoryPopupCard(popupScale,selected,viewModel, onCategoryClick = { categoryData ->
-                                selectedCategory = categoryData
-                                showCategoryDialog = true
-                            })
-
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .offset(y = with(LocalDensity.current) { popupY.toDp() })
+                                .padding(horizontal = 16.dp)
+                                .zIndex(10f)
+                        ) {
+                            Box(
+                                modifier = Modifier.align(Alignment.Center)
+                            ) {
+                                val segmentIndex = selectedSegment!!
+                                CategoryPopupLines(
+                                    line1Progress,
+                                    line2Progress,
+                                    segmentIndex,
+                                    animatedPercentages,
+                                    selected
+                                )
+                                CategoryPopupCard(
+                                    popupScale,
+                                    selected,
+                                    viewModel,
+                                    onCategoryClick = { categoryData ->
+                                        selectedCategory = categoryData
+                                        showCategoryDialog = true
+                                    }
+                                )
+                            }
                         }
                     }
                 }
