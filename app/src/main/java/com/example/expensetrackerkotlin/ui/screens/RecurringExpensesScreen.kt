@@ -23,6 +23,9 @@ import androidx.compose.material.icons.filled.Category
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.FilterList
+import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.Sort
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -47,6 +50,15 @@ import java.time.format.DateTimeFormatter
 import java.util.*
 import kotlin.math.abs
 
+enum class SortType {
+    AMOUNT_HIGH_TO_LOW,
+    AMOUNT_LOW_TO_HIGH,
+    DESCRIPTION_A_TO_Z,
+    DESCRIPTION_Z_TO_A,
+    CATEGORY_A_TO_Z,
+    CATEGORY_Z_TO_A
+}
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RecurringExpensesScreen(
@@ -54,10 +66,17 @@ fun RecurringExpensesScreen(
     onDismiss: () -> Unit
 ) {
     val expenses by viewModel.expenses.collectAsState()
+    val categories by viewModel.categories.collectAsState()
+    val subCategories by viewModel.subCategories.collectAsState()
     val isDarkTheme = viewModel.theme == "dark"
     
+    // Search and filter state
+    var searchText by remember { mutableStateOf("") }
+    var showSortMenu by remember { mutableStateOf(false) }
+    var currentSortType by remember { mutableStateOf(SortType.AMOUNT_HIGH_TO_LOW) }
+    
     // Get only recurring expenses that still have future occurrences
-    val recurringExpenses = remember(expenses) {
+    val baseRecurringExpenses = remember(expenses) {
         val today = LocalDateTime.now()
         expenses.filter { it.recurrenceType != RecurrenceType.NONE }
             .groupBy { it.recurrenceGroupId }
@@ -69,6 +88,40 @@ fun RecurringExpensesScreen(
                 }
                 if (hasFutureOccurrences) baseExpense else null
             }
+    }
+    
+    // Filter and sort expenses
+    val recurringExpenses = remember(baseRecurringExpenses, searchText, currentSortType, categories, subCategories) {
+        var filteredExpenses = baseRecurringExpenses
+        
+        // Apply search filter
+        if (searchText.isNotBlank()) {
+            filteredExpenses = filteredExpenses.filter { expense ->
+                val category = categories.find { it.id == expense.categoryId }
+                val subCategory = subCategories.find { it.id == expense.subCategoryId }
+                
+                expense.description.contains(searchText, ignoreCase = true) ||
+                expense.amount.toString().contains(searchText) ||
+                (category?.name?.contains(searchText, ignoreCase = true) == true) ||
+                (subCategory?.name?.contains(searchText, ignoreCase = true) == true)
+            }
+        }
+        
+        // Apply sorting
+        when (currentSortType) {
+            SortType.AMOUNT_HIGH_TO_LOW -> filteredExpenses.sortedByDescending { it.getAmountInDefaultCurrency(viewModel.defaultCurrency) }
+            SortType.AMOUNT_LOW_TO_HIGH -> filteredExpenses.sortedBy { it.getAmountInDefaultCurrency(viewModel.defaultCurrency) }
+            SortType.DESCRIPTION_A_TO_Z -> filteredExpenses.sortedBy { it.description.lowercase() }
+            SortType.DESCRIPTION_Z_TO_A -> filteredExpenses.sortedByDescending { it.description.lowercase() }
+            SortType.CATEGORY_A_TO_Z -> filteredExpenses.sortedBy { expense ->
+                val subCategory = subCategories.find { it.id == expense.subCategoryId }
+                subCategory?.name?.lowercase() ?: "zzz"
+            }
+            SortType.CATEGORY_Z_TO_A -> filteredExpenses.sortedByDescending { expense ->
+                val subCategory = subCategories.find { it.id == expense.subCategoryId }
+                subCategory?.name?.lowercase() ?: ""
+            }
+        }
     }
     
     Box(
@@ -102,7 +155,124 @@ fun RecurringExpensesScreen(
                     text = "Tekrar Eden Harcamalar",
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Bold,
-                    color = ThemeColors.getTextColor(isDarkTheme)
+                    color = ThemeColors.getTextColor(isDarkTheme),
+                    modifier = Modifier.weight(1f)
+                )
+                
+                // Sort button
+                Box {
+                    IconButton(
+                        onClick = { showSortMenu = true }
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Sort,
+                            contentDescription = "Sort",
+                            tint = ThemeColors.getTextColor(isDarkTheme)
+                        )
+                    }
+                    
+                    DropdownMenu(
+                        expanded = showSortMenu,
+                        onDismissRequest = { showSortMenu = false },
+                        modifier = Modifier.background(ThemeColors.getCardBackgroundColor(isDarkTheme))
+                    ) {
+                        DropdownMenuItem(
+                            text = { Text("Miktar: Büyükten Küçüğe", color = ThemeColors.getTextColor(isDarkTheme)) },
+                            onClick = { 
+                                currentSortType = SortType.AMOUNT_HIGH_TO_LOW
+                                showSortMenu = false 
+                            }
+                        )
+                        DropdownMenuItem(
+                            text = { Text("Miktar: Küçükten Büyüğe", color = ThemeColors.getTextColor(isDarkTheme)) },
+                            onClick = { 
+                                currentSortType = SortType.AMOUNT_LOW_TO_HIGH
+                                showSortMenu = false 
+                            }
+                        )
+                        DropdownMenuItem(
+                            text = { Text("Açıklama: A-Z", color = ThemeColors.getTextColor(isDarkTheme)) },
+                            onClick = { 
+                                currentSortType = SortType.DESCRIPTION_A_TO_Z
+                                showSortMenu = false 
+                            }
+                        )
+                        DropdownMenuItem(
+                            text = { Text("Açıklama: Z-A", color = ThemeColors.getTextColor(isDarkTheme)) },
+                            onClick = { 
+                                currentSortType = SortType.DESCRIPTION_Z_TO_A
+                                showSortMenu = false 
+                            }
+                        )
+                        DropdownMenuItem(
+                            text = { Text("Kategori: A-Z", color = ThemeColors.getTextColor(isDarkTheme)) },
+                            onClick = { 
+                                currentSortType = SortType.CATEGORY_A_TO_Z
+                                showSortMenu = false 
+                            }
+                        )
+                        DropdownMenuItem(
+                            text = { Text("Kategori: Z-A", color = ThemeColors.getTextColor(isDarkTheme)) },
+                            onClick = { 
+                                currentSortType = SortType.CATEGORY_Z_TO_A
+                                showSortMenu = false 
+                            }
+                        )
+                    }
+                }
+            }
+            
+            // Search bar
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp, vertical = 8.dp)
+                    .background(
+                        ThemeColors.getInputBackgroundColor(isDarkTheme),
+                        RoundedCornerShape(12.dp)
+                    )
+                    .border(
+                        width = 1.dp,
+                        color = ThemeColors.getTextGrayColor(isDarkTheme).copy(alpha = 0.3f),
+                        shape = RoundedCornerShape(12.dp)
+                    )
+            ) {
+                BasicTextField(
+                    value = searchText,
+                    onValueChange = { searchText = it },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp, vertical = 12.dp),
+                    singleLine = true,
+                    textStyle = androidx.compose.ui.text.TextStyle(
+                        fontSize = 14.sp,
+                        color = ThemeColors.getTextColor(isDarkTheme)
+                    ),
+                    decorationBox = { innerTextField ->
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Search,
+                                contentDescription = "Search",
+                                tint = ThemeColors.getTextGrayColor(isDarkTheme),
+                                modifier = Modifier.size(20.dp)
+                            )
+                            
+                            Spacer(modifier = Modifier.width(8.dp))
+                            
+                            Box(modifier = Modifier.weight(1f)) {
+                                if (searchText.isEmpty()) {
+                                    Text(
+                                        text = "Açıklama, miktar veya kategoriye göre ara...",
+                                        fontSize = 14.sp,
+                                        color = ThemeColors.getTextGrayColor(isDarkTheme)
+                                    )
+                                }
+                                innerTextField()
+                            }
+                        }
+                    }
                 )
             }
             
@@ -116,30 +286,60 @@ fun RecurringExpensesScreen(
                         horizontalAlignment = Alignment.CenterHorizontally,
                         modifier = Modifier.padding(32.dp)
                     ) {
-                        Text(
-                            text = "Henüz tekrar eden harcama yok",
-                            fontSize = 18.sp,
-                            fontWeight = FontWeight.Medium,
-                            color = ThemeColors.getTextColor(isDarkTheme),
-                            textAlign = TextAlign.Center
-                        )
-                        
-                        Spacer(modifier = Modifier.height(8.dp))
-                        
-                        Text(
-                            text = "Tekrar eden harcama eklemek için + butonuna basın",
-                            fontSize = 14.sp,
-                            color = ThemeColors.getTextGrayColor(isDarkTheme),
-                            textAlign = TextAlign.Center
-                        )
+                        if (searchText.isNotBlank()) {
+                            Text(
+                                text = "Arama sonucu bulunamadı",
+                                fontSize = 18.sp,
+                                fontWeight = FontWeight.Medium,
+                                color = ThemeColors.getTextColor(isDarkTheme),
+                                textAlign = TextAlign.Center
+                            )
+                            
+                            Spacer(modifier = Modifier.height(8.dp))
+                            
+                            Text(
+                                text = "\"$searchText\" için sonuç bulunamadı. Farklı bir arama terimi deneyin.",
+                                fontSize = 14.sp,
+                                color = ThemeColors.getTextGrayColor(isDarkTheme),
+                                textAlign = TextAlign.Center
+                            )
+                        } else {
+                            Text(
+                                text = "Henüz tekrar eden harcama yok",
+                                fontSize = 18.sp,
+                                fontWeight = FontWeight.Medium,
+                                color = ThemeColors.getTextColor(isDarkTheme),
+                                textAlign = TextAlign.Center
+                            )
+                            
+                            Spacer(modifier = Modifier.height(8.dp))
+                            
+                            Text(
+                                text = "Tekrar eden harcama eklemek için + butonuna basın",
+                                fontSize = 14.sp,
+                                color = ThemeColors.getTextGrayColor(isDarkTheme),
+                                textAlign = TextAlign.Center
+                            )
+                        }
                     }
                 }
             } else {
-                LazyColumn(
-                    modifier = Modifier.fillMaxSize(),
-                    contentPadding = PaddingValues(16.dp),
-                    verticalArrangement = Arrangement.spacedBy(12.dp)
-                ) {
+                Column {
+                    // Results count (only show when searching)
+                    if (searchText.isNotBlank()) {
+                        Text(
+                            text = "${recurringExpenses.size} sonuç bulundu",
+                            fontSize = 12.sp,
+                            color = ThemeColors.getTextGrayColor(isDarkTheme),
+                            modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp)
+                        )
+                    }
+                    
+                    LazyColumn(
+                        modifier = Modifier.fillMaxSize(),
+                        contentPadding = PaddingValues(16.dp),
+                        verticalArrangement = Arrangement.spacedBy(12.dp)
+                    ) {
                     items(recurringExpenses) { expense ->
                         RecurringExpenseCard(
                             expense = expense,
@@ -156,6 +356,7 @@ fun RecurringExpensesScreen(
                             }
                         )
                     }
+                }
                 }
             }
         }

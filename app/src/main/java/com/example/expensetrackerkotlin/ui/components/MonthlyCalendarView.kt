@@ -211,24 +211,23 @@ fun MonthlyCalendarView(
                     val dayExpenses = expensesByDay[date] ?: emptyList()
                     val dayTotal =
                         dayExpenses.sumOf { it.getAmountInDefaultCurrency(defaultCurrency) }
+                    val dayProgressTotal = dayExpenses.filter { it.recurrenceType == RecurrenceType.NONE }
+                        .sumOf { it.getAmountInDefaultCurrency(defaultCurrency) }
                     val dailyLimitValue = dailyLimit.toDoubleOrNull() ?: 0.0
                     val progressPercentage = if (dailyLimitValue > 0) {
-                        minOf(dayTotal / dailyLimitValue, 1.0)
+                        minOf(dayProgressTotal / dailyLimitValue, 1.0)
                     } else {
                         0.0
                     }
-                    val isOverLimit = dayTotal > dailyLimitValue && dailyLimitValue > 0
+                    val isOverLimit = dayProgressTotal > dailyLimitValue && dailyLimitValue > 0
                     val isSelected = date == selectedDate.toLocalDate()
                     val isToday = date == LocalDate.now()
 
                     // Create DailyData-like object for consistent styling
-                    val progressTotal = dayExpenses.filter { it.recurrenceType == RecurrenceType.NONE }
-                        .sumOf { it.getAmountInDefaultCurrency(defaultCurrency) }
-                    
                     val dailyData = DailyData(
                         date = date.atStartOfDay(),
                         totalAmount = dayTotal,
-                        progressAmount = progressTotal,
+                        progressAmount = dayProgressTotal,
                         expenseCount = dayExpenses.size,
                         dailyLimit = dailyLimitValue
                     )
