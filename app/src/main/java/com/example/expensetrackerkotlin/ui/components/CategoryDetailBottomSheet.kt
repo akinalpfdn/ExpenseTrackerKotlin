@@ -9,6 +9,8 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Sort
+import androidx.compose.material.icons.filled.ArrowDownward
+import androidx.compose.material.icons.filled.ArrowUpward
 import androidx.compose.material.icons.filled.ExpandMore
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -19,6 +21,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.expensetrackerkotlin.data.*
+import com.example.expensetrackerkotlin.ui.screens.calculateCategoryComparison
 import com.example.expensetrackerkotlin.ui.theme.ThemeColors
 import com.example.expensetrackerkotlin.utils.NumberFormatter
 import java.time.format.DateTimeFormatter
@@ -49,7 +52,10 @@ fun CategoryDetailBottomSheet(
     sortOption: SortOption,
     showSortMenu: Boolean,
     onSortOptionChanged: (SortOption) -> Unit,
-    onShowSortMenuChanged: (Boolean) -> Unit
+    onShowSortMenuChanged: (Boolean) -> Unit,
+    viewModel: com.example.expensetrackerkotlin.viewmodel.ExpenseViewModel,
+    selectedMonth: java.time.YearMonth,
+    selectedFilterType: ExpenseFilterType
 ) {
     val sortedExpenses = remember(categoryData.expenses, sortOption) {
         when (sortOption) {
@@ -58,6 +64,10 @@ fun CategoryDetailBottomSheet(
             SortOption.DATE_DESC -> categoryData.expenses.sortedByDescending { it.date }
             SortOption.DATE_ASC -> categoryData.expenses.sortedBy { it.date }
         }
+    }
+    
+    val comparison = remember(categoryData.category.id, selectedMonth, selectedFilterType) {
+        calculateCategoryComparison(viewModel, selectedMonth, categoryData.category.id, selectedFilterType)
     }
 
     Column(
@@ -99,6 +109,7 @@ fun CategoryDetailBottomSheet(
                         fontWeight = FontWeight.Bold,
                         color = ThemeColors.getTextColor(isDarkTheme)
                     )
+                    Spacer(modifier = Modifier.width(12.dp))
                     Text(
                         text = "$defaultCurrency ${NumberFormatter.formatAmount(categoryData.totalAmount)}",
                         fontSize = 18.sp,
@@ -109,6 +120,21 @@ fun CategoryDetailBottomSheet(
                         fontSize = 16.sp,
                         color = ThemeColors.getTextGrayColor(isDarkTheme)
                     )
+                    
+                    // Comparison indicators
+                    Spacer(modifier = Modifier.height(8.dp))
+
+                        DetailComparisonIndicator(
+                            percentage = comparison.vsLastMonth,
+                            label = "Önceki aya göre",
+                            isDarkTheme = isDarkTheme
+                        )
+                        DetailComparisonIndicator(
+                            percentage = comparison.vsAverage,
+                            label = "6 ay ortalamasına göre",
+                            isDarkTheme = isDarkTheme
+                        )
+
                 }
             }
         }
@@ -245,3 +271,36 @@ fun CategoryDetailBottomSheet(
         // Add some bottom padding for better UX
     }
 }
+
+@Composable
+private fun DetailComparisonIndicator(
+    percentage: Double,
+    label: String,
+    isDarkTheme: Boolean
+) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(4.dp)
+    ) {
+        Column {
+            Text(
+                text = label,
+                fontSize = 14.sp,
+                color = ThemeColors.getTextGrayColor(isDarkTheme)
+            )
+            Text(
+                text = if (percentage == 0.0) "±0%" else "${if (percentage > 0) "+" else ""}${String.format("%.1f", percentage)}%",
+                fontSize = 14.sp,
+                color = when {
+                    percentage > 0 -> Color.Red
+                    percentage < 0 -> Color.Green 
+                    else -> ThemeColors.getTextColor(isDarkTheme)
+                },
+                fontWeight = FontWeight.Bold
+            )
+
+
+        }
+    }
+}
+

@@ -1,6 +1,5 @@
 package com.example.expensetrackerkotlin.ui.screens
 
-import android.R.attr.translationZ
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.*
 import androidx.compose.foundation.gestures.detectTapGestures
@@ -14,7 +13,6 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.font.FontWeight
@@ -105,6 +103,11 @@ fun getFilteredCategoryAnalysisData(
 
     return categoryTotals
 }
+
+data class CategoryComparison(
+    val vsLastMonth: Double,
+    val vsAverage: Double
+)
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -365,6 +368,8 @@ fun AnalysisScreen(
                                     popupScale,
                                     selected,
                                     viewModel,
+                                    selectedMonth,
+                                    selectedMonthlyExpenseType,
                                     onCategoryClick = { categoryData ->
                                         selectedCategory = categoryData
                                         showCategoryDialog = true
@@ -440,7 +445,10 @@ fun AnalysisScreen(
                     sortOption = sortOption,
                     showSortMenu = showSortMenu,
                     onSortOptionChanged = { sortOption = it },
-                    onShowSortMenuChanged = { showSortMenu = it }
+                    onShowSortMenuChanged = { showSortMenu = it },
+                    viewModel = viewModel,
+                    selectedMonth = selectedMonth,
+                    selectedFilterType = selectedMonthlyExpenseType
                 )
             }
         }
@@ -561,5 +569,82 @@ fun RecurringExpenseCard(
             )
         }
 
+}
+
+fun calculateCategoryComparison(
+    viewModel: ExpenseViewModel,
+    currentMonth: YearMonth,
+    categoryId: String,
+    filterType: ExpenseFilterType = ExpenseFilterType.ALL
+): CategoryComparison {
+    val expenses = viewModel.expenses.value
+    val defaultCurrency = viewModel.defaultCurrency
+    
+    // Current month amount
+    val currentMonthExpenses = expenses.filter { expense ->
+        val expenseDate = expense.date.toLocalDate()
+        expenseDate.year == currentMonth.year && expenseDate.month == currentMonth.month &&
+        expense.categoryId == categoryId
+    }.let { expenseList ->
+        when (filterType) {
+            ExpenseFilterType.ALL -> expenseList
+            ExpenseFilterType.RECURRING -> expenseList.filter { it.recurrenceType != RecurrenceType.NONE }
+            ExpenseFilterType.ONE_TIME -> expenseList.filter { it.recurrenceType == RecurrenceType.NONE }
+        }
+    }
+    val currentAmount = currentMonthExpenses.sumOf { it.getAmountInDefaultCurrency(defaultCurrency) }
+    
+    // Previous month amount
+    val previousMonth = currentMonth.minusMonths(1)
+    val previousMonthExpenses = expenses.filter { expense ->
+        val expenseDate = expense.date.toLocalDate()
+        expenseDate.year == previousMonth.year && expenseDate.month == previousMonth.month &&
+        expense.categoryId == categoryId
+    }.let { expenseList ->
+        when (filterType) {
+            ExpenseFilterType.ALL -> expenseList
+            ExpenseFilterType.RECURRING -> expenseList.filter { it.recurrenceType != RecurrenceType.NONE }
+            ExpenseFilterType.ONE_TIME -> expenseList.filter { it.recurrenceType == RecurrenceType.NONE }
+        }
+    }
+    val previousAmount = previousMonthExpenses.sumOf { it.getAmountInDefaultCurrency(defaultCurrency) }
+    
+    // Calculate percentage change vs previous month
+    val vsLastMonth = if (previousAmount > 0) {
+        ((currentAmount - previousAmount) / previousAmount) * 100
+    } else if (currentAmount > 0) {
+        100.0 // If no previous data but current exists, it's 100% increase
+    } else {
+        0.0
+    }
+    
+    // Calculate 3-month average (current + 2 previous months)
+    val monthsToCheck = listOf(currentMonth, currentMonth.minusMonths(1), currentMonth.minusMonths(2), currentMonth.minusMonths(3)
+        , currentMonth.minusMonths(4), currentMonth.minusMonths(5))
+    val totalAmountLast3Months = monthsToCheck.sumOf { month ->
+        expenses.filter { expense ->
+            val expenseDate = expense.date.toLocalDate()
+            expenseDate.year == month.year && expenseDate.month == month.month &&
+            expense.categoryId == categoryId
+        }.let { expenseList ->
+            when (filterType) {
+                ExpenseFilterType.ALL -> expenseList
+                ExpenseFilterType.RECURRING -> expenseList.filter { it.recurrenceType != RecurrenceType.NONE }
+                ExpenseFilterType.ONE_TIME -> expenseList.filter { it.recurrenceType == RecurrenceType.NONE }
+            }
+        }.sumOf { it.getAmountInDefaultCurrency(defaultCurrency) }
+    }
+    val avgAmount = totalAmountLast3Months / 6.0
+    
+    // Calculate percentage change vs average
+    val vsAverage = if (avgAmount > 0) {
+        ((currentAmount - avgAmount) / avgAmount) * 100
+    } else if (currentAmount > 0) {
+        100.0
+    } else {
+        0.0
+    }
+    
+    return CategoryComparison(vsLastMonth, vsAverage)
 }
 

@@ -4,6 +4,9 @@ import androidx.compose.animation.core.*
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowDownward
+import androidx.compose.material.icons.filled.ArrowUpward
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.*
@@ -17,6 +20,11 @@ import androidx.compose.ui.unit.*
 import kotlin.math.*
 import com.example.expensetrackerkotlin.utils.NumberFormatter
 import com.example.expensetrackerkotlin.viewmodel.ExpenseViewModel
+import com.example.expensetrackerkotlin.data.*
+import com.example.expensetrackerkotlin.ui.screens.CategoryComparison
+import com.example.expensetrackerkotlin.ui.screens.calculateCategoryComparison
+import java.time.YearMonth
+
 @Composable
 fun CategoryPopupLines(
     line1Progress: Animatable<Float, AnimationVector1D>,
@@ -126,31 +134,33 @@ fun CategoryPopupLines(
 }
 @SuppressLint("DefaultLocale")
 @Composable
-fun   CategoryPopupCard(
-    popupScale: Animatable<Float,
-            AnimationVector1D>,
+fun CategoryPopupCard(
+    popupScale: Animatable<Float, AnimationVector1D>,
     selected: CategoryAnalysisData,
     viewModel: ExpenseViewModel,
+    selectedMonth: YearMonth,
+    selectedFilterType: ExpenseFilterType,
     onCategoryClick: (CategoryAnalysisData) -> Unit,
-    )
-{// Category Info Card with solid matte background
+) {
+    val comparison = remember(selected.category.id, selectedMonth, selectedFilterType) {
+        calculateCategoryComparison(viewModel, selectedMonth, selected.category.id, selectedFilterType)
+    }
+    
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .height(100.dp)
+            .height(120.dp) // Increased height for comparison data
             .graphicsLayer {
                 scaleX = popupScale.value
                 scaleY = popupScale.value
                 transformOrigin = TransformOrigin(0.5f, 0.5f)
-            }, onClick = {  onCategoryClick(selected)
-        },
+            },
+        onClick = { onCategoryClick(selected) },
         colors = CardDefaults.cardColors(
             containerColor = selected.category.getColor()
         ),
         shape = RoundedCornerShape(12.dp),
-        //elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
-    )
-    {
+    ) {
         Row(
             modifier = Modifier
                 .fillMaxSize()
@@ -192,18 +202,66 @@ fun   CategoryPopupCard(
 
                 Text(
                     text = "${selected.expenseCount} harcama • %${String.format("%.1f", selected.percentage * 100)}",
-                    fontSize = 14.sp,
+                    fontSize = 12.sp,
                     color = Color.White.copy(alpha = 0.8f)
                 )
+                
+
+                    ComparisonIndicator(
+                        percentage = comparison.vsLastMonth,
+                        label = "Önceki aya göre: ",
+                        textColor = Color.White
+                    )
+                    ComparisonIndicator(
+                        percentage = comparison.vsAverage,
+                        label = "6 ay ortalamasına göre: ",
+                        textColor = Color.White
+                    )
             }
 
             // Amount
-            Text(
-                text = "${viewModel.defaultCurrency} ${NumberFormatter.formatAmount(selected.totalAmount)}",
-                fontSize = 14.sp,
-                fontWeight = FontWeight.Bold,
-                color = Color.White
-            )
+            Column(
+                horizontalAlignment = Alignment.End
+            ) {
+                Text(
+                    text = "${viewModel.defaultCurrency} ${NumberFormatter.formatAmount(selected.totalAmount)}",
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Color.White
+                )
+            }
         }
+    }
+}
+
+@Composable
+private fun ComparisonIndicator(
+    percentage: Double,
+    label: String,
+    textColor: Color
+) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(2.dp)
+    ) {
+
+        Text(
+            text = label,
+            fontSize = 12.sp,
+            color = textColor.copy(alpha = 0.6f)
+        )
+        
+        Text(
+            text = if (percentage == 0.0) "±0%" else "${if (percentage > 0) "+" else ""}${String.format("%.1f", percentage)}%",
+            fontSize = 12.sp,
+            color = when {
+                percentage > 0 -> Color.Red.copy(alpha = 0.9f)
+                percentage < 0 -> Color.Green.copy(alpha = 0.9f) 
+                else -> textColor.copy(alpha = 0.7f)
+            },
+            fontWeight = FontWeight.Medium
+        )
+        
+
     }
 }
