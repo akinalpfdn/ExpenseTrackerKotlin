@@ -47,3 +47,4 @@ object NumberFormatter {
         return formatter.format(amount)
     }
 }
+

@@ -214,7 +214,7 @@ fun CategoryPopupCard(
                     )
                     ComparisonIndicator(
                         percentage = comparison.vsAverage,
-                        label = "6 ay ortalamasına göre: ",
+                        label = "Ortalamaya göre: ",
                         textColor = Color.White
                     )
             }
