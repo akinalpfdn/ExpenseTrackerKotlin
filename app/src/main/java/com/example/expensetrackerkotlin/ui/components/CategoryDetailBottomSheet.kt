@@ -38,7 +38,9 @@ enum class SortOption(val displayName: String) {
     AMOUNT_DESC("Tutara Göre (Yüksek → Düşük)"),
     AMOUNT_ASC("Tutara Göre (Düşük → Yüksek)"),
     DATE_DESC("Tarihe Göre (Yeni → Eski)"),
-    DATE_ASC("Tarihe Göre (Eski → Yeni)")
+    DATE_ASC("Tarihe Göre (Eski → Yeni)"),
+    NAME_ASC("Açıklamaya Göre (A → Z)"),
+    NAME_DESC("Açıklamaya Göre (Z → A)")
 }
 
 @SuppressLint("DefaultLocale")
@@ -63,6 +65,8 @@ fun CategoryDetailBottomSheet(
             SortOption.AMOUNT_ASC -> categoryData.expenses.sortedBy { it.amount }
             SortOption.DATE_DESC -> categoryData.expenses.sortedByDescending { it.date }
             SortOption.DATE_ASC -> categoryData.expenses.sortedBy { it.date }
+            SortOption.NAME_ASC -> categoryData.expenses.sortedBy { it.description }
+            SortOption.NAME_DESC -> categoryData.expenses.sortedByDescending { it.description }
         }
     }
     
@@ -110,17 +114,27 @@ fun CategoryDetailBottomSheet(
                         color = ThemeColors.getTextColor(isDarkTheme)
                     )
                     Spacer(modifier = Modifier.width(12.dp))
-                    Text(
-                        text = "$defaultCurrency ${NumberFormatter.formatAmount(categoryData.totalAmount)}",
-                        fontSize = 18.sp,
-                        color = ThemeColors.getTextGrayColor(isDarkTheme)
-                    )
-                    Text(
-                        text = "${categoryData.expenseCount} harcama • %${String.format("%.1f", categoryData.percentage * 100)}",
-                        fontSize = 16.sp,
-                        color = ThemeColors.getTextGrayColor(isDarkTheme)
-                    )
-                    
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(4.dp)
+                    ) {
+
+                        Text(
+                            text = "$defaultCurrency ${NumberFormatter.formatAmount(categoryData.totalAmount)}",
+                            fontSize = 18.sp,
+                            color = ThemeColors.getTextGrayColor(isDarkTheme)
+                        )
+                        Text(
+                            text = "  •  ${categoryData.expenseCount} harcama • %${
+                                String.format(
+                                    "%.1f",
+                                    categoryData.percentage * 100
+                                )
+                            }",
+                            fontSize = 16.sp,
+                            color = ThemeColors.getTextGrayColor(isDarkTheme)
+                        )
+                    }
                     // Comparison indicators
                     Spacer(modifier = Modifier.height(8.dp))
 
@@ -242,6 +256,20 @@ fun CategoryDetailBottomSheet(
                                     color = ThemeColors.getTextGrayColor(isDarkTheme),
                                     modifier = Modifier.padding(top = 4.dp)
                                 )
+                                if (expense.recurrenceType != RecurrenceType.NONE) {
+                                    Text(
+                                        text = "Tekrarlayan: ${when (expense.recurrenceType) {
+                                            RecurrenceType.DAILY -> "Her gün"
+                                            RecurrenceType.WEEKDAYS -> "Hafta içi"
+                                            RecurrenceType.WEEKLY -> "Haftalık"
+                                            RecurrenceType.MONTHLY -> "Aylık"
+                                            else -> ""
+                                        }}",
+                                        fontSize = 11.sp,
+                                        color = ThemeColors.getTextGrayColor(isDarkTheme),
+                                        fontWeight = FontWeight.Medium
+                                    )
+                                }
                             }
                             
                             Column(
@@ -282,7 +310,6 @@ private fun DetailComparisonIndicator(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(4.dp)
     ) {
-        Column {
             Text(
                 text = label,
                 fontSize = 14.sp,
@@ -300,7 +327,7 @@ private fun DetailComparisonIndicator(
             )
 
 
-        }
+
     }
 }
 

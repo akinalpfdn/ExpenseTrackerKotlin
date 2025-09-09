@@ -160,6 +160,8 @@ fun AnalysisScreen(
     var selectedMonth by remember { mutableStateOf(YearMonth.now()) }
     var showCategoryDialog by remember { mutableStateOf(false) }
     var selectedCategory by remember { mutableStateOf<CategoryAnalysisData?>(null) }
+    var showSubCategoryDialog by remember { mutableStateOf(false) }
+    var selectedSubCategory by remember { mutableStateOf<SubCategoryAnalysisData?>(null) }
     var sortOption by remember { mutableStateOf(SortOption.DATE_DESC) }
     var showSortMenu by remember { mutableStateOf(false) }
     var selectedSegment by remember { mutableStateOf<Int?>(null) }
@@ -390,8 +392,8 @@ fun AnalysisScreen(
                                 showCategoryDialog = true
                             },
                             onSubCategoryClick = { subCategoryData ->
-                                // Handle subcategory click - for now just do nothing
-                                // Could show subcategory detail dialog in the future
+                                selectedSubCategory = subCategoryData
+                                showSubCategoryDialog = true
                             }
                         )
                     }
@@ -542,6 +544,42 @@ fun AnalysisScreen(
                     viewModel = viewModel,
                     selectedMonth = selectedMonth,
                     selectedFilterType = selectedMonthlyExpenseType
+                )
+            }
+        }
+    }
+    
+    if (showSubCategoryDialog && selectedSubCategory != null) {
+        val subCategoryDetailSheetState = rememberModalBottomSheetState(
+            skipPartiallyExpanded = true,
+            confirmValueChange = { true }
+        )
+        
+        LaunchedEffect(Unit) {
+            subCategoryDetailSheetState.expand()
+        }
+        
+        ModalBottomSheet(
+            onDismissRequest = {
+                showSubCategoryDialog = false
+                selectedSubCategory = null
+            },
+            sheetState = subCategoryDetailSheetState,
+            dragHandle = { BottomSheetDefaults.DragHandle() }
+        ) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .heightIn(max = 700.dp)
+            ) {
+                SubCategoryDetailBottomSheet(
+                    subCategoryData = selectedSubCategory!!,
+                    defaultCurrency = viewModel.defaultCurrency,
+                    isDarkTheme = isDarkTheme,
+                    onDismiss = {
+                        showSubCategoryDialog = false
+                        selectedSubCategory = null
+                    }
                 )
             }
         }
