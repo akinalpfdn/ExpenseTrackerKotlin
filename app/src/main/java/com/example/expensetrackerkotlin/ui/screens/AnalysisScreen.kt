@@ -32,17 +32,37 @@ import com.example.expensetrackerkotlin.utils.NumberFormatter
 import com.example.expensetrackerkotlin.viewmodel.ExpenseViewModel
 import java.time.*
 import java.time.format.DateTimeFormatter
+import java.util.*
 
 
-fun getMonthlyChartData(viewModel: ExpenseViewModel, selectedMonth: YearMonth, filterType: ExpenseFilterType = ExpenseFilterType.ALL): List<ChartDataPoint> {
+fun getMonthlyChartData(
+    viewModel: ExpenseViewModel, 
+    selectedMonth: YearMonth, 
+    selectedDateRange: Pair<LocalDate?, LocalDate?> = null to null,
+    filterType: ExpenseFilterType = ExpenseFilterType.ALL
+): List<ChartDataPoint> {
     val expenses = viewModel.expenses.value
-    val startOfMonth = selectedMonth.atDay(1).atStartOfDay()
-    val endOfMonth = selectedMonth.atEndOfMonth().atTime(23, 59, 59)
+    val (rangeStart, rangeEnd) = selectedDateRange
     
-    val monthlyExpenses = expenses.filter { expense ->
-        expense.date.toLocalDate().let { expenseDate ->
-            !expenseDate.isBefore(startOfMonth.toLocalDate()) && 
-            !expenseDate.isAfter(endOfMonth.toLocalDate())
+    val monthlyExpenses = if (rangeStart != null || rangeEnd != null) {
+        // Use date range filtering
+        val startDate = rangeStart ?: selectedMonth.atDay(1)
+        val endDate = rangeEnd ?: selectedMonth.atEndOfMonth()
+        
+        expenses.filter { expense ->
+            val expenseDate = expense.date.toLocalDate()
+            !expenseDate.isBefore(startDate) && !expenseDate.isAfter(endDate)
+        }
+    } else {
+        // Use month filtering (default behavior)
+        val startOfMonth = selectedMonth.atDay(1).atStartOfDay()
+        val endOfMonth = selectedMonth.atEndOfMonth().atTime(23, 59, 59)
+        
+        expenses.filter { expense ->
+            expense.date.toLocalDate().let { expenseDate ->
+                !expenseDate.isBefore(startOfMonth.toLocalDate()) && 
+                !expenseDate.isAfter(endOfMonth.toLocalDate())
+            }
         }
     }
     
@@ -167,19 +187,37 @@ fun AnalysisScreen(
     var selectedSegment by remember { mutableStateOf<Int?>(null) }
     var selectedExpenseFilter by remember { mutableStateOf(ExpenseFilterType.ALL) }
     var selectedMonthlyExpenseType by remember { mutableStateOf(ExpenseFilterType.ALL) }
+    
+    // Date range picker state
+    var showDateRangePicker by remember { mutableStateOf(false) }
+    var selectedDateRange by remember { mutableStateOf<Pair<LocalDate?, LocalDate?>>(null to null) }
 
     val expenses by viewModel.expenses.collectAsState()
     val categories by viewModel.categories.collectAsState()
     val subCategories by viewModel.subCategories.collectAsState()
 
-    val monthlyExpenses = remember(expenses, selectedMonth) {
-        val startOfMonth = selectedMonth.atDay(1).atStartOfDay()
-        val endOfMonth = selectedMonth.atEndOfMonth().atTime(23, 59, 59)
+    val monthlyExpenses = remember(expenses, selectedMonth, selectedDateRange) {
+        val (rangeStart, rangeEnd) = selectedDateRange
+        
+        if (rangeStart != null || rangeEnd != null) {
+            // Use date range filtering
+            val startDate = rangeStart ?: selectedMonth.atDay(1)
+            val endDate = rangeEnd ?: selectedMonth.atEndOfMonth()
+            
+            expenses.filter { expense ->
+                val expenseDate = expense.date.toLocalDate()
+                !expenseDate.isBefore(startDate) && !expenseDate.isAfter(endDate)
+            }
+        } else {
+            // Use month filtering (default behavior)
+            val startOfMonth = selectedMonth.atDay(1).atStartOfDay()
+            val endOfMonth = selectedMonth.atEndOfMonth().atTime(23, 59, 59)
 
-        expenses.filter { expense ->
-            expense.date.toLocalDate().let { expenseDate ->
-                !expenseDate.isBefore(startOfMonth.toLocalDate()) && 
-                !expenseDate.isAfter(endOfMonth.toLocalDate())
+            expenses.filter { expense ->
+                expense.date.toLocalDate().let { expenseDate ->
+                    !expenseDate.isBefore(startOfMonth.toLocalDate()) && 
+                    !expenseDate.isAfter(endOfMonth.toLocalDate())
+                }
             }
         }
     }
@@ -236,7 +274,9 @@ fun AnalysisScreen(
     ) {
         MonthYearSelector(
             selectedMonth = selectedMonth,
+            selectedDateRange = selectedDateRange,
             onMonthYearChanged = { selectedMonth = it },
+            onRangePickerClick = { showDateRangePicker = true },
             isDarkTheme = isDarkTheme
         )
 
@@ -331,7 +371,7 @@ fun AnalysisScreen(
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Text(
-                                text = "Bu Ayki Toplam Harcama",
+                                text = "Bu Dönem Toplam Harcama",
                                 fontSize = 20.sp,
                                 fontWeight = FontWeight.Bold,
                                 color = ThemeColors.getTextColor(isDarkTheme),
@@ -366,7 +406,7 @@ fun AnalysisScreen(
                     }
                     item {
                         MonthlyLineChart(
-                            data = getMonthlyChartData(viewModel, selectedMonth, selectedMonthlyExpenseType),
+                            data = getMonthlyChartData(viewModel, selectedMonth, selectedDateRange, selectedMonthlyExpenseType),
                             currency = viewModel.defaultCurrency,
                             isDarkTheme = isDarkTheme
                         )
@@ -588,12 +628,42 @@ fun AnalysisScreen(
             }
         }
     }
+    
+    // Date range picker
+    if (showDateRangePicker) {
+        DateRangePicker(
+            selectedMonth = selectedMonth,
+            selectedRange = selectedDateRange,
+            isDarkTheme = isDarkTheme,
+            onRangeSelected = { newRange ->
+                selectedDateRange = newRange
+                // Clear range if both dates are null, otherwise keep it
+                if (newRange.first == null && newRange.second == null) {
+                    selectedDateRange = null to null
+                }
+            },
+            onDismiss = { showDateRangePicker = false }
+        )
+    }
+}
+
+private fun formatDateRange(range: Pair<LocalDate?, LocalDate?>): String {
+    val (start, end) = range
+    val formatter = DateTimeFormatter.ofPattern("dd MMM", Locale.forLanguageTag("tr"))
+    
+    return when {
+        start != null && end != null -> "${start.format(formatter)} - ${end.format(formatter)}"
+        start != null -> "${start.format(formatter)} - ?"
+        else -> "Tarih aralığı seçin"
+    }
 }
 
 @Composable
 fun MonthYearSelector(
     selectedMonth: YearMonth,
+    selectedDateRange: Pair<LocalDate?, LocalDate?>,
     onMonthYearChanged: (YearMonth) -> Unit,
+    onRangePickerClick: () -> Unit,
     isDarkTheme: Boolean
 ) {
     val currentMonth = YearMonth.now()
@@ -619,20 +689,35 @@ fun MonthYearSelector(
         Card(
             modifier = Modifier
                 .weight(1f)
-                .clickable { },
+                .clickable { onRangePickerClick() },
             colors = CardDefaults.cardColors(
                 containerColor = ThemeColors.getCardBackgroundColor(isDarkTheme)
             ),
             shape = RoundedCornerShape(12.dp)
         ) {
-            Text(
-                text = selectedMonth.format(DateTimeFormatter.ofPattern("MMMM yyyy")),
+            Column(
                 modifier = Modifier.padding(16.dp),
-                textAlign = TextAlign.Center,
-                color = ThemeColors.getTextColor(isDarkTheme),
-                fontWeight = FontWeight.Medium,
-                fontSize = 18.sp
-            )
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(
+                    text = selectedMonth.format(DateTimeFormatter.ofPattern("MMMM yyyy")),
+                    textAlign = TextAlign.Center,
+                    color = ThemeColors.getTextColor(isDarkTheme),
+                    fontWeight = FontWeight.Medium,
+                    fontSize = 18.sp
+                )
+                
+                if (selectedDateRange.first != null || selectedDateRange.second != null) {
+                    Spacer(modifier = Modifier.height(4.dp))
+                    Text(
+                        text = formatDateRange(selectedDateRange),
+                        textAlign = TextAlign.Center,
+                        color = AppColors.PrimaryOrange,
+                        fontSize = 12.sp,
+                        fontWeight = FontWeight.Medium
+                    )
+                }
+            }
         }
 
         IconButton(
