@@ -24,6 +24,7 @@ import com.example.expensetrackerkotlin.data.*
 import com.example.expensetrackerkotlin.ui.components.*
 import com.example.expensetrackerkotlin.ui.components.ChartDataPoint
 import com.example.expensetrackerkotlin.ui.components.CategoryAnalysisData
+import com.example.expensetrackerkotlin.ui.components.SubCategoryAnalysisData
 import com.example.expensetrackerkotlin.ui.components.SortOption
 import com.example.expensetrackerkotlin.ui.components.ExpenseFilterType
 import com.example.expensetrackerkotlin.ui.theme.*
@@ -67,6 +68,45 @@ fun getMonthlyChartData(viewModel: ExpenseViewModel, selectedMonth: YearMonth, f
     return (1..daysInMonth).map { day ->
         dailyExpenses.find { it.day == day } ?: ChartDataPoint(day = day, amount = 0.0)
     }
+}
+
+fun getFilteredSubCategoryAnalysisData(
+    monthlyExpenses: List<Expense>,
+    categories: List<Category>,
+    subCategories: List<SubCategory>,
+    defaultCurrency: String,
+    filterType: ExpenseFilterType = ExpenseFilterType.ALL
+): List<SubCategoryAnalysisData> {
+    if (monthlyExpenses.isEmpty()) return emptyList()
+
+    // Apply filter based on expense type
+    val filteredExpenses = when (filterType) {
+        ExpenseFilterType.ALL -> monthlyExpenses
+        ExpenseFilterType.RECURRING -> monthlyExpenses.filter { it.recurrenceType != RecurrenceType.NONE }
+        ExpenseFilterType.ONE_TIME -> monthlyExpenses.filter { it.recurrenceType == RecurrenceType.NONE }
+    }
+
+    val totalAmount = filteredExpenses.sumOf { it.getAmountInDefaultCurrency(defaultCurrency) }
+    
+    val subCategoryTotals = filteredExpenses.groupBy { it.subCategoryId }
+        .mapNotNull { (subCategoryId, subCategoryExpenses) ->
+            val subCategory = subCategories.find { it.id == subCategoryId }
+            val parentCategory = categories.find { it.id == subCategory?.categoryId }
+            if (subCategory != null && parentCategory != null) {
+                val subCategoryTotal = subCategoryExpenses.sumOf { it.getAmountInDefaultCurrency(defaultCurrency) }
+                SubCategoryAnalysisData(
+                    subCategory = subCategory,
+                    parentCategory = parentCategory,
+                    totalAmount = subCategoryTotal,
+                    expenseCount = subCategoryExpenses.size,
+                    percentage = if (totalAmount > 0) subCategoryTotal / totalAmount else 0.0,
+                    expenses = subCategoryExpenses
+                )
+            } else null
+        }
+        .sortedByDescending { it.totalAmount }
+
+    return subCategoryTotals
 }
 
 fun getFilteredCategoryAnalysisData(
@@ -146,6 +186,16 @@ fun AnalysisScreen(
         getFilteredCategoryAnalysisData(
             monthlyExpenses = monthlyExpenses,
             categories = categories,
+            defaultCurrency = viewModel.defaultCurrency,
+            filterType = selectedMonthlyExpenseType
+        )
+    }
+    
+    val subCategoryAnalysisData = remember(monthlyExpenses, categories, subCategories, selectedMonthlyExpenseType) {
+        getFilteredSubCategoryAnalysisData(
+            monthlyExpenses = monthlyExpenses,
+            categories = categories,
+            subCategories = subCategories,
             defaultCurrency = viewModel.defaultCurrency,
             filterType = selectedMonthlyExpenseType
         )
@@ -331,12 +381,17 @@ fun AnalysisScreen(
                     item {
                         CategorySummarySection(
                             categoryData = categoryAnalysisData,
+                            subCategoryData = subCategoryAnalysisData,
                             totalAmount = totalMonthlyAmount,
                             defaultCurrency = viewModel.defaultCurrency,
                             isDarkTheme = isDarkTheme,
                             onCategoryClick = { categoryData ->
                                 selectedCategory = categoryData
                                 showCategoryDialog = true
+                            },
+                            onSubCategoryClick = { subCategoryData ->
+                                // Handle subcategory click - for now just do nothing
+                                // Could show subcategory detail dialog in the future
                             }
                         )
                     }
