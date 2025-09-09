@@ -576,6 +576,9 @@ fun AnalysisScreen(
                     subCategoryData = selectedSubCategory!!,
                     defaultCurrency = viewModel.defaultCurrency,
                     isDarkTheme = isDarkTheme,
+                    viewModel = viewModel,
+                    selectedMonth = selectedMonth,
+                    selectedFilterType = selectedMonthlyExpenseType,
                     onDismiss = {
                         showSubCategoryDialog = false
                         selectedSubCategory = null
@@ -700,6 +703,83 @@ fun RecurringExpenseCard(
             )
         }
 
+}
+
+fun calculateSubCategoryComparison(
+    viewModel: ExpenseViewModel,
+    currentMonth: YearMonth,
+    subCategoryId: String,
+    filterType: ExpenseFilterType = ExpenseFilterType.ALL
+): CategoryComparison {
+    val expenses = viewModel.expenses.value
+    val defaultCurrency = viewModel.defaultCurrency
+    
+    // Current month amount
+    val currentMonthExpenses = expenses.filter { expense ->
+        val expenseDate = expense.date.toLocalDate()
+        expenseDate.year == currentMonth.year && expenseDate.month == currentMonth.month &&
+        expense.subCategoryId == subCategoryId
+    }.let { expenseList ->
+        when (filterType) {
+            ExpenseFilterType.ALL -> expenseList
+            ExpenseFilterType.RECURRING -> expenseList.filter { it.recurrenceType != RecurrenceType.NONE }
+            ExpenseFilterType.ONE_TIME -> expenseList.filter { it.recurrenceType == RecurrenceType.NONE }
+        }
+    }
+    val currentAmount = currentMonthExpenses.sumOf { it.getAmountInDefaultCurrency(defaultCurrency) }
+    
+    // Previous month amount
+    val previousMonth = currentMonth.minusMonths(1)
+    val previousMonthExpenses = expenses.filter { expense ->
+        val expenseDate = expense.date.toLocalDate()
+        expenseDate.year == previousMonth.year && expenseDate.month == previousMonth.month &&
+        expense.subCategoryId == subCategoryId
+    }.let { expenseList ->
+        when (filterType) {
+            ExpenseFilterType.ALL -> expenseList
+            ExpenseFilterType.RECURRING -> expenseList.filter { it.recurrenceType != RecurrenceType.NONE }
+            ExpenseFilterType.ONE_TIME -> expenseList.filter { it.recurrenceType == RecurrenceType.NONE }
+        }
+    }
+    val previousAmount = previousMonthExpenses.sumOf { it.getAmountInDefaultCurrency(defaultCurrency) }
+    
+    // Calculate percentage change vs previous month
+    val vsLastMonth = if (previousAmount > 0) {
+        ((currentAmount - previousAmount) / previousAmount) * 100
+    } else if (currentAmount > 0) {
+        100.0 // If no previous data but current exists, it's 100% increase
+    } else {
+        0.0
+    }
+    
+    // Calculate 6-month average (current + 5 previous months)
+    val monthsToCheck = listOf(currentMonth, currentMonth.minusMonths(1), currentMonth.minusMonths(2), currentMonth.minusMonths(3),
+        currentMonth.minusMonths(4), currentMonth.minusMonths(5))
+    val totalAmountLast6Months = monthsToCheck.sumOf { month ->
+        expenses.filter { expense ->
+            val expenseDate = expense.date.toLocalDate()
+            expenseDate.year == month.year && expenseDate.month == month.month &&
+            expense.subCategoryId == subCategoryId
+        }.let { expenseList ->
+            when (filterType) {
+                ExpenseFilterType.ALL -> expenseList
+                ExpenseFilterType.RECURRING -> expenseList.filter { it.recurrenceType != RecurrenceType.NONE }
+                ExpenseFilterType.ONE_TIME -> expenseList.filter { it.recurrenceType == RecurrenceType.NONE }
+            }
+        }.sumOf { it.getAmountInDefaultCurrency(defaultCurrency) }
+    }
+    val avgAmount = totalAmountLast6Months / 6.0
+    
+    // Calculate percentage change vs average
+    val vsAverage = if (avgAmount > 0) {
+        ((currentAmount - avgAmount) / avgAmount) * 100
+    } else if (currentAmount > 0) {
+        100.0
+    } else {
+        0.0
+    }
+    
+    return CategoryComparison(vsLastMonth, vsAverage)
 }
 
 fun calculateCategoryComparison(

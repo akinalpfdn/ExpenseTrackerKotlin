@@ -24,6 +24,9 @@ import com.example.expensetrackerkotlin.data.*
 import androidx.compose.ui.text.style.TextOverflow
 import com.example.expensetrackerkotlin.ui.theme.ThemeColors
 import com.example.expensetrackerkotlin.utils.NumberFormatter
+import com.example.expensetrackerkotlin.ui.screens.calculateSubCategoryComparison
+import com.example.expensetrackerkotlin.viewmodel.ExpenseViewModel
+import java.time.YearMonth
 import java.time.format.DateTimeFormatter
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -32,10 +35,17 @@ fun SubCategoryDetailBottomSheet(
     subCategoryData: SubCategoryAnalysisData,
     defaultCurrency: String,
     isDarkTheme: Boolean,
+    viewModel: ExpenseViewModel,
+    selectedMonth: YearMonth,
+    selectedFilterType: ExpenseFilterType,
     onDismiss: () -> Unit
 ) {
     var selectedSortOption by remember { mutableStateOf(SortOption.AMOUNT_DESC) }
     var showSortMenu by remember { mutableStateOf(false) }
+    
+    val comparison = remember(subCategoryData.subCategory.id, selectedMonth, selectedFilterType) {
+        calculateSubCategoryComparison(viewModel, selectedMonth, subCategoryData.subCategory.id, selectedFilterType)
+    }
     
     val sortedExpenses = remember(subCategoryData.expenses, selectedSortOption) {
         when (selectedSortOption) {
@@ -92,6 +102,20 @@ fun SubCategoryDetailBottomSheet(
                     text = "Ana Kategori: ${subCategoryData.parentCategory.name}",
                     fontSize = 14.sp,
                     color = ThemeColors.getTextGrayColor(isDarkTheme)
+                )
+                
+                // Comparison indicators
+                Spacer(modifier = Modifier.height(8.dp))
+                
+                SubCategoryComparisonIndicator(
+                    percentage = comparison.vsLastMonth,
+                    label = "Önceki aya göre",
+                    isDarkTheme = isDarkTheme
+                )
+                SubCategoryComparisonIndicator(
+                    percentage = comparison.vsAverage,
+                    label = "6 ay ortalamasına göre",
+                    isDarkTheme = isDarkTheme
                 )
             }
         }
@@ -329,5 +353,33 @@ fun SubCategoryExpenseItem(
                 )
             }
         }
+    }
+}
+
+@Composable
+private fun SubCategoryComparisonIndicator(
+    percentage: Double,
+    label: String,
+    isDarkTheme: Boolean
+) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(4.dp)
+    ) {
+        Text(
+            text = label,
+            fontSize = 14.sp,
+            color = ThemeColors.getTextGrayColor(isDarkTheme)
+        )
+        Text(
+            text = if (percentage == 0.0) "±0%" else "${if (percentage > 0) "+" else ""}${String.format("%.1f", percentage)}%",
+            fontSize = 14.sp,
+            color = when {
+                percentage > 0 -> Color.Red
+                percentage < 0 -> Color.Green 
+                else -> ThemeColors.getTextColor(isDarkTheme)
+            },
+            fontWeight = FontWeight.Bold
+        )
     }
 }
