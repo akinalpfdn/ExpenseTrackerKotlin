@@ -41,6 +41,9 @@ import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material.icons.automirrored.filled.Sort
+import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewParameter
 
 enum class ExpenseSortType {
     AMOUNT_HIGH_TO_LOW,
@@ -708,6 +711,9 @@ fun ExpensesScreen(
             confirmValueChange = { true }
         )
         
+        var selectedTabIndex by remember { mutableStateOf(0) }
+        val tabs = listOf("Takvim", "Harcamalar")
+        
         LaunchedEffect(Unit) {
             monthlyCalendarSheetState.expand()
         }
@@ -717,25 +723,74 @@ fun ExpensesScreen(
             sheetState = monthlyCalendarSheetState,
             dragHandle = { BottomSheetDefaults.DragHandle() }
         ) {
-            Box(
+            Column(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(700.dp)
             ) {
-                MonthlyCalendarView(
-                    selectedDate = selectedDate,
-                    expenses = expenses,
-                    onDateSelected = { date ->
-                        viewModel.updateSelectedDate(date)
-                        showingMonthlyCalendar = false
-                    },
-                    defaultCurrency = viewModel.defaultCurrency,
-                    dailyLimit = viewModel.dailyLimit,
-                    isDarkTheme = isDarkTheme,
-                    onMonthChanged = { month ->
-                        currentCalendarMonth = month
+                // Tab Row
+                TabRow(
+                    selectedTabIndex = selectedTabIndex,
+                    modifier = Modifier.padding(horizontal = 10.dp),
+                    containerColor = Color.Transparent,
+
+                    contentColor = AppColors.PrimaryOrange,
+                    indicator = { tabPositions ->
+                        TabRowDefaults.Indicator(
+                            modifier = Modifier.tabIndicatorOffset(tabPositions[selectedTabIndex]),
+                            height = 2.dp,
+                            color = AppColors.PrimaryOrange
+                        )
                     }
-                )
+                ) {
+                    tabs.forEachIndexed { index, title ->
+                        Tab(
+                            selected = selectedTabIndex == index,
+                            onClick = { selectedTabIndex = index },
+                            text = {
+                                Text(
+                                    text = title,
+                                    fontSize = 22.sp,
+                                    fontWeight = if (selectedTabIndex == index) FontWeight.SemiBold else FontWeight.Normal,
+                                    color = if (selectedTabIndex == index) AppColors.PrimaryOrange else ThemeColors.getTextGrayColor(isDarkTheme)
+                                )
+                            },
+                            modifier = Modifier.padding(vertical = 8.dp)
+                        )
+                    }
+                }
+                
+                Spacer(modifier = Modifier.height(16.dp))
+                
+                // Tab Content
+                when (selectedTabIndex) {
+                    0 -> {
+                        MonthlyCalendarView(
+                            selectedDate = selectedDate,
+                            expenses = expenses,
+                            onDateSelected = { date ->
+                                viewModel.updateSelectedDate(date)
+                                showingMonthlyCalendar = false
+                            },
+                            defaultCurrency = viewModel.defaultCurrency,
+                            dailyLimit = viewModel.dailyLimit,
+                            isDarkTheme = isDarkTheme,
+                            onMonthChanged = { month ->
+                                currentCalendarMonth = month
+                            },
+                            modifier = Modifier.weight(1f)
+                        )
+                    }
+                    1 -> {
+                        MonthlyExpensesView(
+                            currentMonth = currentCalendarMonth,
+                            expenses = expenses,
+                            viewModel = viewModel,
+                            isDarkTheme = isDarkTheme,
+                            modifier = Modifier.weight(1f)
+                        )
+                    }
+                }
             }
         }
     }
