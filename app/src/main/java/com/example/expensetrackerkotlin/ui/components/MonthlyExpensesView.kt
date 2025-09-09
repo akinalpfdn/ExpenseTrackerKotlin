@@ -113,107 +113,113 @@ fun MonthlyExpensesView(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp, vertical = 8.dp),
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-
-                // Search toggle button
-                IconButton(
-                    onClick = {
-                        showSearchBar = !showSearchBar
-                        if (!showSearchBar) {
-                            searchText = ""
-                        }
-                    }
+                // Left side controls
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Icon(
-                        imageVector = Icons.Default.Search,
-                        contentDescription = "Search",
-                        tint = if (showSearchBar) AppColors.PrimaryOrange else ThemeColors.getTextColor(isDarkTheme)
-                    )
-                }
-
-                // Sort button
-                Box {
+                    // Search toggle button
                     IconButton(
-                        onClick = { showSortMenu = true }
+                        onClick = {
+                            showSearchBar = !showSearchBar
+                            if (!showSearchBar) {
+                                searchText = ""
+                            }
+                        }
                     ) {
                         Icon(
-                            imageVector = Icons.AutoMirrored.Filled.Sort,
-                            contentDescription = "Sort",
-                            tint = ThemeColors.getTextColor(isDarkTheme)
+                            imageVector = Icons.Default.Search,
+                            contentDescription = "Search",
+                            tint = if (showSearchBar) AppColors.PrimaryOrange else ThemeColors.getTextColor(isDarkTheme)
                         )
                     }
 
-                    DropdownMenu(
-                        expanded = showSortMenu,
-                        onDismissRequest = { showSortMenu = false },
-                        modifier = Modifier.background(ThemeColors.getCardBackgroundColor(isDarkTheme))
-                    ) {
-                        DropdownMenuItem(
-                            text = { Text("Zaman: Yeniden Eskiye", color = ThemeColors.getTextColor(isDarkTheme)) },
-                            onClick = {
-                                currentSortType = ExpenseSortType.TIME_NEWEST_FIRST
-                                showSortMenu = false
-                            }
-                        )
-                        DropdownMenuItem(
-                            text = { Text("Zaman: Eskiden Yeniye", color = ThemeColors.getTextColor(isDarkTheme)) },
-                            onClick = {
-                                currentSortType = ExpenseSortType.TIME_OLDEST_FIRST
-                                showSortMenu = false
-                            }
-                        )
-                        DropdownMenuItem(
-                            text = { Text("Miktar: Büyükten Küçüğe", color = ThemeColors.getTextColor(isDarkTheme)) },
-                            onClick = {
-                                currentSortType = ExpenseSortType.AMOUNT_HIGH_TO_LOW
-                                showSortMenu = false
-                            }
-                        )
-                        DropdownMenuItem(
-                            text = { Text("Miktar: Küçükten Büyüğe", color = ThemeColors.getTextColor(isDarkTheme)) },
-                            onClick = {
-                                currentSortType = ExpenseSortType.AMOUNT_LOW_TO_HIGH
-                                showSortMenu = false
-                            }
-                        )
-                        DropdownMenuItem(
-                            text = { Text("Açıklama: A-Z", color = ThemeColors.getTextColor(isDarkTheme)) },
-                            onClick = {
-                                currentSortType = ExpenseSortType.DESCRIPTION_A_TO_Z
-                                showSortMenu = false
-                            }
-                        )
-                        DropdownMenuItem(
-                            text = { Text("Açıklama: Z-A", color = ThemeColors.getTextColor(isDarkTheme)) },
-                            onClick = {
-                                currentSortType = ExpenseSortType.DESCRIPTION_Z_TO_A
-                                showSortMenu = false
-                            }
-                        )
-                        DropdownMenuItem(
-                            text = { Text("Kategori: A-Z", color = ThemeColors.getTextColor(isDarkTheme)) },
-                            onClick = {
-                                currentSortType = ExpenseSortType.CATEGORY_A_TO_Z
-                                showSortMenu = false
-                            }
-                        )
-                        DropdownMenuItem(
-                            text = { Text("Kategori: Z-A", color = ThemeColors.getTextColor(isDarkTheme)) },
-                            onClick = {
-                                currentSortType = ExpenseSortType.CATEGORY_Z_TO_A
-                                showSortMenu = false
-                            }
-                        )
+                    // Sort button
+                    Box {
+                        IconButton(
+                            onClick = { showSortMenu = true }
+                        ) {
+                            Icon(
+                                imageVector = Icons.AutoMirrored.Filled.Sort,
+                                contentDescription = "Sort",
+                                tint = ThemeColors.getTextColor(isDarkTheme)
+                            )
+                        }
+
+                        DropdownMenu(
+                            expanded = showSortMenu,
+                            onDismissRequest = { showSortMenu = false },
+                            modifier = Modifier.background(ThemeColors.getCardBackgroundColor(isDarkTheme))
+                        ) {
+                            DropdownMenuItem(
+                                text = { Text("Zaman: Yeniden Eskiye", color = ThemeColors.getTextColor(isDarkTheme)) },
+                                onClick = {
+                                    currentSortType = ExpenseSortType.TIME_NEWEST_FIRST
+                                    showSortMenu = false
+                                }
+                            )
+                            DropdownMenuItem(
+                                text = { Text("Zaman: Eskiden Yeniye", color = ThemeColors.getTextColor(isDarkTheme)) },
+                                onClick = {
+                                    currentSortType = ExpenseSortType.TIME_OLDEST_FIRST
+                                    showSortMenu = false
+                                }
+                            )
+                            DropdownMenuItem(
+                                text = { Text("Miktar: Büyükten Küçüğe", color = ThemeColors.getTextColor(isDarkTheme)) },
+                                onClick = {
+                                    currentSortType = ExpenseSortType.AMOUNT_HIGH_TO_LOW
+                                    showSortMenu = false
+                                }
+                            )
+                            DropdownMenuItem(
+                                text = { Text("Miktar: Küçükten Büyüğe", color = ThemeColors.getTextColor(isDarkTheme)) },
+                                onClick = {
+                                    currentSortType = ExpenseSortType.AMOUNT_LOW_TO_HIGH
+                                    showSortMenu = false
+                                }
+                            )
+                            DropdownMenuItem(
+                                text = { Text("Açıklama: A-Z", color = ThemeColors.getTextColor(isDarkTheme)) },
+                                onClick = {
+                                    currentSortType = ExpenseSortType.DESCRIPTION_A_TO_Z
+                                    showSortMenu = false
+                                }
+                            )
+                            DropdownMenuItem(
+                                text = { Text("Açıklama: Z-A", color = ThemeColors.getTextColor(isDarkTheme)) },
+                                onClick = {
+                                    currentSortType = ExpenseSortType.DESCRIPTION_Z_TO_A
+                                    showSortMenu = false
+                                }
+                            )
+                            DropdownMenuItem(
+                                text = { Text("Kategori: A-Z", color = ThemeColors.getTextColor(isDarkTheme)) },
+                                onClick = {
+                                    currentSortType = ExpenseSortType.CATEGORY_A_TO_Z
+                                    showSortMenu = false
+                                }
+                            )
+                            DropdownMenuItem(
+                                text = { Text("Kategori: Z-A", color = ThemeColors.getTextColor(isDarkTheme)) },
+                                onClick = {
+                                    currentSortType = ExpenseSortType.CATEGORY_Z_TO_A
+                                    showSortMenu = false
+                                }
+                            )
+                        }
                     }
+
+                        Text(
+                            text = "${monthlyExpenses.size} sonuç",
+                            fontSize = 12.sp,
+                            color = ThemeColors.getTextGrayColor(isDarkTheme)
+                        )
+
                 }
-
-                    Text(
-                        text = "${monthlyExpenses.size} sonuç",
-                        fontSize = 12.sp,
-                        color = ThemeColors.getTextGrayColor(isDarkTheme)
-                    )
                 // Month header
                 Text(
                     text = currentMonth.format(
