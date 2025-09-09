@@ -83,10 +83,28 @@ fun getMonthlyChartData(
         )
     }
     
-    // Create a complete list for all days in the month, filling missing days with 0
-    val daysInMonth = selectedMonth.lengthOfMonth()
-    return (1..daysInMonth).map { day ->
-        dailyExpenses.find { it.day == day } ?: ChartDataPoint(day = day, amount = 0.0)
+    // Create a complete list for the selected range or all days in the month
+    return if (rangeStart != null || rangeEnd != null) {
+        // Generate chart data for selected date range only
+        val startDate = rangeStart ?: selectedMonth.atDay(1)
+        val endDate = rangeEnd ?: selectedMonth.atEndOfMonth()
+        
+        val rangeDays = mutableListOf<Int>()
+        var currentDate = startDate
+        while (!currentDate.isAfter(endDate)) {
+            rangeDays.add(currentDate.dayOfMonth)
+            currentDate = currentDate.plusDays(1)
+        }
+        
+        rangeDays.map { day ->
+            dailyExpenses.find { it.day == day } ?: ChartDataPoint(day = day, amount = 0.0)
+        }
+    } else {
+        // Generate chart data for all days in the month (default behavior)
+        val daysInMonth = selectedMonth.lengthOfMonth()
+        (1..daysInMonth).map { day ->
+            dailyExpenses.find { it.day == day } ?: ChartDataPoint(day = day, amount = 0.0)
+        }
     }
 }
 

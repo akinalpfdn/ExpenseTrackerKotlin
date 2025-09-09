@@ -71,7 +71,7 @@ fun MonthlyLineChart(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = "Aylık Harcama Trendi",
+                text = "Dönemlik Harcama Trendi",
                 fontSize = 18.sp,
                 fontWeight = FontWeight.Bold,
                 color = ThemeColors.getTextColor(isDarkTheme)
