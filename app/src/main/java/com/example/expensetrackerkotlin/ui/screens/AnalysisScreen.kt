@@ -401,6 +401,30 @@ fun AnalysisScreen(
 
                 }
                 
+                // Line and Popup Animation - moved outside conditional to allow closing animation
+                val line1Progress = remember { Animatable(0f) }
+                val line2Progress = remember { Animatable(0f) }
+                val popupScale = remember { Animatable(0f) }
+                
+                LaunchedEffect(selectedSegment) {
+                    if (selectedSegment != null) {
+                        line1Progress.snapTo(0f)
+                        line2Progress.snapTo(0f)
+                        popupScale.snapTo(0f)
+                        
+                        line1Progress.animateTo(1f, animationSpec = tween(400, easing = EaseOutCubic))
+                        line2Progress.animateTo(1f, animationSpec = tween(300, easing = EaseOutCubic))
+                        popupScale.animateTo(1f, animationSpec = spring(
+                            dampingRatio = Spring.DampingRatioMediumBouncy,
+                            stiffness = Spring.StiffnessMedium
+                        ))
+                    } else {
+                        popupScale.animateTo(0f, animationSpec = tween(150))
+                        line2Progress.animateTo(0f, animationSpec = tween(200, easing = EaseInCubic))
+                        line1Progress.animateTo(0f, animationSpec = tween(200, easing = EaseInCubic))
+                    }
+                }
+
                 // Overlay popup that appears above everything
                 if (selectedSegment != null && selectedSegment!! < categoryAnalysisData.size) {
                     val selected = categoryAnalysisData[selectedSegment!!]
@@ -412,29 +436,6 @@ fun AnalysisScreen(
                     
                     // Only show popup if pie chart is visible
                     if (pieChartItemInfo != null) {
-                        // Line and Popup Animation
-                        val line1Progress = remember { Animatable(0f) }
-                        val line2Progress = remember { Animatable(0f) }
-                        val popupScale = remember { Animatable(0f) }
-                        
-                        LaunchedEffect(selectedSegment) {
-                            if (selectedSegment != null) {
-                                line1Progress.snapTo(0f)
-                                line2Progress.snapTo(0f)
-                                popupScale.snapTo(0f)
-                                
-                                line1Progress.animateTo(1f, animationSpec = tween(400, easing = EaseOutCubic))
-                                line2Progress.animateTo(1f, animationSpec = tween(300, easing = EaseOutCubic))
-                                popupScale.animateTo(1f, animationSpec = spring(
-                                    dampingRatio = Spring.DampingRatioMediumBouncy,
-                                    stiffness = Spring.StiffnessMedium
-                                ))
-                            } else {
-                                popupScale.animateTo(0f, animationSpec = tween(150))
-                                line2Progress.animateTo(0f, animationSpec = tween(200, easing = EaseInCubic))
-                                line1Progress.animateTo(0f, animationSpec = tween(200, easing = EaseInCubic))
-                            }
-                        }
                         
                         // Fixed position relative to pie chart center
                         val pieChartTop = pieChartItemInfo.offset

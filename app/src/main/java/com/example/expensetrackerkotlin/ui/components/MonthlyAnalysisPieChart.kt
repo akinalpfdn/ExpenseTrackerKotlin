@@ -142,7 +142,7 @@ fun MonthlyAnalysisPieChart(
                             Canvas(
                                 modifier = Modifier
                                     .size(250.dp)
-                                    .pointerInput(categoryData) {
+                                    .pointerInput(selectedSegment) {
                                         detectTapGestures { tapOffset ->
                                             val center = Offset(size.width / 2f, size.height / 2f)
                                             val radius =
@@ -166,7 +166,12 @@ fun MonthlyAnalysisPieChart(
                                                 for (i in animatedPercentages.indices) {
                                                     val sweepAngle = animatedPercentages[i] * 360f
                                                     if (normalizedAngle >= currentAngle && normalizedAngle <= currentAngle + sweepAngle) {
-                                                        onSegmentSelected(if (selectedSegment == i) null else i)
+                                                        // Toggle behavior: if clicking the same segment, deselect it
+                                                        if (selectedSegment == i) {
+                                                            onSegmentSelected(null) // Close popup
+                                                        } else {
+                                                            onSegmentSelected(i) // Open popup for this segment
+                                                        }
                                                         break
                                                     }
                                                     currentAngle += sweepAngle
