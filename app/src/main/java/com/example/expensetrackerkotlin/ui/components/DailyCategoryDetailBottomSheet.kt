@@ -1,5 +1,6 @@
 package com.example.expensetrackerkotlin.ui.components
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -18,6 +19,7 @@ import androidx.compose.ui.unit.sp
 import com.example.expensetrackerkotlin.data.Category
 import com.example.expensetrackerkotlin.data.Expense
 import com.example.expensetrackerkotlin.data.SubCategory
+import com.example.expensetrackerkotlin.ui.theme.ThemeColors
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.Locale
@@ -39,6 +41,7 @@ fun DailyCategoryDetailBottomSheet(
     subCategories: List<SubCategory>,
     selectedDate: LocalDateTime,
     defaultCurrency: String,
+    isDarkTheme: Boolean = true,
     onDismiss: () -> Unit
 ) {
     var showSortMenu by remember { mutableStateOf(false) }
@@ -74,13 +77,14 @@ fun DailyCategoryDetailBottomSheet(
     
     ModalBottomSheet(
         onDismissRequest = onDismiss,
+        containerColor = ThemeColors.getBackgroundColor(isDarkTheme),
         dragHandle = {
             Surface(
                 modifier = Modifier
                     .width(40.dp)
                     .height(4.dp),
                 shape = RoundedCornerShape(2.dp),
-                color = Color.Gray.copy(alpha = 0.5f)
+                color = ThemeColors.getTextGrayColor(isDarkTheme).copy(alpha = 0.5f)
             ) {}
         }
     ) {
@@ -99,12 +103,13 @@ fun DailyCategoryDetailBottomSheet(
                     Text(
                         text = category.name,
                         fontSize = 20.sp,
-                        fontWeight = FontWeight.Bold
+                        fontWeight = FontWeight.Bold,
+                        color = ThemeColors.getTextColor(isDarkTheme)
                     )
                     Text(
                         text = selectedDate.format(DateTimeFormatter.ofPattern("d MMMM yyyy", Locale.forLanguageTag("tr"))),
                         fontSize = 14.sp,
-                        color = Color.Gray
+                        color = ThemeColors.getTextGrayColor(isDarkTheme)
                     )
                 }
                 
@@ -119,14 +124,15 @@ fun DailyCategoryDetailBottomSheet(
                     
                     DropdownMenu(
                         expanded = showSortMenu,
-                        onDismissRequest = { showSortMenu = false }
+                        onDismissRequest = { showSortMenu = false },
+                        modifier = Modifier.background(ThemeColors.getCardBackgroundColor(isDarkTheme))
                     ) {
                         sortMenuItems.forEach { (label, sortType) ->
                             DropdownMenuItem(
                                 text = { 
                                     Text(
                                         text = label,
-                                        color = if (currentSortType == sortType) MaterialTheme.colorScheme.primary else Color.Unspecified
+                                        color = ThemeColors.getTextColor(isDarkTheme)
                                     )
                                 },
                                 onClick = {
@@ -160,7 +166,8 @@ fun DailyCategoryDetailBottomSheet(
                     Text(
                         text = "Toplam Harcama",
                         fontSize = 16.sp,
-                        fontWeight = FontWeight.Medium
+                        fontWeight = FontWeight.Medium,
+                        color = ThemeColors.getTextColor(isDarkTheme)
                     )
                     Text(
                         text = "${String.format("%.2f", totalAmount)} $defaultCurrency",
@@ -181,7 +188,7 @@ fun DailyCategoryDetailBottomSheet(
                     Text(
                         text = "Bu kategoride harcama bulunamadı",
                         fontSize = 16.sp,
-                        color = Color.Gray,
+                        color = ThemeColors.getTextGrayColor(isDarkTheme),
                         textAlign = TextAlign.Center
                     )
                 }
@@ -189,7 +196,7 @@ fun DailyCategoryDetailBottomSheet(
                 Text(
                     text = "${sortedExpenses.size} Harcama",
                     fontSize = 14.sp,
-                    color = Color.Gray,
+                    color = ThemeColors.getTextGrayColor(isDarkTheme),
                     modifier = Modifier.padding(bottom = 8.dp)
                 )
                 
@@ -201,7 +208,7 @@ fun DailyCategoryDetailBottomSheet(
                         Card(
                             modifier = Modifier.fillMaxWidth(),
                             colors = CardDefaults.cardColors(
-                                containerColor = MaterialTheme.colorScheme.surface
+                                containerColor = ThemeColors.getCardBackgroundColor(isDarkTheme)
                             )
                         ) {
                             Row(
@@ -215,14 +222,15 @@ fun DailyCategoryDetailBottomSheet(
                                     Text(
                                         text = expense.description,
                                         fontSize = 16.sp,
-                                        fontWeight = FontWeight.Medium
+                                        fontWeight = FontWeight.Medium,
+                                        color = ThemeColors.getTextColor(isDarkTheme)
                                     )
                                     val subCategory = subCategories.find { it.id == expense.subCategoryId }
                                     if (subCategory != null) {
                                         Text(
                                             text = subCategory.name,
                                             fontSize = 12.sp,
-                                            color = Color.Gray
+                                            color = ThemeColors.getTextGrayColor(isDarkTheme)
                                         )
                                     }
 

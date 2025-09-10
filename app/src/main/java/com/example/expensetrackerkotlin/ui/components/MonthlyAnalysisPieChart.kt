@@ -204,10 +204,10 @@ fun MonthlyAnalysisPieChart(
                                 }
 
                                 drawCircle(
-                                    color = Color.Transparent,
+                                    color = ThemeColors.getBackgroundColor(isDarkTheme),
                                     radius = baseRadius * 0.45f,
                                     center = center,
-                                    blendMode = BlendMode.Clear
+                                    //blendMode = BlendMode.Clear
                                 )
                             }
 

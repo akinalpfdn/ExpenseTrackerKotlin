@@ -198,7 +198,8 @@ fun ExpensesScreen(
                                 onCategoryClick = { category ->
                                     selectedCategoryForDetail = category
                                     showingDailyCategoryDetail = true
-                                }
+                                },
+                                isDarkTheme = isDarkTheme
                             )
                         }
                     }
@@ -809,6 +810,7 @@ fun ExpensesScreen(
             subCategories = subCategories,
             selectedDate = selectedDate,
             defaultCurrency = viewModel.defaultCurrency,
+            isDarkTheme = isDarkTheme,
             onDismiss = {
                 showingDailyCategoryDetail = false
                 selectedCategoryForDetail = null

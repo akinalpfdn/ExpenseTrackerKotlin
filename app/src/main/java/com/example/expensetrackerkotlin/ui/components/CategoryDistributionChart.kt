@@ -15,6 +15,7 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.expensetrackerkotlin.data.Category
+import com.example.expensetrackerkotlin.ui.theme.ThemeColors
 import kotlin.math.*
 
 data class CategoryExpense(
@@ -27,7 +28,8 @@ data class CategoryExpense(
 fun CategoryDistributionChart(
     categoryExpenses: List<CategoryExpense>,
     modifier: Modifier = Modifier,
-    onCategoryClick: (Category) -> Unit = {}
+    onCategoryClick: (Category) -> Unit = {},
+    isDarkTheme: Boolean
 ) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -110,7 +112,7 @@ fun CategoryDistributionChart(
                 
                 // Draw center circle to create donut effect
                 drawCircle(
-                    color = Color.Black,
+                    color = ThemeColors.getBackgroundColor(isDarkTheme),
                     radius = radius * 0.5f,
                     center = center
                 )
