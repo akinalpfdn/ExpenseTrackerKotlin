@@ -722,7 +722,7 @@ fun MonthYearSelector(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(
-                    text = selectedMonth.format(DateTimeFormatter.ofPattern("MMMM yyyy")),
+                    text = selectedMonth.format(DateTimeFormatter.ofPattern("MMMM yyyy", Locale.forLanguageTag("tr"))),
                     textAlign = TextAlign.Center,
                     color = ThemeColors.getTextColor(isDarkTheme),
                     fontWeight = FontWeight.Medium,
