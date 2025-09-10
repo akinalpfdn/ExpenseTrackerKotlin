@@ -177,7 +177,7 @@ fun ExpensesScreen(
                                 onTap = { showingMonthlyCalendar = true },
                                 currency = viewModel.defaultCurrency,
                                 isDarkTheme = isDarkTheme,
-                                month = currentCalendarMonth.format(java.time.format.DateTimeFormatter.ofPattern("MMM", java.util.Locale.forLanguageTag("tr")))
+                                month = currentCalendarMonth.format(java.time.format.DateTimeFormatter.ofPattern("MMMM", java.util.Locale.forLanguageTag("tr")))
                             )
                         }
                         1 -> {

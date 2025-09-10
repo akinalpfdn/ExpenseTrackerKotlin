@@ -134,11 +134,12 @@ fun MonthlyProgressRingView(
                     text = "$currency${NumberFormatter.formatAmount(totalSpent)}",
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Bold,
+                    modifier = Modifier.padding(bottom = 5.dp),
                     color = if (isOverLimit) Color.Red else ThemeColors.getTextColor(isDarkTheme)
                 )
                 Text(
                     text = if (month.isNotEmpty()) month else "Aylık",
-                    fontSize = 12.sp,
+                    fontSize = 19.sp,
                     color = ThemeColors.getTextGrayColor(isDarkTheme)
                 )
             }
