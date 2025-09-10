@@ -51,6 +51,7 @@ fun DateRangePicker(
     ModalBottomSheet(
         onDismissRequest = onDismiss,
         sheetState = dateRangePickerSheetState,
+        containerColor = ThemeColors.getBackgroundColor(isDarkTheme),
         dragHandle = { BottomSheetDefaults.DragHandle() }
     ) {
         Column(
@@ -62,7 +63,7 @@ fun DateRangePicker(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(bottom = 10.dp),
+                    .padding(start = 10.dp, end = 0.dp, top = 0.dp, bottom = 10.dp),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
@@ -222,6 +223,7 @@ private fun DateRangeCalendar(
             fontWeight = FontWeight.Bold,
             color = ThemeColors.getTextColor(isDarkTheme),
             modifier = Modifier
+                .padding(start = 10.dp, end = 0.dp, top = 0.dp, bottom = 10.dp),
         )
         
         // Day of week headers

@@ -584,6 +584,7 @@ fun AnalysisScreen(
                 showSortMenu = false
             },
             sheetState = categoryDetailSheetState,
+            containerColor = ThemeColors.getBackgroundColor(isDarkTheme),
             dragHandle = { BottomSheetDefaults.DragHandle() }
         ) {
             Box(
@@ -624,6 +625,7 @@ fun AnalysisScreen(
                 selectedSubCategory = null
             },
             sheetState = subCategoryDetailSheetState,
+            containerColor = ThemeColors.getBackgroundColor(isDarkTheme),
             dragHandle = { BottomSheetDefaults.DragHandle() }
         ) {
             Box(

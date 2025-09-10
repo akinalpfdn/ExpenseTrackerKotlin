@@ -606,6 +606,7 @@ fun ExpensesScreen(
         
         ModalBottomSheet(
             onDismissRequest = { showingRecurringExpenses = false },
+            containerColor = ThemeColors.getBackgroundColor(isDarkTheme),
             sheetState = recurringExpensesSheetState,
             dragHandle = { BottomSheetDefaults.DragHandle() }
         ) {
@@ -635,6 +636,7 @@ fun ExpensesScreen(
         
         ModalBottomSheet(
             onDismissRequest = { showingAddExpense = false },
+            containerColor = ThemeColors.getBackgroundColor(isDarkTheme),
             sheetState = sheetState,
             dragHandle = { BottomSheetDefaults.DragHandle() }
         ) {
@@ -671,6 +673,7 @@ fun ExpensesScreen(
         
         ModalBottomSheet(
             onDismissRequest = { showingSettings = false },
+            containerColor = ThemeColors.getBackgroundColor(isDarkTheme),
             sheetState = settingsSheetState,
             dragHandle = { BottomSheetDefaults.DragHandle() }
         ) {
@@ -728,6 +731,7 @@ fun ExpensesScreen(
         ModalBottomSheet(
             onDismissRequest = { showingMonthlyCalendar = false },
             sheetState = monthlyCalendarSheetState,
+            containerColor = ThemeColors.getBackgroundColor(isDarkTheme),
             dragHandle = { BottomSheetDefaults.DragHandle() }
         ) {
             Column(
