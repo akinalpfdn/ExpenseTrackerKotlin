@@ -805,7 +805,7 @@ fun ExpensesScreen(
     if (showingDailyCategoryDetail && selectedCategoryForDetail != null) {
         DailyCategoryDetailBottomSheet(
             category = selectedCategoryForDetail!!,
-            expenses = expenses,
+            selectedDateExpenses = selectedDateExpenses,
             subCategories = subCategories,
             selectedDate = selectedDate,
             defaultCurrency = viewModel.defaultCurrency,

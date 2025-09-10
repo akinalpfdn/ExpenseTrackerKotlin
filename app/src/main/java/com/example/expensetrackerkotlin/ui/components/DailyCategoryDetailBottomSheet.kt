@@ -35,7 +35,7 @@ enum class DailyCategorySortType {
 @Composable
 fun DailyCategoryDetailBottomSheet(
     category: Category,
-    expenses: List<Expense>,
+    selectedDateExpenses: List<Expense>,
     subCategories: List<SubCategory>,
     selectedDate: LocalDateTime,
     defaultCurrency: String,
@@ -44,10 +44,9 @@ fun DailyCategoryDetailBottomSheet(
     var showSortMenu by remember { mutableStateOf(false) }
     var currentSortType by remember { mutableStateOf(DailyCategorySortType.AMOUNT_HIGH_TO_LOW) }
     
-    val categoryExpenses = remember(expenses, category, selectedDate) {
-        expenses.filter { expense -> 
-            val expenseDate = expense.date.toLocalDate()
-            expense.categoryId == category.id && expenseDate == selectedDate
+    val categoryExpenses = remember(selectedDateExpenses, category) {
+        selectedDateExpenses.filter { expense -> 
+            expense.categoryId == category.id
         }
     }
     
@@ -226,11 +225,7 @@ fun DailyCategoryDetailBottomSheet(
                                             color = Color.Gray
                                         )
                                     }
-                                    Text(
-                                        text = expense.date.toLocalDate().format(DateTimeFormatter.ofPattern("HH:mm")),
-                                        fontSize = 12.sp,
-                                        color = Color.Gray
-                                    )
+
                                 }
                                 Text(
                                     text = "${String.format("%.2f", expense.getAmountInDefaultCurrency(defaultCurrency))} $defaultCurrency",
