@@ -45,7 +45,7 @@ fun CategoryManagementScreen(
     val categories by viewModel.categories.collectAsState()
     val subCategories by viewModel.subCategories.collectAsState()
     
-         Column(
+    Column(
          modifier = modifier
              .fillMaxSize()
              .padding(20.dp)

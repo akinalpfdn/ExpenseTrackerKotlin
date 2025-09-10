@@ -18,6 +18,7 @@ import com.example.expensetrackerkotlin.ui.theme.AppColors
 import com.example.expensetrackerkotlin.ui.theme.ThemeColors
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.expensetrackerkotlin.data.Expense
@@ -162,7 +163,7 @@ fun AddExpenseScreen(
                 // Amount
                 Box(
                     modifier = Modifier
-                        .weight(1f)
+                        .weight(0.8f)
                         .height(40.dp)
                         .background(
                             ThemeColors.getInputBackgroundColor(isDarkTheme),
@@ -280,14 +281,7 @@ fun AddExpenseScreen(
                 }
                 
                 // Category (Subcategory)
-                ExposedDropdownMenuBox(
-                    expanded = showCategoryMenu,
-                    onExpandedChange = { 
-                        showCategoryMenu = it
-                        if (it) focusManager.clearFocus()
-                    },
-                    modifier = Modifier.weight(1f)
-                ) {
+                Box(modifier = Modifier.weight(1f)) {
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -301,7 +295,9 @@ fun AddExpenseScreen(
                                 color = ThemeColors.getTextGrayColor(isDarkTheme),
                                 shape = RoundedCornerShape(12.dp)
                             )
-                            .menuAnchor(MenuAnchorType.PrimaryNotEditable)
+                            .clickable { 
+                                showCategoryMenu = !showCategoryMenu
+                            }
                     ) {
                         Row(
                             modifier = Modifier.fillMaxSize(),
@@ -320,8 +316,8 @@ fun AddExpenseScreen(
                             )
                         }
                     }
-                    
-                    ExposedDropdownMenu(
+
+                    DropdownMenu(
                         expanded = showCategoryMenu,
                         onDismissRequest = { 
                             showCategoryMenu = false
@@ -330,13 +326,15 @@ fun AddExpenseScreen(
                         },
                         modifier = Modifier
                             .background(ThemeColors.getInputBackgroundColor(isDarkTheme))
-                            .heightIn(max = 400.dp)
+                            .heightIn(max = 340.dp)
+                            .width(with(androidx.compose.ui.platform.LocalDensity.current) { 150.dp })
                     ) {
                         // Search TextField
 
                         BasicTextField(
                             value = categorySearchText,
                             onValueChange = { categorySearchText = it },
+
                             modifier = Modifier
                                 .fillMaxSize()
                                 .padding(horizontal = 2.dp),
@@ -360,8 +358,6 @@ fun AddExpenseScreen(
                                 }
                             }
                         )
-                        
-                        Spacer(modifier = Modifier.height(4.dp))
                         
                         filteredSubCategories.forEach { subCategory ->
                             DropdownMenuItem(
