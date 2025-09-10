@@ -42,8 +42,6 @@ import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material.icons.automirrored.filled.Sort
 import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.tooling.preview.PreviewParameter
 
 enum class ExpenseSortType {
     AMOUNT_HIGH_TO_LOW,
@@ -73,6 +71,10 @@ fun ExpensesScreen(
     var showingMonthlyCalendar by remember { mutableStateOf(false) }
     var showingRecurringExpenses by remember { mutableStateOf(false) }
     var currentCalendarMonth by remember { mutableStateOf(java.time.YearMonth.from(selectedDate)) }
+    
+    // Daily category detail bottom sheet state
+    var showingDailyCategoryDetail by remember { mutableStateOf(false) }
+    var selectedCategoryForDetail by remember { mutableStateOf<com.example.expensetrackerkotlin.data.Category?>(null) }
     
     // Search and sorting state
     var searchText by remember { mutableStateOf("") }
@@ -149,7 +151,7 @@ fun ExpensesScreen(
                 }
             )
             
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(6.dp))
             
             // Charts TabView - Horizontal Pager like Swift
             val pagerState = rememberPagerState(pageCount = { 3 })
@@ -158,7 +160,7 @@ fun ExpensesScreen(
                 state = pagerState,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(160.dp)
+                    .height(180.dp)
                     .padding(horizontal = 20.dp)
             ) { page ->
                 Box(
@@ -192,7 +194,11 @@ fun ExpensesScreen(
                         2 -> {
                             // Category Distribution
                             CategoryDistributionChart(
-                                categoryExpenses = viewModel.dailyExpensesByCategory
+                                categoryExpenses = viewModel.dailyExpensesByCategory,
+                                onCategoryClick = { category ->
+                                    selectedCategoryForDetail = category
+                                    showingDailyCategoryDetail = true
+                                }
                             )
                         }
                     }
@@ -736,7 +742,7 @@ fun ExpensesScreen(
 
                     contentColor = AppColors.PrimaryOrange,
                     indicator = { tabPositions ->
-                        TabRowDefaults.Indicator(
+                        TabRowDefaults.SecondaryIndicator(
                             modifier = Modifier.tabIndicatorOffset(tabPositions[selectedTabIndex]),
                             height = 2.dp,
                             color = AppColors.PrimaryOrange
@@ -793,5 +799,20 @@ fun ExpensesScreen(
                 }
             }
         }
+    }
+    
+    // Daily Category Detail Bottom Sheet
+    if (showingDailyCategoryDetail && selectedCategoryForDetail != null) {
+        DailyCategoryDetailBottomSheet(
+            category = selectedCategoryForDetail!!,
+            expenses = expenses,
+            subCategories = subCategories,
+            selectedDate = selectedDate,
+            defaultCurrency = viewModel.defaultCurrency,
+            onDismiss = {
+                showingDailyCategoryDetail = false
+                selectedCategoryForDetail = null
+            }
+        )
     }
 }

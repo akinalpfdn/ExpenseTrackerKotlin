@@ -124,7 +124,7 @@ fun MonthlyProgressRingView(
             ProgressRing(
                 progress = progressPercentage.toFloat(),
                 isLimitOver = isOverLimit,
-                modifier = Modifier.size(120.dp),
+                modifier = Modifier.size(140.dp),
                 onClick = onTap
             )
             Column(
@@ -167,7 +167,7 @@ fun DailyProgressRingView(
             ProgressRing(
                 progress = dailyProgressPercentage.toFloat(),
                 isLimitOver = isOverDailyLimit,
-                modifier = Modifier.size(120.dp)
+                modifier = Modifier.size(140.dp)
             )
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally
