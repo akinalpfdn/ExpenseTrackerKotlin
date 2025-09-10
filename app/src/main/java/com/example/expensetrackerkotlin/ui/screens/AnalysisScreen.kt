@@ -298,11 +298,47 @@ fun AnalysisScreen(
             isDarkTheme = isDarkTheme
         )
 
-        if (categoryAnalysisData.isNotEmpty()) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.Start
+            )
+            {
+                ExpenseFilterType.entries.forEach { filterType ->
+                    Row(
+                        modifier = Modifier
+                            .selectable(
+                                selected = selectedMonthlyExpenseType == filterType,
+                                onClick = { selectedMonthlyExpenseType = filterType }
+                            )
+                            .padding(horizontal = 1.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        RadioButton(
+                            selected = selectedMonthlyExpenseType == filterType,
+                            onClick = { selectedMonthlyExpenseType = filterType },
+                            colors = RadioButtonDefaults.colors(
+                                selectedColor = AppColors.PrimaryOrange,
+                                unselectedColor = ThemeColors.getTextGrayColor(isDarkTheme)
+                            )
+                        )
+                        Spacer(modifier = Modifier.width(1.dp))
+                        Text(
+                            text = filterType.displayName,
+                            fontSize = 12.sp,
+                            color = if (selectedMonthlyExpenseType == filterType)
+                                ThemeColors.getTextColor(isDarkTheme)
+                            else ThemeColors.getTextGrayColor(isDarkTheme)
+                        )
+                    }
+                }
+            }
+        if (categoryAnalysisData.isNotEmpty())
+        {
             Box(
                 modifier = Modifier
                     .fillMaxSize()
-                    .pointerInput(selectedSegment) {
+                    .pointerInput(selectedSegment)
+                    {
                         // Close popup when clicking outside
                         detectTapGestures { tapOffset ->
                             if (selectedSegment != null) {
@@ -340,42 +376,6 @@ fun AnalysisScreen(
                     state = scrollState,
                     verticalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
-                    item {
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.Start
-                    )
-                    {
-                        ExpenseFilterType.entries.forEach { filterType ->
-                            Row(
-                                modifier = Modifier
-                                    .selectable(
-                                        selected = selectedMonthlyExpenseType == filterType,
-                                        onClick = { selectedMonthlyExpenseType = filterType }
-                                    )
-                                    .padding(horizontal = 1.dp),
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                RadioButton(
-                                    selected = selectedMonthlyExpenseType == filterType,
-                                    onClick = { selectedMonthlyExpenseType = filterType },
-                                    colors = RadioButtonDefaults.colors(
-                                        selectedColor = AppColors.PrimaryOrange,
-                                        unselectedColor = ThemeColors.getTextGrayColor(isDarkTheme)
-                                    )
-                                )
-                                Spacer(modifier = Modifier.width(1.dp))
-                                Text(
-                                    text = filterType.displayName,
-                                    fontSize = 12.sp,
-                                    color = if (selectedMonthlyExpenseType == filterType)
-                                        ThemeColors.getTextColor(isDarkTheme)
-                                    else ThemeColors.getTextGrayColor(isDarkTheme)
-                                )
-                            }
-                        }
-                    }
-                }
 
                     item {
                         val totalComparison = remember(totalMonthlyAmount, selectedMonth, selectedMonthlyExpenseType) {
@@ -498,7 +498,7 @@ fun AnalysisScreen(
                         // Fixed position relative to pie chart center
                         val pieChartTop = pieChartItemInfo.offset
                         val pieChartHeight = pieChartItemInfo.size
-                        val popupY = pieChartTop + pieChartHeight + 800// 20dp below pie chart
+                        val popupY = pieChartTop + pieChartHeight -50// 20dp below pie chart
                         
                         Box(
                             modifier = Modifier
@@ -550,7 +550,7 @@ fun AnalysisScreen(
                         fontSize = 64.sp
                     )
                     Text(
-                        text = "Bu ay henüz harcama yok",
+                        text = "Bu dönem henüz harcama yok",
                         fontSize = 20.sp,
                         fontWeight = FontWeight.Medium,
                         color = ThemeColors.getTextColor(isDarkTheme),

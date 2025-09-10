@@ -32,8 +32,7 @@ data class SubCategory(
             return listOf(
                 // Gıda ve İçecek
                 SubCategory(name = "Restoran", categoryId = "food", isDefault = true),
-                SubCategory(name = "Market alışverişi", categoryId = "food", isDefault = true),
-                SubCategory(name = "Kafeler", categoryId = "food", isDefault = true),
+                SubCategory(name = "Mutfak alışverişi", categoryId = "food", isDefault = true),
                 
                 // Konut
                 SubCategory(name = "Kira", categoryId = "housing", isDefault = true),
@@ -41,13 +40,13 @@ data class SubCategory(
                 SubCategory(name = "Mortgage ödemesi", categoryId = "housing", isDefault = true),
                 SubCategory(name = "Elektrik faturası", categoryId = "housing", isDefault = true),
                 SubCategory(name = "Su faturası", categoryId = "housing", isDefault = true),
-                SubCategory(name = "Isınma (doğalgaz, kalorifer)", categoryId = "housing", isDefault = true),
+                SubCategory(name = "Isınma", categoryId = "housing", isDefault = true),
                 SubCategory(name = "İnternet ve telefon", categoryId = "housing", isDefault = true),
                 SubCategory(name = "Diğer Faturalar", categoryId = "housing", isDefault = true),
-                SubCategory(name = "Temizlik malzemeleri", categoryId = "housing", isDefault = true),
+                SubCategory(name = "Genel Market alışverişi", categoryId = "housing", isDefault = true),
                 
                 // Ulaşım
-                SubCategory(name = "Benzin/Dizel", categoryId = "transportation", isDefault = true),
+                SubCategory(name = "Akaryakıt", categoryId = "transportation", isDefault = true),
                 SubCategory(name = "Toplu taşıma", categoryId = "transportation", isDefault = true),
                 SubCategory(name = "Araç bakımı", categoryId = "transportation", isDefault = true),
                 SubCategory(name = "Oto kiralama", categoryId = "transportation", isDefault = true),
@@ -60,14 +59,12 @@ data class SubCategory(
                 SubCategory(name = "Doktor randevusu", categoryId = "health", isDefault = true),
                 SubCategory(name = "İlaçlar", categoryId = "health", isDefault = true),
                 SubCategory(name = "Spor salonu üyeliği", categoryId = "health", isDefault = true),
-                SubCategory(name = "Cilt bakım ürünleri", categoryId = "health", isDefault = true),
-                SubCategory(name = "Diş bakımı", categoryId = "health", isDefault = true),
-                SubCategory(name = "Giyim ve aksesuar", categoryId = "health", isDefault = true),
+                SubCategory(name = "Kozmatik", categoryId = "health", isDefault = true),
                 
                 // Eğlence
                 SubCategory(name = "Sinema ve tiyatro", categoryId = "entertainment", isDefault = true),
                 SubCategory(name = "Konser ve etkinlikler", categoryId = "entertainment", isDefault = true),
-                SubCategory(name = "Abonelikler (Netflix, Spotify vb.)", categoryId = "entertainment", isDefault = true),
+                SubCategory(name = "Abonelikler", categoryId = "entertainment", isDefault = true),
                 SubCategory(name = "Kitaplar ve dergiler", categoryId = "entertainment", isDefault = true),
                 SubCategory(name = "Seyahat ve tatil", categoryId = "entertainment", isDefault = true),
                 SubCategory(name = "Oyunlar ve uygulamalar", categoryId = "entertainment", isDefault = true),
@@ -83,7 +80,6 @@ data class SubCategory(
                 SubCategory(name = "Giyim", categoryId = "shopping", isDefault = true),
                 SubCategory(name = "Ev eşyaları", categoryId = "shopping", isDefault = true),
                 SubCategory(name = "Hediyeler", categoryId = "shopping", isDefault = true),
-                SubCategory(name = "Takı ve aksesuar", categoryId = "shopping", isDefault = true),
                 SubCategory(name = "Parfüm", categoryId = "shopping", isDefault = true),
                 
                 // Evcil Hayvan
@@ -100,13 +96,6 @@ data class SubCategory(
                 
                 // Vergi
                 SubCategory(name = "Vergi ödemeleri", categoryId = "tax", isDefault = true),
-                SubCategory(name = "Avukat ve danışman ücretleri", categoryId = "tax", isDefault = true),
-                
-                // Bağışlar
-                SubCategory(name = "Hayır kurumları", categoryId = "donations", isDefault = true),
-                SubCategory(name = "Yardımlar ve bağışlar", categoryId = "donations", isDefault = true),
-                SubCategory(name = "Çevre ve toplum projeleri", categoryId = "donations", isDefault = true),
-                
                 // Diğer
                 SubCategory(name = "Diğer Harcamalar", categoryId = "others", isDefault = true)
             )

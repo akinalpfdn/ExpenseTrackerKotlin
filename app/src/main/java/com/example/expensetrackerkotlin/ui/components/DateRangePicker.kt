@@ -143,7 +143,7 @@ fun DateRangePicker(
                     }
                 }
             )
-            
+            /* no need for them
             // Action buttons
             Row(
                 modifier = Modifier
@@ -184,7 +184,7 @@ fun DateRangePicker(
                         color = ThemeColors.getTextColor(isDarkTheme))
                 }
             }
-
+*/
 
         }
     }
