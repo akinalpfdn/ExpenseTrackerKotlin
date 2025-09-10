@@ -14,8 +14,10 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -44,6 +46,7 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -51,7 +54,9 @@ import com.example.expensetrackerkotlin.ui.theme.AppColors
 import com.example.expensetrackerkotlin.ui.theme.ThemeColors
 import kotlin.math.PI
 import kotlin.math.atan2
+import kotlin.math.cos
 import kotlin.math.pow
+import kotlin.math.sin
 import kotlin.math.sqrt
 
 @Composable
@@ -209,6 +214,37 @@ fun MonthlyAnalysisPieChart(
                                     center = center,
                                     //blendMode = BlendMode.Clear
                                 )
+                            }
+                            
+                            // Overlay category icons on pie chart segments
+                            val density = LocalDensity.current
+                            var iconAngle = -90f
+                            animatedPercentages.forEachIndexed { index, animatedPercentage ->
+                                val sweepAngle = animatedPercentage * 360f
+                                if (sweepAngle > 15f) { // Only show icon if segment is large enough
+                                    val middleAngle = iconAngle + (sweepAngle / 2f)
+                                    val angleInRadians = Math.toRadians(middleAngle.toDouble())
+                                    val iconRadius = 125.dp.value * 0.7 // Position icons at 70% of radius (125dp is half of 250dp)
+                                    
+                                    val iconX = iconRadius * cos(angleInRadians)
+                                    val iconY = iconRadius * sin(angleInRadians)
+                                    
+                                    // Calculate icon size based on segment size
+                                    val iconSize = (16 + (sweepAngle / 360f) * 8).coerceIn(16f, 24f)
+                                    
+                                    Icon(
+                                        imageVector = categoryData[index].category.getIcon(),
+                                        contentDescription = categoryData[index].category.name,
+                                        tint = Color.White,
+                                        modifier = Modifier
+                                            .size(iconSize.dp)
+                                            .offset(
+                                                x = iconX.dp,
+                                                y = iconY.dp
+                                            )
+                                    )
+                                }
+                                iconAngle += sweepAngle
                             }
 
                             // Hint text when nothing is selected
