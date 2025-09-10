@@ -109,7 +109,7 @@ fun MonthlyAnalysisPieChart(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .clickable { isCollapsed = !isCollapsed },
+                    .clickable { isCollapsed = !isCollapsed ;onSegmentSelected(null) },
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
