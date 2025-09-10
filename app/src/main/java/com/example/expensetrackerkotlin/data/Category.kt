@@ -41,10 +41,46 @@ data class Category(
             "account_balance" -> Icons.Default.AccountBalance
             "favorite" -> Icons.Default.Favorite
             "category" -> Icons.Default.Category
+            "sports" -> Icons.Default.Sports
+            "music_note" -> Icons.Default.MusicNote
+            "flight" -> Icons.Default.Flight
+            "hotel" -> Icons.Default.Hotel
+            "restaurant_menu" -> Icons.Default.RestaurantMenu
+            "local_gas_station" -> Icons.Default.LocalGasStation
+            "phone" -> Icons.Default.Phone
+            "computer" -> Icons.Default.Computer
+            "book" -> Icons.Default.Book
+            "cake" -> Icons.Default.Cake
+            "coffee" -> Icons.Default.Coffee
+            "directions_bus" -> Icons.Default.DirectionsBus
+            "directions_walk" -> Icons.Default.DirectionsWalk
+            "eco" -> Icons.Default.Eco
+            "fitness_center" -> Icons.Default.FitnessCenter
+            "gavel" -> Icons.Default.Gavel
+            "healing" -> Icons.Default.Healing
+            "kitchen" -> Icons.Default.Kitchen
+            "local_laundry_service" -> Icons.Default.LocalLaundryService
+            "local_pharmacy" -> Icons.Default.LocalPharmacy
+            "local_pizza" -> Icons.Default.LocalPizza
+            "local_shipping" -> Icons.Default.LocalShipping
+            "lunch_dining" -> Icons.Default.LunchDining
+            "monetization_on" -> Icons.Default.MonetizationOn
+            "palette" -> Icons.Default.Palette
+            "park" -> Icons.Default.Park
+            "pool" -> Icons.Default.Pool
+            "psychology" -> Icons.Default.Psychology
+            "receipt" -> Icons.Default.Receipt
+            "security" -> Icons.Default.Security
+            "spa" -> Icons.Default.Spa
+            "star" -> Icons.Default.Star
+            "theater_comedy" -> Icons.Default.TheaterComedy
+            "toys" -> Icons.Default.Toys
+            "volunteer_activism" -> Icons.Default.VolunteerActivism
+            "water_drop" -> Icons.Default.WaterDrop
+            "wifi" -> Icons.Default.Wifi
             else -> Icons.Default.Category
         }
     }
-    
     companion object {
         // Default categories that will be inserted on first app launch
         fun getDefaultCategories(): List<Category> {

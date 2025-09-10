@@ -402,12 +402,14 @@ fun AnalysisScreen(
                             )
                         }
                         TotalComparisonIndicator(
-                            percentage = totalComparison.vsLastMonth,
+                            amount = totalComparison.vsLastMonth,
+                            currency = viewModel.defaultCurrency,
                             label = "Önceki aya göre",
                             isDarkTheme = isDarkTheme
                         )
                         TotalComparisonIndicator(
-                            percentage = totalComparison.vsAverage,
+                            amount = totalComparison.vsAverage,
+                            currency = viewModel.defaultCurrency,
                             label = "6 ay ortalamasına göre",
                             isDarkTheme = isDarkTheme
                         )
@@ -848,15 +850,10 @@ fun calculateSubCategoryComparison(
         }
     }
     val previousAmount = previousMonthExpenses.sumOf { it.getAmountInDefaultCurrency(defaultCurrency) }
-    
-    // Calculate percentage change vs previous month
-    val vsLastMonth = if (previousAmount > 0) {
-        ((currentAmount - previousAmount) / previousAmount) * 100
-    } else if (currentAmount > 0) {
-        100.0 // If no previous data but current exists, it's 100% increase
-    } else {
-        0.0
-    }
+
+
+    // Calculate amount difference vs previous month
+    val vsLastMonth = currentAmount - previousAmount
     
     // Calculate 6-month average (current + 5 previous months)
     val monthsToCheck = listOf(currentMonth, currentMonth.minusMonths(1), currentMonth.minusMonths(2), currentMonth.minusMonths(3),
@@ -875,15 +872,10 @@ fun calculateSubCategoryComparison(
         }.sumOf { it.getAmountInDefaultCurrency(defaultCurrency) }
     }
     val avgAmount = totalAmountLast6Months / 6.0
-    
-    // Calculate percentage change vs average
-    val vsAverage = if (avgAmount > 0) {
-        ((currentAmount - avgAmount) / avgAmount) * 100
-    } else if (currentAmount > 0) {
-        100.0
-    } else {
-        0.0
-    }
+
+
+    // Calculate amount difference vs average
+    val vsAverage = currentAmount - avgAmount
     
     return CategoryComparison(vsLastMonth, vsAverage)
 }
@@ -926,19 +918,13 @@ fun calculateCategoryComparison(
     }
     val previousAmount = previousMonthExpenses.sumOf { it.getAmountInDefaultCurrency(defaultCurrency) }
     
-    // Calculate percentage change vs previous month
-    val vsLastMonth = if (previousAmount > 0) {
-        ((currentAmount - previousAmount) / previousAmount) * 100
-    } else if (currentAmount > 0) {
-        100.0 // If no previous data but current exists, it's 100% increase
-    } else {
-        0.0
-    }
+    // Calculate amount difference vs previous month
+    val vsLastMonth = currentAmount - previousAmount
     
-    // Calculate 3-month average (current + 2 previous months)
+    // Calculate 6-month average (current + 5 previous months)
     val monthsToCheck = listOf(currentMonth, currentMonth.minusMonths(1), currentMonth.minusMonths(2), currentMonth.minusMonths(3)
         , currentMonth.minusMonths(4), currentMonth.minusMonths(5))
-    val totalAmountLast3Months = monthsToCheck.sumOf { month ->
+    val totalAmountLast6Months = monthsToCheck.sumOf { month ->
         expenses.filter { expense ->
             val expenseDate = expense.date.toLocalDate()
             expenseDate.year == month.year && expenseDate.month == month.month &&
@@ -951,16 +937,10 @@ fun calculateCategoryComparison(
             }
         }.sumOf { it.getAmountInDefaultCurrency(defaultCurrency) }
     }
-    val avgAmount = totalAmountLast3Months / 6.0
+    val avgAmount = totalAmountLast6Months / 6.0
     
-    // Calculate percentage change vs average
-    val vsAverage = if (avgAmount > 0) {
-        ((currentAmount - avgAmount) / avgAmount) * 100
-    } else if (currentAmount > 0) {
-        100.0
-    } else {
-        0.0
-    }
+    // Calculate amount difference vs average
+    val vsAverage = currentAmount - avgAmount
     
     return CategoryComparison(vsLastMonth, vsAverage)
 }
@@ -1000,14 +980,8 @@ fun calculateTotalComparison(
     }
     val previousAmount = previousMonthExpenses.sumOf { it.getAmountInDefaultCurrency(defaultCurrency) }
     
-    // Calculate percentage change vs previous month
-    val vsLastMonth = if (previousAmount > 0) {
-        ((currentAmount - previousAmount) / previousAmount) * 100
-    } else if (currentAmount > 0) {
-        100.0
-    } else {
-        0.0
-    }
+    // Calculate amount difference vs previous month
+    val vsLastMonth = currentAmount - previousAmount
     
     // Calculate 6-month average
     val monthsToCheck = listOf(currentMonth, currentMonth.minusMonths(1), currentMonth.minusMonths(2), currentMonth.minusMonths(3), currentMonth.minusMonths(4), currentMonth.minusMonths(5))
@@ -1025,14 +999,8 @@ fun calculateTotalComparison(
     }
     val avgAmount = totalAmountLast6Months / 6.0
     
-    // Calculate percentage change vs average
-    val vsAverage = if (avgAmount > 0) {
-        ((currentAmount - avgAmount) / avgAmount) * 100
-    } else if (currentAmount > 0) {
-        100.0
-    } else {
-        0.0
-    }
+    // Calculate amount difference vs average
+    val vsAverage = currentAmount - avgAmount
     
     return CategoryComparison(vsLastMonth, vsAverage)
 }
@@ -1041,7 +1009,8 @@ fun calculateTotalComparison(
 
 @Composable
 private fun TotalComparisonIndicator(
-    percentage: Double,
+    amount: Double,
+    currency: String,
     label: String,
     isDarkTheme: Boolean
 ) {
@@ -1054,17 +1023,17 @@ private fun TotalComparisonIndicator(
             fontSize = 16.sp,
             color = ThemeColors.getTextGrayColor(isDarkTheme),
             textAlign = TextAlign.Center,
-                    fontWeight = FontWeight.Bold,
+            fontWeight = FontWeight.Bold,
         )
         
         Spacer(modifier = Modifier.height(14.dp))
         
         Text(
-            text = if (percentage == 0.0) "±0%" else "${if (percentage > 0) "+" else ""}${String.format("%.1f", percentage)}%",
+            text = if (amount == 0.0) "±0" else "${if (amount > 0) "+" else ""}$currency ${NumberFormatter.formatAmount(kotlin.math.abs(amount))}",
             fontSize = 16.sp,
             color = when {
-                percentage > 0 -> Color.Red
-                percentage < 0 -> Color.Green 
+                amount > 0 -> Color.Red
+                amount < 0 -> Color.Green 
                 else -> ThemeColors.getTextColor(isDarkTheme)
             },
             fontWeight = FontWeight.Bold,

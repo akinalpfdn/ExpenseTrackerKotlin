@@ -18,6 +18,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.expensetrackerkotlin.data.*
@@ -139,12 +140,14 @@ fun CategoryDetailBottomSheet(
                     Spacer(modifier = Modifier.height(8.dp))
 
                         DetailComparisonIndicator(
-                            percentage = comparison.vsLastMonth,
+                            amount = comparison.vsLastMonth,
+                            currency = viewModel.defaultCurrency,
                             label = "Önceki aya göre",
                             isDarkTheme = isDarkTheme
                         )
                         DetailComparisonIndicator(
-                            percentage = comparison.vsAverage,
+                            amount = comparison.vsAverage,
+                            currency = viewModel.defaultCurrency,
                             label = "6 ay ortalamasına göre",
                             isDarkTheme = isDarkTheme
                         )
@@ -302,7 +305,8 @@ fun CategoryDetailBottomSheet(
 
 @Composable
 private fun DetailComparisonIndicator(
-    percentage: Double,
+    amount: Double,
+    currency: String,
     label: String,
     isDarkTheme: Boolean
 ) {
@@ -315,16 +319,17 @@ private fun DetailComparisonIndicator(
                 fontSize = 14.sp,
                 color = ThemeColors.getTextGrayColor(isDarkTheme)
             )
-            Text(
-                text = if (percentage == 0.0) "±0%" else "${if (percentage > 0) "+" else ""}${String.format("%.1f", percentage)}%",
-                fontSize = 14.sp,
-                color = when {
-                    percentage > 0 -> Color.Red
-                    percentage < 0 -> Color.Green 
-                    else -> ThemeColors.getTextColor(isDarkTheme)
-                },
-                fontWeight = FontWeight.Bold
-            )
+        Text(
+            text = if (amount == 0.0) "±0" else "${if (amount > 0) "+" else ""}$currency ${NumberFormatter.formatAmount(kotlin.math.abs(amount))}",
+            fontSize = 16.sp,
+            color = when {
+                amount > 0 -> Color.Red
+                amount < 0 -> Color.Green
+                else -> ThemeColors.getTextColor(isDarkTheme)
+            },
+            fontWeight = FontWeight.Bold,
+            textAlign = TextAlign.Center
+        )
 
 
 
