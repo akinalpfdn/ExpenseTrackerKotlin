@@ -61,30 +61,41 @@ class PlanRepository(
     private suspend fun generatePlanBreakdowns(planId: String) {
         val plan = planDao.getPlan(planId) ?: return
         
-        // Use manual expenses if provided, otherwise use system data
-        val baseExpenses = if (plan.manualMonthlyExpenses > 0) {
-            plan.manualMonthlyExpenses
-        } else {
-            var systemExpenses = 0.0
-            
-            // Add fixed expenses if enabled
-            if (plan.includeRecurringExpenses) {
-                systemExpenses += getMonthlyFixedExpenses()
-            }
-            
-            // Add average expenses if enabled
-            if (plan.includeAverageExpenses) {
-                systemExpenses += getAverageMonthlyExpenses(plan.averageMonthsToCalculate)
-            }
-            
-            systemExpenses
-        }
-        
         val breakdowns = mutableListOf<PlanMonthlyBreakdown>()
         var cumulativeNet = 0.0
         
+        // Get all expenses if needed for recurring calculations
+        val allExpenses = if (plan.includeRecurringExpenses || plan.includeAverageExpenses) {
+            expenseRepository.getAllExpensesDirect()
+        } else {
+            emptyList()
+        }
+        
         for (monthIndex in 0 until plan.durationInMonths) {
             val projectedIncome = plan.getMonthlyIncomeAtMonth(monthIndex)
+            
+            // Calculate month-specific expenses
+            val baseExpenses = if (plan.manualMonthlyExpenses > 0) {
+                // Use manual expenses
+                plan.manualMonthlyExpenses
+            } else {
+                var systemExpenses = 0.0
+                
+                // Calculate month date for this breakdown
+                val monthDate = plan.startDate.plusMonths(monthIndex.toLong())
+                
+                // Add recurring expenses for this specific month
+                if (plan.includeRecurringExpenses) {
+                    systemExpenses += getRecurringExpensesForMonth(allExpenses, monthDate)
+                }
+                
+                // Add average expenses if enabled
+                if (plan.includeAverageExpenses) {
+                    systemExpenses += getAverageMonthlyExpenses(plan.averageMonthsToCalculate)
+                }
+                
+                systemExpenses
+            }
             
             // Apply inflation to expenses if enabled
             val adjustedExpenses = if (plan.isInflationApplied && plan.inflationRate > 0) {
@@ -112,6 +123,16 @@ class PlanRepository(
         }
         
         planDao.insertBreakdowns(breakdowns)
+    }
+    
+    private suspend fun getRecurringExpensesForMonth(allExpenses: List<Expense>, monthDate: LocalDateTime): Double {
+        // Filter recurring expenses that are active for this specific month
+        // Similar to AnalysisScreen pattern
+        return allExpenses.filter { expense ->
+            expense.recurrenceType != RecurrenceType.NONE && 
+            (expense.endDate == null || expense.endDate!!.isAfter(monthDate)) && 
+            expense.date.isBefore(monthDate.plusDays(1)) // Started before or during this month
+        }.sumOf { it.amount }
     }
     
     private suspend fun getMonthlyFixedExpenses(): Double {

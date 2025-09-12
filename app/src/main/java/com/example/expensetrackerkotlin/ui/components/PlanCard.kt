@@ -1,8 +1,10 @@
 package com.example.expensetrackerkotlin.ui.components
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -24,10 +26,12 @@ import com.example.expensetrackerkotlin.ui.theme.ThemeColors
 import com.example.expensetrackerkotlin.utils.NumberFormatter
 import com.example.expensetrackerkotlin.utils.PlanningUtils
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun PlanCard(
     planWithBreakdowns: PlanWithBreakdowns,
     onCardClick: () -> Unit,
+    onDeleteClick: () -> Unit,
     isDarkTheme: Boolean,
     defaultCurrency: String,
     modifier: Modifier = Modifier
@@ -64,7 +68,10 @@ fun PlanCard(
     Card(
         modifier = modifier
             .fillMaxWidth()
-            .clickable { onCardClick() },
+            .combinedClickable(
+                onClick = { onCardClick() },
+                onLongClick = { onDeleteClick() }
+            ),
         colors = CardDefaults.cardColors(
             containerColor = ThemeColors.getCardBackgroundColor(isDarkTheme)
         ),

@@ -38,6 +38,7 @@ fun PlanningScreen(
     
     var showCreatePlanDialog by remember { mutableStateOf(false) }
     var selectedPlanForDetail by remember { mutableStateOf<String?>(null) }
+    var planToDelete by remember { mutableStateOf<String?>(null) }
     
     Box(
         modifier = modifier
@@ -128,6 +129,9 @@ fun PlanningScreen(
                             onCardClick = {
                                 planningViewModel.selectPlan(planWithBreakdowns.plan.id)
                                 selectedPlanForDetail = planWithBreakdowns.plan.id
+                            },
+                            onDeleteClick = {
+                                planToDelete = planWithBreakdowns.plan.id
                             },
                             isDarkTheme = isDarkTheme,
                             defaultCurrency = defaultCurrency
@@ -259,6 +263,57 @@ fun PlanningScreen(
                     )
                 }
             }
+        }
+        
+        // Delete confirmation dialog
+        planToDelete?.let { planId ->
+            val planName = plansWithBreakdowns.find { it.plan.id == planId }?.plan?.name ?: "Plan"
+            
+            AlertDialog(
+                onDismissRequest = {
+                    planToDelete = null
+                },
+                title = {
+                    Text(
+                        text = "Planı Sil",
+                        color = ThemeColors.getTextColor(isDarkTheme),
+                        fontWeight = FontWeight.Bold
+                    )
+                },
+                text = {
+                    Text(
+                        text = "\"$planName\" planını silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.",
+                        color = ThemeColors.getTextColor(isDarkTheme)
+                    )
+                },
+                confirmButton = {
+                    TextButton(
+                        onClick = {
+                            planningViewModel.deletePlan(planId)
+                            planToDelete = null
+                        }
+                    ) {
+                        Text(
+                            text = "Sil",
+                            color = ThemeColors.getDeleteRedColor(isDarkTheme),
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
+                },
+                dismissButton = {
+                    TextButton(
+                        onClick = {
+                            planToDelete = null
+                        }
+                    ) {
+                        Text(
+                            text = "İptal",
+                            color = ThemeColors.getTextColor(isDarkTheme)
+                        )
+                    }
+                },
+                containerColor = ThemeColors.getDialogBackgroundColor(isDarkTheme)
+            )
         }
     }
 }
