@@ -40,6 +40,27 @@ fun PlanCard(
     val statusText = PlanningUtils.getPlanStatusText(plan)
     val statusColor = PlanningUtils.getPlanStatusColor(plan)
     
+    // Calculate current net worth and averages
+    val monthsElapsed = plan.getMonthsElapsed()
+    val currentNet = if (monthsElapsed > 0 && monthsElapsed <= breakdowns.size) {
+        breakdowns.getOrNull(monthsElapsed - 1)?.cumulativeNet ?: 0.0
+    } else {
+        0.0
+    }
+    
+    // Calculate average monthly income and expenses
+    val avgMonthlyIncome = if (breakdowns.isNotEmpty()) {
+        breakdowns.sumOf { it.projectedIncome } / breakdowns.size
+    } else {
+        plan.monthlyIncome
+    }
+    
+    val avgMonthlyExpenses = if (breakdowns.isNotEmpty()) {
+        breakdowns.sumOf { it.totalProjectedExpenses } / breakdowns.size
+    } else {
+        0.0
+    }
+    
     Card(
         modifier = modifier
             .fillMaxWidth()
@@ -75,78 +96,7 @@ fun PlanCard(
             
             Spacer(modifier = Modifier.height(16.dp))
             
-            // Status and Duration Row
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                // Status Badge
-                Surface(
-                    color = statusColor.copy(alpha = 0.1f),
-                    shape = RoundedCornerShape(12.dp),
-                    modifier = Modifier.border(
-                        width = 1.dp,
-                        color = statusColor.copy(alpha = 0.3f),
-                        shape = RoundedCornerShape(12.dp)
-                    )
-                ) {
-                    Text(
-                        text = statusText,
-                        fontSize = 12.sp,
-                        fontWeight = FontWeight.Medium,
-                        color = statusColor,
-                        modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp)
-                    )
-                }
-                
-                Text(
-                    text = PlanningUtils.formatPlanDuration(plan.durationInMonths),
-                    fontSize = 14.sp,
-                    color = ThemeColors.getTextGrayColor(isDarkTheme),
-                    fontWeight = FontWeight.Medium
-                )
-            }
-            
-            Spacer(modifier = Modifier.height(16.dp))
-            
-            // Progress Bar (for active plans)
-            if (plan.isActive()) {
-                Column {
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text(
-                            text = "İlerleme",
-                            fontSize = 12.sp,
-                            color = ThemeColors.getTextGrayColor(isDarkTheme)
-                        )
-                        Text(
-                            text = "${(progressPercentage * 100).toInt()}%",
-                            fontSize = 12.sp,
-                            color = ThemeColors.getTextGrayColor(isDarkTheme),
-                            fontWeight = FontWeight.Medium
-                        )
-                    }
-                    
-                    Spacer(modifier = Modifier.height(8.dp))
-                    
-                    LinearProgressIndicator(
-                        progress = progressPercentage,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(6.dp),
-                        color = AppColors.PrimaryOrange,
-                        trackColor = ThemeColors.getTextGrayColor(isDarkTheme).copy(alpha = 0.2f)
-                    )
-                    
-                    Spacer(modifier = Modifier.height(16.dp))
-                }
-            }
-            
-            // Financial Summary
+            // Average Income and Expenses Row
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -154,15 +104,52 @@ fun PlanCard(
             ) {
                 Column {
                     Text(
-                        text = "Aylık Gelir",
+                        text = "Ort. Aylık Gelir",
                         fontSize = 12.sp,
                         color = ThemeColors.getTextGrayColor(isDarkTheme)
                     )
                     Text(
-                        text = "${NumberFormatter.formatAmount(plan.monthlyIncome)} $defaultCurrency",
+                        text = "${NumberFormatter.formatAmount(avgMonthlyIncome)} $defaultCurrency",
+                        fontSize = 14.sp,
+                        fontWeight = FontWeight.Medium,
+                        color = ThemeColors.getSuccessGreenColor(isDarkTheme)
+                    )
+                }
+                
+                Column(horizontalAlignment = Alignment.End) {
+                    Text(
+                        text = "Ort. Aylık Gider",
+                        fontSize = 12.sp,
+                        color = ThemeColors.getTextGrayColor(isDarkTheme)
+                    )
+                    Text(
+                        text = "${NumberFormatter.formatAmount(avgMonthlyExpenses)} $defaultCurrency",
+                        fontSize = 14.sp,
+                        fontWeight = FontWeight.Medium,
+                        color = ThemeColors.getDeleteRedColor(isDarkTheme)
+                    )
+                }
+            }
+            
+            Spacer(modifier = Modifier.height(16.dp))
+            
+            // Net Worth Summary
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Column {
+                    Text(
+                        text = "Şu Anki Net",
+                        fontSize = 12.sp,
+                        color = ThemeColors.getTextGrayColor(isDarkTheme)
+                    )
+                    Text(
+                        text = "${NumberFormatter.formatAmount(currentNet)} $defaultCurrency",
                         fontSize = 16.sp,
                         fontWeight = FontWeight.Bold,
-                        color = ThemeColors.getTextColor(isDarkTheme)
+                        color = if (currentNet >= 0) ThemeColors.getSuccessGreenColor(isDarkTheme) else ThemeColors.getDeleteRedColor(isDarkTheme)
                     )
                 }
                 
@@ -173,12 +160,12 @@ fun PlanCard(
                         Icon(
                             imageVector = if (totalProjectedSavings >= 0) Icons.Default.TrendingUp else Icons.Default.TrendingDown,
                             contentDescription = null,
-                            tint = if (totalProjectedSavings >= 0) Color(0xFF34C759) else Color(0xFFFF3B30),
+                            tint = if (totalProjectedSavings >= 0) ThemeColors.getSuccessGreenColor(isDarkTheme) else ThemeColors.getDeleteRedColor(isDarkTheme),
                             modifier = Modifier.size(16.dp)
                         )
                         Spacer(modifier = Modifier.width(4.dp))
                         Text(
-                            text = "Toplam Net",
+                            text = "Hedef Net",
                             fontSize = 12.sp,
                             color = ThemeColors.getTextGrayColor(isDarkTheme)
                         )
@@ -187,11 +174,11 @@ fun PlanCard(
                         text = "${NumberFormatter.formatAmount(totalProjectedSavings)} $defaultCurrency",
                         fontSize = 16.sp,
                         fontWeight = FontWeight.Bold,
-                        color = if (totalProjectedSavings >= 0) Color(0xFF34C759) else Color(0xFFFF3B30)
+                        color = if (totalProjectedSavings >= 0) ThemeColors.getSuccessGreenColor(isDarkTheme) else ThemeColors.getDeleteRedColor(isDarkTheme)
                     )
                 }
-            }
+
         }
     }
 }
-
+}

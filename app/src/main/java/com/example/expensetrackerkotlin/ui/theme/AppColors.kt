@@ -20,6 +20,7 @@ object AppColors {
     val InputBackgroundFocused = Color(0x26FFFFFF)
     val ButtonDisabled = Color(0x4D808080)
     val DeleteRed = Color(0xCCFF0000)
+    val SuccessGreen = Color(0xFF34C759)
     
     // Light theme colors
     val BackgroundWhite = Color(0xFFFFFFFF)
@@ -30,6 +31,7 @@ object AppColors {
     val InputBackgroundFocusedLight = Color(0xFFE8E8E8)
     val ButtonDisabledLight = Color(0xFFDDDDDD)
     val DeleteRedLight = Color(0xCCFF0000)
+    val SuccessGreenLight = Color(0xFF28A745)
     
     // Gradient colors for buttons
     val ButtonGradientStart = PrimaryOrange

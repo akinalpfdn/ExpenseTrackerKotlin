@@ -211,6 +211,26 @@ class PlanningViewModel(
         }
     }
     
+    fun updatePlanBreakdown(updatedBreakdown: PlanMonthlyBreakdown) {
+        viewModelScope.launch {
+            try {
+                planRepository.updateBreakdown(updatedBreakdown)
+                
+                // Recalculate cumulative amounts for all subsequent months
+                val planId = updatedBreakdown.planId
+                planRepository.recalculateCumulativeAmounts(planId)
+                
+                // Refresh the selected plan to show updated values
+                if (_selectedPlan.value?.plan?.id == planId) {
+                    selectPlan(planId)
+                }
+                clearError()
+            } catch (e: Exception) {
+                _error.value = "Değişiklikler kaydedilirken hata oluştu: ${e.message}"
+            }
+        }
+    }
+    
     fun clearSelectedPlan() {
         _selectedPlan.value = null
         _currentPosition.value = null

@@ -35,6 +35,10 @@ object ThemeColors {
         return if (isDarkTheme) AppColors.DeleteRed else AppColors.DeleteRedLight
     }
     
+    fun getSuccessGreenColor(isDarkTheme: Boolean): Color {
+        return if (isDarkTheme) AppColors.SuccessGreen else AppColors.SuccessGreenLight
+    }
+    
     fun getDialogBackgroundColor(isDarkTheme: Boolean): Color {
         return if (isDarkTheme) AppColors.DialogBackgroundDark else AppColors.DialogBackgroundLight
     }

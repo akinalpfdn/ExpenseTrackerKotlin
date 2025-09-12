@@ -205,7 +205,7 @@ fun PlanningScreen(
                         PlanDetailBottomSheet(
                             planWithBreakdowns = planWithBreakdowns,
                             onUpdateBreakdown = { updatedBreakdown ->
-                                // TODO: Implement update breakdown logic
+                                planningViewModel.updatePlanBreakdown(updatedBreakdown)
                             },
                             isDarkTheme = isDarkTheme,
                             defaultCurrency = defaultCurrency

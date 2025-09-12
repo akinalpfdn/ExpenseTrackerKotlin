@@ -2,6 +2,7 @@ package com.example.expensetrackerkotlin.ui.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -40,9 +41,8 @@ fun PlanDetailBottomSheet(
     val plan = planWithBreakdowns.plan
     val breakdowns = planWithBreakdowns.breakdowns
     
-    var editingRowIndex by remember { mutableStateOf<Int?>(null) }
-    var editedIncome by remember { mutableStateOf("") }
-    var editedExpenses by remember { mutableStateOf("") }
+    var editingCell by remember { mutableStateOf<Pair<Int, String>?>(null) } // (rowIndex, "income"/"expenses")
+    var editedValue by remember { mutableStateOf("") }
     
     Column(
         modifier = modifier
@@ -96,7 +96,7 @@ fun PlanDetailBottomSheet(
                     text = "${NumberFormatter.formatAmount(totalNet)} $defaultCurrency",
                     fontSize = 24.sp,
                     fontWeight = FontWeight.Bold,
-                    color = if (totalNet >= 0) Color(0xFF34C759) else Color(0xFFFF3B30)
+                    color = if (totalNet >= 0) ThemeColors.getSuccessGreenColor(isDarkTheme) else ThemeColors.getDeleteRedColor(isDarkTheme)
                 )
             }
         }
@@ -168,8 +168,6 @@ fun PlanDetailBottomSheet(
             verticalArrangement = Arrangement.spacedBy(1.dp)
         ) {
             itemsIndexed(breakdowns) { index, breakdown ->
-                val isEditing = editingRowIndex == index
-                
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -190,11 +188,13 @@ fun PlanDetailBottomSheet(
                         textAlign = TextAlign.Center
                     )
                     
-                    // Income (editable)
-                    if (isEditing) {
+                    // Income (clickable cell)
+                    val isEditingIncome = editingCell?.first == index && editingCell?.second == "income"
+                    
+                    if (isEditingIncome) {
                         BasicTextField(
-                            value = editedIncome,
-                            onValueChange = { editedIncome = it },
+                            value = editedValue,
+                            onValueChange = { editedValue = it },
                             modifier = Modifier
                                 .weight(1.5f)
                                 .background(
@@ -215,20 +215,32 @@ fun PlanDetailBottomSheet(
                             )
                         )
                     } else {
-                        Text(
-                            text = NumberFormatter.formatAmount(breakdown.projectedIncome),
-                            fontSize = 12.sp,
-                            color = ThemeColors.getTextColor(isDarkTheme),
-                            modifier = Modifier.weight(1.5f),
-                            textAlign = TextAlign.Center
-                        )
+                        Box(
+                            modifier = Modifier
+                                .weight(1.5f)
+                                .clickable {
+                                    editingCell = Pair(index, "income")
+                                    editedValue = breakdown.projectedIncome.toString()
+                                }
+                                .padding(8.dp),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text(
+                                text = NumberFormatter.formatAmount(breakdown.projectedIncome),
+                                fontSize = 12.sp,
+                                color = ThemeColors.getTextColor(isDarkTheme),
+                                textAlign = TextAlign.Center
+                            )
+                        }
                     }
                     
-                    // Expenses (editable)
-                    if (isEditing) {
+                    // Expenses (clickable cell)
+                    val isEditingExpenses = editingCell?.first == index && editingCell?.second == "expenses"
+                    
+                    if (isEditingExpenses) {
                         BasicTextField(
-                            value = editedExpenses,
-                            onValueChange = { editedExpenses = it },
+                            value = editedValue,
+                            onValueChange = { editedValue = it },
                             modifier = Modifier
                                 .weight(1.5f)
                                 .background(
@@ -249,28 +261,44 @@ fun PlanDetailBottomSheet(
                             )
                         )
                     } else {
-                        Text(
-                            text = NumberFormatter.formatAmount(breakdown.totalProjectedExpenses),
-                            fontSize = 12.sp,
-                            color = ThemeColors.getTextColor(isDarkTheme),
-                            modifier = Modifier.weight(1.5f),
-                            textAlign = TextAlign.Center
-                        )
+                        Box(
+                            modifier = Modifier
+                                .weight(1.5f)
+                                .clickable {
+                                    editingCell = Pair(index, "expenses")
+                                    editedValue = breakdown.totalProjectedExpenses.toString()
+                                }
+                                .padding(8.dp),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text(
+                                text = NumberFormatter.formatAmount(breakdown.totalProjectedExpenses),
+                                fontSize = 12.sp,
+                                color = ThemeColors.getTextColor(isDarkTheme),
+                                textAlign = TextAlign.Center
+                            )
+                        }
                     }
                     
                     // Net (calculated)
-                    val netAmount = if (isEditing) {
-                        val income = editedIncome.toDoubleOrNull() ?: breakdown.projectedIncome
-                        val expenses = editedExpenses.toDoubleOrNull() ?: breakdown.totalProjectedExpenses
-                        income - expenses
+                    val currentIncome = if (isEditingIncome) {
+                        editedValue.toDoubleOrNull() ?: breakdown.projectedIncome
                     } else {
-                        breakdown.netAmount
+                        breakdown.projectedIncome
                     }
+                    
+                    val currentExpenses = if (isEditingExpenses) {
+                        editedValue.toDoubleOrNull() ?: breakdown.totalProjectedExpenses
+                    } else {
+                        breakdown.totalProjectedExpenses
+                    }
+                    
+                    val netAmount = currentIncome - currentExpenses
                     
                     Text(
                         text = NumberFormatter.formatAmount(netAmount),
                         fontSize = 12.sp,
-                        color = if (netAmount >= 0) Color(0xFF34C759) else Color(0xFFFF3B30),
+                        color = if (netAmount >= 0) ThemeColors.getSuccessGreenColor(isDarkTheme) else ThemeColors.getDeleteRedColor(isDarkTheme),
                         modifier = Modifier.weight(1.5f),
                         textAlign = TextAlign.Center,
                         fontWeight = FontWeight.Medium
@@ -280,44 +308,47 @@ fun PlanDetailBottomSheet(
                     Text(
                         text = NumberFormatter.formatAmount(breakdown.cumulativeNet),
                         fontSize = 12.sp,
-                        color = if (breakdown.cumulativeNet >= 0) Color(0xFF34C759) else Color(0xFFFF3B30),
+                        color = if (breakdown.cumulativeNet >= 0) ThemeColors.getSuccessGreenColor(isDarkTheme) else ThemeColors.getDeleteRedColor(isDarkTheme),
                         modifier = Modifier.weight(1.5f),
                         textAlign = TextAlign.Center,
                         fontWeight = FontWeight.Bold
                     )
                     
-                    // Edit/Save Button
-                    IconButton(
-                        onClick = {
-                            if (isEditing) {
-                                // Save changes
-                                val newIncome = editedIncome.toDoubleOrNull() ?: breakdown.projectedIncome
-                                val newExpenses = editedExpenses.toDoubleOrNull() ?: breakdown.totalProjectedExpenses
-                                val newNet = newIncome - newExpenses
-                                
-                                val updatedBreakdown = breakdown.copy(
-                                    projectedIncome = newIncome,
-                                    totalProjectedExpenses = newExpenses,
-                                    netAmount = newNet
-                                )
-                                
-                                onUpdateBreakdown(updatedBreakdown)
-                                editingRowIndex = null
-                            } else {
-                                // Start editing
-                                editingRowIndex = index
-                                editedIncome = breakdown.projectedIncome.toString()
-                                editedExpenses = breakdown.totalProjectedExpenses.toString()
-                            }
-                        },
-                        modifier = Modifier.size(32.dp)
-                    ) {
-                        Icon(
-                            imageVector = if (isEditing) Icons.Default.Save else Icons.Default.Edit,
-                            contentDescription = if (isEditing) "Kaydet" else "Düzenle",
-                            tint = AppColors.PrimaryOrange,
-                            modifier = Modifier.size(16.dp)
-                        )
+                    // Save Button (only show when editing)
+                    if (isEditingIncome || isEditingExpenses) {
+                        IconButton(
+                            onClick = {
+                                // Save the current edit
+                                val newValue = editedValue.toDoubleOrNull()
+                                if (newValue != null) {
+                                    val updatedBreakdown = if (isEditingIncome) {
+                                        breakdown.copy(
+                                            projectedIncome = newValue,
+                                            netAmount = newValue - breakdown.totalProjectedExpenses
+                                        )
+                                    } else {
+                                        breakdown.copy(
+                                            totalProjectedExpenses = newValue,
+                                            netAmount = breakdown.projectedIncome - newValue
+                                        )
+                                    }
+                                    onUpdateBreakdown(updatedBreakdown)
+                                }
+                                editingCell = null
+                                editedValue = ""
+                            },
+                            modifier = Modifier.size(32.dp)
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Save,
+                                contentDescription = "Kaydet",
+                                tint = AppColors.PrimaryOrange,
+                                modifier = Modifier.size(16.dp)
+                            )
+                        }
+                    } else {
+                        // Empty space to maintain layout
+                        Spacer(modifier = Modifier.size(32.dp))
                     }
                 }
             }

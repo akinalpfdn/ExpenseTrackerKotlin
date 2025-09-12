@@ -39,6 +39,25 @@ class PlanRepository(
         generatePlanBreakdowns(planId)
     }
     
+    suspend fun updateBreakdown(updatedBreakdown: PlanMonthlyBreakdown) {
+        planDao.updateBreakdown(updatedBreakdown)
+    }
+    
+    suspend fun recalculateCumulativeAmounts(planId: String) {
+        val breakdowns = planDao.getPlanBreakdowns(planId).sortedBy { it.monthIndex }
+        
+        var cumulativeNet = 0.0
+        val updatedBreakdowns = breakdowns.map { breakdown ->
+            cumulativeNet += breakdown.netAmount
+            breakdown.copy(cumulativeNet = cumulativeNet)
+        }
+        
+        // Update all breakdowns with new cumulative amounts
+        updatedBreakdowns.forEach { breakdown ->
+            planDao.updateBreakdown(breakdown)
+        }
+    }
+    
     private suspend fun generatePlanBreakdowns(planId: String) {
         val plan = planDao.getPlan(planId) ?: return
         
