@@ -9,11 +9,12 @@ import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 import kotlinx.coroutines.launch
 
-@Database(entities = [Expense::class, Category::class, SubCategory::class], version = 6, exportSchema = false)
+@Database(entities = [Expense::class, Category::class, SubCategory::class, FinancialPlan::class, PlanMonthlyBreakdown::class], version = 7, exportSchema = false)
 @TypeConverters(Converters::class)
 abstract class ExpenseDatabase : RoomDatabase() {
     abstract fun expenseDao(): ExpenseDao
     abstract fun categoryDao(): CategoryDao
+    abstract fun planDao(): PlanDao
     
     companion object {
         private val MIGRATION_1_2 = object : Migration(1, 2) {
@@ -198,6 +199,48 @@ abstract class ExpenseDatabase : RoomDatabase() {
             }
         }
         
+        private val MIGRATION_6_7 = object : Migration(6, 7) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                // Create financial_plans table
+                database.execSQL("""
+                    CREATE TABLE IF NOT EXISTS financial_plans (
+                        id TEXT PRIMARY KEY NOT NULL,
+                        name TEXT NOT NULL,
+                        startDate TEXT NOT NULL,
+                        durationInMonths INTEGER NOT NULL,
+                        monthlyIncome REAL NOT NULL,
+                        manualMonthlyExpenses REAL NOT NULL DEFAULT 0.0,
+                        isInflationApplied INTEGER NOT NULL DEFAULT 0,
+                        inflationRate REAL NOT NULL DEFAULT 0.0,
+                        includeRecurringExpenses INTEGER NOT NULL DEFAULT 1,
+                        includeAverageExpenses INTEGER NOT NULL DEFAULT 0,
+                        averageMonthsToCalculate INTEGER NOT NULL DEFAULT 3,
+                        createdAt TEXT NOT NULL,
+                        updatedAt TEXT NOT NULL
+                    )
+                """)
+                
+                // Create plan_monthly_breakdowns table
+                database.execSQL("""
+                    CREATE TABLE IF NOT EXISTS plan_monthly_breakdowns (
+                        id TEXT PRIMARY KEY NOT NULL,
+                        planId TEXT NOT NULL,
+                        monthIndex INTEGER NOT NULL,
+                        projectedIncome REAL NOT NULL,
+                        fixedExpenses REAL NOT NULL,
+                        averageExpenses REAL NOT NULL,
+                        totalProjectedExpenses REAL NOT NULL,
+                        netAmount REAL NOT NULL,
+                        cumulativeNet REAL NOT NULL,
+                        FOREIGN KEY(planId) REFERENCES financial_plans(id) ON DELETE CASCADE
+                    )
+                """)
+                
+                // Create index for plan_monthly_breakdowns
+                database.execSQL("CREATE INDEX IF NOT EXISTS index_plan_monthly_breakdowns_planId ON plan_monthly_breakdowns(planId)")
+            }
+        }
+        
         @Volatile
         private var INSTANCE: ExpenseDatabase? = null
         
@@ -208,7 +251,7 @@ abstract class ExpenseDatabase : RoomDatabase() {
                     ExpenseDatabase::class.java,
                     "expense_database"
                 )
-                .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5, MIGRATION_5_6)
+                .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5, MIGRATION_5_6, MIGRATION_6_7)
                 .addCallback(object : RoomDatabase.Callback() {
                     override fun onCreate(db: SupportSQLiteDatabase) {
                         super.onCreate(db)

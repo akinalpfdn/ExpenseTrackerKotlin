@@ -30,4 +30,8 @@ class ExpenseRepository(private val expenseDao: ExpenseDao) {
     suspend fun getTotalForDateRange(startDate: LocalDateTime, endDate: LocalDateTime): Double {
         return expenseDao.getTotalForDateRange(startDate, endDate) ?: 0.0
     }
+    
+    suspend fun getAllExpensesDirect(): List<Expense> {
+        return expenseDao.getAllExpensesDirect()
+    }
 }

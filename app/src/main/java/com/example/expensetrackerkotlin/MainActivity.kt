@@ -12,11 +12,13 @@ import androidx.compose.ui.Modifier
 import com.example.expensetrackerkotlin.data.ExpenseDatabase
 import com.example.expensetrackerkotlin.data.ExpenseRepository
 import com.example.expensetrackerkotlin.data.CategoryRepository
+import com.example.expensetrackerkotlin.data.PlanRepository
 import com.example.expensetrackerkotlin.data.PreferencesManager
 import com.example.expensetrackerkotlin.ui.screens.MainScreen
 import com.example.expensetrackerkotlin.ui.theme.ExpenseTrackerKotlinTheme
 import com.example.expensetrackerkotlin.viewmodel.ExpenseViewModel
 import com.example.expensetrackerkotlin.viewmodel.ExpenseViewModelFactory
+import com.example.expensetrackerkotlin.viewmodel.PlanningViewModel
 import androidx.core.view.WindowCompat
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -30,8 +32,12 @@ class MainActivity : ComponentActivity() {
     private val database by lazy { ExpenseDatabase.getDatabase(this) }
     private val expenseRepository by lazy { ExpenseRepository(database.expenseDao()) }
     private val categoryRepository by lazy { CategoryRepository(database.categoryDao()) }
+    private val planRepository by lazy { PlanRepository(database.planDao(), expenseRepository) }
     private val viewModel: ExpenseViewModel by viewModels {
-        ExpenseViewModelFactory(preferencesManager, expenseRepository, categoryRepository)
+        ExpenseViewModelFactory(preferencesManager, expenseRepository, categoryRepository, planRepository)
+    }
+    private val planningViewModel: PlanningViewModel by viewModels {
+        ExpenseViewModelFactory(preferencesManager, expenseRepository, categoryRepository, planRepository)
     }
     
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -60,7 +66,10 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    MainScreen(viewModel = viewModel)
+                    MainScreen(
+                        viewModel = viewModel,
+                        planningViewModel = planningViewModel
+                    )
                 }
             }
         }

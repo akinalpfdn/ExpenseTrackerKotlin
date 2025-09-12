@@ -15,6 +15,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.expensetrackerkotlin.viewmodel.ExpenseViewModel
+import com.example.expensetrackerkotlin.viewmodel.PlanningViewModel
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.navigationBars
@@ -23,7 +24,8 @@ import androidx.compose.foundation.layout.windowInsetsPadding
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainScreen(
-    viewModel: ExpenseViewModel
+    viewModel: ExpenseViewModel,
+    planningViewModel: PlanningViewModel
 ) {
     val pagerState = rememberPagerState(pageCount = { 3 },initialPage = 0)
     val isDarkTheme = viewModel.theme == "dark"
@@ -43,7 +45,11 @@ fun MainScreen(
             when (page) {
                 0 -> ExpensesScreen(viewModel = viewModel)
                 1 -> AnalysisScreen(viewModel = viewModel,isDarkTheme = isDarkTheme)
-                2-> PlanningScreen(isDarkTheme = isDarkTheme)
+                2-> PlanningScreen(
+                    isDarkTheme = isDarkTheme,
+                    planningViewModel = planningViewModel,
+                    defaultCurrency = viewModel.defaultCurrency
+                )
             }
         }
         
