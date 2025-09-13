@@ -41,7 +41,9 @@ fun CreatePlanBottomSheet(
         monthlyExpenses: Double,
         useAppExpenseData: Boolean,
         isInflationApplied: Boolean,
-        inflationRate: Double
+        inflationRate: Double,
+        isInterestApplied: Boolean,
+        interestRate: Double
     ) -> Unit,
     isDarkTheme: Boolean,
     defaultCurrency: String
@@ -53,6 +55,8 @@ fun CreatePlanBottomSheet(
     var useAppExpenseData by remember { mutableStateOf(true) }
     var isInflationApplied by remember { mutableStateOf(false) }
     var inflationRate by remember { mutableStateOf("") }
+    var isInterestApplied by remember { mutableStateOf(false) }
+    var interestRate by remember { mutableStateOf("") }
     
     val suggestedDurations = PlanningUtils.getSuggestedPlanDurations()
     
@@ -156,6 +160,84 @@ fun CreatePlanBottomSheet(
                     )
                 )
             }
+        }
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        // Interest Settings
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = "Faiz Uygula (Birikime)",
+                fontSize = 14.sp,
+                fontWeight = FontWeight.Medium,
+                color = ThemeColors.getTextColor(isDarkTheme)
+            )
+            Switch(
+                checked = isInterestApplied,
+                onCheckedChange = { isInterestApplied = it },
+                colors = SwitchDefaults.colors(
+                    checkedThumbColor = Color.White,
+                    checkedTrackColor = AppColors.PrimaryOrange,
+                    uncheckedThumbColor = ThemeColors.getTextGrayColor(isDarkTheme),
+                    uncheckedTrackColor = ThemeColors.getTextGrayColor(isDarkTheme).copy(alpha = 0.3f)
+                )
+            )
+        }
+
+        if (isInterestApplied) {
+            Spacer(modifier = Modifier.height(8.dp))
+
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(
+                        ThemeColors.getInputBackgroundColor(isDarkTheme),
+                        RoundedCornerShape(12.dp)
+                    )
+                    .border(
+                        width = 1.dp,
+                        color = ThemeColors.getTextGrayColor(isDarkTheme).copy(alpha = 0.3f),
+                        shape = RoundedCornerShape(12.dp)
+                    )
+            ) {
+                BasicTextField(
+                    value = interestRate,
+                    onValueChange = { interestRate = it },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp),
+                    singleLine = true,
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                    textStyle = androidx.compose.ui.text.TextStyle(
+                        fontSize = 16.sp,
+                        color = ThemeColors.getTextColor(isDarkTheme)
+                    ),
+                    decorationBox = { innerTextField ->
+                        Row {
+                            if (interestRate.isEmpty()) {
+                                Text(
+                                    text = "Yıllık faiz oranı %",
+                                    fontSize = 16.sp,
+                                    color = ThemeColors.getTextGrayColor(isDarkTheme)
+                                )
+                            }
+                            innerTextField()
+                        }
+                    }
+                )
+            }
+
+            Spacer(modifier = Modifier.height(4.dp))
+
+            Text(
+                text = "Pozitif birikime bileşik faiz uygulanır",
+                fontSize = 12.sp,
+                color = ThemeColors.getTextGrayColor(isDarkTheme)
+            )
         }
 
         Spacer(modifier = Modifier.height(16.dp))
@@ -387,7 +469,8 @@ fun CreatePlanBottomSheet(
                             val income = monthlyIncome.toDoubleOrNull() ?: 0.0
                             val expenses = monthlyExpenses.toDoubleOrNull() ?: 0.0
                             val inflation = if (isInflationApplied) inflationRate.toDoubleOrNull() ?: 0.0 else 0.0
-                            
+                            val interest = if (isInterestApplied) interestRate.toDoubleOrNull() ?: 0.0 else 0.0
+
                             onCreatePlan(
                                 planName.trim(),
                                 selectedDuration,
@@ -395,7 +478,9 @@ fun CreatePlanBottomSheet(
                                 expenses,
                                 useAppExpenseData,
                                 isInflationApplied,
-                                inflation
+                                inflation,
+                                isInterestApplied,
+                                interest
                             )
                         },
                         modifier = Modifier.weight(1f),

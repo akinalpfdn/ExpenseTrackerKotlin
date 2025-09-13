@@ -79,6 +79,8 @@ class PlanningViewModel(
         useAppExpenseData: Boolean = true,
         isInflationApplied: Boolean = false,
         inflationRate: Double = 0.0,
+        isInterestApplied: Boolean = false,
+        interestRate: Double = 0.0,
         defaultCurrency: String
     ) {
         viewModelScope.launch {
@@ -105,6 +107,8 @@ class PlanningViewModel(
                     useAppExpenseData = useAppExpenseData,
                     isInflationApplied = isInflationApplied,
                     inflationRate = inflationRate,
+                    isInterestApplied = isInterestApplied,
+                    interestRate = interestRate,
                     defaultCurrency = defaultCurrency
                 )
                 

@@ -243,7 +243,7 @@ fun PlanningScreen(
                 ) {
                     CreatePlanBottomSheet(
                         onDismiss = { showCreatePlanDialog = false },
-                        onCreatePlan = { name, duration, income, expenses, useAppData, inflationApplied, inflationRate ->
+                        onCreatePlan = { name, duration, income, expenses, useAppData, inflationApplied, inflationRate, interestApplied, interestRate ->
                             planningViewModel.createPlan(
                                 name = name,
                                 startDate = java.time.LocalDateTime.now(),
@@ -253,6 +253,8 @@ fun PlanningScreen(
                                 useAppExpenseData = useAppData,
                                 isInflationApplied = inflationApplied,
                                 inflationRate = inflationRate,
+                                isInterestApplied = interestApplied,
+                                interestRate = interestRate,
                                 defaultCurrency = defaultCurrency
                             )
                             showCreatePlanDialog = false

@@ -98,8 +98,18 @@ class PlanRepository(
             }
             
             val netAmount = projectedIncome - adjustedExpenses
-            cumulativeNet += netAmount
-            
+
+            // Calculate interest earned on positive cumulative balance
+            val interestEarned = if (plan.isInterestApplied && cumulativeNet > 0 && plan.interestRate > 0) {
+                val monthlyInterestRate = plan.interestRate / 12 / 100
+                cumulativeNet * monthlyInterestRate
+            } else {
+                0.0
+            }
+
+            // Update cumulative net with this month's net amount plus any interest earned
+            cumulativeNet += netAmount + interestEarned
+
             val breakdown = PlanMonthlyBreakdown(
                 planId = planId,
                 monthIndex = monthIndex,
@@ -108,6 +118,7 @@ class PlanRepository(
                 averageExpenses = if (plan.manualMonthlyExpenses > 0) adjustedExpenses else 0.0, // Use averageExpenses for manual input
                 totalProjectedExpenses = adjustedExpenses,
                 netAmount = netAmount,
+                interestEarned = interestEarned,
                 cumulativeNet = cumulativeNet
             )
             

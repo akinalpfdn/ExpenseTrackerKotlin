@@ -28,7 +28,8 @@ data class PlanMonthlyBreakdown(
     val averageExpenses: Double,
     val totalProjectedExpenses: Double,
     val netAmount: Double, // projectedIncome - totalProjectedExpenses
-    val cumulativeNet: Double // Running total of net amounts
+    val interestEarned: Double = 0.0, // Interest earned on positive cumulative balance
+    val cumulativeNet: Double // Running total of net amounts + interest
 ) {
     
     fun getSavingsRate(): Float {
