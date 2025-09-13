@@ -148,6 +148,10 @@ class PlanningViewModel(
             _isLoading.value = true
             try {
                 planRepository.updateExpenseData(planId)
+                // Refresh selected plan if it's the current one
+                if (_selectedPlan.value?.plan?.id == planId) {
+                    selectPlan(planId)
+                }
                 clearError()
             } catch (e: Exception) {
                 _error.value = "Harcama verileri güncellenirken hata oluştu: ${e.message}"
