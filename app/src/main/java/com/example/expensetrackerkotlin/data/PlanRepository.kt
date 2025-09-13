@@ -213,6 +213,108 @@ class PlanRepository(
             expense.date.isAfter(planStartDate) && expense.date.isBefore(endDate)
         }.sumOf { it.amount }
     }
+
+    /**
+     * Updates expense data for current and future months while preserving past months
+     * Only recalculates if plan uses app expense data
+     */
+    suspend fun updateExpenseData(planId: String) {
+        val plan = planDao.getPlan(planId) ?: return
+
+        // Only update if plan uses app expense data
+        if (!plan.useAppExpenseData) return
+
+        val currentMonthIndex = plan.getMonthsElapsed()
+        val existingBreakdowns = planDao.getPlanBreakdowns(planId)
+
+        // Get all expenses for calculations
+        val allExpenses = expenseRepository.getAllExpensesDirect()
+
+        val updatedBreakdowns = mutableListOf<PlanMonthlyBreakdown>()
+        var cumulativeNet = 0.0
+
+        for (monthIndex in 0 until plan.durationInMonths) {
+            val existingBreakdown = existingBreakdowns.find { it.monthIndex == monthIndex }
+
+            if (monthIndex < currentMonthIndex && existingBreakdown != null) {
+                // Keep past months unchanged, but track cumulative net
+                updatedBreakdowns.add(existingBreakdown)
+                cumulativeNet = existingBreakdown.cumulativeNet
+            } else {
+                // Recalculate current and future months
+                val projectedIncome = plan.getMonthlyIncomeAtMonth(monthIndex)
+
+
+                // Calculate month-specific expenses
+
+                    // Calculate month date for this breakdown
+                    val monthDate = plan.startDate.plusMonths(monthIndex.toLong())
+
+                    // Get recurring expenses for this specific month
+                    val recurringExpenses = getRecurringExpensesForMonth(allExpenses, monthDate, plan.defaultCurrency)
+
+                    // Get average of last 3 months one-time expenses
+                    val averageOneTimeExpenses = getAverageOneTimeExpenses()
+
+                val baseExpenses =  recurringExpenses + averageOneTimeExpenses
+
+
+
+                // Apply inflation if enabled
+                val adjustedExpenses = if (plan.isInflationApplied && plan.inflationRate > 0) {
+                    val monthlyInflationRate = plan.inflationRate / 12 / 100
+                    baseExpenses * (1 + monthlyInflationRate).pow(monthIndex.toDouble())
+                } else {
+                    baseExpenses
+                }
+
+                val netAmount = projectedIncome - adjustedExpenses
+
+                // Calculate interest earned on positive cumulative balance
+                val interestEarned = if (plan.isInterestApplied && cumulativeNet > 0 && plan.interestRate > 0) {
+                    when (plan.interestType) {
+                        InterestType.SIMPLE -> {
+                            val annualRate = plan.interestRate / 100
+                            val monthlySimpleRate = annualRate / 12
+                            cumulativeNet * monthlySimpleRate
+                        }
+                        InterestType.COMPOUND -> {
+                            val annualRate = plan.interestRate / 100
+                            val monthlyCompoundRate = (1 + annualRate).pow(1.0 / 12.0) - 1
+                            cumulativeNet * monthlyCompoundRate
+                        }
+                    }
+                } else {
+                    0.0
+                }
+
+                // Update cumulative net with this month's net amount plus any interest earned
+                cumulativeNet += netAmount + interestEarned
+
+                val updatedBreakdown = PlanMonthlyBreakdown(
+                    id = existingBreakdown?.id ?: java.util.UUID.randomUUID().toString(),
+                    planId = planId,
+                    monthIndex = monthIndex,
+                    projectedIncome = projectedIncome,
+                    fixedExpenses = 0.0, // Keep for backward compatibility
+                    averageExpenses = adjustedExpenses, // Use averageExpenses for app data
+                    totalProjectedExpenses = adjustedExpenses,
+                    netAmount = netAmount,
+                    interestEarned = interestEarned,
+                    cumulativeNet = cumulativeNet
+                )
+
+                updatedBreakdowns.add(updatedBreakdown)
+            }
+        }
+
+        // Update all breakdowns
+        planDao.deleteBreakdownsForPlan(planId)
+        planDao.insertBreakdowns(updatedBreakdowns)
+
+        // Update plan timestamp
+        planDao.updatePlan(plan.copy(updatedAt = LocalDateTime.now()))
+    }
 }
 
 data class PlanCurrentPosition(

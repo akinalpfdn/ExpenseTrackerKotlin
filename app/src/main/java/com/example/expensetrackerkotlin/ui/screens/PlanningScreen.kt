@@ -211,6 +211,9 @@ fun PlanningScreen(
                             onUpdateBreakdown = { updatedBreakdown ->
                                 planningViewModel.updatePlanBreakdown(updatedBreakdown)
                             },
+                            onUpdateExpenseData = {
+                                planningViewModel.updateExpenseData(planWithBreakdowns.plan.id)
+                            },
                             isDarkTheme = isDarkTheme,
                             defaultCurrency = defaultCurrency
                         )

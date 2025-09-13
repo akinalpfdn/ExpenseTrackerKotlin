@@ -142,6 +142,20 @@ class PlanningViewModel(
             }
         }
     }
+
+    fun updateExpenseData(planId: String) {
+        viewModelScope.launch {
+            _isLoading.value = true
+            try {
+                planRepository.updateExpenseData(planId)
+                clearError()
+            } catch (e: Exception) {
+                _error.value = "Harcama verileri güncellenirken hata oluştu: ${e.message}"
+            } finally {
+                _isLoading.value = false
+            }
+        }
+    }
     
     fun regeneratePlanBreakdowns(planId: String) {
         viewModelScope.launch {

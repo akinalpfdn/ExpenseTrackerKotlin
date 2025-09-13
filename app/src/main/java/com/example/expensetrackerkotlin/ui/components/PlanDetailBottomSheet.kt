@@ -34,6 +34,7 @@ import com.example.expensetrackerkotlin.utils.PlanningUtils
 fun PlanDetailBottomSheet(
     planWithBreakdowns: PlanWithBreakdowns,
     onUpdateBreakdown: (PlanMonthlyBreakdown) -> Unit,
+    onUpdateExpenseData: () -> Unit,
     isDarkTheme: Boolean,
     defaultCurrency: String,
     modifier: Modifier = Modifier
@@ -69,8 +70,41 @@ fun PlanDetailBottomSheet(
             textAlign = TextAlign.Center
         )
         
+        Spacer(modifier = Modifier.height(16.dp))
+
+        // Update Expenses Button (only show if plan uses app expense data)
+        if (plan.useAppExpenseData) {
+            OutlinedButton(
+                onClick = onUpdateExpenseData,
+                modifier = Modifier.fillMaxWidth(),
+                colors = ButtonDefaults.outlinedButtonColors(
+                    contentColor = AppColors.PrimaryOrange
+                ),
+                border = androidx.compose.foundation.BorderStroke(
+                    width = 1.dp,
+                    color = AppColors.PrimaryOrange
+                )
+            ) {
+                Text(
+                    text = "Harcama Verilerini Güncelle",
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.Medium
+                )
+            }
+
+            Spacer(modifier = Modifier.height(4.dp))
+
+            Text(
+                text = "Mevcut ve gelecek ayları güncel verilerle yeniden hesaplar",
+                fontSize = 12.sp,
+                color = ThemeColors.getTextGrayColor(isDarkTheme),
+                textAlign = TextAlign.Center,
+                modifier = Modifier.fillMaxWidth()
+            )
+        }
+
         Spacer(modifier = Modifier.height(20.dp))
-        
+
         // Summary Card
         Card(
             modifier = Modifier.fillMaxWidth(),
