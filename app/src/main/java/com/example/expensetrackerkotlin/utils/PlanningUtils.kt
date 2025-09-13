@@ -28,7 +28,7 @@ object PlanningUtils {
      * Formats a plan's date range in Turkish
      */
     fun formatPlanDateRange(startDate: LocalDateTime, endDate: LocalDateTime): String {
-        val formatter = DateTimeFormatter.ofPattern("dd MMM yyyy", Locale.forLanguageTag("tr"))
+        val formatter = DateTimeFormatter.ofPattern("MMM yyyy", Locale.forLanguageTag("tr"))
         return "${startDate.format(formatter)} - ${endDate.format(formatter)}"
     }
     

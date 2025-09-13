@@ -36,7 +36,6 @@ fun CreatePlanBottomSheet(
     onDismiss: () -> Unit,
     onCreatePlan: (
         name: String,
-        startDate: LocalDateTime,
         durationInMonths: Int,
         monthlyIncome: Double,
         monthlyExpenses: Double,
@@ -53,13 +52,11 @@ fun CreatePlanBottomSheet(
     var monthlyIncome by remember { mutableStateOf("") }
     var monthlyExpenses by remember { mutableStateOf("") }
     var selectedDuration by remember { mutableStateOf(12) }
-    var startDate by remember { mutableStateOf(LocalDateTime.now()) }
     var isInflationApplied by remember { mutableStateOf(false) }
     var inflationRate by remember { mutableStateOf("") }
     var includeRecurringExpenses by remember { mutableStateOf(true) }
     var includeAverageExpenses by remember { mutableStateOf(false) }
     var averageMonthsToCalculate by remember { mutableStateOf(3) }
-    var showDatePicker by remember { mutableStateOf(false) }
     
     val suggestedDurations = PlanningUtils.getSuggestedPlanDurations()
     
@@ -232,42 +229,6 @@ fun CreatePlanBottomSheet(
                     fontSize = 12.sp,
                     color = ThemeColors.getTextGrayColor(isDarkTheme)
                 )
-                
-                Spacer(modifier = Modifier.height(16.dp))
-                
-                // Start Date
-                Text(
-                    text = "Başlangıç Tarihi",
-                    fontSize = 14.sp,
-                    fontWeight = FontWeight.Medium,
-                    color = ThemeColors.getTextColor(isDarkTheme)
-                )
-                Spacer(modifier = Modifier.height(8.dp))
-                
-                OutlinedButton(
-                    onClick = { showDatePicker = true },
-                    modifier = Modifier.fillMaxWidth(),
-                    colors = ButtonDefaults.outlinedButtonColors(
-                        containerColor = ThemeColors.getInputBackgroundColor(isDarkTheme),
-                        contentColor = ThemeColors.getTextColor(isDarkTheme)
-                    ),
-                    border = androidx.compose.foundation.BorderStroke(
-                        width = 1.dp,
-                        color = ThemeColors.getTextGrayColor(isDarkTheme).copy(alpha = 0.3f)
-                    )
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.DateRange,
-                        contentDescription = "Tarih Seç",
-                        modifier = Modifier.size(20.dp)
-                    )
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Text(
-                        text = startDate.format(
-                            DateTimeFormatter.ofPattern("dd MMMM yyyy", Locale.forLanguageTag("tr"))
-                        )
-                    )
-                }
                 
                 Spacer(modifier = Modifier.height(16.dp))
                 
@@ -465,7 +426,6 @@ fun CreatePlanBottomSheet(
                             
                             onCreatePlan(
                                 planName.trim(),
-                                startDate,
                                 selectedDuration,
                                 income,
                                 expenses,
