@@ -5,8 +5,8 @@ import androidx.compose.animation.core.*
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.shape.CircleShape
@@ -28,7 +28,6 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import com.example.expensetrackerkotlin.ui.theme.AppColors
 import com.example.expensetrackerkotlin.ui.theme.ThemeColors
-import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextOverflow
@@ -41,7 +40,7 @@ import androidx.compose.runtime.collectAsState
 import java.time.format.DateTimeFormatter
 import kotlin.math.abs
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
 fun ExpenseRowView(
     expense: Expense,
@@ -107,29 +106,26 @@ fun ExpenseRowView(
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .pointerInput(Unit) {
-                        detectTapGestures(
-                            onLongPress = {
-                                // Long press to show delete confirmation
-                                showDeleteConfirmation = true
+                    .combinedClickable(
+                        onClick = {
+                            if (isEditing) {
+                                // If already editing, close the edit mode
+                                isEditing = false
+                                onEditingChanged(false)
+                                // Reset edit fields to original values
+                                editAmount = expense.amount.toString()
+                                editDescription = expense.description
+                                editExchangeRate = expense.exchangeRate?.toString() ?: ""
+                            } else {
+                                // If not editing, open edit mode
+                                isEditing = true
+                                onEditingChanged(true)
                             }
-                        )
-                    }
-                    .clickable {
-                        if (isEditing) {
-                            // If already editing, close the edit mode
-                            isEditing = false
-                            onEditingChanged(false)
-                            // Reset edit fields to original values
-                            editAmount = expense.amount.toString()
-                            editDescription = expense.description
-                            editExchangeRate = expense.exchangeRate?.toString() ?: ""
-                        } else {
-                            // If not editing, open edit mode
-                            isEditing = true
-                            onEditingChanged(true)
+                        },
+                        onLongClick = {
+                            showDeleteConfirmation = true
                         }
-                    },
+                    ),
                 shape = RoundedCornerShape(12.dp),
                 colors = CardDefaults.cardColors(
                     containerColor = ThemeColors.getCardBackgroundColor(isDarkTheme)

@@ -3,6 +3,7 @@ package com.example.expensetrackerkotlin.data
 import kotlinx.coroutines.flow.Flow
 import java.time.LocalDateTime
 import java.time.YearMonth
+import kotlin.math.pow
 
 class PlanRepository(
     private val planDao: PlanDao,
@@ -63,44 +64,35 @@ class PlanRepository(
         
         val breakdowns = mutableListOf<PlanMonthlyBreakdown>()
         var cumulativeNet = 0.0
-        
-        // Get all expenses if needed for recurring calculations
-        val allExpenses = if (plan.includeRecurringExpenses || plan.includeAverageExpenses) {
+
+        val allExpenses =
             expenseRepository.getAllExpensesDirect()
-        } else {
-            emptyList()
-        }
+
         
         for (monthIndex in 0 until plan.durationInMonths) {
             val projectedIncome = plan.getMonthlyIncomeAtMonth(monthIndex)
             
             // Calculate month-specific expenses
-            val baseExpenses = if (plan.manualMonthlyExpenses > 0) {
-                // Use manual expenses
-                plan.manualMonthlyExpenses
-            } else {
-                var systemExpenses = 0.0
-                
+            val baseExpenses = if (plan.useAppExpenseData) {
                 // Calculate month date for this breakdown
                 val monthDate = plan.startDate.plusMonths(monthIndex.toLong())
-                
-                // Add recurring expenses for this specific month
-                if (plan.includeRecurringExpenses) {
-                    systemExpenses += getRecurringExpensesForMonth(allExpenses, monthDate,plan.defaultCurrency)
-                }
-                
-                // Add average expenses if enabled
-                if (plan.includeAverageExpenses) {
-                    systemExpenses += getAverageMonthlyExpenses(plan.averageMonthsToCalculate)
-                }
-                
-                systemExpenses
+
+                // Get recurring expenses for this specific month
+                val recurringExpenses = getRecurringExpensesForMonth(allExpenses, monthDate, plan.defaultCurrency)
+
+                // Get average of last 3 months one-time expenses
+                val averageOneTimeExpenses = getAverageOneTimeExpenses()
+
+                recurringExpenses + averageOneTimeExpenses
+            } else {
+                // Use manual expenses
+                plan.manualMonthlyExpenses
             }
             
             // Apply inflation to expenses if enabled
             val adjustedExpenses = if (plan.isInflationApplied && plan.inflationRate > 0) {
                 val monthlyInflationRate = plan.inflationRate / 12 / 100
-                baseExpenses * Math.pow(1 + monthlyInflationRate, monthIndex.toDouble())
+                baseExpenses * (1 + monthlyInflationRate).pow(monthIndex.toDouble())
             } else {
                 baseExpenses
             }
@@ -143,31 +135,24 @@ class PlanRepository(
 
     }
     
-    private suspend fun getMonthlyFixedExpenses(): Double {
-        val allExpenses = expenseRepository.getAllExpensesDirect()
-        return allExpenses
-            .filter { it.recurrenceType == RecurrenceType.MONTHLY }
-            .sumOf { it.amount }
-    }
+
     
-    private suspend fun getAverageMonthlyExpenses(monthsToCalculate: Int): Double {
+    private suspend fun getAverageOneTimeExpenses(): Double {
         val endDate = LocalDateTime.now()
-        val startDate = endDate.minusMonths(monthsToCalculate.toLong())
-        
+        val startDate = endDate.minusMonths(3)
+
         val allExpenses = expenseRepository.getAllExpensesDirect()
-        val recentExpenses = allExpenses.filter { expense ->
-            expense.date.isAfter(startDate) && 
+        val oneTimeExpenses = allExpenses.filter { expense ->
+            expense.date.isAfter(startDate) &&
             expense.date.isBefore(endDate) &&
             expense.recurrenceType == RecurrenceType.NONE
         }
-        
-        val totalSpent = recentExpenses.sumOf { it.amount }
-        return totalSpent / monthsToCalculate
+
+        val totalSpent = oneTimeExpenses.sumOf { it.amount }
+        return totalSpent / 3
     }
-    
-    fun getPlanBreakdownsFlow(planId: String): Flow<List<PlanMonthlyBreakdown>> {
-        return planDao.getPlanBreakdownsFlow(planId)
-    }
+
+
     
     suspend fun getCurrentFinancialPosition(planId: String): PlanCurrentPosition? {
         val planWithBreakdowns = getPlanWithBreakdowns(planId) ?: return null

@@ -39,11 +39,9 @@ fun CreatePlanBottomSheet(
         durationInMonths: Int,
         monthlyIncome: Double,
         monthlyExpenses: Double,
+        useAppExpenseData: Boolean,
         isInflationApplied: Boolean,
-        inflationRate: Double,
-        includeRecurringExpenses: Boolean,
-        includeAverageExpenses: Boolean,
-        averageMonthsToCalculate: Int
+        inflationRate: Double
     ) -> Unit,
     isDarkTheme: Boolean,
     defaultCurrency: String
@@ -52,11 +50,9 @@ fun CreatePlanBottomSheet(
     var monthlyIncome by remember { mutableStateOf("") }
     var monthlyExpenses by remember { mutableStateOf("") }
     var selectedDuration by remember { mutableStateOf(12) }
+    var useAppExpenseData by remember { mutableStateOf(true) }
     var isInflationApplied by remember { mutableStateOf(false) }
     var inflationRate by remember { mutableStateOf("") }
-    var includeRecurringExpenses by remember { mutableStateOf(true) }
-    var includeAverageExpenses by remember { mutableStateOf(false) }
-    var averageMonthsToCalculate by remember { mutableStateOf(3) }
     
     val suggestedDurations = PlanningUtils.getSuggestedPlanDurations()
     
@@ -125,8 +121,46 @@ fun CreatePlanBottomSheet(
                 }
                 
                 Spacer(modifier = Modifier.height(16.dp))
-                
-                // Monthly Income
+        Spacer(modifier = Modifier.height(16.dp))
+        // Duration
+        Text(
+            text = "Plan Süresi",
+            fontSize = 14.sp,
+            fontWeight = FontWeight.Medium,
+            color = ThemeColors.getTextColor(isDarkTheme)
+        )
+        Spacer(modifier = Modifier.height(8.dp))
+
+        // Duration chips
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .horizontalScroll(rememberScrollState())
+        ) {
+            suggestedDurations.forEach { option ->
+                FilterChip(
+                    onClick = { selectedDuration = option.months },
+                    label = {
+                        Text(
+                            text = option.displayText,
+                            fontSize = 12.sp
+                        )
+                    },
+                    selected = selectedDuration == option.months,
+                    colors = FilterChipDefaults.filterChipColors(
+                        containerColor = ThemeColors.getInputBackgroundColor(isDarkTheme),
+                        selectedContainerColor = AppColors.PrimaryOrange.copy(alpha = 0.2f),
+                        labelColor = ThemeColors.getTextColor(isDarkTheme),
+                        selectedLabelColor = AppColors.PrimaryOrange
+                    )
+                )
+            }
+        }
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        // Monthly Income
                 Text(
                     text = "Aylık Gelir ($defaultCurrency)",
                     fontSize = 14.sp,
@@ -174,8 +208,32 @@ fun CreatePlanBottomSheet(
                 }
                 
                 Spacer(modifier = Modifier.height(16.dp))
-                
-                // Monthly Expenses
+
+                // Use App Expense Data Checkbox
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Checkbox(
+                        checked = useAppExpenseData,
+                        onCheckedChange = { useAppExpenseData = it },
+                        colors = CheckboxDefaults.colors(
+                            checkedColor = AppColors.PrimaryOrange,
+                            uncheckedColor = ThemeColors.getTextGrayColor(isDarkTheme)
+                        )
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(
+                        text = "Uygulamanın harcama verilerini kullan",
+                        fontSize = 14.sp,
+                        color = ThemeColors.getTextColor(isDarkTheme)
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                // Manual Monthly Expenses (only shown when checkbox is unchecked)
+                if (!useAppExpenseData) {
                 Text(
                     text = "Aylık Harcama ($defaultCurrency)",
                     fontSize = 14.sp,
@@ -212,7 +270,7 @@ fun CreatePlanBottomSheet(
                         decorationBox = { innerTextField ->
                             if (monthlyExpenses.isEmpty()) {
                                 Text(
-                                    text = "0 (sistem verilerini kullan veya manuel gir)",
+                                    text = "Manuel aylık harcama miktarı",
                                     fontSize = 14.sp,
                                     color = ThemeColors.getTextGrayColor(isDarkTheme)
                                 )
@@ -222,182 +280,88 @@ fun CreatePlanBottomSheet(
                     )
                 }
                 
-                Spacer(modifier = Modifier.height(4.dp))
-                
-                Text(
-                    text = "Boş bırakırsanız sistem verileri kullanılacak",
-                    fontSize = 12.sp,
-                    color = ThemeColors.getTextGrayColor(isDarkTheme)
+                    Spacer(modifier = Modifier.height(4.dp))
+
+                    Text(
+                        text = "Manuel harcama miktarını girin",
+                        fontSize = 12.sp,
+                        color = ThemeColors.getTextGrayColor(isDarkTheme)
+                    )
+                }
+
+
+        // Inflation Settings
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = "Enflasyon Uygula",
+                fontSize = 14.sp,
+                fontWeight = FontWeight.Medium,
+                color = ThemeColors.getTextColor(isDarkTheme)
+            )
+            Switch(
+                checked = isInflationApplied,
+                onCheckedChange = { isInflationApplied = it },
+                colors = SwitchDefaults.colors(
+                    checkedThumbColor = Color.White,
+                    checkedTrackColor = AppColors.PrimaryOrange,
+                    uncheckedThumbColor = ThemeColors.getTextGrayColor(isDarkTheme),
+                    uncheckedTrackColor = ThemeColors.getTextGrayColor(isDarkTheme).copy(alpha = 0.3f)
                 )
-                
-                Spacer(modifier = Modifier.height(16.dp))
-                
-                // Duration
-                Text(
-                    text = "Plan Süresi",
-                    fontSize = 14.sp,
-                    fontWeight = FontWeight.Medium,
-                    color = ThemeColors.getTextColor(isDarkTheme)
-                )
-                Spacer(modifier = Modifier.height(8.dp))
-                
-                // Duration chips
-                Row(
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+            )
+        }
+
+        if (isInflationApplied) {
+            Spacer(modifier = Modifier.height(8.dp))
+
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(
+                        ThemeColors.getInputBackgroundColor(isDarkTheme),
+                        RoundedCornerShape(12.dp)
+                    )
+                    .border(
+                        width = 1.dp,
+                        color = ThemeColors.getTextGrayColor(isDarkTheme).copy(alpha = 0.3f),
+                        shape = RoundedCornerShape(12.dp)
+                    )
+            ) {
+                BasicTextField(
+                    value = inflationRate,
+                    onValueChange = { inflationRate = it },
                     modifier = Modifier
                         .fillMaxWidth()
-                        .horizontalScroll(rememberScrollState())
-                ) {
-                    suggestedDurations.forEach { option ->
-                        FilterChip(
-                            onClick = { selectedDuration = option.months },
-                            label = { 
-                                Text(
-                                    text = option.displayText,
-                                    fontSize = 12.sp
-                                )
-                            },
-                            selected = selectedDuration == option.months,
-                            colors = FilterChipDefaults.filterChipColors(
-                                containerColor = ThemeColors.getInputBackgroundColor(isDarkTheme),
-                                selectedContainerColor = AppColors.PrimaryOrange.copy(alpha = 0.2f),
-                                labelColor = ThemeColors.getTextColor(isDarkTheme),
-                                selectedLabelColor = AppColors.PrimaryOrange
-                            )
-                        )
-                    }
-                }
-                
-                Spacer(modifier = Modifier.height(16.dp))
-                
-                // Inflation Settings
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(
-                        text = "Enflasyon Uygula",
-                        fontSize = 14.sp,
-                        fontWeight = FontWeight.Medium,
+                        .padding(16.dp),
+                    singleLine = true,
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                    textStyle = androidx.compose.ui.text.TextStyle(
+                        fontSize = 16.sp,
                         color = ThemeColors.getTextColor(isDarkTheme)
-                    )
-                    Switch(
-                        checked = isInflationApplied,
-                        onCheckedChange = { isInflationApplied = it },
-                        colors = SwitchDefaults.colors(
-                            checkedThumbColor = Color.White,
-                            checkedTrackColor = AppColors.PrimaryOrange,
-                            uncheckedThumbColor = ThemeColors.getTextGrayColor(isDarkTheme),
-                            uncheckedTrackColor = ThemeColors.getTextGrayColor(isDarkTheme).copy(alpha = 0.3f)
-                        )
-                    )
-                }
-                
-                if (isInflationApplied) {
-                    Spacer(modifier = Modifier.height(8.dp))
-                    
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .background(
-                                ThemeColors.getInputBackgroundColor(isDarkTheme),
-                                RoundedCornerShape(12.dp)
-                            )
-                            .border(
-                                width = 1.dp,
-                                color = ThemeColors.getTextGrayColor(isDarkTheme).copy(alpha = 0.3f),
-                                shape = RoundedCornerShape(12.dp)
-                            )
-                    ) {
-                        BasicTextField(
-                            value = inflationRate,
-                            onValueChange = { inflationRate = it },
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(16.dp),
-                            singleLine = true,
-                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                            textStyle = androidx.compose.ui.text.TextStyle(
-                                fontSize = 16.sp,
-                                color = ThemeColors.getTextColor(isDarkTheme)
-                            ),
-                            decorationBox = { innerTextField ->
-                                Row {
-                                    if (inflationRate.isEmpty()) {
-                                        Text(
-                                            text = "Yıllık % oran",
-                                            fontSize = 16.sp,
-                                            color = ThemeColors.getTextGrayColor(isDarkTheme)
-                                        )
-                                    }
-                                    innerTextField()
-                                }
+                    ),
+                    decorationBox = { innerTextField ->
+                        Row {
+                            if (inflationRate.isEmpty()) {
+                                Text(
+                                    text = "Yıllık % oran",
+                                    fontSize = 16.sp,
+                                    color = ThemeColors.getTextGrayColor(isDarkTheme)
+                                )
                             }
-                        )
+                            innerTextField()
+                        }
                     }
-                }
-                
-                Spacer(modifier = Modifier.height(16.dp))
-                
-                // Expense Settings
-                Text(
-                    text = "Harcama Ayarları",
-                    fontSize = 14.sp,
-                    fontWeight = FontWeight.Medium,
-                    color = ThemeColors.getTextColor(isDarkTheme)
                 )
-                Spacer(modifier = Modifier.height(8.dp))
+            }
+        }
+
+
+        Spacer(modifier = Modifier.height(16.dp))
                 
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(
-                        text = "Sabit harcamaları dahil et",
-                        fontSize = 12.sp,
-                        color = ThemeColors.getTextColor(isDarkTheme),
-                        modifier = Modifier.weight(1f)
-                    )
-                    Switch(
-                        checked = includeRecurringExpenses,
-                        onCheckedChange = { includeRecurringExpenses = it },
-                        colors = SwitchDefaults.colors(
-                            checkedThumbColor = Color.White,
-                            checkedTrackColor = AppColors.PrimaryOrange,
-                            uncheckedThumbColor = ThemeColors.getTextGrayColor(isDarkTheme),
-                            uncheckedTrackColor = ThemeColors.getTextGrayColor(isDarkTheme).copy(alpha = 0.3f)
-                        )
-                    )
-                }
-                
-                Spacer(modifier = Modifier.height(8.dp))
-                
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(
-                        text = "Geçmiş ortalama harcamaları dahil et",
-                        fontSize = 12.sp,
-                        color = ThemeColors.getTextColor(isDarkTheme),
-                        modifier = Modifier.weight(1f)
-                    )
-                    Switch(
-                        checked = includeAverageExpenses,
-                        onCheckedChange = { includeAverageExpenses = it },
-                        colors = SwitchDefaults.colors(
-                            checkedThumbColor = Color.White,
-                            checkedTrackColor = AppColors.PrimaryOrange,
-                            uncheckedThumbColor = ThemeColors.getTextGrayColor(isDarkTheme),
-                            uncheckedTrackColor = ThemeColors.getTextGrayColor(isDarkTheme).copy(alpha = 0.3f)
-                        )
-                    )
-                }
-                
-                Spacer(modifier = Modifier.height(20.dp))
+
                 
                 // Action Buttons
                 Row(
@@ -429,11 +393,9 @@ fun CreatePlanBottomSheet(
                                 selectedDuration,
                                 income,
                                 expenses,
+                                useAppExpenseData,
                                 isInflationApplied,
-                                inflation,
-                                includeRecurringExpenses,
-                                includeAverageExpenses,
-                                averageMonthsToCalculate
+                                inflation
                             )
                         },
                         modifier = Modifier.weight(1f),

@@ -243,18 +243,16 @@ fun PlanningScreen(
                 ) {
                     CreatePlanBottomSheet(
                         onDismiss = { showCreatePlanDialog = false },
-                        onCreatePlan = { name, duration, income, expenses, inflationApplied, inflationRate, recurring, average, avgMonths ->
+                        onCreatePlan = { name, duration, income, expenses, useAppData, inflationApplied, inflationRate ->
                             planningViewModel.createPlan(
                                 name = name,
                                 startDate = java.time.LocalDateTime.now(),
                                 durationInMonths = duration,
                                 monthlyIncome = income,
                                 manualMonthlyExpenses = expenses,
+                                useAppExpenseData = useAppData,
                                 isInflationApplied = inflationApplied,
                                 inflationRate = inflationRate,
-                                includeRecurringExpenses = recurring,
-                                includeAverageExpenses = average,
-                                averageMonthsToCalculate = avgMonths,
                                 defaultCurrency = defaultCurrency
                             )
                             showCreatePlanDialog = false

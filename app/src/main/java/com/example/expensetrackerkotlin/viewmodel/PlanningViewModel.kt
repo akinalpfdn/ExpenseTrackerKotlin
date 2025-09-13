@@ -76,11 +76,9 @@ class PlanningViewModel(
         durationInMonths: Int,
         monthlyIncome: Double,
         manualMonthlyExpenses: Double = 0.0,
+        useAppExpenseData: Boolean = true,
         isInflationApplied: Boolean = false,
         inflationRate: Double = 0.0,
-        includeRecurringExpenses: Boolean = true,
-        includeAverageExpenses: Boolean = false,
-        averageMonthsToCalculate: Int = 3,
         defaultCurrency: String
     ) {
         viewModelScope.launch {
@@ -104,11 +102,9 @@ class PlanningViewModel(
                     durationInMonths = durationInMonths,
                     monthlyIncome = monthlyIncome,
                     manualMonthlyExpenses = manualMonthlyExpenses,
+                    useAppExpenseData = useAppExpenseData,
                     isInflationApplied = isInflationApplied,
                     inflationRate = inflationRate,
-                    includeRecurringExpenses = includeRecurringExpenses,
-                    includeAverageExpenses = includeAverageExpenses,
-                    averageMonthsToCalculate = averageMonthsToCalculate,
                     defaultCurrency = defaultCurrency
                 )
                 
@@ -122,61 +118,7 @@ class PlanningViewModel(
         }
     }
     
-    fun updatePlan(
-        planId: String,
-        name: String,
-        startDate: LocalDateTime,
-        durationInMonths: Int,
-        monthlyIncome: Double,
-        isInflationApplied: Boolean = false,
-        inflationRate: Double = 0.0,
-        includeRecurringExpenses: Boolean = true,
-        includeAverageExpenses: Boolean = false,
-        averageMonthsToCalculate: Int = 3
-    ) {
-        viewModelScope.launch {
-            _isLoading.value = true
-            try {
-                val validation = PlanningUtils.validatePlanInput(
-                    name = name,
-                    monthlyIncome = monthlyIncome,
-                    durationInMonths = durationInMonths,
-                    inflationRate = if (isInflationApplied) inflationRate else null
-                )
-                
-                if (!validation.isValid) {
-                    _error.value = validation.errors.first()
-                    return@launch
-                }
-                
-                val existingPlan = planRepository.getPlan(planId)
-                if (existingPlan == null) {
-                    _error.value = "Plan bulunamadı"
-                    return@launch
-                }
-                
-                val updatedPlan = existingPlan.copy(
-                    name = name,
-                    startDate = startDate,
-                    durationInMonths = durationInMonths,
-                    monthlyIncome = monthlyIncome,
-                    isInflationApplied = isInflationApplied,
-                    inflationRate = inflationRate,
-                    includeRecurringExpenses = includeRecurringExpenses,
-                    includeAverageExpenses = includeAverageExpenses,
-                    averageMonthsToCalculate = averageMonthsToCalculate,
-                )
-                
-                planRepository.updatePlan(updatedPlan)
-                clearError()
-            } catch (e: Exception) {
-                _error.value = "Plan güncellenirken hata oluştu: ${e.message}"
-            } finally {
-                _isLoading.value = false
-            }
-        }
-    }
-    
+
     fun deletePlan(planId: String) {
         viewModelScope.launch {
             _isLoading.value = true

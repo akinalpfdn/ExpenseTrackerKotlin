@@ -9,7 +9,7 @@ import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 import kotlinx.coroutines.launch
 
-@Database(entities = [Expense::class, Category::class, SubCategory::class, FinancialPlan::class, PlanMonthlyBreakdown::class], version = 8, exportSchema = false)
+@Database(entities = [Expense::class, Category::class, SubCategory::class, FinancialPlan::class, PlanMonthlyBreakdown::class], version = 9, exportSchema = false)
 @TypeConverters(Converters::class)
 abstract class ExpenseDatabase : RoomDatabase() {
     abstract fun expenseDao(): ExpenseDao
@@ -247,6 +247,50 @@ abstract class ExpenseDatabase : RoomDatabase() {
                 database.execSQL("ALTER TABLE financial_plans ADD COLUMN defaultCurrency TEXT NOT NULL DEFAULT '₺'")
             }
         }
+
+        private val MIGRATION_8_9 = object : Migration(8, 9) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                // Replace multiple expense flags with single useAppExpenseData boolean
+                database.execSQL("ALTER TABLE financial_plans ADD COLUMN useAppExpenseData INTEGER NOT NULL DEFAULT 1")
+
+                // Remove old columns by creating new table and copying data
+                database.execSQL("""
+                    CREATE TABLE financial_plans_new (
+                        id TEXT PRIMARY KEY NOT NULL,
+                        name TEXT NOT NULL,
+                        startDate TEXT NOT NULL,
+                        durationInMonths INTEGER NOT NULL,
+                        monthlyIncome REAL NOT NULL,
+                        manualMonthlyExpenses REAL NOT NULL DEFAULT 0.0,
+                        useAppExpenseData INTEGER NOT NULL DEFAULT 1,
+                        isInflationApplied INTEGER NOT NULL DEFAULT 0,
+                        inflationRate REAL NOT NULL DEFAULT 0.0,
+                        createdAt TEXT NOT NULL,
+                        updatedAt TEXT NOT NULL,
+                        defaultCurrency TEXT NOT NULL DEFAULT '₺'
+                    )
+                """)
+
+                // Copy data from old table, combining logic from old flags
+                database.execSQL("""
+                    INSERT INTO financial_plans_new (
+                        id, name, startDate, durationInMonths, monthlyIncome,
+                        manualMonthlyExpenses, useAppExpenseData, isInflationApplied,
+                        inflationRate, createdAt, updatedAt, defaultCurrency
+                    )
+                    SELECT
+                        id, name, startDate, durationInMonths, monthlyIncome,
+                        manualMonthlyExpenses,
+                        CASE WHEN manualMonthlyExpenses > 0 THEN 0 ELSE 1 END,
+                        isInflationApplied, inflationRate, createdAt, updatedAt, defaultCurrency
+                    FROM financial_plans
+                """)
+
+                // Drop old table and rename new one
+                database.execSQL("DROP TABLE financial_plans")
+                database.execSQL("ALTER TABLE financial_plans_new RENAME TO financial_plans")
+            }
+        }
         
         @Volatile
         private var INSTANCE: ExpenseDatabase? = null
@@ -258,7 +302,7 @@ abstract class ExpenseDatabase : RoomDatabase() {
                     ExpenseDatabase::class.java,
                     "expense_database"
                 )
-                .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5, MIGRATION_5_6, MIGRATION_6_7, MIGRATION_7_8)
+                .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5, MIGRATION_5_6, MIGRATION_6_7, MIGRATION_7_8, MIGRATION_8_9)
                 .addCallback(object : RoomDatabase.Callback() {
                     override fun onCreate(db: SupportSQLiteDatabase) {
                         super.onCreate(db)

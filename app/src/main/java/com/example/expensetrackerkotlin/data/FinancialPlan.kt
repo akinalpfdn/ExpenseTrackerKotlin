@@ -16,11 +16,9 @@ data class FinancialPlan(
     val durationInMonths: Int,
     val monthlyIncome: Double,
     val manualMonthlyExpenses: Double = 0.0, // User-defined monthly expenses
+    val useAppExpenseData: Boolean = true, // If true, use app data; if false, use manual expenses
     val isInflationApplied: Boolean = false,
     val inflationRate: Double = 0.0,
-    val includeRecurringExpenses: Boolean = true,
-    val includeAverageExpenses: Boolean = false,
-    val averageMonthsToCalculate: Int = 3,
     val createdAt: LocalDateTime = LocalDateTime.now(),
     val updatedAt: LocalDateTime = LocalDateTime.now(),
     val defaultCurrency: String
@@ -30,12 +28,16 @@ data class FinancialPlan(
         get() = startDate.plusMonths(durationInMonths.toLong())
     
     fun getMonthlyIncomeAtMonth(monthIndex: Int): Double {
+        return monthlyIncome;
+        /*
         return if (isInflationApplied && inflationRate > 0) {
             val monthlyInflationRate = inflationRate / 12 / 100
             monthlyIncome * Math.pow(1 + monthlyInflationRate, monthIndex.toDouble())
         } else {
             monthlyIncome
         }
+        */
+
     }
     
     fun getTotalExpectedIncome(): Double {
