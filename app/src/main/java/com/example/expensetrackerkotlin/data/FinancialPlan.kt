@@ -19,8 +19,9 @@ data class FinancialPlan(
     val useAppExpenseData: Boolean = true, // If true, use app data; if false, use manual expenses
     val isInflationApplied: Boolean = false,
     val inflationRate: Double = 0.0,
-    val isInterestApplied: Boolean = false, // If true, apply compound interest on positive savings
+    val isInterestApplied: Boolean = false, // If true, apply interest on positive savings
     val interestRate: Double = 0.0, // Annual interest rate percentage
+    val interestType: InterestType = InterestType.COMPOUND, // Simple or compound interest
     val createdAt: LocalDateTime = LocalDateTime.now(),
     val updatedAt: LocalDateTime = LocalDateTime.now(),
     val defaultCurrency: String

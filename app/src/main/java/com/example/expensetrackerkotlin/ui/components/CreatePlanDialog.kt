@@ -24,6 +24,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import com.example.expensetrackerkotlin.ui.theme.AppColors
 import com.example.expensetrackerkotlin.ui.theme.ThemeColors
+import com.example.expensetrackerkotlin.data.InterestType
 import com.example.expensetrackerkotlin.utils.NumberFormatter
 import com.example.expensetrackerkotlin.utils.PlanningUtils
 import java.time.LocalDateTime
@@ -43,7 +44,8 @@ fun CreatePlanBottomSheet(
         isInflationApplied: Boolean,
         inflationRate: Double,
         isInterestApplied: Boolean,
-        interestRate: Double
+        interestRate: Double,
+        interestType: InterestType
     ) -> Unit,
     isDarkTheme: Boolean,
     defaultCurrency: String
@@ -57,6 +59,7 @@ fun CreatePlanBottomSheet(
     var inflationRate by remember { mutableStateOf("") }
     var isInterestApplied by remember { mutableStateOf(false) }
     var interestRate by remember { mutableStateOf("") }
+    var selectedInterestType by remember { mutableStateOf(InterestType.COMPOUND) }
     
     val suggestedDurations = PlanningUtils.getSuggestedPlanDurations()
     
@@ -190,7 +193,45 @@ fun CreatePlanBottomSheet(
 
         if (isInterestApplied) {
             Spacer(modifier = Modifier.height(8.dp))
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                FilterChip(
+                    onClick = { selectedInterestType = InterestType.SIMPLE },
+                    label = {
+                        Text(
+                            text = "Basit Faiz",
+                            fontSize = 12.sp
+                        )
+                    },
+                    selected = selectedInterestType == InterestType.SIMPLE,
+                    colors = FilterChipDefaults.filterChipColors(
+                        containerColor = ThemeColors.getInputBackgroundColor(isDarkTheme),
+                        selectedContainerColor = AppColors.PrimaryOrange.copy(alpha = 0.2f),
+                        labelColor = ThemeColors.getTextColor(isDarkTheme),
+                        selectedLabelColor = AppColors.PrimaryOrange
+                    )
+                )
 
+                FilterChip(
+                    onClick = { selectedInterestType = InterestType.COMPOUND },
+                    label = {
+                        Text(
+                            text = "Bileşik Faiz",
+                            fontSize = 12.sp
+                        )
+                    },
+                    selected = selectedInterestType == InterestType.COMPOUND,
+                    colors = FilterChipDefaults.filterChipColors(
+                        containerColor = ThemeColors.getInputBackgroundColor(isDarkTheme),
+                        selectedContainerColor = AppColors.PrimaryOrange.copy(alpha = 0.2f),
+                        labelColor = ThemeColors.getTextColor(isDarkTheme),
+                        selectedLabelColor = AppColors.PrimaryOrange
+                    )
+                )
+            }
+            Spacer(modifier = Modifier.height(8.dp))
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -234,10 +275,23 @@ fun CreatePlanBottomSheet(
             Spacer(modifier = Modifier.height(4.dp))
 
             Text(
-                text = "Pozitif birikime bileşik faiz uygulanır",
+                text = "Pozitif birikime faiz uygulanır",
                 fontSize = 12.sp,
                 color = ThemeColors.getTextGrayColor(isDarkTheme)
             )
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            // Interest Type Selection
+            Text(
+                text = "Faiz Türü",
+                fontSize = 12.sp,
+                fontWeight = FontWeight.Medium,
+                color = ThemeColors.getTextColor(isDarkTheme)
+            )
+
+
+
         }
 
         Spacer(modifier = Modifier.height(16.dp))
@@ -480,7 +534,8 @@ fun CreatePlanBottomSheet(
                                 isInflationApplied,
                                 inflation,
                                 isInterestApplied,
-                                interest
+                                interest,
+                                selectedInterestType
                             )
                         },
                         modifier = Modifier.weight(1f),

@@ -81,6 +81,7 @@ class PlanningViewModel(
         inflationRate: Double = 0.0,
         isInterestApplied: Boolean = false,
         interestRate: Double = 0.0,
+        interestType: com.example.expensetrackerkotlin.data.InterestType = com.example.expensetrackerkotlin.data.InterestType.COMPOUND,
         defaultCurrency: String
     ) {
         viewModelScope.launch {
@@ -109,6 +110,7 @@ class PlanningViewModel(
                     inflationRate = inflationRate,
                     isInterestApplied = isInterestApplied,
                     interestRate = interestRate,
+                    interestType = interestType,
                     defaultCurrency = defaultCurrency
                 )
                 

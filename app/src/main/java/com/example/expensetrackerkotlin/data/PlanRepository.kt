@@ -101,8 +101,21 @@ class PlanRepository(
 
             // Calculate interest earned on positive cumulative balance
             val interestEarned = if (plan.isInterestApplied && cumulativeNet > 0 && plan.interestRate > 0) {
-                val monthlyInterestRate = plan.interestRate / 12 / 100
-                cumulativeNet * monthlyInterestRate
+                when (plan.interestType) {
+                    InterestType.SIMPLE -> {
+                        // Simple interest: (Principal * Rate * Time) / 12 for monthly calculation
+                        // Use current balance as principal for each month
+                        val annualRate = plan.interestRate / 100
+                        val monthlySimpleRate = annualRate / 12
+                        cumulativeNet * monthlySimpleRate
+                    }
+                    InterestType.COMPOUND -> {
+                        // Compound interest: (1 + r)^(1/12) - 1 for true monthly compounding
+                        val annualRate = plan.interestRate / 100
+                        val monthlyCompoundRate = (1 + annualRate).pow(1.0 / 12.0) - 1
+                        cumulativeNet * monthlyCompoundRate
+                    }
+                }
             } else {
                 0.0
             }

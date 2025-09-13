@@ -9,7 +9,7 @@ import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 import kotlinx.coroutines.launch
 
-@Database(entities = [Expense::class, Category::class, SubCategory::class, FinancialPlan::class, PlanMonthlyBreakdown::class], version = 10, exportSchema = false)
+@Database(entities = [Expense::class, Category::class, SubCategory::class, FinancialPlan::class, PlanMonthlyBreakdown::class], version = 11, exportSchema = false)
 @TypeConverters(Converters::class)
 abstract class ExpenseDatabase : RoomDatabase() {
     abstract fun expenseDao(): ExpenseDao
@@ -302,6 +302,13 @@ abstract class ExpenseDatabase : RoomDatabase() {
                 database.execSQL("ALTER TABLE plan_monthly_breakdowns ADD COLUMN interestEarned REAL NOT NULL DEFAULT 0.0")
             }
         }
+
+        private val MIGRATION_10_11 = object : Migration(10, 11) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                // Add interest type field to financial_plans (COMPOUND is default)
+                database.execSQL("ALTER TABLE financial_plans ADD COLUMN interestType TEXT NOT NULL DEFAULT 'COMPOUND'")
+            }
+        }
         
         @Volatile
         private var INSTANCE: ExpenseDatabase? = null
@@ -313,7 +320,7 @@ abstract class ExpenseDatabase : RoomDatabase() {
                     ExpenseDatabase::class.java,
                     "expense_database"
                 )
-                .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5, MIGRATION_5_6, MIGRATION_6_7, MIGRATION_7_8, MIGRATION_8_9, MIGRATION_9_10)
+                .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5, MIGRATION_5_6, MIGRATION_6_7, MIGRATION_7_8, MIGRATION_8_9, MIGRATION_9_10, MIGRATION_10_11)
                 .addCallback(object : RoomDatabase.Callback() {
                     override fun onCreate(db: SupportSQLiteDatabase) {
                         super.onCreate(db)
