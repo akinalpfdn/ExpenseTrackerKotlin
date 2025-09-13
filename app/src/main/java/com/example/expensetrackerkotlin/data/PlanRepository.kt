@@ -86,7 +86,7 @@ class PlanRepository(
                 
                 // Add recurring expenses for this specific month
                 if (plan.includeRecurringExpenses) {
-                    systemExpenses += getRecurringExpensesForMonth(allExpenses, monthDate)
+                    systemExpenses += getRecurringExpensesForMonth(allExpenses, monthDate,plan.defaultCurrency)
                 }
                 
                 // Add average expenses if enabled
@@ -125,14 +125,22 @@ class PlanRepository(
         planDao.insertBreakdowns(breakdowns)
     }
     
-    private suspend fun getRecurringExpensesForMonth(allExpenses: List<Expense>, monthDate: LocalDateTime): Double {
+    private fun getRecurringExpensesForMonth(
+        allExpenses: List<Expense>,
+        monthDate: LocalDateTime,
+        defaultCurrency: String
+    ): Double {
         // Filter recurring expenses that are active for this specific month
         // Similar to AnalysisScreen pattern
+        val selectedMonth= YearMonth.of(monthDate.year,monthDate.month);
+
         return allExpenses.filter { expense ->
-            expense.recurrenceType != RecurrenceType.NONE && 
-            (expense.endDate == null || expense.endDate!!.isAfter(monthDate)) && 
-            expense.date.isBefore(monthDate.plusDays(1)) // Started before or during this month
-        }.sumOf { it.amount }
+            expense.recurrenceType != RecurrenceType.NONE
+                    && expense.date<selectedMonth.atEndOfMonth().atStartOfDay().plusDays(1)
+                    &&  selectedMonth.atEndOfMonth().plusMonths(-1).atStartOfDay().plusDays(1)<=expense.date
+        }.sumOf { it.getAmountInDefaultCurrency(defaultCurrency) }
+
+
     }
     
     private suspend fun getMonthlyFixedExpenses(): Double {

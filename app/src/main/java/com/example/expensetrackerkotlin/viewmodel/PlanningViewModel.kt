@@ -80,7 +80,8 @@ class PlanningViewModel(
         inflationRate: Double = 0.0,
         includeRecurringExpenses: Boolean = true,
         includeAverageExpenses: Boolean = false,
-        averageMonthsToCalculate: Int = 3
+        averageMonthsToCalculate: Int = 3,
+        defaultCurrency: String
     ) {
         viewModelScope.launch {
             _isLoading.value = true
@@ -107,7 +108,8 @@ class PlanningViewModel(
                     inflationRate = inflationRate,
                     includeRecurringExpenses = includeRecurringExpenses,
                     includeAverageExpenses = includeAverageExpenses,
-                    averageMonthsToCalculate = averageMonthsToCalculate
+                    averageMonthsToCalculate = averageMonthsToCalculate,
+                    defaultCurrency = defaultCurrency
                 )
                 
                 planRepository.insertPlan(newPlan)
@@ -162,7 +164,7 @@ class PlanningViewModel(
                     inflationRate = inflationRate,
                     includeRecurringExpenses = includeRecurringExpenses,
                     includeAverageExpenses = includeAverageExpenses,
-                    averageMonthsToCalculate = averageMonthsToCalculate
+                    averageMonthsToCalculate = averageMonthsToCalculate,
                 )
                 
                 planRepository.updatePlan(updatedPlan)

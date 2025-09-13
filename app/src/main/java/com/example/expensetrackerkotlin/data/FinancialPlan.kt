@@ -22,7 +22,8 @@ data class FinancialPlan(
     val includeAverageExpenses: Boolean = false,
     val averageMonthsToCalculate: Int = 3,
     val createdAt: LocalDateTime = LocalDateTime.now(),
-    val updatedAt: LocalDateTime = LocalDateTime.now()
+    val updatedAt: LocalDateTime = LocalDateTime.now(),
+    val defaultCurrency: String
 ) {
     
     val endDate: LocalDateTime

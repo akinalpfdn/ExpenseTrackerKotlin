@@ -9,7 +9,7 @@ import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 import kotlinx.coroutines.launch
 
-@Database(entities = [Expense::class, Category::class, SubCategory::class, FinancialPlan::class, PlanMonthlyBreakdown::class], version = 7, exportSchema = false)
+@Database(entities = [Expense::class, Category::class, SubCategory::class, FinancialPlan::class, PlanMonthlyBreakdown::class], version = 8, exportSchema = false)
 @TypeConverters(Converters::class)
 abstract class ExpenseDatabase : RoomDatabase() {
     abstract fun expenseDao(): ExpenseDao
@@ -241,6 +241,13 @@ abstract class ExpenseDatabase : RoomDatabase() {
             }
         }
         
+        private val MIGRATION_7_8 = object : Migration(7, 8) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                // Add defaultCurrency field to financial_plans table
+                database.execSQL("ALTER TABLE financial_plans ADD COLUMN defaultCurrency TEXT NOT NULL DEFAULT '₺'")
+            }
+        }
+        
         @Volatile
         private var INSTANCE: ExpenseDatabase? = null
         
@@ -251,7 +258,7 @@ abstract class ExpenseDatabase : RoomDatabase() {
                     ExpenseDatabase::class.java,
                     "expense_database"
                 )
-                .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5, MIGRATION_5_6, MIGRATION_6_7)
+                .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5, MIGRATION_5_6, MIGRATION_6_7, MIGRATION_7_8)
                 .addCallback(object : RoomDatabase.Callback() {
                     override fun onCreate(db: SupportSQLiteDatabase) {
                         super.onCreate(db)

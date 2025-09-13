@@ -254,7 +254,8 @@ fun PlanningScreen(
                                 inflationRate = inflationRate,
                                 includeRecurringExpenses = recurring,
                                 includeAverageExpenses = average,
-                                averageMonthsToCalculate = avgMonths
+                                averageMonthsToCalculate = avgMonths,
+                                defaultCurrency = defaultCurrency
                             )
                             showCreatePlanDialog = false
                         },

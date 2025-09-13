@@ -259,12 +259,12 @@ fun AnalysisScreen(
         )
     }
 
-    val recurringExpenseTotal = remember(expenses) {
+    val recurringExpenseTotal = remember(expenses,selectedMonth) {
 
         val threeMonthsFromNow = selectedMonth.atEndOfMonth().plusMonths(3).atStartOfDay().plusDays(1)
         expenses.filter { expense ->
-            expense.recurrenceType != RecurrenceType.NONE && 
-            (expense.endDate == null || expense.endDate.isAfter(threeMonthsFromNow))
+            expense.recurrenceType != RecurrenceType.NONE
+                   &&(expense.endDate == null || expense.endDate.isAfter(threeMonthsFromNow))
                     && expense.date<selectedMonth.atEndOfMonth().atStartOfDay().plusDays(1)
                     &&  selectedMonth.atEndOfMonth().plusMonths(-1).atStartOfDay().plusDays(1)<=expense.date
         }.sumOf { it.getAmountInDefaultCurrency(viewModel.defaultCurrency) }
@@ -745,18 +745,18 @@ fun MonthYearSelector(
         IconButton(
             onClick = {
                 val nextMonth = selectedMonth.plusMonths(1)
-                if (!nextMonth.isAfter(currentMonth)) {
+               // if (!nextMonth.isAfter(currentMonth)) {
                     onMonthYearChanged(nextMonth)
-                }
+               // }
             },
-            enabled = !selectedMonth.plusMonths(1).isAfter(currentMonth)
+            //enabled = !selectedMonth.plusMonths(1).isAfter(currentMonth)
         ) {
             Icon(
                 imageVector = Icons.Default.ChevronRight,
                 contentDescription = "Sonraki ay",
-                tint = if (!selectedMonth.plusMonths(1).isAfter(currentMonth)) 
+                tint = //if (!selectedMonth.plusMonths(1).isAfter(currentMonth))
                     ThemeColors.getTextColor(isDarkTheme) 
-                else ThemeColors.getTextGrayColor(isDarkTheme)
+                //else ThemeColors.getTextGrayColor(isDarkTheme)
             )
         }
     }
