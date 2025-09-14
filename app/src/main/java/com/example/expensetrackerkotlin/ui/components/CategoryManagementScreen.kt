@@ -11,15 +11,14 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.DirectionsWalk
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -27,12 +26,13 @@ import androidx.compose.ui.res.stringResource
 import com.example.expensetrackerkotlin.R
 import com.example.expensetrackerkotlin.ui.theme.AppColors
 import com.example.expensetrackerkotlin.ui.theme.ThemeColors
+import androidx.core.graphics.toColorInt
 
 @Composable
 fun CategoryManagementScreen(
+    modifier: Modifier = Modifier,
     viewModel: com.example.expensetrackerkotlin.viewmodel.ExpenseViewModel,
     isDarkTheme: Boolean = true,
-    modifier: Modifier = Modifier
 ) {
     var expandedCategories by remember { mutableStateOf(setOf<String>()) } // Store category IDs
     var showAddMainCategoryDialog by remember { mutableStateOf(false) }
@@ -265,7 +265,7 @@ private fun AddMainCategoryDialog(
          "cake" to Icons.Default.Cake,
          "coffee" to Icons.Default.Coffee,
          "directions_bus" to Icons.Default.DirectionsBus,
-         "directions_walk" to Icons.Default.DirectionsWalk,
+         "directions_walk" to Icons.AutoMirrored.Filled.DirectionsWalk,
          "eco" to Icons.Default.Eco,
          "fitness_center" to Icons.Default.FitnessCenter,
          "gavel" to Icons.Default.Gavel,
@@ -382,13 +382,13 @@ private fun AddMainCategoryDialog(
                                  modifier = Modifier
                                      .size(48.dp)
                                      .background(
-                                         if (isSelected) Color(android.graphics.Color.parseColor(selectedColorHex)).copy(alpha = 0.2f) 
+                                         if (isSelected) Color(selectedColorHex.toColorInt()).copy(alpha = 0.2f)
                                          else ThemeColors.getInputBackgroundColor(isDarkTheme),
                                          CircleShape
                                      )
                                      .border(
                                          width = if (isSelected) 2.dp else 1.dp,
-                                         color = if (isSelected) Color(android.graphics.Color.parseColor(selectedColorHex)) 
+                                         color = if (isSelected) Color(selectedColorHex.toColorInt())
                                                 else ThemeColors.getTextGrayColor(isDarkTheme),
                                          shape = CircleShape
                                      )
@@ -399,7 +399,7 @@ private fun AddMainCategoryDialog(
                                      imageVector = icon,
                                      contentDescription = iconName,
                                      modifier = Modifier.size(24.dp),
-                                     tint = if (isSelected) Color(android.graphics.Color.parseColor(selectedColorHex))
+                                     tint = if (isSelected) Color(selectedColorHex.toColorInt())
                                            else ThemeColors.getTextGrayColor(isDarkTheme)
                                  )
                              }
@@ -429,7 +429,7 @@ private fun AddMainCategoryDialog(
                                  modifier = Modifier
                                      .size(40.dp)
                                      .background(
-                                         Color(android.graphics.Color.parseColor(colorHex)),
+                                         Color(colorHex.toColorInt()),
                                          CircleShape
                                      )
                                      .border(
@@ -672,7 +672,7 @@ private fun EditCategoryDialog(
          "cake" to Icons.Default.Cake,
          "coffee" to Icons.Default.Coffee,
          "directions_bus" to Icons.Default.DirectionsBus,
-         "directions_walk" to Icons.Default.DirectionsWalk,
+         "directions_walk" to Icons.AutoMirrored.Filled.DirectionsWalk,
          "eco" to Icons.Default.Eco,
          "fitness_center" to Icons.Default.FitnessCenter,
          "gavel" to Icons.Default.Gavel,
@@ -812,13 +812,13 @@ private fun EditCategoryDialog(
                                      modifier = Modifier
                                          .size(48.dp)
                                          .background(
-                                             if (isSelected) Color(android.graphics.Color.parseColor(selectedColorHex)).copy(alpha = 0.2f) 
+                                             if (isSelected) Color(selectedColorHex.toColorInt()).copy(alpha = 0.2f)
                                              else ThemeColors.getInputBackgroundColor(isDarkTheme),
                                              CircleShape
                                          )
                                          .border(
                                              width = if (isSelected) 2.dp else 1.dp,
-                                             color = if (isSelected) Color(android.graphics.Color.parseColor(selectedColorHex)) 
+                                             color = if (isSelected) Color(selectedColorHex.toColorInt())
                                                     else ThemeColors.getTextGrayColor(isDarkTheme),
                                              shape = CircleShape
                                          )
@@ -829,7 +829,7 @@ private fun EditCategoryDialog(
                                          imageVector = icon,
                                          contentDescription = iconName,
                                          modifier = Modifier.size(24.dp),
-                                         tint = if (isSelected) Color(android.graphics.Color.parseColor(selectedColorHex))
+                                         tint = if (isSelected) Color(selectedColorHex.toColorInt())
                                                else ThemeColors.getTextGrayColor(isDarkTheme)
                                      )
                                  }
@@ -859,7 +859,7 @@ private fun EditCategoryDialog(
                                      modifier = Modifier
                                          .size(40.dp)
                                          .background(
-                                             Color(android.graphics.Color.parseColor(colorHex)),
+                                             Color(colorHex.toColorInt()),
                                              CircleShape
                                          )
                                          .border(

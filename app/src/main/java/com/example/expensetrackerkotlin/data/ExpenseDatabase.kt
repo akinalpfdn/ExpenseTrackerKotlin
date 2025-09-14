@@ -7,6 +7,7 @@ import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
+import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.launch
 
 @Database(entities = [Expense::class, Category::class, SubCategory::class, FinancialPlan::class, PlanMonthlyBreakdown::class], version = 11, exportSchema = false)
@@ -18,31 +19,31 @@ abstract class ExpenseDatabase : RoomDatabase() {
     
     companion object {
         private val MIGRATION_1_2 = object : Migration(1, 2) {
-            override fun migrate(database: SupportSQLiteDatabase) {
+            override fun migrate(db: SupportSQLiteDatabase) {
                 // Add the exchangeRate column with a default value of NULL
-                database.execSQL("ALTER TABLE expenses ADD COLUMN exchangeRate REAL")
+                db.execSQL("ALTER TABLE expenses ADD COLUMN exchangeRate REAL")
             }
         }
         
         private val MIGRATION_2_3 = object : Migration(2, 3) {
-            override fun migrate(database: SupportSQLiteDatabase) {
+            override fun migrate(db: SupportSQLiteDatabase) {
                 // Add recurring expense fields
-                database.execSQL("ALTER TABLE expenses ADD COLUMN recurrenceType TEXT DEFAULT 'NONE'")
-                database.execSQL("ALTER TABLE expenses ADD COLUMN endDate TEXT")
+                db.execSQL("ALTER TABLE expenses ADD COLUMN recurrenceType TEXT DEFAULT 'NONE'")
+                db.execSQL("ALTER TABLE expenses ADD COLUMN endDate TEXT")
             }
         }
         
         private val MIGRATION_3_4 = object : Migration(3, 4) {
-            override fun migrate(database: SupportSQLiteDatabase) {
+            override fun migrate(db: SupportSQLiteDatabase) {
                 // Add recurrence group ID field
-                database.execSQL("ALTER TABLE expenses ADD COLUMN recurrenceGroupId TEXT")
+                db.execSQL("ALTER TABLE expenses ADD COLUMN recurrenceGroupId TEXT")
             }
         }
         
         private val MIGRATION_4_5 = object : Migration(4, 5) {
-            override fun migrate(database: SupportSQLiteDatabase) {
+            override fun migrate(db: SupportSQLiteDatabase) {
                 // Create categories table
-                database.execSQL("""
+                db.execSQL("""
                     CREATE TABLE IF NOT EXISTS categories (
                         id TEXT PRIMARY KEY NOT NULL,
                         name TEXT NOT NULL,
@@ -54,7 +55,7 @@ abstract class ExpenseDatabase : RoomDatabase() {
                 """)
                 
                 // Create subcategories table
-                database.execSQL("""
+                db.execSQL("""
                     CREATE TABLE IF NOT EXISTS subcategories (
                         id TEXT PRIMARY KEY NOT NULL,
                         name TEXT NOT NULL,
@@ -66,14 +67,14 @@ abstract class ExpenseDatabase : RoomDatabase() {
                 """)
                 
                 // Create index for subcategories
-                database.execSQL("CREATE INDEX IF NOT EXISTS index_subcategories_categoryId ON subcategories(categoryId)")
+                db.execSQL("CREATE INDEX IF NOT EXISTS index_subcategories_categoryId ON subcategories(categoryId)")
             }
         }
         
         private val MIGRATION_5_6 = object : Migration(5, 6) {
-            override fun migrate(database: SupportSQLiteDatabase) {
+            override fun migrate(db: SupportSQLiteDatabase) {
                 // First, create a temporary table with the new structure
-                database.execSQL("""
+                db.execSQL("""
                     CREATE TABLE expenses_new (
                         id TEXT PRIMARY KEY NOT NULL,
                         amount REAL NOT NULL,
@@ -93,7 +94,7 @@ abstract class ExpenseDatabase : RoomDatabase() {
                 
                 // Copy data from old table to new table, mapping subCategory strings to IDs
                 // We'll use a default mapping for existing data
-                database.execSQL("""
+                db.execSQL("""
                     INSERT INTO expenses_new (
                         id, amount, currency, categoryId, subCategoryId, description, 
                         date, dailyLimitAtCreation, monthlyLimitAtCreation, exchangeRate,
@@ -192,17 +193,17 @@ abstract class ExpenseDatabase : RoomDatabase() {
                 """)
                 
                 // Drop the old table
-                database.execSQL("DROP TABLE expenses")
+                db.execSQL("DROP TABLE expenses")
                 
                 // Rename the new table
-                database.execSQL("ALTER TABLE expenses_new RENAME TO expenses")
+                db.execSQL("ALTER TABLE expenses_new RENAME TO expenses")
             }
         }
         
         private val MIGRATION_6_7 = object : Migration(6, 7) {
-            override fun migrate(database: SupportSQLiteDatabase) {
+            override fun migrate(db: SupportSQLiteDatabase) {
                 // Create financial_plans table
-                database.execSQL("""
+                db.execSQL("""
                     CREATE TABLE IF NOT EXISTS financial_plans (
                         id TEXT PRIMARY KEY NOT NULL,
                         name TEXT NOT NULL,
@@ -221,7 +222,7 @@ abstract class ExpenseDatabase : RoomDatabase() {
                 """)
                 
                 // Create plan_monthly_breakdowns table
-                database.execSQL("""
+                db.execSQL("""
                     CREATE TABLE IF NOT EXISTS plan_monthly_breakdowns (
                         id TEXT PRIMARY KEY NOT NULL,
                         planId TEXT NOT NULL,
@@ -237,24 +238,24 @@ abstract class ExpenseDatabase : RoomDatabase() {
                 """)
                 
                 // Create index for plan_monthly_breakdowns
-                database.execSQL("CREATE INDEX IF NOT EXISTS index_plan_monthly_breakdowns_planId ON plan_monthly_breakdowns(planId)")
+                db.execSQL("CREATE INDEX IF NOT EXISTS index_plan_monthly_breakdowns_planId ON plan_monthly_breakdowns(planId)")
             }
         }
         
         private val MIGRATION_7_8 = object : Migration(7, 8) {
-            override fun migrate(database: SupportSQLiteDatabase) {
+            override fun migrate(db: SupportSQLiteDatabase) {
                 // Add defaultCurrency field to financial_plans table
-                database.execSQL("ALTER TABLE financial_plans ADD COLUMN defaultCurrency TEXT NOT NULL DEFAULT '₺'")
+                db.execSQL("ALTER TABLE financial_plans ADD COLUMN defaultCurrency TEXT NOT NULL DEFAULT '₺'")
             }
         }
 
         private val MIGRATION_8_9 = object : Migration(8, 9) {
-            override fun migrate(database: SupportSQLiteDatabase) {
+            override fun migrate(db: SupportSQLiteDatabase) {
                 // Replace multiple expense flags with single useAppExpenseData boolean
-                database.execSQL("ALTER TABLE financial_plans ADD COLUMN useAppExpenseData INTEGER NOT NULL DEFAULT 1")
+                db.execSQL("ALTER TABLE financial_plans ADD COLUMN useAppExpenseData INTEGER NOT NULL DEFAULT 1")
 
                 // Remove old columns by creating new table and copying data
-                database.execSQL("""
+                db.execSQL("""
                     CREATE TABLE financial_plans_new (
                         id TEXT PRIMARY KEY NOT NULL,
                         name TEXT NOT NULL,
@@ -272,7 +273,7 @@ abstract class ExpenseDatabase : RoomDatabase() {
                 """)
 
                 // Copy data from old table, combining logic from old flags
-                database.execSQL("""
+                db.execSQL("""
                     INSERT INTO financial_plans_new (
                         id, name, startDate, durationInMonths, monthlyIncome,
                         manualMonthlyExpenses, useAppExpenseData, isInflationApplied,
@@ -287,32 +288,33 @@ abstract class ExpenseDatabase : RoomDatabase() {
                 """)
 
                 // Drop old table and rename new one
-                database.execSQL("DROP TABLE financial_plans")
-                database.execSQL("ALTER TABLE financial_plans_new RENAME TO financial_plans")
+                db.execSQL("DROP TABLE financial_plans")
+                db.execSQL("ALTER TABLE financial_plans_new RENAME TO financial_plans")
             }
         }
 
         private val MIGRATION_9_10 = object : Migration(9, 10) {
-            override fun migrate(database: SupportSQLiteDatabase) {
+            override fun migrate(db: SupportSQLiteDatabase) {
                 // Add interest rate fields to financial_plans
-                database.execSQL("ALTER TABLE financial_plans ADD COLUMN isInterestApplied INTEGER NOT NULL DEFAULT 0")
-                database.execSQL("ALTER TABLE financial_plans ADD COLUMN interestRate REAL NOT NULL DEFAULT 0.0")
+                db.execSQL("ALTER TABLE financial_plans ADD COLUMN isInterestApplied INTEGER NOT NULL DEFAULT 0")
+                db.execSQL("ALTER TABLE financial_plans ADD COLUMN interestRate REAL NOT NULL DEFAULT 0.0")
 
                 // Add interestEarned field to plan_monthly_breakdowns
-                database.execSQL("ALTER TABLE plan_monthly_breakdowns ADD COLUMN interestEarned REAL NOT NULL DEFAULT 0.0")
+                db.execSQL("ALTER TABLE plan_monthly_breakdowns ADD COLUMN interestEarned REAL NOT NULL DEFAULT 0.0")
             }
         }
 
         private val MIGRATION_10_11 = object : Migration(10, 11) {
-            override fun migrate(database: SupportSQLiteDatabase) {
+            override fun migrate(db: SupportSQLiteDatabase) {
                 // Add interest type field to financial_plans (COMPOUND is default)
-                database.execSQL("ALTER TABLE financial_plans ADD COLUMN interestType TEXT NOT NULL DEFAULT 'COMPOUND'")
+                db.execSQL("ALTER TABLE financial_plans ADD COLUMN interestType TEXT NOT NULL DEFAULT 'COMPOUND'")
             }
         }
         
         @Volatile
         private var INSTANCE: ExpenseDatabase? = null
         
+        @OptIn(DelicateCoroutinesApi::class)
         fun getDatabase(context: Context): ExpenseDatabase {
             return INSTANCE ?: synchronized(this) {
                 val instance = Room.databaseBuilder(
@@ -321,7 +323,7 @@ abstract class ExpenseDatabase : RoomDatabase() {
                     "expense_database"
                 )
                 .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5, MIGRATION_5_6, MIGRATION_6_7, MIGRATION_7_8, MIGRATION_8_9, MIGRATION_9_10, MIGRATION_10_11)
-                .addCallback(object : RoomDatabase.Callback() {
+                .addCallback(object : Callback() {
                     override fun onCreate(db: SupportSQLiteDatabase) {
                         super.onCreate(db)
                         // Initialize with default categories and subcategories

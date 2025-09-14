@@ -20,11 +20,6 @@ import com.example.expensetrackerkotlin.viewmodel.ExpenseViewModel
 import com.example.expensetrackerkotlin.viewmodel.ExpenseViewModelFactory
 import com.example.expensetrackerkotlin.viewmodel.PlanningViewModel
 import androidx.core.view.WindowCompat
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.toArgb
-import androidx.core.view.WindowInsetsControllerCompat
 
 class MainActivity : ComponentActivity() {
     

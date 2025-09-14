@@ -1,5 +1,6 @@
 package com.example.expensetrackerkotlin.ui.screens
 
+import android.annotation.SuppressLint
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.*
 import androidx.compose.foundation.gestures.detectTapGestures
@@ -190,6 +191,7 @@ data class CategoryComparison(
     val vsAverage: Double
 )
 
+@SuppressLint("FrequentlyChangedStateReadInComposition")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AnalysisScreen(
@@ -205,7 +207,6 @@ fun AnalysisScreen(
     var sortOption by remember { mutableStateOf(SortOption.DATE_DESC) }
     var showSortMenu by remember { mutableStateOf(false) }
     var selectedSegment by remember { mutableStateOf<Int?>(null) }
-    var selectedExpenseFilter by remember { mutableStateOf(ExpenseFilterType.ALL) }
     var selectedMonthlyExpenseType by remember { mutableStateOf(ExpenseFilterType.ALL) }
     
     // Date range picker state
@@ -686,7 +687,7 @@ fun MonthYearSelector(
     onRangePickerClick: () -> Unit,
     isDarkTheme: Boolean
 ) {
-    val currentMonth = YearMonth.now()
+    YearMonth.now()
 
     Row(
         modifier = Modifier.fillMaxWidth(),
@@ -1027,7 +1028,9 @@ private fun TotalComparisonIndicator(
         Spacer(modifier = Modifier.height(14.dp))
         
         Text(
-            text = if (amount == 0.0) "±0" else "${if (amount > 0) "+" else ""}$currency ${NumberFormatter.formatAmount(kotlin.math.abs(amount))}",
+            text = if (amount == 0.0) "±0" else "${if (amount > 0) "+" else ""}$currency ${NumberFormatter.formatAmount(
+                abs(amount)
+            )}",
             fontSize = 16.sp,
             color = when {
                 amount > 0 -> Color.Red

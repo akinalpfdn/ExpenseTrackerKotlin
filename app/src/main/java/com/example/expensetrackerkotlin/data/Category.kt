@@ -6,8 +6,10 @@ import androidx.room.PrimaryKey
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.DirectionsWalk
 import androidx.compose.material.icons.filled.*
 import com.example.expensetrackerkotlin.R
+import androidx.core.graphics.toColorInt
 
 @Entity(tableName = "categories")
 data class Category(
@@ -22,8 +24,8 @@ data class Category(
     // Convert hex string to Color
     fun getColor(): Color {
         return try {
-            Color(android.graphics.Color.parseColor(colorHex))
-        } catch (e: Exception) {
+            Color(colorHex.toColorInt())
+        } catch (_: Exception) {
             Color.Blue // Default color if parsing fails
         }
     }
@@ -55,7 +57,7 @@ data class Category(
             "cake" -> Icons.Default.Cake
             "coffee" -> Icons.Default.Coffee
             "directions_bus" -> Icons.Default.DirectionsBus
-            "directions_walk" -> Icons.Default.DirectionsWalk
+            "directions_walk" -> Icons.AutoMirrored.Filled.DirectionsWalk
             "eco" -> Icons.Default.Eco
             "fitness_center" -> Icons.Default.FitnessCenter
             "gavel" -> Icons.Default.Gavel
