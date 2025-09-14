@@ -338,4 +338,29 @@
     <string name="category_tax">Vergi ve Hukuki Harcamalar</string>
     <string name="category_donations">Bağışlar ve Yardımlar</string>
     <string name="category_others">Diğer Ödemeler</string>
+
+    <!-- PlanningUtils - Plan status and validation -->
+    <string name="plan_status_not_started">Başlamadı</string>
+    <string name="plan_status_completed">Tamamlandı</string>
+    <string name="plan_status_active">Aktif</string>
+    <string name="validation_plan_name_empty">Plan adı boş olamaz</string>
+    <string name="validation_monthly_income_positive">Aylık gelir 0\'dan büyük olmalıdır</string>
+    <string name="validation_duration_positive">Plan süresi 0\'dan büyük olmalıdır</string>
+    <string name="validation_duration_max_10_years">Plan süresi 10 yıldan fazla olamaz</string>
+    <string name="validation_inflation_rate_range">Enflasyon oranı -%50%% ile %100%% arasında olmalıdır</string>
+    <string name="duration_3_months">3 Ay</string>
+    <string name="duration_6_months">6 Ay</string>
+    <string name="duration_1_year">1 Yıl</string>
+    <string name="duration_1_5_years">1,5 Yıl</string>
+    <string name="duration_2_years">2 Yıl</string>
+    <string name="duration_3_years">3 Yıl</string>
+    <string name="duration_5_years">5 Yıl</string>
+
+    <!-- PlanningViewModel - Error messages -->
+    <string name="error_loading_plan">Plan yüklenirken hata: %s</string>
+    <string name="error_creating_plan">Plan oluşturulurken hata: %s</string>
+    <string name="error_deleting_plan">Plan silinirken hata: %s</string>
+    <string name="error_updating_expense_data">Harcama verileri güncellenirken hata: %s</string>
+    <string name="error_updating_plan_calculations">Plan hesaplamaları güncellenirken hata: %s</string>
+    <string name="error_saving_changes">Değişiklikler kaydedilirken hata: %s</string>
 </resources>

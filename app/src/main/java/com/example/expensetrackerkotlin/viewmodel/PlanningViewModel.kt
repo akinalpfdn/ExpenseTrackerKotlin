@@ -25,8 +25,7 @@ class PlanningViewModel(
     val selectedPlan: StateFlow<PlanWithBreakdowns?> = _selectedPlan.asStateFlow()
     
     private val _currentPosition = MutableStateFlow<PlanCurrentPosition?>(null)
-    val currentPosition: StateFlow<PlanCurrentPosition?> = _currentPosition.asStateFlow()
-    
+
     private val _isLoading = MutableStateFlow(false)
     val isLoading: StateFlow<Boolean> = _isLoading.asStateFlow()
     
@@ -82,7 +81,7 @@ class PlanningViewModel(
         inflationRate: Double = 0.0,
         isInterestApplied: Boolean = false,
         interestRate: Double = 0.0,
-        interestType: com.example.expensetrackerkotlin.data.InterestType = com.example.expensetrackerkotlin.data.InterestType.COMPOUND,
+        interestType: InterestType = InterestType.COMPOUND,
         defaultCurrency: String,
         context: Context
     ) {
@@ -163,25 +162,7 @@ class PlanningViewModel(
             }
         }
     }
-    
-    fun regeneratePlanBreakdowns(planId: String) {
-        viewModelScope.launch {
-            _isLoading.value = true
-            try {
-                planRepository.regeneratePlanBreakdowns(planId)
-                // Refresh selected plan if it's the current one
-                if (_selectedPlan.value?.plan?.id == planId) {
-                    selectPlan(planId)
-                }
-                clearError()
-            } catch (e: Exception) {
-                _error.value = "Plan hesaplamaları güncellenirken hata oluştu: ${e.message}"
-            } finally {
-                _isLoading.value = false
-            }
-        }
-    }
-    
+
     fun updatePlanBreakdown(updatedBreakdown: PlanMonthlyBreakdown) {
         viewModelScope.launch {
             try {
@@ -210,19 +191,5 @@ class PlanningViewModel(
     fun clearError() {
         _error.value = null
     }
-    
-    // Helper methods for UI
-    fun getActivePlans(): List<FinancialPlan> {
-        return _plans.value.filter { it.isActive() }
-    }
-    
-    fun getUpcomingPlans(): List<FinancialPlan> {
-        val now = LocalDateTime.now()
-        return _plans.value.filter { it.startDate.isAfter(now) }
-    }
-    
-    fun getCompletedPlans(): List<FinancialPlan> {
-        val now = LocalDateTime.now()
-        return _plans.value.filter { it.endDate.isBefore(now) }
-    }
+
 }

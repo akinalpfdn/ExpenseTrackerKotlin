@@ -1,343 +1,368 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Expense Tracker</string>
-    <string name="general_settings">General Settings</string>
-    <string name="categories">Categories</string>
-    <string name="default_currency">Default Currency</string>
-    <string name="currency_description">Default currency to be used for new expenses</string>
-    <string name="daily_spending_limit">Daily Spending Limit</string>
-    <string name="enter_daily_limit">Enter daily limit</string>
-    <string name="daily_limit_description">Your daily spending limit. No limit applied if left blank</string>
-    <string name="monthly_spending_limit">Monthly Spending Limit</string>
-    <string name="enter_monthly_limit">Enter monthly limit</string>
-    <string name="monthly_limit_description">Your monthly total spending limit. Progress ring is shown based on this value</string>
-    <string name="theme">Theme</string>
-    <string name="dark_theme">Dark Theme</string>
-    <string name="light_theme">Light Theme</string>
-    <string name="theme_description">Change the app\'s appearance</string>
-    <string name="cancel">Cancel</string>
-    <string name="save">Save</string>
+    <string name="app_name">Учёт Расходов</string>
+    <string name="general_settings">Общие Настройки</string>
+    <string name="categories">Категории</string>
+    <string name="default_currency">Валюта по Умолчанию</string>
+    <string name="currency_description">Валюта по умолчанию для новых расходов</string>
+    <string name="daily_spending_limit">Дневной Лимит Расходов</string>
+    <string name="enter_daily_limit">Введите дневной лимит</string>
+    <string name="daily_limit_description">Ваш дневной лимит расходов. Лимит не применяется, если оставить пустым</string>
+    <string name="monthly_spending_limit">Месячный Лимит Расходов</string>
+    <string name="enter_monthly_limit">Введите месячный лимит</string>
+    <string name="monthly_limit_description">Ваш общий месячный лимит расходов. Кольцо прогресса отображается на основе этого значения</string>
+    <string name="theme">Тема</string>
+    <string name="dark_theme">Тёмная Тема</string>
+    <string name="light_theme">Светлая Тема</string>
+    <string name="theme_description">Изменить внешний вид приложения</string>
+    <string name="cancel">Отмена</string>
+    <string name="save">Сохранить</string>
     <!-- RecurringExpensesScreen -->
-    <string name="recurring_expenses">Recurring Expenses</string>
-    <string name="sort">Sort</string>
-    <string name="search">Search</string>
-    <string name="back">Back</string>
-    <string name="amount_high_to_low">Amount: High to Low</string>
-    <string name="amount_low_to_high">Amount: Low to High</string>
-    <string name="description_a_to_z">Description: A-Z</string>
-    <string name="description_z_to_a">Description: Z-A</string>
-    <string name="category_a_to_z">Category: A-Z</string>
-    <string name="category_z_to_a">Category: Z-A</string>
-    <string name="end_date_recurring">End: %s</string>
-    <string name="search_placeholder">Search by description, amount or category...</string>
-    <string name="no_search_results">No search results found</string>
-    <string name="search_no_results_description">No results found for \"%1$s\". Try a different search term.</string>
-    <string name="no_recurring_expenses">No recurring expenses yet</string>
-    <string name="recurring_expenses_hint">Press the + button to add recurring expenses</string>
-    <string name="results_found">%d results found</string>
-    <string name="daily">Daily</string>
-    <string name="weekdays">Weekdays</string>
-    <string name="weekly">Weekly</string>
-    <string name="monthly">Monthly</string>
-    <string name="exchange_rate">Exchange Rate: %s</string>
-    <string name="delete">Delete</string>
-    <string name="amount">Amount</string>
-    <string name="description">Description</string>
-    <string name="exchange_rate_field">Exchange Rate</string>
-    <string name="select_date">Select Date</string>
-    <string name="delete_recurring_expense">Delete Recurring Expense</string>
-    <string name="delete_recurring_confirmation">Are you sure you want to delete this recurring expense from today onwards? This action cannot be undone.</string>
+    <string name="recurring_expenses">Повторяющиеся Расходы</string>
+    <string name="sort">Сортировать</string>
+    <string name="search">Поиск</string>
+    <string name="back">Назад</string>
+    <string name="amount_high_to_low">Сумма: По Убыванию</string>
+    <string name="amount_low_to_high">Сумма: По Возрастанию</string>
+    <string name="description_a_to_z">Описание: А-Я</string>
+    <string name="description_z_to_a">Описание: Я-А</string>
+    <string name="category_a_to_z">Категория: А-Я</string>
+    <string name="category_z_to_a">Категория: Я-А</string>
+    <string name="end_date_recurring">Конец: %s</string>
+    <string name="search_placeholder">Поиск по описанию, сумме или категории...</string>
+    <string name="no_search_results">Результаты поиска не найдены</string>
+    <string name="search_no_results_description">Не найдено результатов для \"%1$s\". Попробуйте другой поисковый запрос.</string>
+    <string name="no_recurring_expenses">Пока нет повторяющихся расходов</string>
+    <string name="recurring_expenses_hint">Нажмите кнопку + для добавления повторяющихся расходов</string>
+    <string name="results_found">Найдено %d результатов</string>
+    <string name="daily">Ежедневно</string>
+    <string name="weekdays">Рабочие дни</string>
+    <string name="weekly">Еженедельно</string>
+    <string name="monthly">Ежемесячно</string>
+    <string name="exchange_rate">Обменный Курс: %s</string>
+    <string name="delete">Удалить</string>
+    <string name="amount">Сумма</string>
+    <string name="description">Описание</string>
+    <string name="exchange_rate_field">Обменный Курс</string>
+    <string name="select_date">Выбрать Дату</string>
+    <string name="delete_recurring_expense">Удалить Повторяющийся Расход</string>
+    <string name="delete_recurring_confirmation">Вы уверены, что хотите удалить этот повторяющийся расход с сегодняшнего дня? Это действие нельзя отменить.</string>
     <string name="ok">OK</string>
     <!-- PlanningScreen -->
-    <string name="financial_planning">Financial Planning</string>
-    <string name="planning_description">Create and track your future plans</string>
-    <string name="no_plans_yet">No plans yet</string>
-    <string name="create_first_plan">Press the + button to create your first financial plan</string>
-    <string name="add_plan">Add Plan</string>
-    <string name="delete_plan">Delete Plan</string>
-    <string name="delete_plan_confirmation">Are you sure you want to delete the \"%1$s\" plan? This action cannot be undone.</string>
+    <string name="financial_planning">Финансовое Планирование</string>
+    <string name="planning_description">Создавайте и отслеживайте ваши будущие планы</string>
+    <string name="no_plans_yet">Пока нет планов</string>
+    <string name="create_first_plan">Нажмите кнопку + для создания вашего первого финансового плана</string>
+    <string name="add_plan">Добавить План</string>
+    <string name="delete_plan">Удалить План</string>
+    <string name="delete_plan_confirmation">Вы уверены, что хотите удалить план \"%1$s\"? Это действие нельзя отменить.</string>
 
     <!-- ExpensesScreen -->
-    <string name="results_count">%d results</string>
-    <string name="search_expenses_placeholder">Search by description, amount or category...</string>
-    <string name="monthly_limit_exceeded">⚠️ You have exceeded your monthly spending limit!</string>
-    <string name="time_newest_first">Date: Newest First</string>
-    <string name="time_oldest_first">Date: Oldest First</string>
+    <string name="results_count">%d результатов</string>
+    <string name="search_expenses_placeholder">Поиск по описанию, сумме или категории...</string>
+    <string name="monthly_limit_exceeded">⚠️ Вы превысили ваш месячный лимит расходов!</string>
+    <string name="time_newest_first">Дата: Сначала Новые</string>
+    <string name="time_oldest_first">Дата: Сначала Старые</string>
 
     <!-- AnalysisScreen -->
-    <string name="current_period_total">Current Period Total Spending</string>
-    <string name="vs_previous_month">Compared to previous month</string>
-    <string name="vs_6_month_average">Compared to 6-month average</string>
-    <string name="no_expenses_this_period">No expenses this period yet</string>
-    <string name="analysis_will_appear">Analysis will appear here when you add expenses</string>
-    <string name="previous_month">Previous month</string>
-    <string name="next_month">Next month</string>
-    <string name="select_date_range">Select date range</string>
-    <string name="fixed_expenses">Fixed Expenses</string>
-    <string name="recurring_expenses_description">Expenses that will continue for 3+ months</string>
-    <string name="recurring_expenses_cd">Recurring expenses</string>
-    <string name="pick_date_range">Pick date range</string>
+    <string name="current_period_total">Общие Расходы Текущего Периода</string>
+    <string name="vs_previous_month">По сравнению с предыдущим месяцем</string>
+    <string name="vs_6_month_average">По сравнению со средним за 6 месяцев</string>
+    <string name="no_expenses_this_period">Пока нет расходов в этом периоде</string>
+    <string name="analysis_will_appear">Анализ появится здесь, когда вы добавите расходы</string>
+    <string name="previous_month">Предыдущий месяц</string>
+    <string name="next_month">Следующий месяц</string>
+    <string name="select_date_range">Выбрать диапазон дат</string>
+    <string name="fixed_expenses">Постоянные Расходы</string>
+    <string name="recurring_expenses_description">Расходы, которые будут продолжаться 3+ месяца</string>
+    <string name="recurring_expenses_cd">Повторяющиеся расходы</string>
+    <string name="pick_date_range">Выбрать диапазон дат</string>
 
     <!-- AddExpenseScreen -->
-    <string name="enter_expense_details">Enter expense details</string>
-    <string name="expense_amount_placeholder">0.00</string>
-    <string name="search_placeholder_category">search...</string>
-    <string name="description_optional">Description (Optional)</string>
-    <string name="add_description_placeholder">Add description...</string>
-    <string name="recurrence_type">Recurrence Type</string>
-    <string name="end_date">End Date</string>
-    <string name="exchange_rate_label">Exchange Rate (1 %1$s = ? %2$s)</string>
-    <string name="exchange_rate_example">e.g: 0.035 (1 %1$s = 0.035 %2$s)</string>
-    <string name="exchange_rate_note">This rate will be used for progress calculations</string>
-    <string name="add_expense">Add Expense</string>
-    <string name="update_expense">Update Expense</string>
-    <string name="none">None</string>
-    <string name="one_time">One time</string>
-    <string name="every_day">Every day</string>
-    <string name="weekdays_only">Weekdays only</string>
-    <string name="once_per_week">Once per week</string>
-    <string name="once_per_month">Once per month</string>
-    <string name="edit_expense">Edit Expense</string>
-    <string name="new_expense">New Expense</string>
-    <string name="selectCategory">Category selection</string>
-    <string name="single_time">Single time</string>
-    <string name="okay">Okay</string>
+    <string name="enter_expense_details">Введите детали расхода</string>
+    <string name="expense_amount_placeholder">0,00</string>
+    <string name="search_placeholder_category">поиск...</string>
+    <string name="description_optional">Описание (Необязательно)</string>
+    <string name="add_description_placeholder">Добавить описание...</string>
+    <string name="recurrence_type">Тип Повторения</string>
+    <string name="end_date">Дата Окончания</string>
+    <string name="exchange_rate_label">Обменный Курс (1 %1$s = ? %2$s)</string>
+    <string name="exchange_rate_example">напр: 0,035 (1 %1$s = 0,035 %2$s)</string>
+    <string name="exchange_rate_note">Этот курс будет использоваться для расчёта прогресса</string>
+    <string name="add_expense">Добавить Расход</string>
+    <string name="update_expense">Обновить Расход</string>
+    <string name="none">Нет</string>
+    <string name="one_time">Один раз</string>
+    <string name="every_day">Каждый день</string>
+    <string name="weekdays_only">Только рабочие дни</string>
+    <string name="once_per_week">Раз в неделю</string>
+    <string name="once_per_month">Раз в месяц</string>
+    <string name="edit_expense">Редактировать Расход</string>
+    <string name="new_expense">Новый Расход</string>
+    <string name="selectCategory">Выбор категории</string>
+    <string name="single_time">Один раз</string>
+    <string name="okay">Хорошо</string>
 
     <!-- SubCategoryDetailBottomSheet -->
-    <string name="parent_category">Parent Category</string>
-    <string name="total_amount">Total Amount</string>
-    <string name="expense_count">Expense Count</string>
-    <string name="average">Average</string>
-    <string name="expenses">Expenses</string>
-    <string name="recurring_label">Recurring</string>
+    <string name="parent_category">Родительская Категория</string>
+    <string name="total_amount">Общая Сумма</string>
+    <string name="expense_count">Количество Расходов</string>
+    <string name="average">Среднее</string>
+    <string name="expenses">Расходы</string>
+    <string name="recurring_label">Повторяющийся</string>
 
     <!-- ProgressRingComponent -->
-    <string name="monthly_label">Monthly</string>
-    <string name="daily_label">Daily</string>
+    <string name="monthly_label">Месячный</string>
+    <string name="daily_label">Дневной</string>
 
     <!-- PlanDetailBottomSheet -->
-    <string name="update_expense_data">Update Expense Data</string>
-    <string name="update_expense_data_description">Recalculates current and future months with updated data</string>
-    <string name="total_net_value">Total Net Value</string>
-    <string name="month">Month</string>
-    <string name="income">Income</string>
-    <string name="expense">Expense</string>
-    <string name="net">Net</string>
-    <string name="total">Total</string>
+    <string name="update_expense_data">Обновить Данные Расходов</string>
+    <string name="update_expense_data_description">Пересчитывает текущие и будущие месяцы с обновлёнными данными</string>
+    <string name="total_net_value">Общая Чистая Стоимость</string>
+    <string name="month">Месяц</string>
+    <string name="income">Доходы</string>
+    <string name="expense">Расход</string>
+    <string name="net">Чистый</string>
+    <string name="total">Итого</string>
 
     <!-- PlanCard -->
-    <string name="avg_monthly_income">Avg. Monthly Income</string>
-    <string name="avg_monthly_expense">Avg. Monthly Expense</string>
-    <string name="current_net">Current Net</string>
-    <string name="target_net">Target Net</string>
+    <string name="avg_monthly_income">Средн. Месячный Доход</string>
+    <string name="avg_monthly_expense">Средн. Месячные Расходы</string>
+    <string name="current_net">Текущий Чистый</string>
+    <string name="target_net">Целевой Чистый</string>
 
     <!-- MonthlyLineChart -->
-    <string name="all">All</string>
-    <string name="one_time_expense">One-Time Expense</string>
-    <string name="period_expense_trend">Period Expense Trend</string>
-    <string name="expand">Expand</string>
-    <string name="collapse">Collapse</string>
-    <string name="no_data_found">No data found</string>
-    <string name="highest">Highest</string>
+    <string name="all">Все</string>
+    <string name="one_time_expense">Разовый Расход</string>
+    <string name="period_expense_trend">Тренд Расходов Периода</string>
+    <string name="expand">Развернуть</string>
+    <string name="collapse">Свернуть</string>
+    <string name="no_data_found">Данные не найдены</string>
+    <string name="highest">Наивысший</string>
 
     <!-- MonthlyExpensesView -->
-    <string name="no_expenses_this_month">No expenses this month</string>
-    <string name="add_expense_for_month">Press the + button on the main screen to add expenses for this month</string>
+    <string name="no_expenses_this_month">Нет расходов в этом месяце</string>
+    <string name="add_expense_for_month">Нажмите кнопку + на главном экране для добавления расходов за этот месяц</string>
 
     <!-- MonthlyCalendarView - Day headers -->
-    <string name="monday_short">M</string>
-    <string name="tuesday_short">T</string>
-    <string name="wednesday_short">W</string>
-    <string name="thursday_short">T</string>
-    <string name="friday_short">F</string>
-    <string name="saturday_short">S</string>
-    <string name="sunday_short">S</string>
+    <string name="monday_short">П</string>
+    <string name="tuesday_short">В</string>
+    <string name="wednesday_short">С</string>
+    <string name="thursday_short">Ч</string>
+    <string name="friday_short">П</string>
+    <string name="saturday_short">С</string>
+    <string name="sunday_short">В</string>
 
     <!-- MonthlyAnalysisPieChart -->
-    <string name="category_distribution">Category Distribution</string>
-    <string name="tap_chart_to_select_category">Tap the chart to select a category</string>
+    <string name="category_distribution">Распределение по Категориям</string>
+    <string name="tap_chart_to_select_category">Нажмите на график для выбора категории</string>
 
     <!-- ExpenseRowView -->
-    <string name="unknown">Unknown</string>
-    <string name="delete_expense">Delete Expense</string>
-    <string name="delete_expense_confirmation">Are you sure you want to delete this expense? This action cannot be undone.</string>
+    <string name="unknown">Неизвестно</string>
+    <string name="delete_expense">Удалить Расход</string>
+    <string name="delete_expense_confirmation">Вы уверены, что хотите удалить этот расход? Это действие нельзя отменить.</string>
 
     <!-- DailyCategoryDetailBottomSheet -->
-    <string name="amount_high_to_low_arrow">Amount (High → Low)</string>
-    <string name="amount_low_to_high_arrow">Amount (Low → High)</string>
-    <string name="time_newest_first_arrow">Time (New → Old)</string>
-    <string name="time_oldest_first_arrow">Time (Old → New)</string>
-    <string name="description_a_to_z_arrow">Description (A → Z)</string>
-    <string name="description_z_to_a_arrow">Description (Z → A)</string>
-    <string name="total_spending">Total Spending</string>
-    <string name="no_expenses_in_category">No expenses found in this category</string>
-    <string name="expense_singular">Expense</string>
+    <string name="amount_high_to_low_arrow">Сумма (Высокая → Низкая)</string>
+    <string name="amount_low_to_high_arrow">Сумма (Низкая → Высокая)</string>
+    <string name="time_newest_first_arrow">Время (Новое → Старое)</string>
+    <string name="time_oldest_first_arrow">Время (Старое → Новое)</string>
+    <string name="description_a_to_z_arrow">Описание (А → Я)</string>
+    <string name="description_z_to_a_arrow">Описание (Я → А)</string>
+    <string name="total_spending">Общие Расходы</string>
+    <string name="no_expenses_in_category">Расходы в этой категории не найдены</string>
+    <string name="expense_singular">Расход</string>
 
     <!-- CreatePlanDialog -->
-    <string name="create_new_plan">Create New Plan</string>
-    <string name="plan_name">Plan Name</string>
-    <string name="plan_name_example">e.g: 2024 Savings Plan</string>
-    <string name="plan_duration">Plan Duration</string>
-    <string name="apply_interest_to_savings">Apply Interest (to Savings)</string>
-    <string name="simple_interest">Simple Interest</string>
-    <string name="compound_interest">Compound Interest</string>
-    <string name="annual_interest_rate">Annual interest rate %</string>
-    <string name="interest_applied_to_positive_savings">Interest is applied to positive savings</string>
-    <string name="interest_type">Interest Type</string>
-    <string name="monthly_income_currency">Monthly Income (%s)</string>
-    <string name="use_app_expense_data">Use app\'s expense data</string>
-    <string name="monthly_expenses_currency">Monthly Expenses (%s)</string>
-    <string name="manual_monthly_expense_amount">Manual monthly expense amount</string>
-    <string name="enter_manual_expense_amount">Enter manual expense amount</string>
-    <string name="apply_inflation">Apply Inflation</string>
-    <string name="annual_percentage_rate">Annual % rate</string>
-    <string name="create">Create</string>
+    <string name="create_new_plan">Создать Новый План</string>
+    <string name="plan_name">Название Плана</string>
+    <string name="plan_name_example">напр: План Сбережений 2024</string>
+    <string name="plan_duration">Продолжительность Плана</string>
+    <string name="apply_interest_to_savings">Применить Проценты (к Сбережениям)</string>
+    <string name="simple_interest">Простые Проценты</string>
+    <string name="compound_interest">Сложные Проценты</string>
+    <string name="annual_interest_rate">Годовая процентная ставка %</string>
+    <string name="interest_applied_to_positive_savings">Проценты применяются к положительным сбережениям</string>
+    <string name="interest_type">Тип Процентов</string>
+    <string name="monthly_income_currency">Месячный Доход (%s)</string>
+    <string name="use_app_expense_data">Использовать данные расходов приложения</string>
+    <string name="monthly_expenses_currency">Месячные Расходы (%s)</string>
+    <string name="manual_monthly_expense_amount">Ручная сумма месячных расходов</string>
+    <string name="enter_manual_expense_amount">Введите ручную сумму расходов</string>
+    <string name="apply_inflation">Применить Инфляцию</string>
+    <string name="annual_percentage_rate">Годовая ставка %</string>
+    <string name="create">Создать</string>
 
     <!-- CategorySummarySection -->
-    <string name="category_details">Category Details</string>
-    <string name="main_categories">Main Categories</string>
-    <string name="sub_categories">Sub Categories</string>
-    <string name="expense_lowercase">expense</string>
-    <string name="see_details">See details</string>
+    <string name="category_details">Детали Категории</string>
+    <string name="main_categories">Основные Категории</string>
+    <string name="sub_categories">Подкategории</string>
+    <string name="expense_lowercase">расход</string>
+    <string name="see_details">Посмотреть детали</string>
 
     <!-- CategoryPopupLines -->
-    <string name="vs_previous_month_colon">Compared to previous month:</string>
-    <string name="vs_average_colon">Compared to average:</string>
+    <string name="vs_previous_month_colon">По сравнению с предыдущим месяцем:</string>
+    <string name="vs_average_colon">По сравнению со средним:</string>
 
     <!-- CategoryManagementScreen -->
-    <string name="add_new_main_category">Add New Main Category</string>
-    <string name="add_main_category_content_desc">Add Main Category</string>
-    <string name="category_name_hint">Enter category name</string>
-    <string name="unique_category_name_note">Choose a unique name for the category</string>
-    <string name="icon_selection">Icon Selection</string>
-    <string name="color_selection">Color Selection</string>
-    <string name="add_button">Add</string>
-    <string name="main_category">Main Category</string>
-    <string name="select_category">Select category</string>
-    <string name="subcategory_name">Subcategory Name</string>
-    <string name="subcategory_name_hint">Enter subcategory name</string>
-    <string name="unique_subcategory_name_note">Choose a unique name for the subcategory</string>
-    <string name="edit_subcategory">Edit Subcategory</string>
-    <string name="edit_category">Edit Category</string>
-    <string name="edit">Edit</string>
-    <string name="enter_name_hint">Enter name</string>
-    <string name="delete_confirmation">Delete Confirmation</string>
-    <string name="delete_item_confirmation">Are you sure you want to delete \"%s\"? This action cannot be undone.</string>
-    <string name="this_item">This item</string>
-    <string name="collapse_desc">Collapse</string>
-    <string name="expand_desc">Expand</string>
-    <string name="edit_category_desc">Edit Category</string>
-    <string name="delete_category_desc">Delete Category</string>
-    <string name="add_subcategory">Add Subcategory</string>
-    <string name="add_subcategory_desc">Add Subcategory</string>
-    <string name="edit_subcategory_desc">Edit Subcategory</string>
-    <string name="delete_subcategory_desc">Delete Subcategory</string>
-    <string name="selected">Selected</string>
+    <string name="add_new_main_category">Добавить Новую Основную Категорию</string>
+    <string name="add_main_category_content_desc">Добавить Основную Категорию</string>
+    <string name="category_name_hint">Введите название категории</string>
+    <string name="unique_category_name_note">Выберите уникальное название для категории</string>
+    <string name="icon_selection">Выбор Иконки</string>
+    <string name="color_selection">Выбор Цвета</string>
+    <string name="add_button">Добавить</string>
+    <string name="main_category">Основная Категория</string>
+    <string name="select_category">Выбрать категорию</string>
+    <string name="subcategory_name">Название Подкategории</string>
+    <string name="subcategory_name_hint">Введите название подкategории</string>
+    <string name="unique_subcategory_name_note">Выберите уникальное название для подкategории</string>
+    <string name="edit_subcategory">Редактировать Подкategорию</string>
+    <string name="edit_category">Редактировать Категорию</string>
+    <string name="edit">Редактировать</string>
+    <string name="enter_name_hint">Введите название</string>
+    <string name="delete_confirmation">Подтверждение Удаления</string>
+    <string name="delete_item_confirmation">Вы уверены, что хотите удалить \"%s\"? Это действие нельзя отменить.</string>
+    <string name="this_item">Этот элемент</string>
+    <string name="collapse_desc">Свернуть</string>
+    <string name="expand_desc">Развернуть</string>
+    <string name="edit_category_desc">Редактировать Категорию</string>
+    <string name="delete_category_desc">Удалить Категорию</string>
+    <string name="add_subcategory">Добавить Подкategорию</string>
+    <string name="add_subcategory_desc">Добавить Подкategорию</string>
+    <string name="edit_subcategory_desc">Редактировать Подкategорию</string>
+    <string name="delete_subcategory_desc">Удалить Подкategорию</string>
+    <string name="selected">Выбран</string>
 
     <!-- CategoryDistributionChart -->
-    <string name="no_data">No data</string>
-    <string name="category">Category</string>
+    <string name="no_data">Нет данных</string>
+    <string name="category">Категория</string>
 
     <!-- CategoryDetailBottomSheet -->
-    <string name="sort_amount_desc">By Amount (High → Low)</string>
-    <string name="sort_amount_asc">By Amount (Low → High)</string>
-    <string name="sort_date_desc">By Date (New → Old)</string>
-    <string name="sort_date_asc">By Date (Old → New)</string>
-    <string name="sort_name_asc">By Description (A → Z)</string>
-    <string name="sort_name_desc">By Description (Z → A)</string>
+    <string name="sort_amount_desc">По Сумме (Высокая → Низкая)</string>
+    <string name="sort_amount_asc">По Сумме (Низкая → Высокая)</string>
+    <string name="sort_date_desc">По Дате (Новая → Старая)</string>
+    <string name="sort_date_asc">По Дате (Старая → Новая)</string>
+    <string name="sort_name_asc">По Описанию (А → Я)</string>
+    <string name="sort_name_desc">По Описанию (Я → А)</string>
 
     <!-- SubCategory - Default subcategories -->
     <!-- Food & Drink -->
-    <string name="subcategory_restaurant">Restaurant</string>
-    <string name="subcategory_kitchen_shopping">Kitchen shopping</string>
+    <string name="subcategory_restaurant">Ресторан</string>
+    <string name="subcategory_kitchen_shopping">Продукты для кухни</string>
 
     <!-- Housing -->
-    <string name="subcategory_rent">Rent</string>
-    <string name="subcategory_dues">Dues</string>
-    <string name="subcategory_mortgage">Mortgage payment</string>
-    <string name="subcategory_electricity">Electricity bill</string>
-    <string name="subcategory_water">Water bill</string>
-    <string name="subcategory_heating">Heating</string>
-    <string name="subcategory_internet_phone">Internet and phone</string>
-    <string name="subcategory_other_bills">Other Bills</string>
-    <string name="subcategory_general_shopping">General grocery shopping</string>
+    <string name="subcategory_rent">Аренда</string>
+    <string name="subcategory_dues">Коммунальные услуги</string>
+    <string name="subcategory_mortgage">Платёж по ипотеке</string>
+    <string name="subcategory_electricity">Счёт за электричество</string>
+    <string name="subcategory_water">Счёт за воду</string>
+    <string name="subcategory_heating">Отопление</string>
+    <string name="subcategory_internet_phone">Интернет и телефон</string>
+    <string name="subcategory_other_bills">Другие Счета</string>
+    <string name="subcategory_general_shopping">Общие покупки продуктов</string>
 
     <!-- Transportation -->
-    <string name="subcategory_fuel">Fuel</string>
-    <string name="subcategory_public_transport">Public transport</string>
-    <string name="subcategory_car_maintenance">Car maintenance</string>
-    <string name="subcategory_car_rental">Car rental</string>
-    <string name="subcategory_taxi_uber">Taxi/Uber</string>
-    <string name="subcategory_car_insurance">Car insurance</string>
-    <string name="subcategory_mtv">Vehicle tax</string>
-    <string name="subcategory_parking_fees">Parking fees</string>
+    <string name="subcategory_fuel">Топливо</string>
+    <string name="subcategory_public_transport">Общественный транспорт</string>
+    <string name="subcategory_car_maintenance">Обслуживание автомобиля</string>
+    <string name="subcategory_car_rental">Аренда автомобиля</string>
+    <string name="subcategory_taxi_uber">Такси/Убер</string>
+    <string name="subcategory_car_insurance">Страхование автомобиля</string>
+    <string name="subcategory_mtv">Транспортный налог</string>
+    <string name="subcategory_parking_fees">Плата за парковку</string>
 
     <!-- Health -->
-    <string name="subcategory_doctor_appointment">Doctor appointment</string>
-    <string name="subcategory_medicines">Medicines</string>
-    <string name="subcategory_gym_membership">Gym membership</string>
-    <string name="subcategory_cosmetics">Cosmetics</string>
+    <string name="subcategory_doctor_appointment">Визит к врачу</string>
+    <string name="subcategory_medicines">Лекарства</string>
+    <string name="subcategory_gym_membership">Абонемент в спортзал</string>
+    <string name="subcategory_cosmetics">Косметика</string>
 
     <!-- Entertainment -->
-    <string name="subcategory_cinema_theater">Cinema and theater</string>
-    <string name="subcategory_concerts_events">Concerts and events</string>
-    <string name="subcategory_subscriptions">Subscriptions</string>
-    <string name="subcategory_books_magazines">Books and magazines</string>
-    <string name="subcategory_travel_vacation">Travel and vacation</string>
-    <string name="subcategory_games_apps">Games and apps</string>
+    <string name="subcategory_cinema_theater">Кино и театр</string>
+    <string name="subcategory_concerts_events">Концерты и мероприятия</string>
+    <string name="subcategory_subscriptions">Подписки</string>
+    <string name="subcategory_books_magazines">Книги и журналы</string>
+    <string name="subcategory_travel_vacation">Путешествия и отпуск</string>
+    <string name="subcategory_games_apps">Игры и приложения</string>
 
     <!-- Education -->
-    <string name="subcategory_course_fees">Course fees</string>
-    <string name="subcategory_education_materials">Education materials</string>
-    <string name="subcategory_seminars">Seminars</string>
-    <string name="subcategory_online_courses">Online courses</string>
+    <string name="subcategory_course_fees">Плата за курсы</string>
+    <string name="subcategory_education_materials">Образовательные материалы</string>
+    <string name="subcategory_seminars">Семинары</string>
+    <string name="subcategory_online_courses">Онлайн курсы</string>
 
     <!-- Shopping -->
-    <string name="subcategory_electronics">Electronics</string>
-    <string name="subcategory_clothing">Clothing</string>
-    <string name="subcategory_home_goods">Home goods</string>
-    <string name="subcategory_gifts">Gifts</string>
-    <string name="subcategory_perfume">Perfume</string>
+    <string name="subcategory_electronics">Электроника</string>
+    <string name="subcategory_clothing">Одежда</string>
+    <string name="subcategory_home_goods">Товары для дома</string>
+    <string name="subcategory_gifts">Подарки</string>
+    <string name="subcategory_perfume">Парфюм</string>
 
     <!-- Pets -->
-    <string name="subcategory_pet_food_toys">Food and toys</string>
-    <string name="subcategory_vet_services">Veterinary services</string>
-    <string name="subcategory_pet_insurance">Pet insurance</string>
+    <string name="subcategory_pet_food_toys">Корм и игрушки</string>
+    <string name="subcategory_vet_services">Ветеринарные услуги</string>
+    <string name="subcategory_pet_insurance">Страхование питомцев</string>
 
     <!-- Work -->
-    <string name="subcategory_work_meals">Work meals</string>
-    <string name="subcategory_office_supplies">Office supplies</string>
-    <string name="subcategory_business_travel">Business travel</string>
-    <string name="subcategory_work_education">Training and seminars</string>
-    <string name="subcategory_freelance_payments">Freelance work payments</string>
+    <string name="subcategory_work_meals">Рабочие обеды</string>
+    <string name="subcategory_office_supplies">Офисные принадлежности</string>
+    <string name="subcategory_business_travel">Командировки</string>
+    <string name="subcategory_work_education">Обучение и семинары</string>
+    <string name="subcategory_freelance_payments">Платежи за фриланс</string>
 
     <!-- Tax -->
-    <string name="subcategory_tax_payments">Tax payments</string>
+    <string name="subcategory_tax_payments">Налоговые платежи</string>
 
     <!-- Others -->
-    <string name="subcategory_other_expenses">Other Expenses</string>
+    <string name="subcategory_other_expenses">Другие Расходы</string>
 
     <!-- ExpensesScreen - Empty state messages -->
-    <string name="no_search_results_found">No search results found</string>
-    <string name="no_expenses_yet">No expenses yet</string>
-    <string name="no_expenses_today">No expenses today</string>
-    <string name="no_search_results_description">No results found for \"%1$s\". Try a different search term.</string>
-    <string name="first_expense_hint">Press the + button to add your first expense</string>
-    <string name="add_expense_for_day_hint">Press the + button to add expenses for this day</string>
-    <string name="calendar_tab">Calendar</string>
-    <string name="expenses_tab">Expenses</string>
+    <string name="no_search_results_found">Результаты поиска не найдены</string>
+    <string name="no_expenses_yet">Пока нет расходов</string>
+    <string name="no_expenses_today">Сегодня нет расходов</string>
+    <string name="no_search_results_description">Не найдено результатов для \"%1$s\". Попробуйте другой поисковый запрос.</string>
+    <string name="first_expense_hint">Нажмите кнопку + для добавления вашего первого расхода</string>
+    <string name="add_expense_for_day_hint">Нажмите кнопку + для добавления расходов на этот день</string>
+    <string name="calendar_tab">Календарь</string>
+    <string name="expenses_tab">Расходы</string>
+
+    <!-- PlanningUtils - Plan status and validation -->
+    <string name="plan_status_not_started">Не начат</string>
+    <string name="plan_status_completed">Завершён</string>
+    <string name="plan_status_active">Активен</string>
+    <string name="validation_plan_name_empty">Название плана не может быть пустым</string>
+    <string name="validation_monthly_income_positive">Месячный доход должен быть больше 0</string>
+    <string name="validation_duration_positive">Продолжительность плана должна быть больше 0</string>
+    <string name="validation_duration_max_10_years">Продолжительность плана не может быть более 10 лет</string>
+    <string name="validation_inflation_rate_range">Уровень инфляции должен быть между -50%% и 100%%</string>
+    <string name="duration_3_months">3 Месяца</string>
+    <string name="duration_6_months">6 Месяцев</string>
+    <string name="duration_1_year">1 Год</string>
+    <string name="duration_1_5_years">1,5 Года</string>
+    <string name="duration_2_years">2 Года</string>
+    <string name="duration_3_years">3 Года</string>
+    <string name="duration_5_years">5 Лет</string>
+
+    <!-- PlanningViewModel - Error messages -->
+    <string name="error_loading_plan">Ошибка загрузки плана: %s</string>
+    <string name="error_creating_plan">Ошибка создания плана: %s</string>
+    <string name="error_deleting_plan">Ошибка удаления плана: %s</string>
+    <string name="error_updating_expense_data">Ошибка обновления данных расходов: %s</string>
+    <string name="error_updating_plan_calculations">Ошибка обновления расчётов плана: %s</string>
+    <string name="error_saving_changes">Ошибка сохранения изменений: %s</string>
 
     <!-- Category - Default categories -->
-    <string name="category_food">Food and Drink</string>
-    <string name="category_housing">Housing</string>
-    <string name="category_transportation">Transportation</string>
-    <string name="category_health">Health and Personal Care</string>
-    <string name="category_entertainment">Entertainment and Hobbies</string>
-    <string name="category_education">Education</string>
-    <string name="category_shopping">Shopping</string>
-    <string name="category_pets">Pets</string>
-    <string name="category_work">Work and Professional Expenses</string>
-    <string name="category_tax">Tax and Legal Expenses</string>
-    <string name="category_donations">Donations and Aid</string>
-    <string name="category_others">Other Payments</string>
+    <string name="category_food">Еда и Напитки</string>
+    <string name="category_housing">Жильё</string>
+    <string name="category_transportation">Транспорт</string>
+    <string name="category_health">Здоровье и Личная Гигиена</string>
+    <string name="category_entertainment">Развлечения и Хобби</string>
+    <string name="category_education">Образование</string>
+    <string name="category_shopping">Покупки</string>
+    <string name="category_pets">Домашние Животные</string>
+    <string name="category_work">Работа и Профессиональные Расходы</string>
+    <string name="category_tax">Налоги и Юридические Расходы</string>
+    <string name="category_donations">Пожертвования и Помощь</string>
+    <string name="category_others">Другие Платежи</string>
 </resources>
