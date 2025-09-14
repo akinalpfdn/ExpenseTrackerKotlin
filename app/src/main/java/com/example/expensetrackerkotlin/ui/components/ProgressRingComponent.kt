@@ -21,6 +21,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.res.stringResource
+import com.example.expensetrackerkotlin.R
 import com.example.expensetrackerkotlin.ui.theme.ThemeColors
 import com.example.expensetrackerkotlin.utils.NumberFormatter
 import kotlin.math.cos
@@ -138,7 +140,7 @@ fun MonthlyProgressRingView(
                     color = if (isOverLimit) Color.Red else ThemeColors.getTextColor(isDarkTheme)
                 )
                 Text(
-                    text = if (month.isNotEmpty()) month else "Aylık",
+                    text = if (month.isNotEmpty()) month else stringResource(R.string.monthly_label),
                     fontSize = 19.sp,
                     color = ThemeColors.getTextGrayColor(isDarkTheme)
                 )
@@ -180,7 +182,7 @@ fun DailyProgressRingView(
                     color = if (isOverDailyLimit) Color.Red else ThemeColors.getTextColor(isDarkTheme)
                 )
                 Text(
-                    text = "Günlük",
+                    text = stringResource(R.string.daily_label),
                     fontSize = 12.sp,
                     color = ThemeColors.getTextGrayColor(isDarkTheme)
                 )

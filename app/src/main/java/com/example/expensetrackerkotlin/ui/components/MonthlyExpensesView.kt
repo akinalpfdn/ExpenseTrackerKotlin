@@ -22,6 +22,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.res.stringResource
+import com.example.expensetrackerkotlin.R
 import com.example.expensetrackerkotlin.ui.theme.AppColors
 import com.example.expensetrackerkotlin.ui.theme.ThemeColors
 import com.example.expensetrackerkotlin.data.Expense
@@ -155,56 +157,56 @@ fun MonthlyExpensesView(
                             modifier = Modifier.background(ThemeColors.getCardBackgroundColor(isDarkTheme))
                         ) {
                             DropdownMenuItem(
-                                text = { Text("Zaman: Yeniden Eskiye", color = ThemeColors.getTextColor(isDarkTheme)) },
+                                text = { Text(stringResource(R.string.time_newest_first), color = ThemeColors.getTextColor(isDarkTheme)) },
                                 onClick = {
                                     currentSortType = ExpenseSortType.TIME_NEWEST_FIRST
                                     showSortMenu = false
                                 }
                             )
                             DropdownMenuItem(
-                                text = { Text("Zaman: Eskiden Yeniye", color = ThemeColors.getTextColor(isDarkTheme)) },
+                                text = { Text(stringResource(R.string.time_oldest_first), color = ThemeColors.getTextColor(isDarkTheme)) },
                                 onClick = {
                                     currentSortType = ExpenseSortType.TIME_OLDEST_FIRST
                                     showSortMenu = false
                                 }
                             )
                             DropdownMenuItem(
-                                text = { Text("Miktar: Büyükten Küçüğe", color = ThemeColors.getTextColor(isDarkTheme)) },
+                                text = { Text(stringResource(R.string.amount_high_to_low), color = ThemeColors.getTextColor(isDarkTheme)) },
                                 onClick = {
                                     currentSortType = ExpenseSortType.AMOUNT_HIGH_TO_LOW
                                     showSortMenu = false
                                 }
                             )
                             DropdownMenuItem(
-                                text = { Text("Miktar: Küçükten Büyüğe", color = ThemeColors.getTextColor(isDarkTheme)) },
+                                text = { Text(stringResource(R.string.amount_low_to_high), color = ThemeColors.getTextColor(isDarkTheme)) },
                                 onClick = {
                                     currentSortType = ExpenseSortType.AMOUNT_LOW_TO_HIGH
                                     showSortMenu = false
                                 }
                             )
                             DropdownMenuItem(
-                                text = { Text("Açıklama: A-Z", color = ThemeColors.getTextColor(isDarkTheme)) },
+                                text = { Text(stringResource(R.string.description_a_to_z), color = ThemeColors.getTextColor(isDarkTheme)) },
                                 onClick = {
                                     currentSortType = ExpenseSortType.DESCRIPTION_A_TO_Z
                                     showSortMenu = false
                                 }
                             )
                             DropdownMenuItem(
-                                text = { Text("Açıklama: Z-A", color = ThemeColors.getTextColor(isDarkTheme)) },
+                                text = { Text(stringResource(R.string.description_z_to_a), color = ThemeColors.getTextColor(isDarkTheme)) },
                                 onClick = {
                                     currentSortType = ExpenseSortType.DESCRIPTION_Z_TO_A
                                     showSortMenu = false
                                 }
                             )
                             DropdownMenuItem(
-                                text = { Text("Kategori: A-Z", color = ThemeColors.getTextColor(isDarkTheme)) },
+                                text = { Text(stringResource(R.string.category_a_to_z), color = ThemeColors.getTextColor(isDarkTheme)) },
                                 onClick = {
                                     currentSortType = ExpenseSortType.CATEGORY_A_TO_Z
                                     showSortMenu = false
                                 }
                             )
                             DropdownMenuItem(
-                                text = { Text("Kategori: Z-A", color = ThemeColors.getTextColor(isDarkTheme)) },
+                                text = { Text(stringResource(R.string.category_z_to_a), color = ThemeColors.getTextColor(isDarkTheme)) },
                                 onClick = {
                                     currentSortType = ExpenseSortType.CATEGORY_Z_TO_A
                                     showSortMenu = false
@@ -214,7 +216,7 @@ fun MonthlyExpensesView(
                     }
 
                         Text(
-                            text = "${monthlyExpenses.size} sonuç",
+                            text = stringResource(R.string.results_count, monthlyExpenses.size),
                             fontSize = 12.sp,
                             color = ThemeColors.getTextGrayColor(isDarkTheme)
                         )
@@ -279,7 +281,7 @@ fun MonthlyExpensesView(
                                 Box(modifier = Modifier.weight(1f)) {
                                     if (searchText.isEmpty()) {
                                         Text(
-                                            text = "Açıklama, miktar veya kategoriye göre ara...",
+                                            text = stringResource(R.string.search_expenses_placeholder),
                                             fontSize = 14.sp,
                                             color = ThemeColors.getTextGrayColor(isDarkTheme)
                                         )
@@ -314,9 +316,9 @@ fun MonthlyExpensesView(
                 
                 Text(
                     text = if (searchText.isNotBlank()) {
-                        "Arama sonucu bulunamadı"
+                        stringResource(R.string.no_search_results)
                     } else {
-                        "Bu ayda harcama yok"
+                        stringResource(R.string.no_expenses_this_month)
                     },
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Medium,
@@ -328,9 +330,9 @@ fun MonthlyExpensesView(
                 
                 Text(
                     text = if (searchText.isNotBlank()) {
-                        "\"$searchText\" için sonuç bulunamadı. Farklı bir arama terimi deneyin."
+                        stringResource(R.string.search_no_results_description, searchText)
                     } else {
-                        "Bu aya harcama eklemek için ana ekranda + butonuna basın"
+                        stringResource(R.string.add_expense_for_month)
                     },
                     fontSize = 16.sp,
                     color = ThemeColors.getTextGrayColor(isDarkTheme),

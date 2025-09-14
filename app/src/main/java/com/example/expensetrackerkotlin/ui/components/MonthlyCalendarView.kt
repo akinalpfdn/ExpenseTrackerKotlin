@@ -16,6 +16,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.res.stringResource
+import com.example.expensetrackerkotlin.R
 import com.example.expensetrackerkotlin.ui.theme.AppColors
 import com.example.expensetrackerkotlin.ui.theme.ThemeColors
 import com.example.expensetrackerkotlin.data.DailyData
@@ -166,7 +168,15 @@ fun MonthlyCalendarView(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceEvenly
             ) {
-                listOf("P", "S", "Ç", "P", "C", "C", "P").forEach { dayName ->
+                listOf(
+                    stringResource(R.string.monday_short),
+                    stringResource(R.string.tuesday_short),
+                    stringResource(R.string.wednesday_short),
+                    stringResource(R.string.thursday_short),
+                    stringResource(R.string.friday_short),
+                    stringResource(R.string.saturday_short),
+                    stringResource(R.string.sunday_short)
+                ).forEach { dayName ->
                     Text(
                         text = dayName,
                         fontSize = 12.sp,

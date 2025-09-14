@@ -22,6 +22,8 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.res.stringResource
+import com.example.expensetrackerkotlin.R
 import com.example.expensetrackerkotlin.data.PlanWithBreakdowns
 import com.example.expensetrackerkotlin.data.PlanMonthlyBreakdown
 import com.example.expensetrackerkotlin.ui.theme.AppColors
@@ -86,7 +88,7 @@ fun PlanDetailBottomSheet(
                 )
             ) {
                 Text(
-                    text = "Harcama Verilerini Güncelle",
+                    text = stringResource(R.string.update_expense_data),
                     fontSize = 14.sp,
                     fontWeight = FontWeight.Medium
                 )
@@ -95,7 +97,7 @@ fun PlanDetailBottomSheet(
             Spacer(modifier = Modifier.height(4.dp))
 
             Text(
-                text = "Mevcut ve gelecek ayları güncel verilerle yeniden hesaplar",
+                text = stringResource(R.string.update_expense_data_description),
                 fontSize = 12.sp,
                 color = ThemeColors.getTextGrayColor(isDarkTheme),
                 textAlign = TextAlign.Center,
@@ -120,7 +122,7 @@ fun PlanDetailBottomSheet(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(
-                    text = "Toplam Net Değer",
+                    text = stringResource(R.string.total_net_value),
                     fontSize = 14.sp,
                     color = ThemeColors.getTextGrayColor(isDarkTheme)
                 )
@@ -149,7 +151,7 @@ fun PlanDetailBottomSheet(
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Text(
-                text = "Ay",
+                text = stringResource(R.string.month),
                 fontSize = 12.sp,
                 fontWeight = FontWeight.Bold,
                 color = ThemeColors.getTextColor(isDarkTheme),
@@ -157,7 +159,7 @@ fun PlanDetailBottomSheet(
                 textAlign = TextAlign.Center
             )
             Text(
-                text = "Gelir",
+                text = stringResource(R.string.income),
                 fontSize = 12.sp,
                 fontWeight = FontWeight.Bold,
                 color = ThemeColors.getTextColor(isDarkTheme),
@@ -165,7 +167,7 @@ fun PlanDetailBottomSheet(
                 textAlign = TextAlign.Center
             )
             Text(
-                text = "Gider",
+                text = stringResource(R.string.expense),
                 fontSize = 12.sp,
                 fontWeight = FontWeight.Bold,
                 color = ThemeColors.getTextColor(isDarkTheme),
@@ -173,7 +175,7 @@ fun PlanDetailBottomSheet(
                 textAlign = TextAlign.Center
             )
             Text(
-                text = "Net",
+                text = stringResource(R.string.net),
                 fontSize = 12.sp,
                 fontWeight = FontWeight.Bold,
                 color = ThemeColors.getTextColor(isDarkTheme),
@@ -181,7 +183,7 @@ fun PlanDetailBottomSheet(
                 textAlign = TextAlign.Center
             )
             Text(
-                text = "Toplam",
+                text = stringResource(R.string.total),
                 fontSize = 12.sp,
                 fontWeight = FontWeight.Bold,
                 color = ThemeColors.getTextColor(isDarkTheme),
@@ -375,7 +377,7 @@ fun PlanDetailBottomSheet(
                         ) {
                             Icon(
                                 imageVector = Icons.Default.Save,
-                                contentDescription = "Kaydet",
+                                contentDescription = stringResource(R.string.save),
                                 tint = AppColors.PrimaryOrange,
                                 modifier = Modifier.size(16.dp)
                             )

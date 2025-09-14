@@ -20,6 +20,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.res.stringResource
+import com.example.expensetrackerkotlin.R
 import com.example.expensetrackerkotlin.data.PlanWithBreakdowns
 import com.example.expensetrackerkotlin.ui.theme.AppColors
 import com.example.expensetrackerkotlin.ui.theme.ThemeColors
@@ -111,7 +113,7 @@ fun PlanCard(
             ) {
                 Column {
                     Text(
-                        text = "Ort. Aylık Gelir",
+                        text = stringResource(R.string.avg_monthly_income),
                         fontSize = 12.sp,
                         color = ThemeColors.getTextGrayColor(isDarkTheme)
                     )
@@ -125,7 +127,7 @@ fun PlanCard(
                 
                 Column(horizontalAlignment = Alignment.End) {
                     Text(
-                        text = "Ort. Aylık Gider",
+                        text = stringResource(R.string.avg_monthly_expense),
                         fontSize = 12.sp,
                         color = ThemeColors.getTextGrayColor(isDarkTheme)
                     )
@@ -148,7 +150,7 @@ fun PlanCard(
             ) {
                 Column {
                     Text(
-                        text = "Şu Anki Net",
+                        text = stringResource(R.string.current_net),
                         fontSize = 12.sp,
                         color = ThemeColors.getTextGrayColor(isDarkTheme)
                     )
@@ -172,7 +174,7 @@ fun PlanCard(
                         )
                         Spacer(modifier = Modifier.width(4.dp))
                         Text(
-                            text = "Hedef Net",
+                            text = stringResource(R.string.target_net),
                             fontSize = 12.sp,
                             color = ThemeColors.getTextGrayColor(isDarkTheme)
                         )

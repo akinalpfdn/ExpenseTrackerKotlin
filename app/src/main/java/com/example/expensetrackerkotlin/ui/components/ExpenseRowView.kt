@@ -33,6 +33,8 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.res.stringResource
+import com.example.expensetrackerkotlin.R
 import com.example.expensetrackerkotlin.data.Expense
 import com.example.expensetrackerkotlin.data.RecurrenceType
 import com.example.expensetrackerkotlin.utils.NumberFormatter
@@ -166,7 +168,7 @@ fun ExpenseRowView(
                             
                             Column {
                                 Text(
-                                    text = subCategory?.name ?: "Unknown",
+                                    text = subCategory?.name ?: stringResource(R.string.unknown),
                                     fontWeight = FontWeight.Medium,
                                     fontSize = 16.sp,
                                     color = ThemeColors.getTextColor(isDarkTheme),
@@ -196,7 +198,7 @@ fun ExpenseRowView(
                             )
                             if (expense.exchangeRate != null) {
                                 Text(
-                                    text = "Kur: ${String.format("%.4f", expense.exchangeRate)}",
+                                    text = "${stringResource(R.string.exchange_rate)}: ${String.format("%.4f", expense.exchangeRate)}",
                                     fontSize = 12.sp,
                                     color = ThemeColors.getTextGrayColor(isDarkTheme)
                                 )
@@ -224,10 +226,10 @@ fun ExpenseRowView(
                                      )
                                      Text(
                                          text = when (expense.recurrenceType) {
-                                             RecurrenceType.DAILY -> "Her gün"
-                                             RecurrenceType.WEEKDAYS -> "Hafta içi"
-                                             RecurrenceType.WEEKLY -> "Haftalık"
-                                             RecurrenceType.MONTHLY -> "Aylık"
+                                             RecurrenceType.DAILY -> stringResource(R.string.daily)
+                                             RecurrenceType.WEEKDAYS -> stringResource(R.string.weekdays)
+                                             RecurrenceType.WEEKLY -> stringResource(R.string.weekly)
+                                             RecurrenceType.MONTHLY -> stringResource(R.string.monthly)
                                              RecurrenceType.NONE -> ""
                                          },
                                          fontSize = 11.sp,
@@ -289,7 +291,7 @@ fun ExpenseRowView(
                                         ) {
                                             if (editAmount.isEmpty()) {
                                                 Text(
-                                                    text = "Miktar",
+                                                    text = stringResource(R.string.amount),
                                                     fontSize = 14.sp,
                                                     color = ThemeColors.getTextGrayColor(isDarkTheme)
                                                 )
@@ -333,7 +335,7 @@ fun ExpenseRowView(
                                         ) {
                                             if (editDescription.isEmpty()) {
                                                 Text(
-                                                    text = "Açıklama",
+                                                    text = stringResource(R.string.description),
                                                     fontSize = 14.sp,
                                                     color = ThemeColors.getTextGrayColor(isDarkTheme)
                                                 )
@@ -384,7 +386,7 @@ fun ExpenseRowView(
                                             ) {
                                                 if (editExchangeRate.isEmpty()) {
                                                     Text(
-                                                        text = "Döviz Kuru",
+                                                        text = stringResource(R.string.exchange_rate_field),
                                                         fontSize = 14.sp,
                                                         color = ThemeColors.getTextGrayColor(isDarkTheme)
                                                     )
@@ -425,7 +427,7 @@ fun ExpenseRowView(
                                             modifier = Modifier.size(16.dp)
                                         )
                                         Spacer(modifier = Modifier.width(4.dp))
-                                        Text("Sil", fontSize = 12.sp, color = Color.White)
+                                        Text(stringResource(R.string.delete), fontSize = 12.sp, color = Color.White)
                                     }
                                 }
                                 Button(
@@ -465,7 +467,7 @@ fun ExpenseRowView(
                                             modifier = Modifier.size(16.dp)
                                         )
                                         Spacer(modifier = Modifier.width(4.dp))
-                                        Text("Kaydet", fontSize = 12.sp, color = ThemeColors.getTextColor(isDarkTheme))
+                                        Text(stringResource(R.string.save), fontSize = 12.sp, color = ThemeColors.getTextColor(isDarkTheme))
                                     }
                                 }
 
@@ -501,14 +503,14 @@ fun ExpenseRowView(
             },
             title = {
                 Text(
-                    text = "Harcamayı Sil",
+                    text = stringResource(R.string.delete_expense),
                     color = ThemeColors.getTextColor(isDarkTheme),
                     fontWeight = FontWeight.Bold
                 )
             },
             text = {
                 Text(
-                    text = "Bu harcamayı silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.",
+                    text = stringResource(R.string.delete_expense_confirmation),
                     color = ThemeColors.getTextColor(isDarkTheme)
                 )
             },
@@ -520,7 +522,7 @@ fun ExpenseRowView(
                     }
                 ) {
                     Text(
-                        "Sil", 
+                        stringResource(R.string.delete), 
                         color = Color.Red,
                         fontWeight = FontWeight.Bold
                     )
@@ -533,7 +535,7 @@ fun ExpenseRowView(
                     }
                 ) {
                     Text(
-                        "İptal", 
+                        stringResource(R.string.cancel), 
                         color = ThemeColors.getTextColor(isDarkTheme)
                     )
                 }

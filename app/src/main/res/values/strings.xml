@@ -102,4 +102,74 @@
     <string name="selectCategory">Kategori seçim</string>
     <string name="single_time">Tek seferlik</string>
     <string name="okay">Tamam</string>
+
+    <!-- SubCategoryDetailBottomSheet -->
+    <string name="parent_category">Ana Kategori</string>
+    <string name="total_amount">Toplam Tutar</string>
+    <string name="expense_count">Harcama Sayısı</string>
+    <string name="average">Ortalama</string>
+    <string name="expenses">Harcamalar</string>
+    <string name="recurring_label">Tekrarlayan</string>
+
+    <!-- ProgressRingComponent -->
+    <string name="monthly_label">Aylık</string>
+    <string name="daily_label">Günlük</string>
+
+    <!-- PlanDetailBottomSheet -->
+    <string name="update_expense_data">Harcama Verilerini Güncelle</string>
+    <string name="update_expense_data_description">Mevcut ve gelecek ayları güncel verilerle yeniden hesaplar</string>
+    <string name="total_net_value">Toplam Net Değer</string>
+    <string name="month">Ay</string>
+    <string name="income">Gelir</string>
+    <string name="expense">Gider</string>
+    <string name="net">Net</string>
+    <string name="total">Toplam</string>
+
+    <!-- PlanCard -->
+    <string name="avg_monthly_income">Ort. Aylık Gelir</string>
+    <string name="avg_monthly_expense">Ort. Aylık Gider</string>
+    <string name="current_net">Şu Anki Net</string>
+    <string name="target_net">Hedef Net</string>
+
+    <!-- MonthlyLineChart -->
+    <string name="all">Tümü</string>
+    <string name="one_time_expense">Tek Seferlik</string>
+    <string name="period_expense_trend">Dönemlik Harcama Trendi</string>
+    <string name="expand">Genişlet</string>
+    <string name="collapse">Daralt</string>
+    <string name="no_data_found">Veri bulunamadı</string>
+    <string name="highest">En yüksek</string>
+
+    <!-- MonthlyExpensesView -->
+    <string name="no_expenses_this_month">Bu ayda harcama yok</string>
+    <string name="add_expense_for_month">Bu aya harcama eklemek için ana ekranda + butonuna basın</string>
+
+    <!-- MonthlyCalendarView - Day headers -->
+    <string name="monday_short">P</string>
+    <string name="tuesday_short">S</string>
+    <string name="wednesday_short">Ç</string>
+    <string name="thursday_short">P</string>
+    <string name="friday_short">C</string>
+    <string name="saturday_short">C</string>
+    <string name="sunday_short">P</string>
+
+    <!-- MonthlyAnalysisPieChart -->
+    <string name="category_distribution">Kategori Dağılımı</string>
+    <string name="tap_chart_to_select_category">Kategori seçmek için grafiğe dokunun</string>
+
+    <!-- ExpenseRowView -->
+    <string name="unknown">Bilinmeyen</string>
+    <string name="delete_expense">Harcamayı Sil</string>
+    <string name="delete_expense_confirmation">Bu harcamayı silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.</string>
+
+    <!-- DailyCategoryDetailBottomSheet -->
+    <string name="amount_high_to_low_arrow">Tutar (Yüksek → Düşük)</string>
+    <string name="amount_low_to_high_arrow">Tutar (Düşük → Yüksek)</string>
+    <string name="time_newest_first_arrow">Zaman (Yeni → Eski)</string>
+    <string name="time_oldest_first_arrow">Zaman (Eski → Yeni)</string>
+    <string name="description_a_to_z_arrow">Açıklama (A → Z)</string>
+    <string name="description_z_to_a_arrow">Açıklama (Z → A)</string>
+    <string name="total_spending">Toplam Harcama</string>
+    <string name="no_expenses_in_category">Bu kategoride harcama bulunamadı</string>
+    <string name="expense_singular">Harcama</string>
 </resources>

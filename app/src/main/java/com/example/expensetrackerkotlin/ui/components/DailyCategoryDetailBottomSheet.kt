@@ -16,6 +16,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.res.stringResource
+import com.example.expensetrackerkotlin.R
 import com.example.expensetrackerkotlin.data.Category
 import com.example.expensetrackerkotlin.data.Expense
 import com.example.expensetrackerkotlin.data.SubCategory
@@ -67,12 +69,12 @@ fun DailyCategoryDetailBottomSheet(
     val totalAmount = categoryExpenses.sumOf { it.getAmountInDefaultCurrency(defaultCurrency) }
     
     val sortMenuItems = listOf(
-        "Tutar (Yüksek → Düşük)" to DailyCategorySortType.AMOUNT_HIGH_TO_LOW,
-        "Tutar (Düşük → Yüksek)" to DailyCategorySortType.AMOUNT_LOW_TO_HIGH,
-        "Zaman (Yeni → Eski)" to DailyCategorySortType.TIME_NEWEST_FIRST,
-        "Zaman (Eski → Yeni)" to DailyCategorySortType.TIME_OLDEST_FIRST,
-        "Açıklama (A → Z)" to DailyCategorySortType.DESCRIPTION_A_TO_Z,
-        "Açıklama (Z → A)" to DailyCategorySortType.DESCRIPTION_Z_TO_A
+        stringResource(R.string.amount_high_to_low_arrow) to DailyCategorySortType.AMOUNT_HIGH_TO_LOW,
+        stringResource(R.string.amount_low_to_high_arrow) to DailyCategorySortType.AMOUNT_LOW_TO_HIGH,
+        stringResource(R.string.time_newest_first_arrow) to DailyCategorySortType.TIME_NEWEST_FIRST,
+        stringResource(R.string.time_oldest_first_arrow) to DailyCategorySortType.TIME_OLDEST_FIRST,
+        stringResource(R.string.description_a_to_z_arrow) to DailyCategorySortType.DESCRIPTION_A_TO_Z,
+        stringResource(R.string.description_z_to_a_arrow) to DailyCategorySortType.DESCRIPTION_Z_TO_A
     )
     
     ModalBottomSheet(
@@ -118,7 +120,7 @@ fun DailyCategoryDetailBottomSheet(
                     IconButton(onClick = { showSortMenu = !showSortMenu }) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.Sort,
-                            contentDescription = "Sırala"
+                            contentDescription = stringResource(R.string.sort)
                         )
                     }
                     
@@ -164,7 +166,7 @@ fun DailyCategoryDetailBottomSheet(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = "Toplam Harcama",
+                        text = stringResource(R.string.total_spending),
                         fontSize = 16.sp,
                         fontWeight = FontWeight.Medium,
                         color = ThemeColors.getTextColor(isDarkTheme)
@@ -186,7 +188,7 @@ fun DailyCategoryDetailBottomSheet(
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
-                        text = "Bu kategoride harcama bulunamadı",
+                        text = stringResource(R.string.no_expenses_in_category),
                         fontSize = 16.sp,
                         color = ThemeColors.getTextGrayColor(isDarkTheme),
                         textAlign = TextAlign.Center
@@ -194,7 +196,7 @@ fun DailyCategoryDetailBottomSheet(
                 }
             } else {
                 Text(
-                    text = "${sortedExpenses.size} Harcama",
+                    text = "${sortedExpenses.size} ${stringResource(R.string.expense_singular)}",
                     fontSize = 14.sp,
                     color = ThemeColors.getTextGrayColor(isDarkTheme),
                     modifier = Modifier.padding(bottom = 8.dp)

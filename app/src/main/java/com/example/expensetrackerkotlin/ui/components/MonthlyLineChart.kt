@@ -28,6 +28,8 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.res.stringResource
+import com.example.expensetrackerkotlin.R
 import com.example.expensetrackerkotlin.ui.theme.AppColors
 import com.example.expensetrackerkotlin.ui.theme.ThemeColors
 import com.example.expensetrackerkotlin.utils.NumberFormatter
@@ -38,10 +40,19 @@ data class ChartDataPoint(
     val amount: Double
 )
 
-enum class ExpenseFilterType(val displayName: String) {
-    ALL("Tümü"),
-    RECURRING("Tekrarlayan"),
-    ONE_TIME("Tek Seferlik")
+@Composable
+fun getExpenseFilterTypeDisplayName(type: ExpenseFilterType): String {
+    return when (type) {
+        ExpenseFilterType.ALL -> stringResource(R.string.all)
+        ExpenseFilterType.RECURRING -> stringResource(R.string.recurring_label)
+        ExpenseFilterType.ONE_TIME -> stringResource(R.string.one_time_expense)
+    }
+}
+
+enum class ExpenseFilterType {
+    ALL,
+    RECURRING,
+    ONE_TIME
 }
 
 @Composable
@@ -71,14 +82,14 @@ fun MonthlyLineChart(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = "Dönemlik Harcama Trendi",
+                text = stringResource(R.string.period_expense_trend),
                 fontSize = 18.sp,
                 fontWeight = FontWeight.Bold,
                 color = ThemeColors.getTextColor(isDarkTheme)
             )
             Icon(
                 imageVector = if (isCollapsed) Icons.Default.ExpandMore else Icons.Default.ExpandLess,
-                contentDescription = if (isCollapsed) "Genişlet" else "Daralt",
+                contentDescription = if (isCollapsed) stringResource(R.string.expand) else stringResource(R.string.collapse),
                 tint = ThemeColors.getTextGrayColor(isDarkTheme),
                 modifier = Modifier.size(24.dp)
             )
@@ -101,7 +112,7 @@ fun MonthlyLineChart(
                         contentAlignment = Alignment.Center
                     ) {
                         Text(
-                            text = "Veri bulunamadı",
+                            text = stringResource(R.string.no_data_found),
                             color = ThemeColors.getTextGrayColor(isDarkTheme)
                         )
                     }
@@ -135,7 +146,7 @@ fun MonthlyLineChart(
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Text(
-                                text = "En yüksek: $currency ${
+                                text = "${stringResource(R.string.highest)}: $currency ${
                                     NumberFormatter.formatAmount(
                                         maxAmount
                                     )
@@ -146,7 +157,7 @@ fun MonthlyLineChart(
 
                             val avgAmount = data.map { it.amount }.average()
                             Text(
-                                text = "Ortalama: $currency ${NumberFormatter.formatAmount(avgAmount)}",
+                                text = "${stringResource(R.string.average)}: $currency ${NumberFormatter.formatAmount(avgAmount)}",
                                 fontSize = 12.sp,
                                 color = ThemeColors.getTextGrayColor(isDarkTheme)
                             )

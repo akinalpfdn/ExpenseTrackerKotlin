@@ -50,6 +50,8 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.res.stringResource
+import com.example.expensetrackerkotlin.R
 import com.example.expensetrackerkotlin.ui.theme.AppColors
 import com.example.expensetrackerkotlin.ui.theme.ThemeColors
 import kotlin.math.PI
@@ -114,14 +116,14 @@ fun MonthlyAnalysisPieChart(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = "Kategori Dağılımı",
+                    text = stringResource(R.string.category_distribution),
                     fontSize = 18.sp,
                     fontWeight = androidx.compose.ui.text.font.FontWeight.Bold,
                     color = ThemeColors.getTextColor(isDarkTheme)
                 )
                 Icon(
                     imageVector = if (isCollapsed) Icons.Default.ExpandMore else Icons.Default.ExpandLess,
-                    contentDescription = if (isCollapsed) "Genişlet" else "Daralt",
+                    contentDescription = if (isCollapsed) stringResource(R.string.expand) else stringResource(R.string.collapse),
                     tint = ThemeColors.getTextGrayColor(isDarkTheme),
                     modifier = Modifier.size(24.dp)
                 )
@@ -265,7 +267,7 @@ fun MonthlyAnalysisPieChart(
                                     )
                                     Spacer(modifier = Modifier.height(4.dp))
                                     Text(
-                                        text = "Kategori seçmek için grafiğe dokunun",
+                                        text = stringResource(R.string.tap_chart_to_select_category),
                                         fontSize = 11.sp,
                                         color = ThemeColors.getTextGrayColor(isDarkTheme)
                                             .copy(alpha = 0.8f),

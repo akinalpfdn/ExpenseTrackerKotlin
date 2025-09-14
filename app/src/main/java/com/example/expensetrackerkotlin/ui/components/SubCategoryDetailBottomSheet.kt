@@ -21,6 +21,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.res.stringResource
+import com.example.expensetrackerkotlin.R
 import com.example.expensetrackerkotlin.data.*
 import androidx.compose.ui.text.style.TextOverflow
 import com.example.expensetrackerkotlin.ui.theme.ThemeColors
@@ -100,7 +102,7 @@ fun SubCategoryDetailBottomSheet(
                     overflow = TextOverflow.Ellipsis
                 )
                 Text(
-                    text = "Ana Kategori: ${subCategoryData.parentCategory.name}",
+                    text = "${stringResource(R.string.parent_category)}: ${subCategoryData.parentCategory.name}",
                     fontSize = 14.sp,
                     color = ThemeColors.getTextGrayColor(isDarkTheme)
                 )
@@ -111,13 +113,13 @@ fun SubCategoryDetailBottomSheet(
                 SubCategoryComparisonIndicator(
                     amount = comparison.vsLastMonth,
                     currency = viewModel.defaultCurrency,
-                    label = "Önceki aya göre",
+                    label = stringResource(R.string.vs_previous_month),
                     isDarkTheme = isDarkTheme
                 )
                 SubCategoryComparisonIndicator(
                     amount = comparison.vsAverage,
                     currency = viewModel.defaultCurrency,
-                    label = "6 ay ortalamasına göre",
+                    label = stringResource(R.string.vs_6_month_average),
                     isDarkTheme = isDarkTheme
                 )
             }
@@ -144,7 +146,7 @@ fun SubCategoryDetailBottomSheet(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Text(
-                        text = "Toplam Tutar",
+                        text = stringResource(R.string.total_amount),
                         fontSize = 14.sp,
                         color = ThemeColors.getTextGrayColor(isDarkTheme)
                     )
@@ -167,7 +169,7 @@ fun SubCategoryDetailBottomSheet(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Text(
-                        text = "Harcama Sayısı",
+                        text = stringResource(R.string.expense_count),
                         fontSize = 14.sp,
                         color = ThemeColors.getTextGrayColor(isDarkTheme)
                     )
@@ -190,7 +192,7 @@ fun SubCategoryDetailBottomSheet(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Text(
-                        text = "Ortalama",
+                        text = stringResource(R.string.average),
                         fontSize = 14.sp,
                         color = ThemeColors.getTextGrayColor(isDarkTheme)
                     )
@@ -213,7 +215,7 @@ fun SubCategoryDetailBottomSheet(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = "Harcamalar",
+                text = stringResource(R.string.expenses),
                 fontSize = 18.sp,
                 fontWeight = FontWeight.Bold,
                 color = ThemeColors.getTextColor(isDarkTheme)
@@ -331,11 +333,11 @@ fun SubCategoryExpenseItem(
                 
                 if (expense.recurrenceType != RecurrenceType.NONE) {
                     Text(
-                        text = "Tekrarlayan: ${when (expense.recurrenceType) {
-                            RecurrenceType.DAILY -> "Her gün"
-                            RecurrenceType.WEEKDAYS -> "Hafta içi"
-                            RecurrenceType.WEEKLY -> "Haftalık"
-                            RecurrenceType.MONTHLY -> "Aylık" 
+                        text = "${stringResource(R.string.recurring_label)}: ${when (expense.recurrenceType) {
+                            RecurrenceType.DAILY -> stringResource(R.string.daily)
+                            RecurrenceType.WEEKDAYS -> stringResource(R.string.weekdays)
+                            RecurrenceType.WEEKLY -> stringResource(R.string.weekly)
+                            RecurrenceType.MONTHLY -> stringResource(R.string.monthly)
                             else -> ""
                         }}",
                         fontSize = 11.sp,
