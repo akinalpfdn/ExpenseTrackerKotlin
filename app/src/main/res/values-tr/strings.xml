@@ -17,7 +17,6 @@
     <string name="theme_description">Uygulamanın görünümünü değiştirin</string>
     <string name="cancel">İptal</string>
     <string name="save">Kaydet</string>
-
     <!-- RecurringExpensesScreen -->
     <string name="recurring_expenses">Tekrar Eden Harcamalar</string>
     <string name="sort">Sort</string>
@@ -29,6 +28,7 @@
     <string name="description_z_to_a">Açıklama: Z-A</string>
     <string name="category_a_to_z">Kategori: A-Z</string>
     <string name="category_z_to_a">Kategori: Z-A</string>
+    <string name="end_date_recurring">Bitiş: %s</string>
     <string name="search_placeholder">Açıklama, miktar veya kategoriye göre ara...</string>
     <string name="no_search_results">Arama sonucu bulunamadı</string>
     <string name="search_no_results_description">\"%1$s\" için sonuç bulunamadı. Farklı bir arama terimi deneyin.</string>
@@ -39,7 +39,6 @@
     <string name="weekdays">Hafta içi</string>
     <string name="weekly">Haftalık</string>
     <string name="monthly">Aylık</string>
-    <string name="end_date_recurring">Bitiş: %s</string>
     <string name="exchange_rate">Kur: %s</string>
     <string name="delete">Sil</string>
     <string name="amount">Miktar</string>
@@ -49,7 +48,6 @@
     <string name="delete_recurring_expense">Tekrar Eden Harcamayı Sil</string>
     <string name="delete_recurring_confirmation">Bu tekrar eden harcamayı bugünden itibaren silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.</string>
     <string name="ok">Tamam</string>
-
     <!-- PlanningScreen -->
     <string name="financial_planning">Finansal Planlama</string>
     <string name="planning_description">Gelecek planlarınızı oluşturun ve takip edin</string>
@@ -104,4 +102,232 @@
     <string name="selectCategory">Kategori seçim</string>
     <string name="single_time">Tek seferlik</string>
     <string name="okay">Tamam</string>
+
+    <!-- SubCategoryDetailBottomSheet -->
+    <string name="parent_category">Ana Kategori</string>
+    <string name="total_amount">Toplam Tutar</string>
+    <string name="expense_count">Harcama Sayısı</string>
+    <string name="average">Ortalama</string>
+    <string name="expenses">Harcamalar</string>
+    <string name="recurring_label">Tekrarlayan</string>
+
+    <!-- ProgressRingComponent -->
+    <string name="monthly_label">Aylık</string>
+    <string name="daily_label">Günlük</string>
+
+    <!-- PlanDetailBottomSheet -->
+    <string name="update_expense_data">Harcama Verilerini Güncelle</string>
+    <string name="update_expense_data_description">Mevcut ve gelecek ayları güncel verilerle yeniden hesaplar</string>
+    <string name="total_net_value">Toplam Net Değer</string>
+    <string name="month">Ay</string>
+    <string name="income">Gelir</string>
+    <string name="expense">Gider</string>
+    <string name="net">Net</string>
+    <string name="total">Toplam</string>
+
+    <!-- PlanCard -->
+    <string name="avg_monthly_income">Ort. Aylık Gelir</string>
+    <string name="avg_monthly_expense">Ort. Aylık Gider</string>
+    <string name="current_net">Şu Anki Net</string>
+    <string name="target_net">Hedef Net</string>
+
+    <!-- MonthlyLineChart -->
+    <string name="all">Tümü</string>
+    <string name="one_time_expense">Tek Seferlik</string>
+    <string name="period_expense_trend">Dönemlik Harcama Trendi</string>
+    <string name="expand">Genişlet</string>
+    <string name="collapse">Daralt</string>
+    <string name="no_data_found">Veri bulunamadı</string>
+    <string name="highest">En yüksek</string>
+
+    <!-- MonthlyExpensesView -->
+    <string name="no_expenses_this_month">Bu ayda harcama yok</string>
+    <string name="add_expense_for_month">Bu aya harcama eklemek için ana ekranda + butonuna basın</string>
+
+    <!-- MonthlyCalendarView - Day headers -->
+    <string name="monday_short">P</string>
+    <string name="tuesday_short">S</string>
+    <string name="wednesday_short">Ç</string>
+    <string name="thursday_short">P</string>
+    <string name="friday_short">C</string>
+    <string name="saturday_short">C</string>
+    <string name="sunday_short">P</string>
+
+    <!-- MonthlyAnalysisPieChart -->
+    <string name="category_distribution">Kategori Dağılımı</string>
+    <string name="tap_chart_to_select_category">Kategori seçmek için grafiğe dokunun</string>
+
+    <!-- ExpenseRowView -->
+    <string name="unknown">Bilinmeyen</string>
+    <string name="delete_expense">Harcamayı Sil</string>
+    <string name="delete_expense_confirmation">Bu harcamayı silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.</string>
+
+    <!-- DailyCategoryDetailBottomSheet -->
+    <string name="amount_high_to_low_arrow">Tutar (Yüksek → Düşük)</string>
+    <string name="amount_low_to_high_arrow">Tutar (Düşük → Yüksek)</string>
+    <string name="time_newest_first_arrow">Zaman (Yeni → Eski)</string>
+    <string name="time_oldest_first_arrow">Zaman (Eski → Yeni)</string>
+    <string name="description_a_to_z_arrow">Açıklama (A → Z)</string>
+    <string name="description_z_to_a_arrow">Açıklama (Z → A)</string>
+    <string name="total_spending">Toplam Harcama</string>
+    <string name="no_expenses_in_category">Bu kategoride harcama bulunamadı</string>
+    <string name="expense_singular">Harcama</string>
+
+    <!-- CreatePlanDialog -->
+    <string name="create_new_plan">Yeni Plan Oluştur</string>
+    <string name="plan_name">Plan Adı</string>
+    <string name="plan_name_example">Örn: 2024 Tasarruf Planı</string>
+    <string name="plan_duration">Plan Süresi</string>
+    <string name="apply_interest_to_savings">Faiz Uygula (Birikime)</string>
+    <string name="simple_interest">Basit Faiz</string>
+    <string name="compound_interest">Bileşik Faiz</string>
+    <string name="annual_interest_rate">Yıllık faiz oranı %</string>
+    <string name="interest_applied_to_positive_savings">Pozitif birikime faiz uygulanır</string>
+    <string name="interest_type">Faiz Türü</string>
+    <string name="monthly_income_currency">Aylık Gelir (%s)</string>
+    <string name="use_app_expense_data">Uygulamanın harcama verilerini kullan</string>
+    <string name="monthly_expenses_currency">Aylık Harcama (%s)</string>
+    <string name="manual_monthly_expense_amount">Manuel aylık harcama miktarı</string>
+    <string name="enter_manual_expense_amount">Manuel harcama miktarını girin</string>
+    <string name="apply_inflation">Enflasyon Uygula</string>
+    <string name="annual_percentage_rate">Yıllık % oran</string>
+    <string name="create">Oluştur</string>
+
+    <!-- CategorySummarySection -->
+    <string name="category_details">Kategori Detayları</string>
+    <string name="main_categories">Ana Kategoriler</string>
+    <string name="sub_categories">Alt Kategoriler</string>
+    <string name="expense_lowercase">harcama</string>
+    <string name="see_details">Detayları gör</string>
+
+    <!-- CategoryPopupLines -->
+    <string name="vs_previous_month_colon">Önceki aya göre:</string>
+    <string name="vs_average_colon">Ortalamaya göre:</string>
+
+    <!-- CategoryManagementScreen -->
+    <string name="add_new_main_category">Yeni Ana Kategori Ekle</string>
+    <string name="add_main_category_content_desc">Add Main Category</string>
+    <string name="category_name_hint">Kategori adı girin</string>
+    <string name="unique_category_name_note">Kategori için benzersiz bir isim belirleyin</string>
+    <string name="icon_selection">İkon Seçimi</string>
+    <string name="color_selection">Renk Seçimi</string>
+    <string name="add_button">Ekle</string>
+    <string name="main_category">Ana Kategori</string>
+    <string name="select_category">Kategori seçin</string>
+    <string name="subcategory_name">Alt Kategori Adı</string>
+    <string name="subcategory_name_hint">Alt kategori adı girin</string>
+    <string name="unique_subcategory_name_note">Alt kategori için benzersiz bir isim belirleyin</string>
+    <string name="edit_subcategory">Alt Kategori Düzenle</string>
+    <string name="edit_category">Kategori Düzenle</string>
+    <string name="edit">Düzenle</string>
+    <string name="enter_name_hint">Ad girin</string>
+    <string name="delete_confirmation">Silme Onayı</string>
+    <string name="delete_item_confirmation">"%s" öğesini silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.</string>
+    <string name="this_item">Bu öğe</string>
+    <string name="collapse_desc">Collapse</string>
+    <string name="expand_desc">Expand</string>
+    <string name="edit_category_desc">Edit Category</string>
+    <string name="delete_category_desc">Delete Category</string>
+    <string name="add_subcategory">Alt Kategori Ekle</string>
+    <string name="add_subcategory_desc">Add Subcategory</string>
+    <string name="edit_subcategory_desc">Edit Subcategory</string>
+    <string name="delete_subcategory_desc">Delete Subcategory</string>
+    <string name="selected">Selected</string>
+
+    <!-- CategoryDistributionChart -->
+    <string name="no_data">Veri yok</string>
+    <string name="category">Kategori</string>
+
+    <!-- CategoryDetailBottomSheet -->
+    <string name="sort_amount_desc">Tutara Göre (Yüksek → Düşük)</string>
+    <string name="sort_amount_asc">Tutara Göre (Düşük → Yüksek)</string>
+    <string name="sort_date_desc">Tarihe Göre (Yeni → Eski)</string>
+    <string name="sort_date_asc">Tarihe Göre (Eski → Yeni)</string>
+    <string name="sort_name_asc">Açıklamaya Göre (A → Z)</string>
+    <string name="sort_name_desc">Açıklamaya Göre (Z → A)</string>
+
+    <!-- SubCategory - Default subcategories -->
+    <!-- Food & Drink -->
+    <string name="subcategory_restaurant">Restoran</string>
+    <string name="subcategory_kitchen_shopping">Mutfak alışverişi</string>
+
+    <!-- Housing -->
+    <string name="subcategory_rent">Kira</string>
+    <string name="subcategory_dues">Aidat</string>
+    <string name="subcategory_mortgage">Mortgage ödemesi</string>
+    <string name="subcategory_electricity">Elektrik faturası</string>
+    <string name="subcategory_water">Su faturası</string>
+    <string name="subcategory_heating">Isınma</string>
+    <string name="subcategory_internet_phone">İnternet ve telefon</string>
+    <string name="subcategory_other_bills">Diğer Faturalar</string>
+    <string name="subcategory_general_shopping">Genel Market alışverişi</string>
+
+    <!-- Transportation -->
+    <string name="subcategory_fuel">Akaryakıt</string>
+    <string name="subcategory_public_transport">Toplu taşıma</string>
+    <string name="subcategory_car_maintenance">Araç bakımı</string>
+    <string name="subcategory_car_rental">Oto kiralama</string>
+    <string name="subcategory_taxi_uber">Taksi/Uber</string>
+    <string name="subcategory_car_insurance">Araç sigortası</string>
+    <string name="subcategory_mtv">MTV</string>
+    <string name="subcategory_parking_fees">Park ücretleri</string>
+
+    <!-- Health -->
+    <string name="subcategory_doctor_appointment">Doktor randevusu</string>
+    <string name="subcategory_medicines">İlaçlar</string>
+    <string name="subcategory_gym_membership">Spor salonu üyeliği</string>
+    <string name="subcategory_cosmetics">Kozmatik</string>
+
+    <!-- Entertainment -->
+    <string name="subcategory_cinema_theater">Sinema ve tiyatro</string>
+    <string name="subcategory_concerts_events">Konser ve etkinlikler</string>
+    <string name="subcategory_subscriptions">Abonelikler</string>
+    <string name="subcategory_books_magazines">Kitaplar ve dergiler</string>
+    <string name="subcategory_travel_vacation">Seyahat ve tatil</string>
+    <string name="subcategory_games_apps">Oyunlar ve uygulamalar</string>
+
+    <!-- Education -->
+    <string name="subcategory_course_fees">Kurs ücretleri</string>
+    <string name="subcategory_education_materials">Eğitim materyalleri</string>
+    <string name="subcategory_seminars">Seminerler</string>
+    <string name="subcategory_online_courses">Online kurslar</string>
+
+    <!-- Shopping -->
+    <string name="subcategory_electronics">Elektronik</string>
+    <string name="subcategory_clothing">Giyim</string>
+    <string name="subcategory_home_goods">Ev eşyaları</string>
+    <string name="subcategory_gifts">Hediyeler</string>
+    <string name="subcategory_perfume">Parfüm</string>
+
+    <!-- Pets -->
+    <string name="subcategory_pet_food_toys">Mama ve oyuncaklar</string>
+    <string name="subcategory_vet_services">Veteriner hizmetleri</string>
+    <string name="subcategory_pet_insurance">Evcil hayvan sigortası</string>
+
+    <!-- Work -->
+    <string name="subcategory_work_meals">İş yemekleri</string>
+    <string name="subcategory_office_supplies">Ofis malzemeleri</string>
+    <string name="subcategory_business_travel">İş seyahatleri</string>
+    <string name="subcategory_work_education">Eğitim ve seminerler</string>
+    <string name="subcategory_freelance_payments">Freelance iş ödemeleri</string>
+
+    <!-- Tax -->
+    <string name="subcategory_tax_payments">Vergi ödemeleri</string>
+
+    <!-- Others -->
+    <string name="subcategory_other_expenses">Diğer Harcamalar</string>
+
+    <!-- Category - Default categories -->
+    <string name="category_food">Gıda ve İçecek</string>
+    <string name="category_housing">Konut</string>
+    <string name="category_transportation">Ulaşım</string>
+    <string name="category_health">Sağlık ve Kişisel Bakım</string>
+    <string name="category_entertainment">Eğlence ve Hobiler</string>
+    <string name="category_education">Eğitim</string>
+    <string name="category_shopping">Alışveriş</string>
+    <string name="category_pets">Evcil Hayvan</string>
+    <string name="category_work">İş ve Profesyonel Harcamalar</string>
+    <string name="category_tax">Vergi ve Hukuki Harcamalar</string>
+    <string name="category_donations">Bağışlar ve Yardımlar</string>
+    <string name="category_others">Diğer Ödemeler</string>
 </resources>

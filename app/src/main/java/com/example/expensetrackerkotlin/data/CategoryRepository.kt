@@ -1,9 +1,10 @@
 package com.example.expensetrackerkotlin.data
 
+import android.content.Context
 import kotlinx.coroutines.flow.Flow
 import java.util.*
 
-class CategoryRepository(private val categoryDao: CategoryDao) {
+class CategoryRepository(private val categoryDao: CategoryDao, private val context: Context) {
     
     // Category operations
     val allCategories: Flow<List<Category>> = categoryDao.getAllCategories()
@@ -103,8 +104,8 @@ class CategoryRepository(private val categoryDao: CategoryDao) {
     // Initialize default data if not already done
     suspend fun initializeDefaultDataIfNeeded() {
         if (!isDefaultDataInitialized()) {
-            categoryDao.insertCategories(Category.getDefaultCategories())
-            categoryDao.insertSubCategories(SubCategory.getDefaultSubCategories())
+            categoryDao.insertCategories(Category.getDefaultCategories(context))
+            categoryDao.insertSubCategories(SubCategory.getDefaultSubCategories(context))
         }
     }
 }

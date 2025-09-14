@@ -31,7 +31,7 @@ class MainActivity : ComponentActivity() {
     private val preferencesManager by lazy { PreferencesManager(this) }
     private val database by lazy { ExpenseDatabase.getDatabase(this) }
     private val expenseRepository by lazy { ExpenseRepository(database.expenseDao()) }
-    private val categoryRepository by lazy { CategoryRepository(database.categoryDao()) }
+    private val categoryRepository by lazy { CategoryRepository(database.categoryDao(), this) }
     private val planRepository by lazy { PlanRepository(database.planDao(), expenseRepository) }
     private val viewModel: ExpenseViewModel by viewModels {
         ExpenseViewModelFactory(preferencesManager, expenseRepository, categoryRepository, planRepository)

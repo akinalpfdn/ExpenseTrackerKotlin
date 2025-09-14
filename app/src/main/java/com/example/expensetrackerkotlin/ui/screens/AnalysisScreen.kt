@@ -325,7 +325,7 @@ fun AnalysisScreen(
                         )
                         Spacer(modifier = Modifier.width(1.dp))
                         Text(
-                            text = filterType.displayName,
+                            text = getExpenseFilterTypeDisplayName(filterType),
                             fontSize = 12.sp,
                             color = if (selectedMonthlyExpenseType == filterType)
                                 ThemeColors.getTextColor(isDarkTheme)

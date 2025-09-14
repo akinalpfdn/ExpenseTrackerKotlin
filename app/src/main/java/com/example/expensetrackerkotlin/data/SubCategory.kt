@@ -1,10 +1,12 @@
 package com.example.expensetrackerkotlin.data
 
+import android.content.Context
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import androidx.room.ForeignKey
 import androidx.room.Index
 import java.util.*
+import com.example.expensetrackerkotlin.R
 
 @Entity(
     tableName = "subcategories",
@@ -28,76 +30,76 @@ data class SubCategory(
 ) {
     companion object {
         // Default subcategories that will be inserted on first app launch
-        fun getDefaultSubCategories(): List<SubCategory> {
+        fun getDefaultSubCategories(context: Context): List<SubCategory> {
             return listOf(
                 // Gıda ve İçecek
-                SubCategory(name = "Restoran", categoryId = "food", isDefault = true),
-                SubCategory(name = "Mutfak alışverişi", categoryId = "food", isDefault = true),
+                SubCategory(name = context.getString(R.string.subcategory_restaurant), categoryId = "food", isDefault = true),
+                SubCategory(name = context.getString(R.string.subcategory_kitchen_shopping), categoryId = "food", isDefault = true),
                 
                 // Konut
-                SubCategory(name = "Kira", categoryId = "housing", isDefault = true),
-                SubCategory(name = "Aidat", categoryId = "housing", isDefault = true),
-                SubCategory(name = "Mortgage ödemesi", categoryId = "housing", isDefault = true),
-                SubCategory(name = "Elektrik faturası", categoryId = "housing", isDefault = true),
-                SubCategory(name = "Su faturası", categoryId = "housing", isDefault = true),
-                SubCategory(name = "Isınma", categoryId = "housing", isDefault = true),
-                SubCategory(name = "İnternet ve telefon", categoryId = "housing", isDefault = true),
-                SubCategory(name = "Diğer Faturalar", categoryId = "housing", isDefault = true),
-                SubCategory(name = "Genel Market alışverişi", categoryId = "housing", isDefault = true),
+                SubCategory(name = context.getString(R.string.subcategory_rent), categoryId = "housing", isDefault = true),
+                SubCategory(name = context.getString(R.string.subcategory_dues), categoryId = "housing", isDefault = true),
+                SubCategory(name = context.getString(R.string.subcategory_mortgage), categoryId = "housing", isDefault = true),
+                SubCategory(name = context.getString(R.string.subcategory_electricity), categoryId = "housing", isDefault = true),
+                SubCategory(name = context.getString(R.string.subcategory_water), categoryId = "housing", isDefault = true),
+                SubCategory(name = context.getString(R.string.subcategory_heating), categoryId = "housing", isDefault = true),
+                SubCategory(name = context.getString(R.string.subcategory_internet_phone), categoryId = "housing", isDefault = true),
+                SubCategory(name = context.getString(R.string.subcategory_other_bills), categoryId = "housing", isDefault = true),
+                SubCategory(name = context.getString(R.string.subcategory_general_shopping), categoryId = "housing", isDefault = true),
                 
                 // Ulaşım
-                SubCategory(name = "Akaryakıt", categoryId = "transportation", isDefault = true),
-                SubCategory(name = "Toplu taşıma", categoryId = "transportation", isDefault = true),
-                SubCategory(name = "Araç bakımı", categoryId = "transportation", isDefault = true),
-                SubCategory(name = "Oto kiralama", categoryId = "transportation", isDefault = true),
-                SubCategory(name = "Taksi/Uber", categoryId = "transportation", isDefault = true),
-                SubCategory(name = "Araç sigortası", categoryId = "transportation", isDefault = true),
-                SubCategory(name = "MTV", categoryId = "transportation", isDefault = true),
-                SubCategory(name = "Park ücretleri", categoryId = "transportation", isDefault = true),
+                SubCategory(name = context.getString(R.string.subcategory_fuel), categoryId = "transportation", isDefault = true),
+                SubCategory(name = context.getString(R.string.subcategory_public_transport), categoryId = "transportation", isDefault = true),
+                SubCategory(name = context.getString(R.string.subcategory_car_maintenance), categoryId = "transportation", isDefault = true),
+                SubCategory(name = context.getString(R.string.subcategory_car_rental), categoryId = "transportation", isDefault = true),
+                SubCategory(name = context.getString(R.string.subcategory_taxi_uber), categoryId = "transportation", isDefault = true),
+                SubCategory(name = context.getString(R.string.subcategory_car_insurance), categoryId = "transportation", isDefault = true),
+                SubCategory(name = context.getString(R.string.subcategory_mtv), categoryId = "transportation", isDefault = true),
+                SubCategory(name = context.getString(R.string.subcategory_parking_fees), categoryId = "transportation", isDefault = true),
                 
                 // Sağlık
-                SubCategory(name = "Doktor randevusu", categoryId = "health", isDefault = true),
-                SubCategory(name = "İlaçlar", categoryId = "health", isDefault = true),
-                SubCategory(name = "Spor salonu üyeliği", categoryId = "health", isDefault = true),
-                SubCategory(name = "Kozmatik", categoryId = "health", isDefault = true),
+                SubCategory(name = context.getString(R.string.subcategory_doctor_appointment), categoryId = "health", isDefault = true),
+                SubCategory(name = context.getString(R.string.subcategory_medicines), categoryId = "health", isDefault = true),
+                SubCategory(name = context.getString(R.string.subcategory_gym_membership), categoryId = "health", isDefault = true),
+                SubCategory(name = context.getString(R.string.subcategory_cosmetics), categoryId = "health", isDefault = true),
                 
                 // Eğlence
-                SubCategory(name = "Sinema ve tiyatro", categoryId = "entertainment", isDefault = true),
-                SubCategory(name = "Konser ve etkinlikler", categoryId = "entertainment", isDefault = true),
-                SubCategory(name = "Abonelikler", categoryId = "entertainment", isDefault = true),
-                SubCategory(name = "Kitaplar ve dergiler", categoryId = "entertainment", isDefault = true),
-                SubCategory(name = "Seyahat ve tatil", categoryId = "entertainment", isDefault = true),
-                SubCategory(name = "Oyunlar ve uygulamalar", categoryId = "entertainment", isDefault = true),
+                SubCategory(name = context.getString(R.string.subcategory_cinema_theater), categoryId = "entertainment", isDefault = true),
+                SubCategory(name = context.getString(R.string.subcategory_concerts_events), categoryId = "entertainment", isDefault = true),
+                SubCategory(name = context.getString(R.string.subcategory_subscriptions), categoryId = "entertainment", isDefault = true),
+                SubCategory(name = context.getString(R.string.subcategory_books_magazines), categoryId = "entertainment", isDefault = true),
+                SubCategory(name = context.getString(R.string.subcategory_travel_vacation), categoryId = "entertainment", isDefault = true),
+                SubCategory(name = context.getString(R.string.subcategory_games_apps), categoryId = "entertainment", isDefault = true),
                 
                 // Eğitim
-                SubCategory(name = "Kurs ücretleri", categoryId = "education", isDefault = true),
-                SubCategory(name = "Eğitim materyalleri", categoryId = "education", isDefault = true),
-                SubCategory(name = "Seminerler", categoryId = "education", isDefault = true),
-                SubCategory(name = "Online kurslar", categoryId = "education", isDefault = true),
+                SubCategory(name = context.getString(R.string.subcategory_course_fees), categoryId = "education", isDefault = true),
+                SubCategory(name = context.getString(R.string.subcategory_education_materials), categoryId = "education", isDefault = true),
+                SubCategory(name = context.getString(R.string.subcategory_seminars), categoryId = "education", isDefault = true),
+                SubCategory(name = context.getString(R.string.subcategory_online_courses), categoryId = "education", isDefault = true),
                 
                 // Alışveriş
-                SubCategory(name = "Elektronik", categoryId = "shopping", isDefault = true),
-                SubCategory(name = "Giyim", categoryId = "shopping", isDefault = true),
-                SubCategory(name = "Ev eşyaları", categoryId = "shopping", isDefault = true),
-                SubCategory(name = "Hediyeler", categoryId = "shopping", isDefault = true),
-                SubCategory(name = "Parfüm", categoryId = "shopping", isDefault = true),
+                SubCategory(name = context.getString(R.string.subcategory_electronics), categoryId = "shopping", isDefault = true),
+                SubCategory(name = context.getString(R.string.subcategory_clothing), categoryId = "shopping", isDefault = true),
+                SubCategory(name = context.getString(R.string.subcategory_home_goods), categoryId = "shopping", isDefault = true),
+                SubCategory(name = context.getString(R.string.subcategory_gifts), categoryId = "shopping", isDefault = true),
+                SubCategory(name = context.getString(R.string.subcategory_perfume), categoryId = "shopping", isDefault = true),
                 
                 // Evcil Hayvan
-                SubCategory(name = "Mama ve oyuncaklar", categoryId = "pets", isDefault = true),
-                SubCategory(name = "Veteriner hizmetleri", categoryId = "pets", isDefault = true),
-                SubCategory(name = "Evcil hayvan sigortası", categoryId = "pets", isDefault = true),
+                SubCategory(name = context.getString(R.string.subcategory_pet_food_toys), categoryId = "pets", isDefault = true),
+                SubCategory(name = context.getString(R.string.subcategory_vet_services), categoryId = "pets", isDefault = true),
+                SubCategory(name = context.getString(R.string.subcategory_pet_insurance), categoryId = "pets", isDefault = true),
                 
                 // İş
-                SubCategory(name = "İş yemekleri", categoryId = "work", isDefault = true),
-                SubCategory(name = "Ofis malzemeleri", categoryId = "work", isDefault = true),
-                SubCategory(name = "İş seyahatleri", categoryId = "work", isDefault = true),
-                SubCategory(name = "Eğitim ve seminerler", categoryId = "work", isDefault = true),
-                SubCategory(name = "Freelance iş ödemeleri", categoryId = "work", isDefault = true),
+                SubCategory(name = context.getString(R.string.subcategory_work_meals), categoryId = "work", isDefault = true),
+                SubCategory(name = context.getString(R.string.subcategory_office_supplies), categoryId = "work", isDefault = true),
+                SubCategory(name = context.getString(R.string.subcategory_business_travel), categoryId = "work", isDefault = true),
+                SubCategory(name = context.getString(R.string.subcategory_work_education), categoryId = "work", isDefault = true),
+                SubCategory(name = context.getString(R.string.subcategory_freelance_payments), categoryId = "work", isDefault = true),
                 
                 // Vergi
-                SubCategory(name = "Vergi ödemeleri", categoryId = "tax", isDefault = true),
+                SubCategory(name = context.getString(R.string.subcategory_tax_payments), categoryId = "tax", isDefault = true),
                 // Diğer
-                SubCategory(name = "Diğer Harcamalar", categoryId = "others", isDefault = true)
+                SubCategory(name = context.getString(R.string.subcategory_other_expenses), categoryId = "others", isDefault = true)
             )
         }
     }

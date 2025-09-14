@@ -233,7 +233,7 @@ fun SubCategoryDetailBottomSheet(
                     )
                     Spacer(modifier = Modifier.width(4.dp))
                     Text(
-                        text = selectedSortOption.displayName,
+                        text = getSortOptionDisplayName(selectedSortOption),
                         color = ThemeColors.getTextColor(isDarkTheme),
                         fontSize = 14.sp
                     )
@@ -254,7 +254,7 @@ fun SubCategoryDetailBottomSheet(
                         DropdownMenuItem(
                             text = {
                                 Text(
-                                    text = option.displayName,
+                                    text = getSortOptionDisplayName(option),
                                     color = ThemeColors.getTextColor(isDarkTheme)
                                 )
                             },

@@ -1,11 +1,13 @@
 package com.example.expensetrackerkotlin.data
 
+import android.content.Context
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
+import com.example.expensetrackerkotlin.R
 
 @Entity(tableName = "categories")
 data class Category(
@@ -83,88 +85,88 @@ data class Category(
     }
     companion object {
         // Default categories that will be inserted on first app launch
-        fun getDefaultCategories(): List<Category> {
+        fun getDefaultCategories(context: Context): List<Category> {
             return listOf(
                 Category(
                     id = "food",
-                    name = "Gıda ve İçecek",
+                    name = context.getString(R.string.category_food),
                     colorHex = "#FF9500",
                     iconName = "restaurant",
                     isDefault = true
                 ),
                 Category(
                     id = "housing",
-                    name = "Konut",
+                    name = context.getString(R.string.category_housing),
                     colorHex = "#007AFF",
                     iconName = "home",
                     isDefault = true
                 ),
                 Category(
                     id = "transportation",
-                    name = "Ulaşım",
+                    name = context.getString(R.string.category_transportation),
                     colorHex = "#34C759",
                     iconName = "directions_car",
                     isDefault = true
                 ),
                 Category(
                     id = "health",
-                    name = "Sağlık ve Kişisel Bakım",
+                    name = context.getString(R.string.category_health),
                     colorHex = "#FF2D92",
                     iconName = "local_hospital",
                     isDefault = true
                 ),
                 Category(
                     id = "entertainment",
-                    name = "Eğlence ve Hobiler",
+                    name = context.getString(R.string.category_entertainment),
                     colorHex = "#9D73E3",
                     iconName = "movie",
                     isDefault = true
                 ),
                 Category(
                     id = "education",
-                    name = "Eğitim",
+                    name = context.getString(R.string.category_education),
                     colorHex = "#5856D6",
                     iconName = "school",
                     isDefault = true
                 ),
                 Category(
                     id = "shopping",
-                    name = "Alışveriş",
+                    name = context.getString(R.string.category_shopping),
                     colorHex = "#FF3B30",
                     iconName = "shopping_cart",
                     isDefault = true
                 ),
                 Category(
                     id = "pets",
-                    name = "Evcil Hayvan",
+                    name = context.getString(R.string.category_pets),
                     colorHex = "#64D2FF",
                     iconName = "pets",
                     isDefault = true
                 ),
                 Category(
                     id = "work",
-                    name = "İş ve Profesyonel Harcamalar",
+                    name = context.getString(R.string.category_work),
                     colorHex = "#5AC8FA",
                     iconName = "work",
                     isDefault = true
                 ),
                 Category(
                     id = "tax",
-                    name = "Vergi ve Hukuki Harcamalar",
+                    name = context.getString(R.string.category_tax),
                     colorHex = "#FFD60A",
                     iconName = "account_balance",
                     isDefault = true
                 ),
                 Category(
                     id = "donations",
-                    name = "Bağışlar ve Yardımlar",
+                    name = context.getString(R.string.category_donations),
                     colorHex = "#30D158",
                     iconName = "favorite",
                     isDefault = true
                 ),
                 Category(
                     id = "others",
-                    name = "Diğer Ödemeler",
+                    name = context.getString(R.string.category_others),
                     colorHex = "#3F51B5",
                     iconName = "category",
                     isDefault = true

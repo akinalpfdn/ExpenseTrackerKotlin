@@ -327,7 +327,7 @@ abstract class ExpenseDatabase : RoomDatabase() {
                         // Initialize with default categories and subcategories
                         INSTANCE?.let { database ->
                             kotlinx.coroutines.GlobalScope.launch {
-                                initializeDefaultData(database.categoryDao())
+                                initializeDefaultData(database.categoryDao(), context)
                             }
                         }
                     }
@@ -338,19 +338,19 @@ abstract class ExpenseDatabase : RoomDatabase() {
             }
         }
         
-        private suspend fun initializeDefaultData(categoryDao: CategoryDao) {
+        private suspend fun initializeDefaultData(categoryDao: CategoryDao, context: Context) {
             // Check if default categories already exist
             val defaultCategoriesCount = categoryDao.getDefaultCategoriesCount()
             val defaultSubCategoriesCount = categoryDao.getDefaultSubCategoriesCount()
-            
+
             if (defaultCategoriesCount == 0) {
                 // Insert default categories
-                categoryDao.insertCategories(Category.getDefaultCategories())
+                categoryDao.insertCategories(Category.getDefaultCategories(context))
             }
-            
+
             if (defaultSubCategoriesCount == 0) {
                 // Insert default subcategories
-                categoryDao.insertSubCategories(SubCategory.getDefaultSubCategories())
+                categoryDao.insertSubCategories(SubCategory.getDefaultSubCategories(context))
             }
         }
     }
