@@ -21,7 +21,9 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.window.Dialog
+import com.example.expensetrackerkotlin.R
 import com.example.expensetrackerkotlin.ui.theme.AppColors
 import com.example.expensetrackerkotlin.ui.theme.ThemeColors
 import com.example.expensetrackerkotlin.data.InterestType
@@ -71,7 +73,7 @@ fun CreatePlanBottomSheet(
     ) {
                 // Header
                 Text(
-                    text = "Yeni Plan Oluştur",
+                    text = stringResource(R.string.create_new_plan),
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Bold,
                     color = ThemeColors.getTextColor(isDarkTheme),
@@ -83,7 +85,7 @@ fun CreatePlanBottomSheet(
                 
                 // Plan Name
                 Text(
-                    text = "Plan Adı",
+                    text = stringResource(R.string.plan_name),
                     fontSize = 14.sp,
                     fontWeight = FontWeight.Medium,
                     color = ThemeColors.getTextColor(isDarkTheme)
@@ -117,7 +119,7 @@ fun CreatePlanBottomSheet(
                         decorationBox = { innerTextField ->
                             if (planName.isEmpty()) {
                                 Text(
-                                    text = "Örn: 2024 Tasarruf Planı",
+                                    text = stringResource(R.string.plan_name_example),
                                     fontSize = 16.sp,
                                     color = ThemeColors.getTextGrayColor(isDarkTheme)
                                 )
@@ -131,7 +133,7 @@ fun CreatePlanBottomSheet(
         Spacer(modifier = Modifier.height(16.dp))
         // Duration
         Text(
-            text = "Plan Süresi",
+            text = stringResource(R.string.plan_duration),
             fontSize = 14.sp,
             fontWeight = FontWeight.Medium,
             color = ThemeColors.getTextColor(isDarkTheme)
@@ -174,7 +176,7 @@ fun CreatePlanBottomSheet(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = "Faiz Uygula (Birikime)",
+                text = stringResource(R.string.apply_interest_to_savings),
                 fontSize = 14.sp,
                 fontWeight = FontWeight.Medium,
                 color = ThemeColors.getTextColor(isDarkTheme)
@@ -201,7 +203,7 @@ fun CreatePlanBottomSheet(
                     onClick = { selectedInterestType = InterestType.SIMPLE },
                     label = {
                         Text(
-                            text = "Basit Faiz",
+                            text = stringResource(R.string.simple_interest),
                             fontSize = 12.sp
                         )
                     },
@@ -218,7 +220,7 @@ fun CreatePlanBottomSheet(
                     onClick = { selectedInterestType = InterestType.COMPOUND },
                     label = {
                         Text(
-                            text = "Bileşik Faiz",
+                            text = stringResource(R.string.compound_interest),
                             fontSize = 12.sp
                         )
                     },
@@ -261,7 +263,7 @@ fun CreatePlanBottomSheet(
                         Row {
                             if (interestRate.isEmpty()) {
                                 Text(
-                                    text = "Yıllık faiz oranı %",
+                                    text = stringResource(R.string.annual_interest_rate),
                                     fontSize = 16.sp,
                                     color = ThemeColors.getTextGrayColor(isDarkTheme)
                                 )
@@ -275,7 +277,7 @@ fun CreatePlanBottomSheet(
             Spacer(modifier = Modifier.height(4.dp))
 
             Text(
-                text = "Pozitif birikime faiz uygulanır",
+                text = stringResource(R.string.interest_applied_to_positive_savings),
                 fontSize = 12.sp,
                 color = ThemeColors.getTextGrayColor(isDarkTheme)
             )
@@ -284,7 +286,7 @@ fun CreatePlanBottomSheet(
 
             // Interest Type Selection
             Text(
-                text = "Faiz Türü",
+                text = stringResource(R.string.interest_type),
                 fontSize = 12.sp,
                 fontWeight = FontWeight.Medium,
                 color = ThemeColors.getTextColor(isDarkTheme)
@@ -298,7 +300,7 @@ fun CreatePlanBottomSheet(
 
         // Monthly Income
                 Text(
-                    text = "Aylık Gelir ($defaultCurrency)",
+                    text = stringResource(R.string.monthly_income_currency, defaultCurrency),
                     fontSize = 14.sp,
                     fontWeight = FontWeight.Medium,
                     color = ThemeColors.getTextColor(isDarkTheme)
@@ -360,7 +362,7 @@ fun CreatePlanBottomSheet(
                     )
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(
-                        text = "Uygulamanın harcama verilerini kullan",
+                        text = stringResource(R.string.use_app_expense_data),
                         fontSize = 14.sp,
                         color = ThemeColors.getTextColor(isDarkTheme)
                     )
@@ -371,7 +373,7 @@ fun CreatePlanBottomSheet(
                 // Manual Monthly Expenses (only shown when checkbox is unchecked)
                 if (!useAppExpenseData) {
                 Text(
-                    text = "Aylık Harcama ($defaultCurrency)",
+                    text = stringResource(R.string.monthly_expenses_currency, defaultCurrency),
                     fontSize = 14.sp,
                     fontWeight = FontWeight.Medium,
                     color = ThemeColors.getTextColor(isDarkTheme)
@@ -406,7 +408,7 @@ fun CreatePlanBottomSheet(
                         decorationBox = { innerTextField ->
                             if (monthlyExpenses.isEmpty()) {
                                 Text(
-                                    text = "Manuel aylık harcama miktarı",
+                                    text = stringResource(R.string.manual_monthly_expense_amount),
                                     fontSize = 14.sp,
                                     color = ThemeColors.getTextGrayColor(isDarkTheme)
                                 )
@@ -419,7 +421,7 @@ fun CreatePlanBottomSheet(
                     Spacer(modifier = Modifier.height(4.dp))
 
                     Text(
-                        text = "Manuel harcama miktarını girin",
+                        text = stringResource(R.string.enter_manual_expense_amount),
                         fontSize = 12.sp,
                         color = ThemeColors.getTextGrayColor(isDarkTheme)
                     )
@@ -433,7 +435,7 @@ fun CreatePlanBottomSheet(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = "Enflasyon Uygula",
+                text = stringResource(R.string.apply_inflation),
                 fontSize = 14.sp,
                 fontWeight = FontWeight.Medium,
                 color = ThemeColors.getTextColor(isDarkTheme)
@@ -482,7 +484,7 @@ fun CreatePlanBottomSheet(
                         Row {
                             if (inflationRate.isEmpty()) {
                                 Text(
-                                    text = "Yıllık % oran",
+                                    text = stringResource(R.string.annual_percentage_rate),
                                     fontSize = 16.sp,
                                     color = ThemeColors.getTextGrayColor(isDarkTheme)
                                 )
@@ -515,7 +517,7 @@ fun CreatePlanBottomSheet(
                             color = ThemeColors.getTextGrayColor(isDarkTheme).copy(alpha = 0.5f)
                         )
                     ) {
-                        Text("İptal")
+                        Text(stringResource(R.string.cancel))
                     }
                     
                     Button(
@@ -545,7 +547,7 @@ fun CreatePlanBottomSheet(
                         ),
                         enabled = planName.isNotBlank() && monthlyIncome.isNotBlank()
                     ) {
-                        Text("Oluştur")
+                        Text(stringResource(R.string.create))
                     }
                 }
             }

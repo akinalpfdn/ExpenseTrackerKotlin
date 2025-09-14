@@ -172,4 +172,77 @@
     <string name="total_spending">Toplam Harcama</string>
     <string name="no_expenses_in_category">Bu kategoride harcama bulunamadı</string>
     <string name="expense_singular">Harcama</string>
+
+    <!-- CreatePlanDialog -->
+    <string name="create_new_plan">Yeni Plan Oluştur</string>
+    <string name="plan_name">Plan Adı</string>
+    <string name="plan_name_example">Örn: 2024 Tasarruf Planı</string>
+    <string name="plan_duration">Plan Süresi</string>
+    <string name="apply_interest_to_savings">Faiz Uygula (Birikime)</string>
+    <string name="simple_interest">Basit Faiz</string>
+    <string name="compound_interest">Bileşik Faiz</string>
+    <string name="annual_interest_rate">Yıllık faiz oranı %</string>
+    <string name="interest_applied_to_positive_savings">Pozitif birikime faiz uygulanır</string>
+    <string name="interest_type">Faiz Türü</string>
+    <string name="monthly_income_currency">Aylık Gelir (%s)</string>
+    <string name="use_app_expense_data">Uygulamanın harcama verilerini kullan</string>
+    <string name="monthly_expenses_currency">Aylık Harcama (%s)</string>
+    <string name="manual_monthly_expense_amount">Manuel aylık harcama miktarı</string>
+    <string name="enter_manual_expense_amount">Manuel harcama miktarını girin</string>
+    <string name="apply_inflation">Enflasyon Uygula</string>
+    <string name="annual_percentage_rate">Yıllık % oran</string>
+    <string name="create">Oluştur</string>
+
+    <!-- CategorySummarySection -->
+    <string name="category_details">Kategori Detayları</string>
+    <string name="main_categories">Ana Kategoriler</string>
+    <string name="sub_categories">Alt Kategoriler</string>
+    <string name="expense_lowercase">harcama</string>
+    <string name="see_details">Detayları gör</string>
+
+    <!-- CategoryPopupLines -->
+    <string name="vs_previous_month_colon">Önceki aya göre:</string>
+    <string name="vs_average_colon">Ortalamaya göre:</string>
+
+    <!-- CategoryManagementScreen -->
+    <string name="add_new_main_category">Yeni Ana Kategori Ekle</string>
+    <string name="add_main_category_content_desc">Add Main Category</string>
+    <string name="category_name_hint">Kategori adı girin</string>
+    <string name="unique_category_name_note">Kategori için benzersiz bir isim belirleyin</string>
+    <string name="icon_selection">İkon Seçimi</string>
+    <string name="color_selection">Renk Seçimi</string>
+    <string name="add_button">Ekle</string>
+    <string name="main_category">Ana Kategori</string>
+    <string name="select_category">Kategori seçin</string>
+    <string name="subcategory_name">Alt Kategori Adı</string>
+    <string name="subcategory_name_hint">Alt kategori adı girin</string>
+    <string name="unique_subcategory_name_note">Alt kategori için benzersiz bir isim belirleyin</string>
+    <string name="edit_subcategory">Alt Kategori Düzenle</string>
+    <string name="edit_category">Kategori Düzenle</string>
+    <string name="edit">Düzenle</string>
+    <string name="enter_name_hint">Ad girin</string>
+    <string name="delete_confirmation">Silme Onayı</string>
+    <string name="delete_item_confirmation">"%s" öğesini silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.</string>
+    <string name="this_item">Bu öğe</string>
+    <string name="collapse_desc">Collapse</string>
+    <string name="expand_desc">Expand</string>
+    <string name="edit_category_desc">Edit Category</string>
+    <string name="delete_category_desc">Delete Category</string>
+    <string name="add_subcategory">Alt Kategori Ekle</string>
+    <string name="add_subcategory_desc">Add Subcategory</string>
+    <string name="edit_subcategory_desc">Edit Subcategory</string>
+    <string name="delete_subcategory_desc">Delete Subcategory</string>
+    <string name="selected">Selected</string>
+
+    <!-- CategoryDistributionChart -->
+    <string name="no_data">Veri yok</string>
+    <string name="category">Kategori</string>
+
+    <!-- CategoryDetailBottomSheet -->
+    <string name="sort_amount_desc">Tutara Göre (Yüksek → Düşük)</string>
+    <string name="sort_amount_asc">Tutara Göre (Düşük → Yüksek)</string>
+    <string name="sort_date_desc">Tarihe Göre (Yeni → Eski)</string>
+    <string name="sort_date_asc">Tarihe Göre (Eski → Yeni)</string>
+    <string name="sort_name_asc">Açıklamaya Göre (A → Z)</string>
+    <string name="sort_name_desc">Açıklamaya Göre (Z → A)</string>
 </resources>

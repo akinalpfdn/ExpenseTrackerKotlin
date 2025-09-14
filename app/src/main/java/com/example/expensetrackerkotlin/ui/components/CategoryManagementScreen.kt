@@ -23,6 +23,8 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.res.stringResource
+import com.example.expensetrackerkotlin.R
 import com.example.expensetrackerkotlin.ui.theme.AppColors
 import com.example.expensetrackerkotlin.ui.theme.ThemeColors
 
@@ -114,12 +116,12 @@ fun CategoryManagementScreen(
              ) {
                 Icon(
                     imageVector = Icons.Default.Add,
-                    contentDescription = "Add Main Category",
+                    contentDescription = stringResource(R.string.add_main_category_content_desc),
                     modifier = Modifier.size(20.dp)
                 )
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(
-                    text = "Yeni Ana Kategori Ekle",
+                    text = stringResource(R.string.add_new_main_category),
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Medium
                 )
@@ -340,7 +342,7 @@ private fun AddMainCategoryDialog(
                                  ) {
                                      if (categoryName.isEmpty()) {
                                          Text(
-                                             text = "Kategori adı girin",
+                                             text = stringResource(R.string.category_name_hint),
                                              fontSize = 14.sp,
                                              color = ThemeColors.getTextGrayColor(isDarkTheme)
                                          )
@@ -352,7 +354,7 @@ private fun AddMainCategoryDialog(
                      }
                      
                      Text(
-                         text = "Kategori için benzersiz bir isim belirleyin",
+                         text = stringResource(R.string.unique_category_name_note),
                          fontSize = 14.sp,
                          color = ThemeColors.getTextGrayColor(isDarkTheme)
                      )
@@ -363,7 +365,7 @@ private fun AddMainCategoryDialog(
                      verticalArrangement = Arrangement.spacedBy(8.dp)
                  ) {
                      Text(
-                         text = "İkon Seçimi",
+                         text = stringResource(R.string.icon_selection),
                          fontSize = 18.sp,
                          fontWeight = FontWeight.Medium,
                          color = ThemeColors.getTextColor(isDarkTheme)
@@ -410,7 +412,7 @@ private fun AddMainCategoryDialog(
                      verticalArrangement = Arrangement.spacedBy(8.dp)
                  ) {
                      Text(
-                         text = "Renk Seçimi",
+                         text = stringResource(R.string.color_selection),
                          fontSize = 18.sp,
                          fontWeight = FontWeight.Medium,
                          color = ThemeColors.getTextColor(isDarkTheme)
@@ -441,7 +443,7 @@ private fun AddMainCategoryDialog(
                                  if (isSelected) {
                                      Icon(
                                          imageVector = Icons.Default.Check,
-                                         contentDescription = "Selected",
+                                         contentDescription = stringResource(R.string.selected),
                                          modifier = Modifier.size(20.dp),
                                          tint = Color.White
                                      )
@@ -462,7 +464,7 @@ private fun AddMainCategoryDialog(
                  shape = RoundedCornerShape(16.dp)
              ) {
                  Text(
-                     text = "Ekle",
+                     text = stringResource(R.string.add_button),
                      fontSize = 18.sp,
                      fontWeight = FontWeight.SemiBold,
                      color = ThemeColors.getTextColor(isDarkTheme)
@@ -478,7 +480,7 @@ private fun AddMainCategoryDialog(
                  shape = RoundedCornerShape(16.dp)
              ) {
                  Text(
-                     text = "İptal",
+                     text = stringResource(R.string.cancel),
                      fontSize = 18.sp,
                      fontWeight = FontWeight.Medium,
                      color = ThemeColors.getTextColor(isDarkTheme)
@@ -508,14 +510,14 @@ private fun AddSubcategoryDialog(
                      verticalArrangement = Arrangement.spacedBy(8.dp)
                  ) {
                      Text(
-                         text = "Ana Kategori",
+                         text = stringResource(R.string.main_category),
                          fontSize = 18.sp,
                          fontWeight = FontWeight.Medium,
                          color = ThemeColors.getTextColor(isDarkTheme)
                      )
                      
                      Text(
-                         text = selectedCategory?.name ?: "Kategori seçin",
+                         text = selectedCategory?.name ?: stringResource(R.string.select_category),
                          fontSize = 14.sp,
                          color = ThemeColors.getTextColor(isDarkTheme),
                          modifier = Modifier
@@ -540,7 +542,7 @@ private fun AddSubcategoryDialog(
                      verticalArrangement = Arrangement.spacedBy(8.dp)
                  ) {
                      Text(
-                         text = "Alt Kategori Adı",
+                         text = stringResource(R.string.subcategory_name),
                          fontSize = 18.sp,
                          fontWeight = FontWeight.Medium,
                          color = ThemeColors.getTextColor(isDarkTheme)
@@ -577,7 +579,7 @@ private fun AddSubcategoryDialog(
                                  ) {
                                      if (subcategoryName.isEmpty()) {
                                          Text(
-                                             text = "Alt kategori adı girin",
+                                             text = stringResource(R.string.subcategory_name_hint),
                                              fontSize = 14.sp,
                                              color = ThemeColors.getTextGrayColor(isDarkTheme)
                                          )
@@ -589,7 +591,7 @@ private fun AddSubcategoryDialog(
                      }
                      
                      Text(
-                         text = "Alt kategori için benzersiz bir isim belirleyin",
+                         text = stringResource(R.string.unique_subcategory_name_note),
                          fontSize = 14.sp,
                          color = ThemeColors.getTextGrayColor(isDarkTheme)
                      )
@@ -606,7 +608,7 @@ private fun AddSubcategoryDialog(
                  shape = RoundedCornerShape(16.dp)
              ) {
                  Text(
-                     text = "Ekle",
+                     text = stringResource(R.string.add_button),
                      fontSize = 18.sp,
                      fontWeight = FontWeight.SemiBold,
                      color = ThemeColors.getTextColor(isDarkTheme)
@@ -622,7 +624,7 @@ private fun AddSubcategoryDialog(
                  shape = RoundedCornerShape(16.dp)
              ) {
                  Text(
-                     text = "İptal",
+                     text = stringResource(R.string.cancel),
                      fontSize = 18.sp,
                      fontWeight = FontWeight.Medium,
                      color = ThemeColors.getTextColor(isDarkTheme)
@@ -724,9 +726,9 @@ private fun EditCategoryDialog(
          title = {
              Text(
                  text = when {
-                     subcategory != null -> "Alt Kategori Düzenle"
-                     category != null -> "Kategori Düzenle"
-                     else -> "Düzenle"
+                     subcategory != null -> stringResource(R.string.edit_subcategory)
+                     category != null -> stringResource(R.string.edit_category)
+                     else -> stringResource(R.string.edit)
                  },
                  fontSize = 18.sp,
                  fontWeight = FontWeight.Bold,
@@ -774,7 +776,7 @@ private fun EditCategoryDialog(
                                  ) {
                                      if (editName.isEmpty()) {
                                          Text(
-                                             text = "Ad girin",
+                                             text = stringResource(R.string.enter_name_hint),
                                              fontSize = 14.sp,
                                              color = ThemeColors.getTextGrayColor(isDarkTheme)
                                          )
@@ -793,7 +795,7 @@ private fun EditCategoryDialog(
                          verticalArrangement = Arrangement.spacedBy(8.dp)
                      ) {
                          Text(
-                             text = "İkon Seçimi",
+                             text = stringResource(R.string.icon_selection),
                              fontSize = 18.sp,
                              fontWeight = FontWeight.Medium,
                              color = ThemeColors.getTextColor(isDarkTheme)
@@ -840,7 +842,7 @@ private fun EditCategoryDialog(
                          verticalArrangement = Arrangement.spacedBy(8.dp)
                      ) {
                          Text(
-                             text = "Renk Seçimi",
+                             text = stringResource(R.string.color_selection),
                              fontSize = 18.sp,
                              fontWeight = FontWeight.Medium,
                              color = ThemeColors.getTextColor(isDarkTheme)
@@ -871,7 +873,7 @@ private fun EditCategoryDialog(
                                      if (isSelected) {
                                          Icon(
                                              imageVector = Icons.Default.Check,
-                                             contentDescription = "Selected",
+                                             contentDescription = stringResource(R.string.selected),
                                              modifier = Modifier.size(20.dp),
                                              tint = Color.White
                                          )
@@ -899,7 +901,7 @@ private fun EditCategoryDialog(
                  shape = RoundedCornerShape(16.dp)
              ) {
                  Text(
-                     text = "Kaydet",
+                     text = stringResource(R.string.save),
                      fontSize = 18.sp,
                      fontWeight = FontWeight.SemiBold,
                      color = ThemeColors.getTextColor(isDarkTheme)
@@ -915,7 +917,7 @@ private fun EditCategoryDialog(
                  shape = RoundedCornerShape(16.dp)
              ) {
                  Text(
-                     text = "İptal",
+                     text = stringResource(R.string.cancel),
                      fontSize = 18.sp,
                      fontWeight = FontWeight.Medium,
                      color = ThemeColors.getTextColor(isDarkTheme)
@@ -936,21 +938,21 @@ private fun EditCategoryDialog(
      val itemName = when {
          subcategory != null -> subcategory.name
          category != null -> category.name
-         else -> "Bu öğe"
+         else -> stringResource(R.string.this_item)
      }
      
      AlertDialog(
          onDismissRequest = onDismiss,
          title = {
              Text(
-                 text = "Silme Onayı",
+                 text = stringResource(R.string.delete_confirmation),
                  color = ThemeColors.getTextColor(isDarkTheme),
                  fontWeight = FontWeight.Bold
              )
          },
          text = {
              Text(
-                 text = "\"$itemName\" öğesini silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.",
+                 text = stringResource(R.string.delete_item_confirmation, itemName),
                  color = ThemeColors.getTextColor(isDarkTheme)
              )
          },
@@ -959,7 +961,7 @@ private fun EditCategoryDialog(
                  onClick = onConfirm
              ) {
                  Text(
-                     "Sil", 
+                     stringResource(R.string.delete), 
                      color = Color.Red,
                      fontWeight = FontWeight.Bold
                  )
@@ -970,7 +972,7 @@ private fun EditCategoryDialog(
                  onClick = onDismiss
              ) {
                  Text(
-                     "İptal", 
+                     stringResource(R.string.cancel), 
                      color = ThemeColors.getTextColor(isDarkTheme)
                  )
              }
@@ -1019,7 +1021,7 @@ private fun CategoryTreeItem(
             // Expand/Collapse Icon
             Icon(
                 imageVector = if (isExpanded) Icons.Default.ExpandLess else Icons.Default.ExpandMore,
-                contentDescription = if (isExpanded) "Collapse" else "Expand",
+                contentDescription = if (isExpanded) stringResource(R.string.collapse_desc) else stringResource(R.string.expand_desc),
                 modifier = Modifier.size(20.dp),
                 tint = ThemeColors.getTextGrayColor(isDarkTheme)
             )
@@ -1070,7 +1072,7 @@ private fun CategoryTreeItem(
                 ) {
                     Icon(
                         imageVector = Icons.Default.Edit,
-                        contentDescription = "Edit Category",
+                        contentDescription = stringResource(R.string.edit_category_desc),
                         modifier = Modifier.size(16.dp),
                         tint = AppColors.RecurringButtonStart
                     )
@@ -1087,7 +1089,7 @@ private fun CategoryTreeItem(
                 ) {
                     Icon(
                         imageVector = Icons.Default.Delete,
-                        contentDescription = "Delete Category",
+                        contentDescription = stringResource(R.string.delete_category_desc),
                         modifier = Modifier.size(16.dp),
                         tint = Color.Red
                     )
@@ -1121,12 +1123,12 @@ private fun CategoryTreeItem(
             ) {
                 Icon(
                     imageVector = Icons.Default.Add,
-                    contentDescription = "Add Subcategory",
+                    contentDescription = stringResource(R.string.add_subcategory_desc),
                     modifier = Modifier.size(16.dp)
                 )
                 Spacer(modifier = Modifier.width(6.dp))
                 Text(
-                    text = "Alt Kategori Ekle",
+                    text = stringResource(R.string.add_subcategory),
                     fontSize = 14.sp,
                     fontWeight = FontWeight.Medium
                 )
@@ -1190,7 +1192,7 @@ private fun SubCategoryItem(
             ) {
                 Icon(
                     imageVector = Icons.Default.Edit,
-                    contentDescription = "Edit Subcategory",
+                    contentDescription = stringResource(R.string.edit_subcategory_desc),
                     modifier = Modifier.size(14.dp),
                     tint = AppColors.RecurringButtonStart
                 )
@@ -1208,7 +1210,7 @@ private fun SubCategoryItem(
             ) {
                 Icon(
                     imageVector = Icons.Default.Delete,
-                    contentDescription = "Delete Subcategory",
+                    contentDescription = stringResource(R.string.delete_subcategory_desc),
                     modifier = Modifier.size(14.dp),
                     tint = Color.Red
                 )

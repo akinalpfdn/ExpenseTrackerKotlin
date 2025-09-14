@@ -17,7 +17,9 @@ import androidx.compose.ui.graphics.drawscope.Fill
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.*
+import androidx.compose.ui.res.stringResource
 import kotlin.math.*
+import com.example.expensetrackerkotlin.R
 import com.example.expensetrackerkotlin.utils.NumberFormatter
 import com.example.expensetrackerkotlin.viewmodel.ExpenseViewModel
 import com.example.expensetrackerkotlin.data.*
@@ -201,7 +203,7 @@ fun CategoryPopupCard(
                 )
 
                 Text(
-                    text = "${selected.expenseCount} harcama • %${String.format("%.1f", selected.percentage * 100)}",
+                    text = "${selected.expenseCount} ${stringResource(R.string.expense_lowercase)} • %${String.format("%.1f", selected.percentage * 100)}",
                     fontSize = 12.sp,
                     color = Color.White.copy(alpha = 0.8f)
                 )
@@ -209,12 +211,12 @@ fun CategoryPopupCard(
 
                     ComparisonIndicator(
                         percentage = comparison.vsLastMonth,
-                        label = "Önceki aya göre: ",
+                        label = stringResource(R.string.vs_previous_month_colon),
                         textColor = Color.White
                     )
                     ComparisonIndicator(
                         percentage = comparison.vsAverage,
-                        label = "Ortalamaya göre: ",
+                        label = stringResource(R.string.vs_average_colon),
                         textColor = Color.White
                     )
             }

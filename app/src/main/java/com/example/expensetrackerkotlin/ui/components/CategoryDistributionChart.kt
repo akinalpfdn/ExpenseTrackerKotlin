@@ -14,6 +14,8 @@ import androidx.compose.ui.graphics.*
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.res.stringResource
+import com.example.expensetrackerkotlin.R
 import com.example.expensetrackerkotlin.data.Category
 import com.example.expensetrackerkotlin.ui.theme.ThemeColors
 import kotlin.math.*
@@ -41,7 +43,7 @@ fun CategoryDistributionChart(
                 modifier = Modifier.size(120.dp)
             ) {
                 Text(
-                    text = "Veri yok",
+                    text = stringResource(R.string.no_data),
                     fontSize = 16.sp,
                     color = Color.Gray
                 )
@@ -119,7 +121,7 @@ fun CategoryDistributionChart(
             }
             
             Text(
-                text = "Kategori",
+                text = stringResource(R.string.category),
                 fontSize = 12.sp,
                 color = Color.Gray
             )

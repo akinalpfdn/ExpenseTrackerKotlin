@@ -21,6 +21,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.res.stringResource
+import com.example.expensetrackerkotlin.R
 import com.example.expensetrackerkotlin.data.*
 import com.example.expensetrackerkotlin.ui.screens.calculateCategoryComparison
 import com.example.expensetrackerkotlin.ui.theme.ThemeColors
@@ -35,13 +37,25 @@ data class CategoryAnalysisData(
     val expenses: List<Expense>
 )
 
-enum class SortOption(val displayName: String) {
-    AMOUNT_DESC("Tutara Göre (Yüksek → Düşük)"),
-    AMOUNT_ASC("Tutara Göre (Düşük → Yüksek)"),
-    DATE_DESC("Tarihe Göre (Yeni → Eski)"),
-    DATE_ASC("Tarihe Göre (Eski → Yeni)"),
-    NAME_ASC("Açıklamaya Göre (A → Z)"),
-    NAME_DESC("Açıklamaya Göre (Z → A)")
+enum class SortOption {
+    AMOUNT_DESC,
+    AMOUNT_ASC,
+    DATE_DESC,
+    DATE_ASC,
+    NAME_ASC,
+    NAME_DESC
+}
+
+@Composable
+fun getSortOptionDisplayName(sortOption: SortOption): String {
+    return when (sortOption) {
+        SortOption.AMOUNT_DESC -> stringResource(R.string.sort_amount_desc)
+        SortOption.AMOUNT_ASC -> stringResource(R.string.sort_amount_asc)
+        SortOption.DATE_DESC -> stringResource(R.string.sort_date_desc)
+        SortOption.DATE_ASC -> stringResource(R.string.sort_date_asc)
+        SortOption.NAME_ASC -> stringResource(R.string.sort_name_asc)
+        SortOption.NAME_DESC -> stringResource(R.string.sort_name_desc)
+    }
 }
 
 @SuppressLint("DefaultLocale")
@@ -126,7 +140,7 @@ fun CategoryDetailBottomSheet(
                             color = ThemeColors.getTextGrayColor(isDarkTheme)
                         )
                         Text(
-                            text = "  •  ${categoryData.expenseCount} harcama • %${
+                            text = "  •  ${categoryData.expenseCount} ${stringResource(R.string.expense_lowercase)} • %${
                                 String.format(
                                     "%.1f",
                                     categoryData.percentage * 100
@@ -142,13 +156,13 @@ fun CategoryDetailBottomSheet(
                         DetailComparisonIndicator(
                             amount = comparison.vsLastMonth,
                             currency = viewModel.defaultCurrency,
-                            label = "Önceki aya göre",
+                            label = stringResource(R.string.vs_previous_month),
                             isDarkTheme = isDarkTheme
                         )
                         DetailComparisonIndicator(
                             amount = comparison.vsAverage,
                             currency = viewModel.defaultCurrency,
-                            label = "6 ay ortalamasına göre",
+                            label = stringResource(R.string.vs_6_month_average),
                             isDarkTheme = isDarkTheme
                         )
 
@@ -175,7 +189,7 @@ fun CategoryDetailBottomSheet(
                 )
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(
-                    text = sortOption.displayName,
+                    text = getSortOptionDisplayName(sortOption),
                     fontSize = 14.sp
                 )
                 Spacer(modifier = Modifier.width(8.dp))
@@ -195,7 +209,7 @@ fun CategoryDetailBottomSheet(
                     DropdownMenuItem(
                         text = {
                             Text(
-                                text = option.displayName,
+                                text = getSortOptionDisplayName(option),
                                 color = ThemeColors.getTextColor(isDarkTheme),
                                 fontSize = 14.sp
                             )
@@ -240,7 +254,7 @@ fun CategoryDetailBottomSheet(
                                 modifier = Modifier.weight(1f)
                             ) {
                                 Text(
-                                    text = subCategory?.name ?: "Bilinmeyen",
+                                    text = subCategory?.name ?: stringResource(R.string.unknown),
                                     fontWeight = FontWeight.Medium,
                                     fontSize = 17.sp,
                                     color = ThemeColors.getTextColor(isDarkTheme)
@@ -261,11 +275,11 @@ fun CategoryDetailBottomSheet(
                                 )
                                 if (expense.recurrenceType != RecurrenceType.NONE) {
                                     Text(
-                                        text = "Tekrarlayan: ${when (expense.recurrenceType) {
-                                            RecurrenceType.DAILY -> "Her gün"
-                                            RecurrenceType.WEEKDAYS -> "Hafta içi"
-                                            RecurrenceType.WEEKLY -> "Haftalık"
-                                            RecurrenceType.MONTHLY -> "Aylık"
+                                        text = "${stringResource(R.string.recurring_label)}: ${when (expense.recurrenceType) {
+                                            RecurrenceType.DAILY -> stringResource(R.string.daily)
+                                            RecurrenceType.WEEKDAYS -> stringResource(R.string.weekdays)
+                                            RecurrenceType.WEEKLY -> stringResource(R.string.weekly)
+                                            RecurrenceType.MONTHLY -> stringResource(R.string.monthly)
                                             else -> ""
                                         }}",
                                         fontSize = 11.sp,

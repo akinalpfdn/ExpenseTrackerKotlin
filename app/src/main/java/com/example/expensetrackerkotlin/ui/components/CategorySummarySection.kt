@@ -16,6 +16,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.res.stringResource
+import com.example.expensetrackerkotlin.R
 import com.example.expensetrackerkotlin.ui.theme.AppColors
 import com.example.expensetrackerkotlin.ui.theme.ThemeColors
 import com.example.expensetrackerkotlin.utils.NumberFormatter
@@ -53,7 +55,7 @@ fun CategorySummarySection(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = "Kategori Detayları",
+                text = stringResource(R.string.category_details),
                 fontSize = 20.sp,
                 fontWeight = FontWeight.Bold,
                 color = ThemeColors.getTextColor(isDarkTheme),
@@ -88,7 +90,7 @@ fun CategorySummarySection(
                 )
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(
-                    text = "Ana Kategoriler",
+                    text = stringResource(R.string.main_categories),
                     fontSize = 16.sp,
                     color = ThemeColors.getTextColor(isDarkTheme)
                 )
@@ -108,7 +110,7 @@ fun CategorySummarySection(
                 )
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(
-                    text = "Alt Kategoriler",
+                    text = stringResource(R.string.sub_categories),
                     fontSize = 16.sp,
                     color = ThemeColors.getTextColor(isDarkTheme)
                 )
@@ -192,7 +194,7 @@ fun CategorySummaryRow(
                     overflow = TextOverflow.Ellipsis
                 )
                 Text(
-                    text = "${categoryData.expenseCount} harcama • %${String.format("%.1f", categoryData.percentage * 100)}",
+                    text = "${categoryData.expenseCount} ${stringResource(R.string.expense_lowercase)} • %${String.format("%.1f", categoryData.percentage * 100)}",
                     fontSize = 14.sp,
                     color = ThemeColors.getTextGrayColor(isDarkTheme)
                 )
@@ -213,7 +215,7 @@ fun CategorySummaryRow(
             
             Icon(
                 imageVector = Icons.Default.ChevronRight,
-                contentDescription = "Detayları gör",
+                contentDescription = stringResource(R.string.see_details),
                 tint = ThemeColors.getTextGrayColor(isDarkTheme),
                 modifier = Modifier.size(16.dp)
             )
@@ -275,7 +277,7 @@ fun SubCategorySummaryRow(
                     overflow = TextOverflow.Ellipsis
                 )
                 Text(
-                    text = "${subCategoryData.expenseCount} harcama • %${String.format("%.1f", subCategoryData.percentage * 100)}",
+                    text = "${subCategoryData.expenseCount} ${stringResource(R.string.expense_lowercase)} • %${String.format("%.1f", subCategoryData.percentage * 100)}",
                     fontSize = 14.sp,
                     color = ThemeColors.getTextGrayColor(isDarkTheme)
                 )
@@ -296,7 +298,7 @@ fun SubCategorySummaryRow(
             
             Icon(
                 imageVector = Icons.Default.ChevronRight,
-                contentDescription = "Detayları gör",
+                contentDescription = stringResource(R.string.see_details),
                 tint = ThemeColors.getTextGrayColor(isDarkTheme),
                 modifier = Modifier.size(16.dp)
             )
