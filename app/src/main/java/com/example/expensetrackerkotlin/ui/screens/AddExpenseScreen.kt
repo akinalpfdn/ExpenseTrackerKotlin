@@ -165,7 +165,7 @@ fun AddExpenseScreen(
                 // Amount
                 Box(
                     modifier = Modifier
-                        .weight(0.8f)
+                        .weight(0.6f)
                         .height(40.dp)
                         .background(
                             ThemeColors.getInputBackgroundColor(isDarkTheme),
@@ -329,7 +329,7 @@ fun AddExpenseScreen(
                         modifier = Modifier
                             .background(ThemeColors.getInputBackgroundColor(isDarkTheme))
                             .heightIn(max = 340.dp)
-                            .width(with(androidx.compose.ui.platform.LocalDensity.current) { 150.dp })
+                            .width(with(androidx.compose.ui.platform.LocalDensity.current) { 170.dp })
                     ) {
                         // Search TextField
 

@@ -390,24 +390,17 @@ fun ExpensesScreen(
                         .weight(1f)
                         .padding(horizontal = 40.dp)
                 ) {
-                    Icon(
-                        imageVector = Icons.Default.Add,
-                        contentDescription = "No expenses",
-                        modifier = Modifier.size(60.dp),
-                        tint = ThemeColors.getTextGrayColor(isDarkTheme)
-                    )
-                    
-                    Spacer(modifier = Modifier.height(16.dp))
+
                     
                     Text(
                         text = if (searchText.isNotBlank()) {
-                            "Arama sonucu bulunamadı"
+                            stringResource(R.string.no_search_results_found)
                         } else if (selectedDate.toLocalDate() == LocalDateTime.now().toLocalDate()) {
-                            "Henüz harcama yok"
+                            stringResource(R.string.no_expenses_yet)
                         } else {
-                            "Bu günde harcama yok"
+                            stringResource(R.string.no_expenses_today)
                         },
-                        fontSize = 20.sp,
+                        fontSize = 22.sp,
                         fontWeight = FontWeight.Medium,
                         color = ThemeColors.getTextColor(isDarkTheme),
                         textAlign = TextAlign.Center
@@ -417,13 +410,13 @@ fun ExpensesScreen(
                     
                     Text(
                         text = if (searchText.isNotBlank()) {
-                            "\"$searchText\" için sonuç bulunamadı. Farklı bir arama terimi deneyin."
+                            stringResource(R.string.no_search_results_description, searchText)
                         } else if (selectedDate.toLocalDate() == LocalDateTime.now().toLocalDate()) {
-                            "İlk harcamanızı eklemek için + butonuna basın"
+                            stringResource(R.string.first_expense_hint)
                         } else {
-                            "Bu güne harcama eklemek için + butonuna basın"
+                            stringResource(R.string.add_expense_for_day_hint)
                         },
-                        fontSize = 16.sp,
+                        fontSize = 18.sp,
                         color = ThemeColors.getTextGrayColor(isDarkTheme),
                         textAlign = TextAlign.Center
                     )
@@ -724,7 +717,7 @@ fun ExpensesScreen(
         )
         
         var selectedTabIndex by remember { mutableStateOf(0) }
-        val tabs = listOf("Takvim", "Harcamalar")
+        val tabs = listOf(stringResource(R.string.calendar_tab), stringResource(R.string.expenses_tab))
         
         LaunchedEffect(Unit) {
             monthlyCalendarSheetState.expand()

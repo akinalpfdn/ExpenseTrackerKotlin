@@ -316,7 +316,15 @@
 
     <!-- Others -->
     <string name="subcategory_other_expenses">Diğer Harcamalar</string>
-
+    <!-- ExpensesScreen - Empty state messages -->
+    <string name="no_search_results_found">Arama sonucu bulunamadı</string>
+    <string name="no_expenses_yet">Henüz harcama yok</string>
+    <string name="no_expenses_today">Bugün harcama yok</string>
+    <string name="no_search_results_description">\"%1$s\" için sonuç bulunamadı. Farklı bir arama terimi deneyin.</string>
+    <string name="first_expense_hint">İlk harcamanızı eklemek için + butonuna basın</string>
+    <string name="add_expense_for_day_hint">Bu güne harcama eklemek için + butonuna basın</string>
+    <string name="calendar_tab">Takvim</string>
+    <string name="expenses_tab">Harcamalar</string>
     <!-- Category - Default categories -->
     <string name="category_food">Gıda ve İçecek</string>
     <string name="category_housing">Konut</string>

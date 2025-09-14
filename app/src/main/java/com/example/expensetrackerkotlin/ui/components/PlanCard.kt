@@ -20,6 +20,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import com.example.expensetrackerkotlin.R
 import com.example.expensetrackerkotlin.data.PlanWithBreakdowns
@@ -43,7 +44,8 @@ fun PlanCard(
     
     val totalProjectedSavings = PlanningUtils.calculateTotalProjectedSavings(breakdowns)
     val progressPercentage = plan.getProgressPercentage()
-    val statusText = PlanningUtils.getPlanStatusText(plan)
+    val context = LocalContext.current
+    val statusText = PlanningUtils.getPlanStatusText(plan, context)
     val statusColor = PlanningUtils.getPlanStatusColor(plan)
     
     // Calculate current net worth and averages

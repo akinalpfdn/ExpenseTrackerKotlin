@@ -317,6 +317,16 @@
     <!-- Others -->
     <string name="subcategory_other_expenses">Other Expenses</string>
 
+    <!-- ExpensesScreen - Empty state messages -->
+    <string name="no_search_results_found">No search results found</string>
+    <string name="no_expenses_yet">No expenses yet</string>
+    <string name="no_expenses_today">No expenses today</string>
+    <string name="no_search_results_description">No results found for \"%1$s\". Try a different search term.</string>
+    <string name="first_expense_hint">Press the + button to add your first expense</string>
+    <string name="add_expense_for_day_hint">Press the + button to add expenses for this day</string>
+    <string name="calendar_tab">Calendar</string>
+    <string name="expenses_tab">Expenses</string>
+
     <!-- Category - Default categories -->
     <string name="category_food">Food and Drink</string>
     <string name="category_housing">Housing</string>

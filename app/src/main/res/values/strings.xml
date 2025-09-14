@@ -317,6 +317,41 @@
     <!-- Others -->
     <string name="subcategory_other_expenses">Other Expenses</string>
 
+    <!-- ExpensesScreen - Empty state messages -->
+    <string name="no_search_results_found">No search results found</string>
+    <string name="no_expenses_yet">No expenses yet</string>
+    <string name="no_expenses_today">No expenses today</string>
+    <string name="no_search_results_description">No results found for \"%1$s\". Try a different search term.</string>
+    <string name="first_expense_hint">Press the + button to add your first expense</string>
+    <string name="add_expense_for_day_hint">Press the + button to add expenses for this day</string>
+    <string name="calendar_tab">Calendar</string>
+    <string name="expenses_tab">Expenses</string>
+
+    <!-- PlanningUtils - Plan status and validation -->
+    <string name="plan_status_not_started">Not started</string>
+    <string name="plan_status_completed">Completed</string>
+    <string name="plan_status_active">Active</string>
+    <string name="validation_plan_name_empty">Plan name cannot be empty</string>
+    <string name="validation_monthly_income_positive">Monthly income must be greater than 0</string>
+    <string name="validation_duration_positive">Plan duration must be greater than 0</string>
+    <string name="validation_duration_max_10_years">Plan duration cannot be more than 10 years</string>
+    <string name="validation_inflation_rate_range">Inflation rate must be between -50%% and 100%%</string>
+    <string name="duration_3_months">3 Months</string>
+    <string name="duration_6_months">6 Months</string>
+    <string name="duration_1_year">1 Year</string>
+    <string name="duration_1_5_years">1.5 Years</string>
+    <string name="duration_2_years">2 Years</string>
+    <string name="duration_3_years">3 Years</string>
+    <string name="duration_5_years">5 Years</string>
+
+    <!-- PlanningViewModel - Error messages -->
+    <string name="error_loading_plan">Error loading plan: %s</string>
+    <string name="error_creating_plan">Error creating plan: %s</string>
+    <string name="error_deleting_plan">Error deleting plan: %s</string>
+    <string name="error_updating_expense_data">Error updating expense data: %s</string>
+    <string name="error_updating_plan_calculations">Error updating plan calculations: %s</string>
+    <string name="error_saving_changes">Error saving changes: %s</string>
+
     <!-- Category - Default categories -->
     <string name="category_food">Food and Drink</string>
     <string name="category_housing">Housing</string>

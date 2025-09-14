@@ -22,6 +22,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.window.Dialog
 import com.example.expensetrackerkotlin.R
 import com.example.expensetrackerkotlin.ui.theme.AppColors
@@ -63,7 +64,8 @@ fun CreatePlanBottomSheet(
     var interestRate by remember { mutableStateOf("") }
     var selectedInterestType by remember { mutableStateOf(InterestType.COMPOUND) }
     
-    val suggestedDurations = PlanningUtils.getSuggestedPlanDurations()
+    val context = LocalContext.current
+    val suggestedDurations = PlanningUtils.getSuggestedPlanDurations(context)
     
     Column(
         modifier = Modifier

@@ -1,5 +1,7 @@
 package com.example.expensetrackerkotlin.utils
 
+import android.content.Context
+import com.example.expensetrackerkotlin.R
 import com.example.expensetrackerkotlin.data.FinancialPlan
 import com.example.expensetrackerkotlin.data.PlanMonthlyBreakdown
 import java.time.LocalDateTime
@@ -8,21 +10,7 @@ import java.util.*
 
 object PlanningUtils {
     
-    /**
-     * Formats a plan duration in a human-readable Turkish format
-     */
-    fun formatPlanDuration(durationInMonths: Int): String {
-        return when {
-            durationInMonths < 12 -> "$durationInMonths ay"
-            durationInMonths == 12 -> "1 yıl"
-            durationInMonths % 12 == 0 -> "${durationInMonths / 12} yıl"
-            else -> {
-                val years = durationInMonths / 12
-                val months = durationInMonths % 12
-                "$years yıl $months ay"
-            }
-        }
-    }
+
     
     /**
      * Formats a plan's date range in Turkish
@@ -33,14 +21,14 @@ object PlanningUtils {
     }
     
     /**
-     * Gets plan status text in Turkish
+     * Gets plan status text
      */
-    fun getPlanStatusText(plan: FinancialPlan): String {
+    fun getPlanStatusText(plan: FinancialPlan, context: Context): String {
         val now = LocalDateTime.now()
         return when {
-            now.isBefore(plan.startDate) -> "Başlamadı"
-            now.isAfter(plan.endDate) -> "Tamamlandı"
-            else -> "Aktif"
+            now.isBefore(plan.startDate) -> context.getString(R.string.plan_status_not_started)
+            now.isAfter(plan.endDate) -> context.getString(R.string.plan_status_completed)
+            else -> context.getString(R.string.plan_status_active)
         }
     }
     
@@ -63,15 +51,7 @@ object PlanningUtils {
         return breakdowns.lastOrNull()?.cumulativeNet ?: 0.0
     }
     
-    /**
-     * Calculates average monthly savings rate for a plan
-     */
-    fun calculateAverageSavingsRate(breakdowns: List<PlanMonthlyBreakdown>): Float {
-        if (breakdowns.isEmpty()) return 0f
-        
-        val averageRate = breakdowns.map { it.getSavingsRate() }.average()
-        return averageRate.toFloat()
-    }
+
     
     /**
      * Gets month name in Turkish for a given month index from plan start
@@ -82,17 +62,7 @@ object PlanningUtils {
         return targetDate.format(formatter)
     }
     
-    /**
-     * Determines if a plan's projection is optimistic, realistic, or conservative
-     */
-    fun getPlanProjectionType(averageSavingsRate: Float): String {
-        return when {
-            averageSavingsRate >= 0.3f -> "İyimser"
-            averageSavingsRate >= 0.1f -> "Gerçekçi"
-            averageSavingsRate >= 0.0f -> "Muhafazakar"
-            else -> "Risk Altında"
-        }
-    }
+
     
     /**
      * Validates plan input parameters
@@ -101,30 +71,31 @@ object PlanningUtils {
         name: String,
         monthlyIncome: Double,
         durationInMonths: Int,
-        inflationRate: Double?
+        inflationRate: Double?,
+        context: Context
     ): PlanValidationResult {
         val errors = mutableListOf<String>()
-        
+
         if (name.isBlank()) {
-            errors.add("Plan adı boş olamaz")
+            errors.add(context.getString(R.string.validation_plan_name_empty))
         }
-        
+
         if (monthlyIncome <= 0) {
-            errors.add("Aylık gelir 0'dan büyük olmalıdır")
+            errors.add(context.getString(R.string.validation_monthly_income_positive))
         }
-        
+
         if (durationInMonths <= 0) {
-            errors.add("Plan süresi 0'dan büyük olmalıdır")
+            errors.add(context.getString(R.string.validation_duration_positive))
         }
-        
+
         if (durationInMonths > 120) { // 10 years max
-            errors.add("Plan süresi 10 yıldan fazla olamaz")
+            errors.add(context.getString(R.string.validation_duration_max_10_years))
         }
-        
+
         if (inflationRate != null && (inflationRate < -50 || inflationRate > 100)) {
-            errors.add("Enflasyon oranı -50% ile 100% arasında olmalıdır")
+            errors.add(context.getString(R.string.validation_inflation_rate_range))
         }
-        
+
         return PlanValidationResult(
             isValid = errors.isEmpty(),
             errors = errors
@@ -134,15 +105,15 @@ object PlanningUtils {
     /**
      * Generates suggested plan durations
      */
-    fun getSuggestedPlanDurations(): List<PlanDurationOption> {
+    fun getSuggestedPlanDurations(context: Context): List<PlanDurationOption> {
         return listOf(
-            PlanDurationOption(3, "3 Ay", "Kısa Vadeli"),
-            PlanDurationOption(6, "6 Ay", "Kısa Vadeli"),
-            PlanDurationOption(12, "1 Yıl", "Orta Vadeli"),
-            PlanDurationOption(18, "1.5 Yıl", "Orta Vadeli"),
-            PlanDurationOption(24, "2 Yıl", "Orta Vadeli"),
-            PlanDurationOption(36, "3 Yıl", "Uzun Vadeli"),
-            PlanDurationOption(60, "5 Yıl", "Uzun Vadeli")
+            PlanDurationOption(3, context.getString(R.string.duration_3_months)),
+            PlanDurationOption(6, context.getString(R.string.duration_6_months)),
+            PlanDurationOption(12, context.getString(R.string.duration_1_year)),
+            PlanDurationOption(18, context.getString(R.string.duration_1_5_years)),
+            PlanDurationOption(24, context.getString(R.string.duration_2_years)),
+            PlanDurationOption(36, context.getString(R.string.duration_3_years)),
+            PlanDurationOption(60, context.getString(R.string.duration_5_years))
         )
     }
 }
@@ -154,6 +125,5 @@ data class PlanValidationResult(
 
 data class PlanDurationOption(
     val months: Int,
-    val displayText: String,
-    val category: String
+    val displayText: String
 )

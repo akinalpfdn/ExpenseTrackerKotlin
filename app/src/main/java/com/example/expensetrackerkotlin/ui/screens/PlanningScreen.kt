@@ -17,6 +17,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import com.example.expensetrackerkotlin.R
 import com.example.expensetrackerkotlin.ui.components.PlanCard
@@ -34,6 +35,7 @@ fun PlanningScreen(
     defaultCurrency: String = "₺",
     modifier: Modifier = Modifier
 ) {
+    val context = LocalContext.current
     val plansWithBreakdowns by planningViewModel.plansWithBreakdowns.collectAsState()
     val isLoading by planningViewModel.isLoading.collectAsState()
     val error by planningViewModel.error.collectAsState()
@@ -261,7 +263,8 @@ fun PlanningScreen(
                                 isInterestApplied = interestApplied,
                                 interestRate = interestRate,
                                 interestType = interestType,
-                                defaultCurrency = defaultCurrency
+                                defaultCurrency = defaultCurrency,
+                                context = context
                             )
                             showCreatePlanDialog = false
                         },

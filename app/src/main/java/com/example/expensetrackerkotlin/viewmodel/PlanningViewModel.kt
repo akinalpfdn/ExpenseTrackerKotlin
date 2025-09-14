@@ -1,5 +1,6 @@
 package com.example.expensetrackerkotlin.viewmodel
 
+import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.expensetrackerkotlin.data.*
@@ -82,7 +83,8 @@ class PlanningViewModel(
         isInterestApplied: Boolean = false,
         interestRate: Double = 0.0,
         interestType: com.example.expensetrackerkotlin.data.InterestType = com.example.expensetrackerkotlin.data.InterestType.COMPOUND,
-        defaultCurrency: String
+        defaultCurrency: String,
+        context: Context
     ) {
         viewModelScope.launch {
             _isLoading.value = true
@@ -91,7 +93,8 @@ class PlanningViewModel(
                     name = name,
                     monthlyIncome = monthlyIncome,
                     durationInMonths = durationInMonths,
-                    inflationRate = if (isInflationApplied) inflationRate else null
+                    inflationRate = if (isInflationApplied) inflationRate else null,
+                    context = context
                 )
                 
                 if (!validation.isValid) {
