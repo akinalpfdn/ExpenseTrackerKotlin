@@ -17,6 +17,7 @@
     <string name="theme_description">Uygulamanın görünümünü değiştirin</string>
     <string name="cancel">İptal</string>
     <string name="save">Kaydet</string>
+
     <!-- RecurringExpensesScreen -->
     <string name="recurring_expenses">Tekrar Eden Harcamalar</string>
     <string name="sort">Sort</string>

@@ -37,6 +37,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.res.stringResource
+import com.example.expensetrackerkotlin.R
 import com.example.expensetrackerkotlin.data.Expense
 import com.example.expensetrackerkotlin.data.RecurrenceType
 import androidx.compose.runtime.collectAsState
@@ -143,7 +145,7 @@ fun RecurringExpensesScreen(
                 ) {
                     Icon(
                         imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                        contentDescription = "Back",
+                        contentDescription = stringResource(R.string.back),
                         tint = ThemeColors.getTextColor(isDarkTheme)
                     )
                 }
@@ -151,7 +153,7 @@ fun RecurringExpensesScreen(
                 Spacer(modifier = Modifier.width(8.dp))
                 
                 Text(
-                    text = "Tekrar Eden Harcamalar",
+                    text = stringResource(R.string.recurring_expenses),
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Bold,
                     color = ThemeColors.getTextColor(isDarkTheme),
@@ -165,7 +167,7 @@ fun RecurringExpensesScreen(
                     ) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.Sort,
-                            contentDescription = "Sort",
+                            contentDescription = stringResource(R.string.sort),
                             tint = ThemeColors.getTextColor(isDarkTheme)
                         )
                     }
@@ -176,42 +178,42 @@ fun RecurringExpensesScreen(
                         modifier = Modifier.background(ThemeColors.getCardBackgroundColor(isDarkTheme))
                     ) {
                         DropdownMenuItem(
-                            text = { Text("Miktar: Büyükten Küçüğe", color = ThemeColors.getTextColor(isDarkTheme)) },
+                            text = { Text(stringResource(R.string.amount_high_to_low), color = ThemeColors.getTextColor(isDarkTheme)) },
                             onClick = { 
                                 currentSortType = SortType.AMOUNT_HIGH_TO_LOW
                                 showSortMenu = false 
                             }
                         )
                         DropdownMenuItem(
-                            text = { Text("Miktar: Küçükten Büyüğe", color = ThemeColors.getTextColor(isDarkTheme)) },
+                            text = { Text(stringResource(R.string.amount_low_to_high), color = ThemeColors.getTextColor(isDarkTheme)) },
                             onClick = { 
                                 currentSortType = SortType.AMOUNT_LOW_TO_HIGH
                                 showSortMenu = false 
                             }
                         )
                         DropdownMenuItem(
-                            text = { Text("Açıklama: A-Z", color = ThemeColors.getTextColor(isDarkTheme)) },
+                            text = { Text(stringResource(R.string.description_a_to_z), color = ThemeColors.getTextColor(isDarkTheme)) },
                             onClick = { 
                                 currentSortType = SortType.DESCRIPTION_A_TO_Z
                                 showSortMenu = false 
                             }
                         )
                         DropdownMenuItem(
-                            text = { Text("Açıklama: Z-A", color = ThemeColors.getTextColor(isDarkTheme)) },
+                            text = { Text(stringResource(R.string.description_z_to_a), color = ThemeColors.getTextColor(isDarkTheme)) },
                             onClick = { 
                                 currentSortType = SortType.DESCRIPTION_Z_TO_A
                                 showSortMenu = false 
                             }
                         )
                         DropdownMenuItem(
-                            text = { Text("Kategori: A-Z", color = ThemeColors.getTextColor(isDarkTheme)) },
+                            text = { Text(stringResource(R.string.category_a_to_z), color = ThemeColors.getTextColor(isDarkTheme)) },
                             onClick = { 
                                 currentSortType = SortType.CATEGORY_A_TO_Z
                                 showSortMenu = false 
                             }
                         )
                         DropdownMenuItem(
-                            text = { Text("Kategori: Z-A", color = ThemeColors.getTextColor(isDarkTheme)) },
+                            text = { Text(stringResource(R.string.category_z_to_a), color = ThemeColors.getTextColor(isDarkTheme)) },
                             onClick = { 
                                 currentSortType = SortType.CATEGORY_Z_TO_A
                                 showSortMenu = false 
@@ -253,7 +255,7 @@ fun RecurringExpensesScreen(
                         ) {
                             Icon(
                                 imageVector = Icons.Default.Search,
-                                contentDescription = "Search",
+                                contentDescription = stringResource(R.string.search),
                                 tint = ThemeColors.getTextGrayColor(isDarkTheme),
                                 modifier = Modifier.size(20.dp)
                             )
@@ -263,7 +265,7 @@ fun RecurringExpensesScreen(
                             Box(modifier = Modifier.weight(1f)) {
                                 if (searchText.isEmpty()) {
                                     Text(
-                                        text = "Açıklama, miktar veya kategoriye göre ara...",
+                                        text = stringResource(R.string.search_placeholder),
                                         fontSize = 14.sp,
                                         color = ThemeColors.getTextGrayColor(isDarkTheme)
                                     )
@@ -287,7 +289,7 @@ fun RecurringExpensesScreen(
                     ) {
                         if (searchText.isNotBlank()) {
                             Text(
-                                text = "Arama sonucu bulunamadı",
+                                text = stringResource(R.string.no_search_results),
                                 fontSize = 18.sp,
                                 fontWeight = FontWeight.Medium,
                                 color = ThemeColors.getTextColor(isDarkTheme),
@@ -297,14 +299,14 @@ fun RecurringExpensesScreen(
                             Spacer(modifier = Modifier.height(8.dp))
                             
                             Text(
-                                text = "\"$searchText\" için sonuç bulunamadı. Farklı bir arama terimi deneyin.",
+                                text = stringResource(R.string.search_no_results_description, searchText),
                                 fontSize = 14.sp,
                                 color = ThemeColors.getTextGrayColor(isDarkTheme),
                                 textAlign = TextAlign.Center
                             )
                         } else {
                             Text(
-                                text = "Henüz tekrar eden harcama yok",
+                                text = stringResource(R.string.no_recurring_expenses),
                                 fontSize = 18.sp,
                                 fontWeight = FontWeight.Medium,
                                 color = ThemeColors.getTextColor(isDarkTheme),
@@ -314,7 +316,7 @@ fun RecurringExpensesScreen(
                             Spacer(modifier = Modifier.height(8.dp))
                             
                             Text(
-                                text = "Tekrar eden harcama eklemek için + butonuna basın",
+                                text = stringResource(R.string.recurring_expenses_hint),
                                 fontSize = 14.sp,
                                 color = ThemeColors.getTextGrayColor(isDarkTheme),
                                 textAlign = TextAlign.Center
@@ -327,7 +329,7 @@ fun RecurringExpensesScreen(
                     // Results count (only show when searching)
                     if (searchText.isNotBlank()) {
                         Text(
-                            text = "${recurringExpenses.size} sonuç bulundu",
+                            text = stringResource(R.string.results_found, recurringExpenses.size),
                             fontSize = 12.sp,
                             color = ThemeColors.getTextGrayColor(isDarkTheme),
                             modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp)
@@ -426,12 +428,12 @@ fun RecurringExpenseCard(
                     ) {
                         Icon(
                             imageVector = Icons.Default.Delete,
-                            contentDescription = "Delete",
+                            contentDescription = stringResource(R.string.delete),
                             tint = Color.White,
                             modifier = Modifier.size(24.dp)
                         )
                         Text(
-                            text = "Sil",
+                            text = stringResource(R.string.delete),
                             color = Color.White,
                             fontWeight = FontWeight.Bold,
                             fontSize = 16.sp
@@ -550,7 +552,7 @@ fun RecurringExpenseCard(
                             )
                             if (expense.exchangeRate != null) {
                                 Text(
-                                    text = "Kur: ${String.format("%.4f", expense.exchangeRate)}",
+                                    text = stringResource(R.string.exchange_rate, String.format("%.4f", expense.exchangeRate)),
                                     fontSize = 11.sp,
                                     color = ThemeColors.getTextGrayColor(isDarkTheme)
                                 )
@@ -568,10 +570,10 @@ fun RecurringExpenseCard(
                     ) {
                         Text(
                             text = when (expense.recurrenceType) {
-                                RecurrenceType.DAILY -> "Her gün"
-                                RecurrenceType.WEEKDAYS -> "Hafta içi"
-                                RecurrenceType.WEEKLY -> "Haftalık"
-                                RecurrenceType.MONTHLY -> "Aylık"
+                                RecurrenceType.DAILY -> stringResource(R.string.daily)
+                                RecurrenceType.WEEKDAYS -> stringResource(R.string.weekdays)
+                                RecurrenceType.WEEKLY -> stringResource(R.string.weekly)
+                                RecurrenceType.MONTHLY -> stringResource(R.string.monthly)
                                 RecurrenceType.NONE -> ""
                             },
                             fontSize = 12.sp,
@@ -580,7 +582,7 @@ fun RecurringExpenseCard(
                         
                         expense.endDate?.let { endDate ->
                             Text(
-                                text = "Bitiş: ${endDate.format(DateTimeFormatter.ofPattern("dd MMM yyyy", Locale.forLanguageTag("tr")))}",
+                                text = stringResource(R.string.end_date, endDate.format(DateTimeFormatter.ofPattern("dd MMM yyyy", Locale.forLanguageTag("tr")))),
                                 fontSize = 12.sp,
                                 color = ThemeColors.getTextGrayColor(isDarkTheme)
                             )
@@ -639,7 +641,7 @@ fun RecurringExpenseCard(
                                         ) {
                                             if (editAmount.isEmpty()) {
                                                 Text(
-                                                    text = "Miktar",
+                                                    text = stringResource(R.string.amount),
                                                     fontSize = 14.sp,
                                                     color = ThemeColors.getTextGrayColor(isDarkTheme)
                                                 )
@@ -684,7 +686,7 @@ fun RecurringExpenseCard(
                                         ) {
                                             if (editDescription.isEmpty()) {
                                                 Text(
-                                                    text = "Açıklama",
+                                                    text = stringResource(R.string.description),
                                                     fontSize = 14.sp,
                                                     color = ThemeColors.getTextGrayColor(isDarkTheme)
                                                 )
@@ -735,7 +737,7 @@ fun RecurringExpenseCard(
                                             ) {
                                                 if (editExchangeRate.isEmpty()) {
                                                     Text(
-                                                        text = "Döviz Kuru",
+                                                        text = stringResource(R.string.exchange_rate_field),
                                                         fontSize = 14.sp,
                                                         color = ThemeColors.getTextGrayColor(isDarkTheme)
                                                     )
@@ -780,7 +782,7 @@ fun RecurringExpenseCard(
                                     
                                     Icon(
                                         imageVector = Icons.Default.CalendarToday,
-                                        contentDescription = "Tarih Seç",
+                                        contentDescription = stringResource(R.string.select_date),
                                         tint = ThemeColors.getTextGrayColor(isDarkTheme),
                                         modifier = Modifier.size(20.dp)
                                     )
@@ -815,12 +817,12 @@ fun RecurringExpenseCard(
                                     ) {
                                         Icon(
                                             imageVector = Icons.Default.Close,
-                                            contentDescription = "Cancel",
+                                            contentDescription = stringResource(R.string.cancel),
                                             tint = ThemeColors.getTextColor(isDarkTheme),
                                             modifier = Modifier.size(16.dp)
                                         )
                                         Spacer(modifier = Modifier.width(4.dp))
-                                        Text("İptal", fontSize = 12.sp, color = ThemeColors.getTextColor(isDarkTheme))
+                                        Text(stringResource(R.string.cancel), fontSize = 12.sp, color = ThemeColors.getTextColor(isDarkTheme))
                                     }
                                 }
                                 Button(
@@ -858,12 +860,12 @@ fun RecurringExpenseCard(
                                     ) {
                                         Icon(
                                             imageVector = Icons.Default.Check,
-                                            contentDescription = "Save",
+                                            contentDescription = stringResource(R.string.save),
                                             tint = ThemeColors.getTextColor(isDarkTheme),
                                             modifier = Modifier.size(16.dp)
                                         )
                                         Spacer(modifier = Modifier.width(4.dp))
-                                        Text("Kaydet", fontSize = 12.sp, color = ThemeColors.getTextColor(isDarkTheme))
+                                        Text(stringResource(R.string.save), fontSize = 12.sp, color = ThemeColors.getTextColor(isDarkTheme))
                                     }
                                 }
                             }
@@ -884,14 +886,14 @@ fun RecurringExpenseCard(
             },
             title = {
                 Text(
-                    text = "Tekrar Eden Harcamayı Sil",
+                    text = stringResource(R.string.delete_recurring_expense),
                     color = ThemeColors.getTextColor(isDarkTheme),
                     fontWeight = FontWeight.Bold
                 )
             },
             text = {
                 Text(
-                    text = "Bu tekrar eden harcamayı bugünden itibaren silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.",
+                    text = stringResource(R.string.delete_recurring_confirmation),
                     color = ThemeColors.getTextColor(isDarkTheme)
                 )
             },
@@ -906,7 +908,7 @@ fun RecurringExpenseCard(
                     }
                 ) {
                     Text(
-                        "Sil", 
+                        stringResource(R.string.delete),
                         color = Color.Red,
                         fontWeight = FontWeight.Bold
                     )
@@ -922,7 +924,7 @@ fun RecurringExpenseCard(
                     }
                 ) {
                     Text(
-                        "İptal", 
+                        stringResource(R.string.cancel),
                         color = ThemeColors.getTextColor(isDarkTheme)
                     )
                 }
@@ -951,7 +953,7 @@ fun RecurringExpenseCard(
                     }
                 ) {
                     Text(
-                        "Tamam",
+                        stringResource(R.string.ok),
                         color = AppColors.PrimaryOrange,
                         fontWeight = FontWeight.SemiBold
                     )
@@ -962,7 +964,7 @@ fun RecurringExpenseCard(
                     onClick = { showEndDatePicker = false }
                 ) {
                     Text(
-                        "İptal",
+                        stringResource(R.string.cancel),
                         color = if (isDarkTheme) ThemeColors.getTextGrayColor(true) else Color.White
                     )
                 }

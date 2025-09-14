@@ -24,6 +24,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.material3.MenuAnchorType
 import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
+import androidx.compose.ui.res.stringResource
+import com.example.expensetrackerkotlin.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -40,7 +42,7 @@ fun SettingsScreen(
     onDismiss: () -> Unit
 ) {
     var selectedTabIndex by remember { mutableStateOf(0) }
-    val tabs = listOf("Genel Ayarlar", "Kategoriler")
+    val tabs = listOf(stringResource(R.string.general_settings), stringResource(R.string.categories))
     
     val isDarkTheme = theme == "dark"
     
@@ -58,7 +60,7 @@ fun SettingsScreen(
             containerColor = ThemeColors.getBackgroundColor(isDarkTheme),
             contentColor = AppColors.PrimaryOrange,
             indicator = { tabPositions ->
-                TabRowDefaults.Indicator(
+                TabRowDefaults.SecondaryIndicator(
                     modifier = Modifier.tabIndicatorOffset(tabPositions[selectedTabIndex]),
                     height = 3.dp,
                     color = AppColors.PrimaryOrange
@@ -145,7 +147,7 @@ fun GeneralSettingsTab(
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 Text(
-                    text = "Varsayılan Para Birimi",
+                    text = stringResource(R.string.default_currency),
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Medium,
                     color = ThemeColors.getTextColor(isDarkTheme)
@@ -216,7 +218,7 @@ fun GeneralSettingsTab(
                 }
                 
                 Text(
-                    text = "Yeni harcamalar için kullanılacak varsayılan para birimi",
+                    text = stringResource(R.string.currency_description),
                     fontSize = 14.sp,
                     color = ThemeColors.getTextGrayColor(isDarkTheme)
                 )
@@ -227,7 +229,7 @@ fun GeneralSettingsTab(
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 Text(
-                    text = "Günlük Harcama Limiti",
+                    text = stringResource(R.string.daily_spending_limit),
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Medium,
                     color = ThemeColors.getTextColor(isDarkTheme)
@@ -269,7 +271,7 @@ fun GeneralSettingsTab(
                             ) {
                                 if (newDailyLimit.isEmpty()) {
                                     Text(
-                                        text = "Günlük limit girin",
+                                        text = stringResource(R.string.enter_daily_limit),
                                         fontSize = 14.sp,
                                         color = ThemeColors.getTextGrayColor(isDarkTheme)
                                     )
@@ -281,7 +283,7 @@ fun GeneralSettingsTab(
                 }
                 
                 Text(
-                    text = "Her güne özel harcama limitiniz. Boş bırakılırsa limit uygulanmaz",
+                    text = stringResource(R.string.daily_limit_description),
                     fontSize = 14.sp,
                     color = ThemeColors.getTextGrayColor(isDarkTheme)
                 )
@@ -292,7 +294,7 @@ fun GeneralSettingsTab(
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 Text(
-                    text = "Aylık Harcama Limiti",
+                    text = stringResource(R.string.monthly_spending_limit),
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Medium,
                     color = ThemeColors.getTextColor(isDarkTheme)
@@ -334,7 +336,7 @@ fun GeneralSettingsTab(
                             ) {
                                 if (newMonthlyLimit.isEmpty()) {
                                     Text(
-                                        text = "Aylık limit girin",
+                                        text = stringResource(R.string.enter_monthly_limit),
                                         fontSize = 14.sp,
                                         color = ThemeColors.getTextGrayColor(isDarkTheme)
                                     )
@@ -346,7 +348,7 @@ fun GeneralSettingsTab(
                 }
                 
                 Text(
-                    text = "Aylık toplam harcama limitiniz. Progress ring bu değere göre gösterilir",
+                    text = stringResource(R.string.monthly_limit_description),
                     fontSize = 14.sp,
                     color = ThemeColors.getTextGrayColor(isDarkTheme)
                 )
@@ -357,7 +359,7 @@ fun GeneralSettingsTab(
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 Text(
-                    text = "Tema",
+                    text = stringResource(R.string.theme),
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Medium,
                     color = ThemeColors.getTextColor(isDarkTheme)
@@ -369,7 +371,7 @@ fun GeneralSettingsTab(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = if (newTheme == "dark") "Koyu Tema" else "Açık Tema",
+                        text = if (newTheme == "dark") stringResource(R.string.dark_theme) else stringResource(R.string.light_theme),
                         fontSize = 16.sp,
                         color = ThemeColors.getTextColor(isDarkTheme)
                     )
@@ -389,7 +391,7 @@ fun GeneralSettingsTab(
                 }
                 
                 Text(
-                    text = "Uygulamanın görünümünü değiştirin",
+                    text = stringResource(R.string.theme_description),
                     fontSize = 14.sp,
                     color = ThemeColors.getTextGrayColor(isDarkTheme)
                 )
@@ -416,7 +418,7 @@ fun GeneralSettingsTab(
                 shape = RoundedCornerShape(16.dp)
             ) {
                 Text(
-                    text = "İptal",
+                    text = stringResource(R.string.cancel),
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Medium,
                     color = ThemeColors.getTextColor(isDarkTheme)
@@ -439,7 +441,7 @@ fun GeneralSettingsTab(
                 shape = RoundedCornerShape(16.dp)
             ) {
                 Text(
-                    text = "Kaydet",
+                    text = stringResource(R.string.save),
                     fontSize = 18.sp,
                     fontWeight = FontWeight.SemiBold,
                     color = ThemeColors.getTextColor(isDarkTheme)
