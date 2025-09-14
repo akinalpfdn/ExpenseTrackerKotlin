@@ -21,6 +21,8 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.res.stringResource
+import com.example.expensetrackerkotlin.R
 import com.example.expensetrackerkotlin.data.Expense
 import com.example.expensetrackerkotlin.data.RecurrenceType
 import java.time.LocalDateTime
@@ -107,11 +109,11 @@ fun AddExpenseScreen(
     
     val currencies = listOf("₺", "$", "€", "£")
     val recurrenceTypes = listOf(
-        RecurrenceType.NONE to "Tek seferlik",
-        RecurrenceType.DAILY to "Her gün",
-        RecurrenceType.WEEKDAYS to "Hafta içi her gün",
-        RecurrenceType.WEEKLY to "Haftada 1 kez",
-        RecurrenceType.MONTHLY to "Ayda 1 kez"
+        RecurrenceType.NONE to stringResource(R.string.one_time),
+        RecurrenceType.DAILY to stringResource(R.string.every_day),
+        RecurrenceType.WEEKDAYS to stringResource(R.string.weekdays_only),
+        RecurrenceType.WEEKLY to stringResource(R.string.once_per_week),
+        RecurrenceType.MONTHLY to stringResource(R.string.once_per_month)
     )
     
     val focusManager = LocalFocusManager.current
@@ -133,14 +135,14 @@ fun AddExpenseScreen(
                 .padding(horizontal = 20.dp)
         ) {
             Text(
-                text = if (editingExpense != null) "Harcamayı Düzenle" else "Yeni Harcama",
+                text = if (editingExpense != null) stringResource(R.string.edit_expense) else stringResource(R.string.new_expense),
                 fontSize = 32.sp,
                 fontWeight = FontWeight.Bold,
                 color = ThemeColors.getTextColor(isDarkTheme)
             )
             Spacer(modifier = Modifier.height(8.dp))
             Text(
-                text = "Harcama detaylarını girin",
+                text = stringResource(R.string.enter_expense_details),
                 fontSize = 16.sp,
                 color = ThemeColors.getTextGrayColor(isDarkTheme)
             )
@@ -201,7 +203,7 @@ fun AddExpenseScreen(
                             ) {
                                 if (amount.isEmpty()) {
                                     Text(
-                                        text = "0.00",
+                                        text = stringResource(R.string.expense_amount_placeholder),
                                         fontSize = 14.sp,
                                         color = ThemeColors.getTextGrayColor(isDarkTheme)
                                     )
@@ -305,7 +307,7 @@ fun AddExpenseScreen(
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Text(
-                                text = subCategories.find { it.id == selectedSubCategoryId }?.name ?: "Kategori seçin",
+                                text = subCategories.find { it.id == selectedSubCategoryId }?.name ?: stringResource(R.string.selectCategory),
                                 fontSize = 14.sp,
                                 color = ThemeColors.getTextColor(isDarkTheme),
                                 modifier = Modifier.padding(start = 12.dp)
@@ -349,7 +351,7 @@ fun AddExpenseScreen(
                                 ) {
                                     if (categorySearchText.isEmpty()) {
                                         Text(
-                                            text = "ara...",
+                                            text = stringResource(R.string.search_placeholder_category),
                                             fontSize = 12.sp,
                                             color = ThemeColors.getTextGrayColor(isDarkTheme)
                                         )
@@ -386,7 +388,7 @@ fun AddExpenseScreen(
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 Text(
-                    text = "Açıklama (İsteğe bağlı)",
+                    text = stringResource(R.string.description_optional),
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Medium,
                     color = ThemeColors.getTextColor(isDarkTheme)
@@ -423,7 +425,7 @@ fun AddExpenseScreen(
                             ) {
                                 if (description.isEmpty()) {
                                     Text(
-                                        text = "Açıklama ekleyin...",
+                                        text = stringResource(R.string.add_description_placeholder),
                                         fontSize = 14.sp,
                                         color = ThemeColors.getTextGrayColor(isDarkTheme)
                                     )
@@ -440,7 +442,7 @@ fun AddExpenseScreen(
                      verticalArrangement = Arrangement.spacedBy(8.dp)
                  ) {
                      Text(
-                         text = "Tekrar Türü",
+                         text = stringResource(R.string.recurrence_type),
                          fontSize = 18.sp,
                          fontWeight = FontWeight.Medium,
                          color = ThemeColors.getTextColor(isDarkTheme)
@@ -475,7 +477,7 @@ fun AddExpenseScreen(
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Text(
-                                text = recurrenceTypes.find { it.first == selectedRecurrenceType }?.second ?: "Tek seferlik",
+                                text = recurrenceTypes.find { it.first == selectedRecurrenceType }?.second ?: stringResource(R.string.single_time),
                                 fontSize = 14.sp,
                                 color = ThemeColors.getTextColor(isDarkTheme),
                                 modifier = Modifier.padding(start = 12.dp)
@@ -518,7 +520,7 @@ fun AddExpenseScreen(
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     Text(
-                        text = "Bitiş Tarihi",
+                        text = stringResource(R.string.end_date),
                         fontSize = 18.sp,
                         fontWeight = FontWeight.Medium,
                         color = ThemeColors.getTextColor(isDarkTheme)
@@ -557,7 +559,7 @@ fun AddExpenseScreen(
                             
                             Icon(
                                 imageVector = Icons.Default.CalendarToday,
-                                contentDescription = "Tarih Seç",
+                                contentDescription = stringResource(R.string.select_date),
                                 tint = ThemeColors.getTextGrayColor(isDarkTheme),
                                 modifier = Modifier.size(20.dp)
                             )
@@ -572,7 +574,7 @@ fun AddExpenseScreen(
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     Text(
-                        text = "Döviz Kuru (1 $selectedCurrency = ? $defaultCurrency)",
+                        text = stringResource(R.string.exchange_rate_label, selectedCurrency, defaultCurrency),
                         fontSize = 18.sp,
                         fontWeight = FontWeight.Medium,
                         color = ThemeColors.getTextColor(isDarkTheme)
@@ -614,7 +616,7 @@ fun AddExpenseScreen(
                                 ) {
                                     if (exchangeRate.isEmpty()) {
                                         Text(
-                                            text = "Örn: 0.035 (1 $selectedCurrency = 0.035 $defaultCurrency)",
+                                            text = stringResource(R.string.exchange_rate_example, selectedCurrency, defaultCurrency),
                                             fontSize = 14.sp,
                                             color = ThemeColors.getTextGrayColor(isDarkTheme)
                                         )
@@ -626,7 +628,7 @@ fun AddExpenseScreen(
                     }
                     
                     Text(
-                        text = "Bu kur, progress hesaplamaları için kullanılacak",
+                        text = stringResource(R.string.exchange_rate_note),
                         fontSize = 14.sp,
                         color = ThemeColors.getTextGrayColor(isDarkTheme)
                     )
@@ -653,7 +655,7 @@ fun AddExpenseScreen(
                 shape = RoundedCornerShape(16.dp)
             ) {
                 Text(
-                    text = "İptal",
+                    text = stringResource(R.string.cancel),
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Medium,
                     color = ThemeColors.getTextColor(isDarkTheme)
@@ -722,7 +724,7 @@ fun AddExpenseScreen(
                 shape = RoundedCornerShape(16.dp)
             ) {
                 Text(
-                    text = if (editingExpense != null) "Güncelle" else "Harcama Ekle",
+                    text = if (editingExpense != null) stringResource(R.string.update_expense) else stringResource(R.string.add_expense),
                     fontSize = 18.sp,
                     fontWeight = FontWeight.SemiBold,
                     color = ThemeColors.getTextColor(isDarkTheme)
@@ -751,7 +753,7 @@ fun AddExpenseScreen(
                          }
                      ) {
                          Text(
-                             "Tamam",
+                             stringResource(R.string.okay),
                              color = AppColors.PrimaryOrange,
                              fontWeight = FontWeight.SemiBold
                          )
@@ -762,7 +764,7 @@ fun AddExpenseScreen(
                          onClick = { showEndDatePicker = false }
                      ) {
                          Text(
-                             "İptal",
+                             stringResource(R.string.cancel),
                              color = if (isDarkTheme) ThemeColors.getTextGrayColor(true) else Color.White
                          )
                      }

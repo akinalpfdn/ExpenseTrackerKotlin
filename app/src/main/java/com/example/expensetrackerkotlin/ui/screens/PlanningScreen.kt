@@ -17,6 +17,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.res.stringResource
+import com.example.expensetrackerkotlin.R
 import com.example.expensetrackerkotlin.ui.components.PlanCard
 import com.example.expensetrackerkotlin.ui.components.CreatePlanBottomSheet
 import com.example.expensetrackerkotlin.ui.components.PlanDetailBottomSheet
@@ -52,7 +54,7 @@ fun PlanningScreen(
             
             // Header
             Text(
-                text = "Finansal Planlama",
+                text = stringResource(R.string.financial_planning),
                 fontSize = 28.sp,
                 fontWeight = FontWeight.Bold,
                 color = ThemeColors.getTextColor(isDarkTheme),
@@ -62,7 +64,7 @@ fun PlanningScreen(
             Spacer(modifier = Modifier.height(8.dp))
             
             Text(
-                text = "Gelecek planlarınızı oluşturun ve takip edin",
+                text = stringResource(R.string.planning_description),
                 fontSize = 16.sp,
                 color = ThemeColors.getTextGrayColor(isDarkTheme),
                 modifier = Modifier.padding(horizontal = 20.dp)
@@ -100,7 +102,7 @@ fun PlanningScreen(
                     Spacer(modifier = Modifier.height(16.dp))
                     
                     Text(
-                        text = "Henüz plan yok",
+                        text = stringResource(R.string.no_plans_yet),
                         fontSize = 24.sp,
                         fontWeight = FontWeight.Bold,
                         color = ThemeColors.getTextColor(isDarkTheme),
@@ -110,7 +112,7 @@ fun PlanningScreen(
                     Spacer(modifier = Modifier.height(8.dp))
                     
                     Text(
-                        text = "İlk finansal planınızı oluşturmak için + butonuna basın",
+                        text = stringResource(R.string.create_first_plan),
                         fontSize = 16.sp,
                         color = ThemeColors.getTextGrayColor(isDarkTheme),
                         textAlign = TextAlign.Center
@@ -163,7 +165,7 @@ fun PlanningScreen(
             ) {
                 Icon(
                     imageVector = Icons.Default.Add,
-                    contentDescription = "Plan Ekle",
+                    contentDescription = stringResource(R.string.add_plan),
                     tint = Color.White,
                     modifier = Modifier.size(30.dp)
                 )
@@ -280,14 +282,14 @@ fun PlanningScreen(
                 },
                 title = {
                     Text(
-                        text = "Planı Sil",
+                        text = stringResource(R.string.delete_plan),
                         color = ThemeColors.getTextColor(isDarkTheme),
                         fontWeight = FontWeight.Bold
                     )
                 },
                 text = {
                     Text(
-                        text = "\"$planName\" planını silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.",
+                        text = stringResource(R.string.delete_plan_confirmation, planName),
                         color = ThemeColors.getTextColor(isDarkTheme)
                     )
                 },
@@ -299,7 +301,7 @@ fun PlanningScreen(
                         }
                     ) {
                         Text(
-                            text = "Sil",
+                            text = stringResource(R.string.delete),
                             color = ThemeColors.getDeleteRedColor(isDarkTheme),
                             fontWeight = FontWeight.Bold
                         )
@@ -312,7 +314,7 @@ fun PlanningScreen(
                         }
                     ) {
                         Text(
-                            text = "İptal",
+                            text = stringResource(R.string.cancel),
                             color = ThemeColors.getTextColor(isDarkTheme)
                         )
                     }

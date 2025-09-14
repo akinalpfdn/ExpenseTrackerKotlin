@@ -39,7 +39,7 @@
     <string name="weekdays">Hafta içi</string>
     <string name="weekly">Haftalık</string>
     <string name="monthly">Aylık</string>
-    <string name="end_date">Bitiş: %s</string>
+    <string name="end_date_recurring">Bitiş: %s</string>
     <string name="exchange_rate">Kur: %s</string>
     <string name="delete">Sil</string>
     <string name="amount">Miktar</string>
@@ -49,4 +49,59 @@
     <string name="delete_recurring_expense">Tekrar Eden Harcamayı Sil</string>
     <string name="delete_recurring_confirmation">Bu tekrar eden harcamayı bugünden itibaren silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.</string>
     <string name="ok">Tamam</string>
+
+    <!-- PlanningScreen -->
+    <string name="financial_planning">Finansal Planlama</string>
+    <string name="planning_description">Gelecek planlarınızı oluşturun ve takip edin</string>
+    <string name="no_plans_yet">Henüz plan yok</string>
+    <string name="create_first_plan">İlk finansal planınızı oluşturmak için + butonuna basın</string>
+    <string name="add_plan">Plan Ekle</string>
+    <string name="delete_plan">Planı Sil</string>
+    <string name="delete_plan_confirmation">\"%1$s\" planını silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.</string>
+
+    <!-- ExpensesScreen -->
+    <string name="results_count">%d sonuç</string>
+    <string name="search_expenses_placeholder">Açıklama, miktar veya kategoriye göre ara...</string>
+    <string name="monthly_limit_exceeded">⚠️ Aylık harcama limitinizi aştınız!</string>
+    <string name="time_newest_first">Tarih: Yeniden Eskiye</string>
+    <string name="time_oldest_first">Tarih: Eskiden Yeniye</string>
+
+    <!-- AnalysisScreen -->
+    <string name="current_period_total">Bu Dönem Toplam Harcama</string>
+    <string name="vs_previous_month">Önceki aya göre</string>
+    <string name="vs_6_month_average">6 ay ortalamasına göre</string>
+    <string name="no_expenses_this_period">Bu dönem henüz harcama yok</string>
+    <string name="analysis_will_appear">Harcama eklediğinizde analiz burada görünecek</string>
+    <string name="previous_month">Önceki ay</string>
+    <string name="next_month">Sonraki ay</string>
+    <string name="select_date_range">Tarih aralığı seçin</string>
+    <string name="fixed_expenses">Sabit Harcamalar</string>
+    <string name="recurring_expenses_description">3+ ay devam edecek olan harcamalar</string>
+    <string name="recurring_expenses_cd">Tekrarlayan harcamalar</string>
+    <string name="pick_date_range">Tarih aralığı seçin</string>
+
+    <!-- AddExpenseScreen -->
+    <string name="enter_expense_details">Harcama detaylarını girin</string>
+    <string name="expense_amount_placeholder">0.00</string>
+    <string name="search_placeholder_category">ara...</string>
+    <string name="description_optional">Açıklama (İsteğe bağlı)</string>
+    <string name="add_description_placeholder">Açıklama ekleyin...</string>
+    <string name="recurrence_type">Tekrar Türü</string>
+    <string name="end_date">Bitiş Tarihi</string>
+    <string name="exchange_rate_label">Döviz Kuru (1 %1$s = ? %2$s)</string>
+    <string name="exchange_rate_example">Örn: 0.035 (1 %1$s = 0.035 %2$s)</string>
+    <string name="exchange_rate_note">Bu kur, progress hesaplamaları için kullanılacak</string>
+    <string name="add_expense">Harcama Ekle</string>
+    <string name="update_expense">Harcama Güncelle</string>
+    <string name="none">Yok</string>
+    <string name="one_time">Tek seferlik</string>
+    <string name="every_day">Her gün</string>
+    <string name="weekdays_only">Hafta içi her gün</string>
+    <string name="once_per_week">Haftada 1 kez</string>
+    <string name="once_per_month">Ayda 1 kez</string>
+    <string name="edit_expense">Harcamayı Düzenle</string>
+    <string name="new_expense">Yeni Harcama</string>
+    <string name="selectCategory">Kategori seçim</string>
+    <string name="single_time">Tek seferlik</string>
+    <string name="okay">Tamam</string>
 </resources>

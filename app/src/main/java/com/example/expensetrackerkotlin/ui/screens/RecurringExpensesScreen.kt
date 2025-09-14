@@ -582,7 +582,7 @@ fun RecurringExpenseCard(
                         
                         expense.endDate?.let { endDate ->
                             Text(
-                                text = stringResource(R.string.end_date, endDate.format(DateTimeFormatter.ofPattern("dd MMM yyyy", Locale.forLanguageTag("tr")))),
+                                text = stringResource(R.string.end_date_recurring, endDate.format(DateTimeFormatter.ofPattern("dd MMM yyyy", Locale.forLanguageTag("tr")))),
                                 fontSize = 12.sp,
                                 color = ThemeColors.getTextGrayColor(isDarkTheme)
                             )

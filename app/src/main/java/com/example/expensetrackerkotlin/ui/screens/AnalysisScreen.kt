@@ -33,6 +33,8 @@ import com.example.expensetrackerkotlin.viewmodel.ExpenseViewModel
 import java.time.*
 import java.time.format.DateTimeFormatter
 import java.util.*
+import androidx.compose.ui.res.stringResource
+import com.example.expensetrackerkotlin.R
 
 
 fun getMonthlyChartData(
@@ -389,7 +391,7 @@ fun AnalysisScreen(
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Text(
-                                text = "Bu Dönem Toplam Harcama",
+                                text = stringResource(R.string.current_period_total),
                                 fontSize = 20.sp,
                                 fontWeight = FontWeight.Bold,
                                 color = ThemeColors.getTextColor(isDarkTheme),
@@ -404,13 +406,13 @@ fun AnalysisScreen(
                         TotalComparisonIndicator(
                             amount = totalComparison.vsLastMonth,
                             currency = viewModel.defaultCurrency,
-                            label = "Önceki aya göre",
+                            label = stringResource(R.string.vs_previous_month),
                             isDarkTheme = isDarkTheme
                         )
                         TotalComparisonIndicator(
                             amount = totalComparison.vsAverage,
                             currency = viewModel.defaultCurrency,
-                            label = "6 ay ortalamasına göre",
+                            label = stringResource(R.string.vs_6_month_average),
                             isDarkTheme = isDarkTheme
                         )
                     }
@@ -552,14 +554,14 @@ fun AnalysisScreen(
                         fontSize = 64.sp
                     )
                     Text(
-                        text = "Bu dönem henüz harcama yok",
+                        text = stringResource(R.string.no_expenses_this_period),
                         fontSize = 20.sp,
                         fontWeight = FontWeight.Medium,
                         color = ThemeColors.getTextColor(isDarkTheme),
                         textAlign = TextAlign.Center
                     )
                     Text(
-                        text = "Harcama eklediğinizde analiz burada görünecek",
+                        text = stringResource(R.string.analysis_will_appear),
                         fontSize = 14.sp,
                         color = ThemeColors.getTextGrayColor(isDarkTheme),
                         textAlign = TextAlign.Center
@@ -669,14 +671,14 @@ fun AnalysisScreen(
     }
 }
 
-private fun formatDateRange(range: Pair<LocalDate?, LocalDate?>): String {
+private fun formatDateRange(range: Pair<LocalDate?, LocalDate?>,text:String): String {
     val (start, end) = range
     val formatter = DateTimeFormatter.ofPattern("dd MMM", Locale.forLanguageTag("tr"))
     
     return when {
         start != null && end != null -> "${start.format(formatter)} - ${end.format(formatter)}"
         start != null -> "${start.format(formatter)} - ?"
-        else -> "Tarih aralığı seçin"
+        else -> text
     }
 }
 
@@ -703,7 +705,7 @@ fun MonthYearSelector(
         ) {
             Icon(
                 imageVector = Icons.Default.ChevronLeft,
-                contentDescription = "Önceki ay",
+                contentDescription = stringResource(R.string.previous_month),
                 tint = ThemeColors.getTextColor(isDarkTheme)
             )
         }
@@ -732,7 +734,7 @@ fun MonthYearSelector(
                 if (selectedDateRange.first != null || selectedDateRange.second != null) {
                     Spacer(modifier = Modifier.height(4.dp))
                     Text(
-                        text = formatDateRange(selectedDateRange),
+                        text = formatDateRange(selectedDateRange,stringResource(R.string.pick_date_range)),
                         textAlign = TextAlign.Center,
                         color = AppColors.PrimaryOrange,
                         fontSize = 12.sp,
@@ -753,7 +755,7 @@ fun MonthYearSelector(
         ) {
             Icon(
                 imageVector = Icons.Default.ChevronRight,
-                contentDescription = "Sonraki ay",
+                contentDescription = stringResource(R.string.next_month),
                 tint = //if (!selectedMonth.plusMonths(1).isAfter(currentMonth))
                     ThemeColors.getTextColor(isDarkTheme) 
                 //else ThemeColors.getTextGrayColor(isDarkTheme)
@@ -783,20 +785,20 @@ fun RecurringExpenseCard(
             ) {
                 Icon(
                     imageVector = Icons.Default.Refresh,
-                    contentDescription = "Tekrarlayan harcamalar",
+                    contentDescription = stringResource(R.string.recurring_expenses_cd),
                     tint = AppColors.PrimaryOrange,
                     modifier = Modifier.size(18.dp)
                 )
                 Spacer(modifier = Modifier.width(12.dp))
                 Column {
                     Text(
-                        text = "Sabit Harcamalar",
+                        text = stringResource(R.string.fixed_expenses),
                         fontWeight = FontWeight.Bold,
                         fontSize = 16.sp,
                         color = ThemeColors.getTextColor(isDarkTheme)
                     )
                     Text(
-                        text = "3+ ay devam edecek olan harcamalar",
+                        text = stringResource(R.string.recurring_expenses_description),
                         fontSize = 12.sp,
                         color = ThemeColors.getTextGrayColor(isDarkTheme)
                     )
