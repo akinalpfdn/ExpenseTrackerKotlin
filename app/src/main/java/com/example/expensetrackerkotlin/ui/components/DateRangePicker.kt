@@ -1,7 +1,6 @@
 package com.example.expensetrackerkotlin.ui.components
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -9,9 +8,6 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ChevronLeft
-import androidx.compose.material.icons.filled.ChevronRight
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -23,8 +19,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.expensetrackerkotlin.R
-import com.example.expensetrackerkotlin.data.Expense
-import com.example.expensetrackerkotlin.data.RecurrenceType
 import com.example.expensetrackerkotlin.ui.theme.AppColors
 import com.example.expensetrackerkotlin.ui.theme.ThemeColors
 import java.time.LocalDate
@@ -110,7 +104,7 @@ fun DateRangePicker(
                         )
                         Spacer(modifier = Modifier.height(4.dp))
                         Text(
-                            text = formatDateRange(selectedRange,stringResource(com.example.expensetrackerkotlin.R.string.select_date)),
+                            text = formatDateRange(selectedRange,stringResource(R.string.select_date)),
                             fontSize = 16.sp,
                             color = AppColors.PrimaryOrange,
                             fontWeight = FontWeight.Bold
@@ -234,12 +228,12 @@ private fun DateRangeCalendar(
             horizontalArrangement = Arrangement.SpaceEvenly
         ) {
             val dayHeaders = listOf(
-                stringResource(com.example.expensetrackerkotlin.R.string.monday_short),
-                stringResource(com.example.expensetrackerkotlin.R.string.tuesday_short),
-                stringResource(com.example.expensetrackerkotlin.R.string.wednesday_short),
-                stringResource(com.example.expensetrackerkotlin.R.string.thursday_short),
-                stringResource(com.example.expensetrackerkotlin.R.string.friday_short),
-                stringResource(com.example.expensetrackerkotlin.R.string.saturday_short),
+                stringResource(R.string.monday_short),
+                stringResource(R.string.tuesday_short),
+                stringResource(R.string.wednesday_short),
+                stringResource(R.string.thursday_short),
+                stringResource(R.string.friday_short),
+                stringResource(R.string.saturday_short),
                 stringResource(R.string.sunday_short)
             )// Turkish day abbreviations
             dayHeaders.forEach { dayHeader ->

@@ -365,7 +365,6 @@ fun MonthlyExpensesView(
                         dailyExpenseRatio = viewModel.getDailyExpenseRatio(expense),
                         defaultCurrency = viewModel.defaultCurrency,
                         isDarkTheme = isDarkTheme,
-                        isRecurringExpenseMode = false,
                         viewModel = viewModel
                     )
                 }

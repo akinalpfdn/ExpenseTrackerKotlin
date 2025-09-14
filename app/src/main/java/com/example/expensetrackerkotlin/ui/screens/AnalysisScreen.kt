@@ -643,11 +643,7 @@ fun AnalysisScreen(
                     isDarkTheme = isDarkTheme,
                     viewModel = viewModel,
                     selectedMonth = selectedMonth,
-                    selectedFilterType = selectedMonthlyExpenseType,
-                    onDismiss = {
-                        showSubCategoryDialog = false
-                        selectedSubCategory = null
-                    }
+                    selectedFilterType = selectedMonthlyExpenseType
                 )
             }
         }

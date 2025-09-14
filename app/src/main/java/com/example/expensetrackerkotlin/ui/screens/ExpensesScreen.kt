@@ -187,7 +187,6 @@ fun ExpensesScreen(
                         DailyProgressRingView(
                             dailyProgressPercentage = viewModel.dailyProgressPercentage,
                             isOverDailyLimit = viewModel.isOverDailyLimit,
-                            dailyLimitValue = viewModel.dailyLimit.toDoubleOrNull() ?: 0.0,
                             selectedDateTotal = viewModel.getSelectedDayTotal(),
                             currency = viewModel.defaultCurrency,
                             isDarkTheme = isDarkTheme
@@ -449,7 +448,6 @@ fun ExpensesScreen(
                             dailyExpenseRatio = viewModel.getDailyExpenseRatio(expense),
                             defaultCurrency = viewModel.defaultCurrency,
                             isDarkTheme = isDarkTheme,
-                            isRecurringExpenseMode = false,
                             viewModel = viewModel
                         )
                     }

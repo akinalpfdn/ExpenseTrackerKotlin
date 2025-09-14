@@ -8,13 +8,7 @@ class CategoryRepository(private val categoryDao: CategoryDao, private val conte
     
     // Category operations
     val allCategories: Flow<List<Category>> = categoryDao.getAllCategories()
-    val defaultCategories: Flow<List<Category>> = categoryDao.getDefaultCategories()
-    val customCategories: Flow<List<Category>> = categoryDao.getCustomCategories()
-    
-    suspend fun getCategoryById(categoryId: String): Category? {
-        return categoryDao.getCategoryById(categoryId)
-    }
-    
+
     suspend fun insertCategory(category: Category) {
         categoryDao.insertCategory(category)
     }
@@ -26,24 +20,10 @@ class CategoryRepository(private val categoryDao: CategoryDao, private val conte
     suspend fun deleteCategory(category: Category) {
         categoryDao.deleteCategory(category)
     }
-    
-    suspend fun deleteCategoryById(categoryId: String) {
-        categoryDao.deleteCategoryById(categoryId)
-    }
-    
+
     // SubCategory operations
     val allSubCategories: Flow<List<SubCategory>> = categoryDao.getAllSubCategories()
-    val defaultSubCategories: Flow<List<SubCategory>> = categoryDao.getDefaultSubCategories()
-    val customSubCategories: Flow<List<SubCategory>> = categoryDao.getCustomSubCategories()
-    
-    fun getSubCategoriesByCategoryId(categoryId: String): Flow<List<SubCategory>> {
-        return categoryDao.getSubCategoriesByCategoryId(categoryId)
-    }
-    
-    suspend fun getSubCategoryById(subCategoryId: String): SubCategory? {
-        return categoryDao.getSubCategoryById(subCategoryId)
-    }
-    
+
     suspend fun insertSubCategory(subCategory: SubCategory) {
         categoryDao.insertSubCategory(subCategory)
     }
@@ -55,15 +35,7 @@ class CategoryRepository(private val categoryDao: CategoryDao, private val conte
     suspend fun deleteSubCategory(subCategory: SubCategory) {
         categoryDao.deleteSubCategory(subCategory)
     }
-    
-    suspend fun deleteSubCategoryById(subCategoryId: String) {
-        categoryDao.deleteSubCategoryById(subCategoryId)
-    }
-    
-    // Combined operations
-    val categoriesWithSubCategories: Flow<Map<Category, List<SubCategory>>> = 
-        categoryDao.getCategoriesWithSubCategories()
-    
+
     // Helper methods for creating custom categories and subcategories
     suspend fun createCustomCategory(
         name: String,

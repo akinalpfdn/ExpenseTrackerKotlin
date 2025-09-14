@@ -158,13 +158,6 @@ data class Category(
                     isDefault = true
                 ),
                 Category(
-                    id = "donations",
-                    name = context.getString(R.string.category_donations),
-                    colorHex = "#30D158",
-                    iconName = "favorite",
-                    isDefault = true
-                ),
-                Category(
                     id = "others",
                     name = context.getString(R.string.category_others),
                     colorHex = "#3F51B5",

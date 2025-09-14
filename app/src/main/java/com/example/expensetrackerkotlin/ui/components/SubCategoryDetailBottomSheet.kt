@@ -9,10 +9,9 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Sort
-import androidx.compose.material.icons.filled.ArrowDownward
-import androidx.compose.material.icons.filled.ArrowUpward
 import androidx.compose.material.icons.filled.ExpandMore
 import androidx.compose.material3.*
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -40,8 +39,7 @@ fun SubCategoryDetailBottomSheet(
     isDarkTheme: Boolean,
     viewModel: ExpenseViewModel,
     selectedMonth: YearMonth,
-    selectedFilterType: ExpenseFilterType,
-    onDismiss: () -> Unit
+    selectedFilterType: ExpenseFilterType
 ) {
     var selectedSortOption by remember { mutableStateOf(SortOption.AMOUNT_DESC) }
     var showSortMenu by remember { mutableStateOf(false) }
@@ -157,14 +155,15 @@ fun SubCategoryDetailBottomSheet(
                         color = ThemeColors.getTextColor(isDarkTheme)
                     )
                 }
-                
-                Divider(
+
+                HorizontalDivider(
                     modifier = Modifier
                         .height(40.dp)
                         .width(1.dp),
+                    thickness = DividerDefaults.Thickness,
                     color = ThemeColors.getTextGrayColor(isDarkTheme).copy(alpha = 0.3f)
                 )
-                
+
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
@@ -180,14 +179,15 @@ fun SubCategoryDetailBottomSheet(
                         color = ThemeColors.getTextColor(isDarkTheme)
                     )
                 }
-                
-                Divider(
+
+                HorizontalDivider(
                     modifier = Modifier
                         .height(40.dp)
                         .width(1.dp),
+                    thickness = DividerDefaults.Thickness,
                     color = ThemeColors.getTextGrayColor(isDarkTheme).copy(alpha = 0.3f)
                 )
-                
+
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
@@ -250,7 +250,7 @@ fun SubCategoryDetailBottomSheet(
                     onDismissRequest = { showSortMenu = false },
                     modifier = Modifier.background(ThemeColors.getCardBackgroundColor(isDarkTheme))
                 ) {
-                    SortOption.values().forEach { option ->
+                    SortOption.entries.forEach { option ->
                         DropdownMenuItem(
                             text = {
                                 Text(

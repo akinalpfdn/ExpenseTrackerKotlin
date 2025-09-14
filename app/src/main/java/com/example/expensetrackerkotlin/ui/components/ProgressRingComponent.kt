@@ -4,19 +4,14 @@ import androidx.compose.animation.core.*
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.*
-import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.rotate
-import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -25,8 +20,6 @@ import androidx.compose.ui.res.stringResource
 import com.example.expensetrackerkotlin.R
 import com.example.expensetrackerkotlin.ui.theme.ThemeColors
 import com.example.expensetrackerkotlin.utils.NumberFormatter
-import kotlin.math.cos
-import kotlin.math.sin
 
 @Composable
 fun ProgressRing(
@@ -80,14 +73,10 @@ fun ProgressRing(
         val sweepAngle = 360f * animatedProgress.value
         
         // Create gradient brush - start from right (0 degrees)
-        val brush = if (colors.size > 1) {
-            Brush.sweepGradient(
-                colors = colors,
-                center = center
-            )
-        } else {
-            SolidColor(colors.firstOrNull() ?: Color.Blue)
-        }
+        val brush = Brush.sweepGradient(
+            colors = colors,
+            center = center
+        )
         
         // Rotate the canvas to align gradient with progress arc
         rotate(-90f, center) {
@@ -151,13 +140,12 @@ fun MonthlyProgressRingView(
 
 @Composable
 fun DailyProgressRingView(
+    modifier: Modifier = Modifier,
     dailyProgressPercentage: Double,
     isOverDailyLimit: Boolean,
-    dailyLimitValue: Double,
     selectedDateTotal: Double,
     currency: String = "₺",
     isDarkTheme: Boolean = true,
-    modifier: Modifier = Modifier
 ) {
     
     Column(

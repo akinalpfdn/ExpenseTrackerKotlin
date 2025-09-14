@@ -10,9 +10,9 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Save
 import androidx.compose.material3.*
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -192,12 +192,12 @@ fun PlanDetailBottomSheet(
             )
             Spacer(modifier = Modifier.width(40.dp)) // For edit button space
         }
-        
-        Divider(
-            color = ThemeColors.getTextGrayColor(isDarkTheme).copy(alpha = 0.2f),
-            thickness = 1.dp
+
+        HorizontalDivider(
+            thickness = 1.dp,
+            color = ThemeColors.getTextGrayColor(isDarkTheme).copy(alpha = 0.2f)
         )
-        
+
         // Table Content
         LazyColumn(
             modifier = Modifier.weight(1f),

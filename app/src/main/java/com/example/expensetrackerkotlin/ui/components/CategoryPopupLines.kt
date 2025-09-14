@@ -4,9 +4,6 @@ import androidx.compose.animation.core.*
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowDownward
-import androidx.compose.material.icons.filled.ArrowUpward
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.*
@@ -22,8 +19,6 @@ import kotlin.math.*
 import com.example.expensetrackerkotlin.R
 import com.example.expensetrackerkotlin.utils.NumberFormatter
 import com.example.expensetrackerkotlin.viewmodel.ExpenseViewModel
-import com.example.expensetrackerkotlin.data.*
-import com.example.expensetrackerkotlin.ui.screens.CategoryComparison
 import com.example.expensetrackerkotlin.ui.screens.calculateCategoryComparison
 import java.time.YearMonth
 

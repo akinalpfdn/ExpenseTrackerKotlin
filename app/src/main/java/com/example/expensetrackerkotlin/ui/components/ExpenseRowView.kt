@@ -1,14 +1,12 @@
 package com.example.expensetrackerkotlin.ui.components
 
 import androidx.compose.animation.*
-import androidx.compose.animation.core.*
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
@@ -17,14 +15,12 @@ import androidx.compose.foundation.border
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Category
 import androidx.compose.material.icons.filled.Check
-import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import com.example.expensetrackerkotlin.ui.theme.AppColors
 import com.example.expensetrackerkotlin.ui.theme.ThemeColors
@@ -40,7 +36,6 @@ import com.example.expensetrackerkotlin.data.RecurrenceType
 import com.example.expensetrackerkotlin.utils.NumberFormatter
 import androidx.compose.runtime.collectAsState
 import java.time.format.DateTimeFormatter
-import kotlin.math.abs
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
@@ -53,7 +48,6 @@ fun ExpenseRowView(
     dailyExpenseRatio: Double,
     defaultCurrency: String,
     isDarkTheme: Boolean = true,
-    isRecurringExpenseMode: Boolean = false,
     viewModel: com.example.expensetrackerkotlin.viewmodel.ExpenseViewModel,
     modifier: Modifier = Modifier
 ) {
@@ -157,7 +151,7 @@ fun ExpenseRowView(
                                 contentAlignment = Alignment.Center
                             ) {
                                 Icon(
-                                    imageVector = category?.getIcon() ?: androidx.compose.material.icons.Icons.Default.Category,
+                                    imageVector = category?.getIcon() ?: Icons.Default.Category,
                                     contentDescription = category?.name ?: "Category",
                                     tint = category?.getColor() ?: Color.Gray,
                                     modifier = Modifier.size(16.dp)
@@ -230,7 +224,7 @@ fun ExpenseRowView(
                                              RecurrenceType.WEEKDAYS -> stringResource(R.string.weekdays)
                                              RecurrenceType.WEEKLY -> stringResource(R.string.weekly)
                                              RecurrenceType.MONTHLY -> stringResource(R.string.monthly)
-                                             RecurrenceType.NONE -> ""
+                                             else -> ""
                                          },
                                          fontSize = 11.sp,
                                          color = ThemeColors.getTextGrayColor(isDarkTheme)
