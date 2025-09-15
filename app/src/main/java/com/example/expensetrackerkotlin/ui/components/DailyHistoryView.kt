@@ -44,21 +44,16 @@ fun DailyHistoryView(
         week.any { day -> day.date.toLocalDate() == selectedDate.toLocalDate() }
     }
 
-    println("DailyHistoryView Debug: Selected date: ${selectedDate.toLocalDate()}")
-    println("DailyHistoryView Debug: Weekly data count: ${weeklyData.size}")
     weeklyData.forEachIndexed { index, week ->
         val weekStart = week.firstOrNull()?.date?.toLocalDate()
         val weekEnd = week.lastOrNull()?.date?.toLocalDate()
-        println("DailyHistoryView Debug: Week $index: $weekStart to $weekEnd")
     }
-    println("DailyHistoryView Debug: Selected week index: $selectedWeekIndex")
 
     // Monitor page changes for week navigation - only when user settles on a new page
     LaunchedEffect(pagerState.settledPage) {
         val currentOffset = pagerState.settledPage - initialPage
         if (currentOffset != 0) {
             val direction = if (currentOffset > 0) 1 else -1
-            println("Debug: Settled on page ${pagerState.settledPage}, offset: $currentOffset, navigating $direction...")
 
             // Navigate to new week
             onWeekNavigate(direction)
@@ -97,11 +92,8 @@ fun DailyHistoryView(
             emptyList()
         }
 
-        println("HorizontalPager Debug: Page $pageIndex, offset $pageOffset, showing week $weekIndex")
         weekData.firstOrNull()?.let { firstDay ->
-            println("HorizontalPager Debug: Week data starts: ${firstDay.date.toLocalDate()}")
         }
-        println("HorizontalPager Debug: Selected date: ${selectedDate.toLocalDate()}, is in this week: ${weekData.any { it.date.toLocalDate() == selectedDate.toLocalDate() }}")
 
         // Display week as a row of days
         Row(

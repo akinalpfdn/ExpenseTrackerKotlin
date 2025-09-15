@@ -32,6 +32,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CalendarToday
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.material3.MenuAnchorType
+import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -141,7 +142,9 @@ fun AddExpenseScreen(
             )
             Spacer(modifier = Modifier.height(8.dp))
             Text(
-                text = stringResource(R.string.enter_expense_details),
+                text = selectedDate.format(
+                    DateTimeFormatter.ofPattern("dd MMMM yyyy", Locale.getDefault())
+                ),
                 fontSize = 16.sp,
                 color = ThemeColors.getTextGrayColor(isDarkTheme)
             )

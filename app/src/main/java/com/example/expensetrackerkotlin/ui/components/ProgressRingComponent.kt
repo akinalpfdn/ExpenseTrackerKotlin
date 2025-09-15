@@ -145,7 +145,12 @@ fun MonthlyProgressRingView(
                         modifier = Modifier.padding(bottom = 5.dp),
                         color = if (isOverLimit) Color.Red else ThemeColors.getTextColor(isDarkTheme)
                     )
+                    Text(
+                        text = month.ifEmpty { stringResource(R.string.monthly_label) },
+                        fontSize = 19.sp,
+                        color = ThemeColors.getTextGrayColor(isDarkTheme)
 
+                    )
                 }
 
             }

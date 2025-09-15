@@ -670,7 +670,7 @@ fun AnalysisScreen(
 
 private fun formatDateRange(range: Pair<LocalDate?, LocalDate?>,text:String): String {
     val (start, end) = range
-    val formatter = DateTimeFormatter.ofPattern("dd MMM", Locale.forLanguageTag("tr"))
+    val formatter = DateTimeFormatter.ofPattern("dd MMM", Locale.getDefault())
     
     return when {
         start != null && end != null -> "${start.format(formatter)} - ${end.format(formatter)}"
@@ -721,7 +721,7 @@ fun MonthYearSelector(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(
-                    text = selectedMonth.format(DateTimeFormatter.ofPattern("MMMM yyyy", Locale.forLanguageTag("tr"))),
+                    text = selectedMonth.format(DateTimeFormatter.ofPattern("MMMM yyyy", Locale.getDefault())),
                     textAlign = TextAlign.Center,
                     color = ThemeColors.getTextColor(isDarkTheme),
                     fontWeight = FontWeight.Medium,

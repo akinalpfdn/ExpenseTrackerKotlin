@@ -225,7 +225,7 @@ fun MonthlyExpensesView(
                 // Month header
                 Text(
                     text = currentMonth.format(
-                        DateTimeFormatter.ofPattern("MMMM yyyy", Locale.forLanguageTag("tr"))
+                        DateTimeFormatter.ofPattern("MMMM yyyy", Locale.getDefault())
                     ),
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Bold,

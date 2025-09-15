@@ -119,7 +119,7 @@ fun MonthlyCalendarView(
                     text = currentMonth.format(
                         DateTimeFormatter.ofPattern(
                             "MMMM yyyy",
-                            Locale.forLanguageTag("tr")
+                            Locale.getDefault()
                         )
                     ),
                     fontSize = 20.sp,

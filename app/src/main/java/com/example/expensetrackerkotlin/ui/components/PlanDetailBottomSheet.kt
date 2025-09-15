@@ -150,20 +150,13 @@ fun PlanDetailBottomSheet(
                 .padding(12.dp),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            Text(
-                text = stringResource(R.string.month),
-                fontSize = 12.sp,
-                fontWeight = FontWeight.Bold,
-                color = ThemeColors.getTextColor(isDarkTheme),
-                modifier = Modifier.weight(1f),
-                textAlign = TextAlign.Center
-            )
+
             Text(
                 text = stringResource(R.string.income),
                 fontSize = 12.sp,
                 fontWeight = FontWeight.Bold,
                 color = ThemeColors.getTextColor(isDarkTheme),
-                modifier = Modifier.weight(1.5f),
+                modifier = Modifier.weight(1.6f),
                 textAlign = TextAlign.Center
             )
             Text(
@@ -171,7 +164,7 @@ fun PlanDetailBottomSheet(
                 fontSize = 12.sp,
                 fontWeight = FontWeight.Bold,
                 color = ThemeColors.getTextColor(isDarkTheme),
-                modifier = Modifier.weight(1.5f),
+                modifier = Modifier.weight(1.6f),
                 textAlign = TextAlign.Center
             )
             Text(
@@ -179,7 +172,7 @@ fun PlanDetailBottomSheet(
                 fontSize = 12.sp,
                 fontWeight = FontWeight.Bold,
                 color = ThemeColors.getTextColor(isDarkTheme),
-                modifier = Modifier.weight(1.5f),
+                modifier = Modifier.weight(1.6f),
                 textAlign = TextAlign.Center
             )
             Text(
@@ -187,7 +180,15 @@ fun PlanDetailBottomSheet(
                 fontSize = 12.sp,
                 fontWeight = FontWeight.Bold,
                 color = ThemeColors.getTextColor(isDarkTheme),
-                modifier = Modifier.weight(1.5f),
+                modifier = Modifier.weight(1.6f),
+                textAlign = TextAlign.Center
+            )
+            Text(
+                text = stringResource(R.string.month),
+                fontSize = 12.sp,
+                fontWeight = FontWeight.Bold,
+                color = ThemeColors.getTextColor(isDarkTheme),
+                modifier = Modifier.weight(1f),
                 textAlign = TextAlign.Center
             )
             Spacer(modifier = Modifier.width(40.dp)) // For edit button space
@@ -215,14 +216,7 @@ fun PlanDetailBottomSheet(
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    // Month
-                    Text(
-                        text = PlanningUtils.getMonthName(plan, breakdown.monthIndex),
-                        fontSize = 12.sp,
-                        color = ThemeColors.getTextColor(isDarkTheme),
-                        modifier = Modifier.weight(1f),
-                        textAlign = TextAlign.Center
-                    )
+
                     
                     // Income (clickable cell)
                     val isEditingIncome = editingCell?.first == index && editingCell?.second == "income"
@@ -232,7 +226,7 @@ fun PlanDetailBottomSheet(
                             value = editedValue,
                             onValueChange = { editedValue = it },
                             modifier = Modifier
-                                .weight(1.5f)
+                                .weight(1.6f)
                                 .background(
                                     ThemeColors.getInputBackgroundColor(isDarkTheme),
                                     RoundedCornerShape(6.dp)
@@ -253,7 +247,7 @@ fun PlanDetailBottomSheet(
                     } else {
                         Box(
                             modifier = Modifier
-                                .weight(1.5f)
+                                .weight(1.6f)
                                 .clickable {
                                     editingCell = Pair(index, "income")
                                     editedValue = breakdown.projectedIncome.toString()
@@ -278,7 +272,7 @@ fun PlanDetailBottomSheet(
                             value = editedValue,
                             onValueChange = { editedValue = it },
                             modifier = Modifier
-                                .weight(1.5f)
+                                .weight(1.6f)
                                 .background(
                                     ThemeColors.getInputBackgroundColor(isDarkTheme),
                                     RoundedCornerShape(6.dp)
@@ -299,7 +293,7 @@ fun PlanDetailBottomSheet(
                     } else {
                         Box(
                             modifier = Modifier
-                                .weight(1.5f)
+                                .weight(1.6f)
                                 .clickable {
                                     editingCell = Pair(index, "expenses")
                                     editedValue = breakdown.totalProjectedExpenses.toString()
@@ -345,11 +339,18 @@ fun PlanDetailBottomSheet(
                         text = NumberFormatter.formatAmount(breakdown.cumulativeNet),
                         fontSize = 12.sp,
                         color = if (breakdown.cumulativeNet >= 0) ThemeColors.getSuccessGreenColor(isDarkTheme) else ThemeColors.getDeleteRedColor(isDarkTheme),
-                        modifier = Modifier.weight(1.5f),
+                        modifier = Modifier.weight(1.6f),
                         textAlign = TextAlign.Center,
                         fontWeight = FontWeight.Bold
                     )
-                    
+                    // Month
+                    Text(
+                        text = PlanningUtils.getMonthName(plan, breakdown.monthIndex),
+                        fontSize = 12.sp,
+                        color = ThemeColors.getTextColor(isDarkTheme),
+                        modifier = Modifier.weight(1f),
+                        textAlign = TextAlign.Center
+                    )
                     // Save Button (only show when editing)
                     if (isEditingIncome || isEditingExpenses) {
                         IconButton(

@@ -110,7 +110,7 @@ fun DailyCategoryDetailBottomSheet(
                         color = ThemeColors.getTextColor(isDarkTheme)
                     )
                     Text(
-                        text = selectedDate.format(DateTimeFormatter.ofPattern("d MMMM yyyy", Locale.forLanguageTag("tr"))),
+                        text = selectedDate.format(DateTimeFormatter.ofPattern("d MMMM yyyy", Locale.getDefault())),
                         fontSize = 14.sp,
                         color = ThemeColors.getTextGrayColor(isDarkTheme)
                     )

@@ -214,7 +214,7 @@ private fun DateRangeCalendar(
     Column {
         // Month header
         Text(
-            text = selectedMonth.format(DateTimeFormatter.ofPattern("MMMM yyyy", Locale.forLanguageTag("tr"))),
+            text = selectedMonth.format(DateTimeFormatter.ofPattern("MMMM yyyy", Locale.getDefault())),
             fontSize = 18.sp,
             fontWeight = FontWeight.Bold,
             color = ThemeColors.getTextColor(isDarkTheme),
@@ -317,7 +317,7 @@ private fun DateCell(
 
 private fun formatDateRange(range: Pair<LocalDate?, LocalDate?>,text:String): String {
     val (start, end) = range
-    val formatter = DateTimeFormatter.ofPattern("dd MMM", Locale.forLanguageTag("tr"))
+    val formatter = DateTimeFormatter.ofPattern("dd MMM", Locale.getDefault())
     
     return when {
         start != null && end != null -> "${start.format(formatter)} - ${end.format(formatter)}"
