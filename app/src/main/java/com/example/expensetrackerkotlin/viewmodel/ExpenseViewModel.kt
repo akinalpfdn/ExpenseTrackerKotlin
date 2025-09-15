@@ -10,6 +10,10 @@ import com.example.expensetrackerkotlin.ui.components.CategoryExpense
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.launch
 import java.time.LocalDateTime
 import java.util.UUID
@@ -151,25 +155,46 @@ class ExpenseViewModel(
             }.sortedByDescending { it.amount }
         }
     
-    val dailyHistoryData: List<DailyData>
-        get() {
-            val selectedDate = _selectedDate.value
-            
-            // Calculate the start of the week (Monday) for the selected date
-            val dayOfWeek = selectedDate.dayOfWeek.value // 1=Monday, 7=Sunday
-            val daysFromMonday = dayOfWeek - 1 // 0=Monday, 6=Sunday
-            val startOfWeek = selectedDate.minusDays(daysFromMonday.toLong())
-            
-            return (0..6).map { dayOffset ->
+    // Track current week for infinite scrolling
+    private val _currentWeekOffset = MutableStateFlow(0) // 0 = this week, -1 = previous, +1 = next
+    val currentWeekOffset: StateFlow<Int> = _currentWeekOffset.asStateFlow()
+
+    // Generate 3 weeks of data for infinite pager (previous, current, next)
+    val weeklyHistoryData: StateFlow<List<List<DailyData>>> = combine(
+        _selectedDate,
+        _currentWeekOffset,
+        expenses
+    ) { selectedDate, weekOffset, allExpenses ->
+        println("ViewModel Debug: Generating 3 weeks data - selectedDate: ${selectedDate.toLocalDate()}, weekOffset: $weekOffset")
+
+        // Calculate the start of the week (Monday) for the selected date
+        val dayOfWeek = selectedDate.dayOfWeek.value // 1=Monday, 7=Sunday
+        val daysFromMonday = dayOfWeek - 1 // 0=Monday, 6=Sunday
+        val startOfSelectedWeek = selectedDate.minusDays(daysFromMonday.toLong())
+
+        println("ViewModel Debug: Start of selected week: ${startOfSelectedWeek.toLocalDate()}")
+
+        // IMPORTANT: The baseWeek should be the currently displayed week, not always the selected date's week
+        // weekOffset should move relative to the current displayed week
+        val baseWeek = startOfSelectedWeek.plusWeeks(weekOffset.toLong())
+        println("ViewModel Debug: Base week (with offset): ${baseWeek.toLocalDate()}")
+
+        // Generate 3 weeks: previous (-1), current (0), next (+1)
+        (-1..1).map { weekIndex ->
+            val startOfWeek = baseWeek.plusWeeks(weekIndex.toLong())
+            println("ViewModel Debug: Week $weekIndex starts at: ${startOfWeek.toLocalDate()}")
+
+            // Generate 7 days for this week
+            (0..6).map { dayOffset ->
                 val date = startOfWeek.plusDays(dayOffset.toLong())
                 val dayExpenses = getExpensesForDate(date)
                 val totalAmount = dayExpenses.sumOf { it.getAmountInDefaultCurrency(defaultCurrency) }
                 val progressAmount = dayExpenses.filter { it.recurrenceType == RecurrenceType.NONE }
                     .sumOf { it.getAmountInDefaultCurrency(defaultCurrency) }
                 val expenseCount = dayExpenses.size
-                
+
                 val averageDailyLimit = dailyLimitValue
-                
+
                 DailyData(
                     date = date,
                     totalAmount = totalAmount,
@@ -179,10 +204,50 @@ class ExpenseViewModel(
                 )
             }
         }
+    }.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5000),
+        initialValue = emptyList()
+    )
+
+    // Backward compatibility - current week data
+    val dailyHistoryData: StateFlow<List<DailyData>> = weeklyHistoryData.map { weeks ->
+        if (weeks.isNotEmpty() && weeks.size >= 2) {
+            weeks[1] // Return current week (middle week)
+        } else {
+            emptyList()
+        }
+    }.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5000),
+        initialValue = emptyList()
+    )
     
     // Methods
     fun updateSelectedDate(date: LocalDateTime) {
+        val currentSelected = _selectedDate.value
+        println("ViewModel Debug: updateSelectedDate called - from: ${currentSelected.toLocalDate()} to: ${date.toLocalDate()}")
+
         _selectedDate.value = date
+
+        // Reset week offset when selecting a new date - let the data generation handle showing the correct week
+        println("ViewModel Debug: Resetting week offset to 0 for new selected date")
+        _currentWeekOffset.value = 0
+    }
+
+    fun navigateToWeek(direction: Int) {
+        // direction: -1 for previous week, +1 for next week
+        val oldOffset = _currentWeekOffset.value
+        _currentWeekOffset.value += direction
+        println("ViewModel Debug: navigateToWeek($direction) - offset: $oldOffset -> ${_currentWeekOffset.value}")
+
+        // DON'T update selected date here - let the data generation handle showing different weeks
+        // The selected date should stay the same, but we show different weeks around it
+        println("ViewModel Debug: Selected date stays: ${_selectedDate.value.toLocalDate()}")
+    }
+
+    fun resetWeekOffset() {
+        _currentWeekOffset.value = 0
     }
     
     fun addExpense(expense: Expense) {

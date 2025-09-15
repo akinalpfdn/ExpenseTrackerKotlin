@@ -44,6 +44,7 @@ import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material.icons.automirrored.filled.Sort
 import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
+import java.util.Locale
 
 enum class ExpenseSortType {
     AMOUNT_HIGH_TO_LOW,
@@ -67,6 +68,8 @@ fun ExpensesScreen(
     val editingExpenseId by viewModel.editingExpenseId.collectAsState()
     val categories by viewModel.categories.collectAsState()
     val subCategories by viewModel.subCategories.collectAsState()
+    val dailyHistoryData by viewModel.dailyHistoryData.collectAsState()
+    val weeklyHistoryData by viewModel.weeklyHistoryData.collectAsState()
     
     var showingAddExpense by remember { mutableStateOf(false) }
     var showingSettings by remember { mutableStateOf(false) }
@@ -145,11 +148,14 @@ fun ExpensesScreen(
             
             // Daily History
             DailyHistoryView(
-                dailyData = viewModel.dailyHistoryData,
+                weeklyData = weeklyHistoryData,
                 selectedDate = selectedDate,
                 isDarkTheme = isDarkTheme,
                 onDateSelected = { date ->
                     viewModel.updateSelectedDate(date)
+                },
+                onWeekNavigate = { direction ->
+                    viewModel.navigateToWeek(direction)
                 }
             )
             
@@ -179,7 +185,9 @@ fun ExpensesScreen(
                                 onTap = { showingMonthlyCalendar = true },
                                 currency = viewModel.defaultCurrency,
                                 isDarkTheme = isDarkTheme,
-                                month = currentCalendarMonth.format(java.time.format.DateTimeFormatter.ofPattern("MMMM", java.util.Locale.forLanguageTag("tr")))
+                                month = currentCalendarMonth.format(java.time.format.DateTimeFormatter.ofPattern("MMMM", Locale.getDefault())),
+
+                                selectedDate = viewModel.selectedDate
                             )
                         }
                         1 -> {

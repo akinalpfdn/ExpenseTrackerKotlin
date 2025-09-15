@@ -20,6 +20,14 @@ import androidx.compose.ui.res.stringResource
 import com.example.expensetrackerkotlin.R
 import com.example.expensetrackerkotlin.ui.theme.ThemeColors
 import com.example.expensetrackerkotlin.utils.NumberFormatter
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
+import java.util.Locale
 
 @Composable
 fun ProgressRing(
@@ -96,46 +104,60 @@ fun ProgressRing(
 
 @Composable
 fun MonthlyProgressRingView(
+    modifier: Modifier = Modifier,
     totalSpent: Double,
     progressPercentage: Double,
     isOverLimit: Boolean,
     onTap: () -> Unit,
     currency: String = "₺",
     isDarkTheme: Boolean = true,
-    modifier: Modifier = Modifier,
-    month: String = ""
+    month: String = "",
+    selectedDate: StateFlow<LocalDateTime>
 ) {
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = modifier
-    ) {
-        Box(
-            contentAlignment = Alignment.Center
-        ) {
-            ProgressRing(
-                progress = progressPercentage.toFloat(),
-                isLimitOver = isOverLimit,
-                modifier = Modifier.size(140.dp),
-                onClick = onTap
+        val formattedDate by selectedDate
+        .map { dateTime ->
+            dateTime.format(
+                DateTimeFormatter.ofPattern("dd MMMM yyyy", Locale.getDefault())
             )
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Text(
-                    text = "$currency${NumberFormatter.formatAmount(totalSpent)}",
-                    fontSize = 20.sp,
-                    fontWeight = FontWeight.Bold,
-                    modifier = Modifier.padding(bottom = 5.dp),
-                    color = if (isOverLimit) Color.Red else ThemeColors.getTextColor(isDarkTheme)
-                )
-                Text(
-                    text = if (month.isNotEmpty()) month else stringResource(R.string.monthly_label),
-                    fontSize = 19.sp,
-                    color = ThemeColors.getTextGrayColor(isDarkTheme)
-                )
-            }
         }
-    }
+        .collectAsState(initial = "")   // ✅ collect flow as state
+
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = modifier
+        ) {
+            Box(
+                contentAlignment = Alignment.Center
+            ) {
+                ProgressRing(
+                    progress = progressPercentage.toFloat(),
+                    isLimitOver = isOverLimit,
+                    modifier = Modifier.size(140.dp),
+                    onClick = onTap
+                )
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Text(
+                        text = "$currency${NumberFormatter.formatAmount(totalSpent)}",
+                        fontSize = 20.sp,
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier.padding(bottom = 5.dp),
+                        color = if (isOverLimit) Color.Red else ThemeColors.getTextColor(isDarkTheme)
+                    )
+
+                }
+
+            }
+            Text(
+                text = formattedDate,
+                fontSize = 19.sp,
+                color = ThemeColors.getTextGrayColor(isDarkTheme)
+            )
+
+        }
+
+
 }
 
 @Composable
