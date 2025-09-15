@@ -1,368 +1,368 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Controle de Gastos</string>
-    <string name="general_settings">Configurações Gerais</string>
-    <string name="categories">Categorias</string>
-    <string name="default_currency">Moeda Padrão</string>
-    <string name="currency_description">Moeda padrão a ser usada para novos gastos</string>
-    <string name="daily_spending_limit">Limite de Gasto Diário</string>
-    <string name="enter_daily_limit">Digite o limite diário</string>
-    <string name="daily_limit_description">Seu limite de gasto diário. Nenhum limite aplicado se deixado em branco</string>
-    <string name="monthly_spending_limit">Limite de Gasto Mensal</string>
-    <string name="enter_monthly_limit">Digite o limite mensal</string>
-    <string name="monthly_limit_description">Seu limite total de gasto mensal. O anel de progresso é mostrado baseado neste valor</string>
-    <string name="theme">Tema</string>
-    <string name="dark_theme">Tema Escuro</string>
-    <string name="light_theme">Tema Claro</string>
-    <string name="theme_description">Alterar a aparência do aplicativo</string>
-    <string name="cancel">Cancelar</string>
-    <string name="save">Salvar</string>
+    <string name="app_name">Expense Tracker</string>
+    <string name="general_settings">General Settings</string>
+    <string name="categories">Categories</string>
+    <string name="default_currency">Default Currency</string>
+    <string name="currency_description">Default currency to be used for new expenses</string>
+    <string name="daily_spending_limit">Daily Spending Limit</string>
+    <string name="enter_daily_limit">Enter daily limit</string>
+    <string name="daily_limit_description">Your daily spending limit. No limit applied if left blank</string>
+    <string name="monthly_spending_limit">Monthly Spending Limit</string>
+    <string name="enter_monthly_limit">Enter monthly limit</string>
+    <string name="monthly_limit_description">Your monthly total spending limit. Progress ring is shown based on this value</string>
+    <string name="theme">Theme</string>
+    <string name="dark_theme">Dark Theme</string>
+    <string name="light_theme">Light Theme</string>
+    <string name="theme_description">Change the app\'s appearance</string>
+    <string name="cancel">Cancel</string>
+    <string name="save">Save</string>
     <!-- RecurringExpensesScreen -->
-    <string name="recurring_expenses">Gastos Recorrentes</string>
-    <string name="sort">Ordenar</string>
-    <string name="search">Pesquisar</string>
-    <string name="back">Voltar</string>
-    <string name="amount_high_to_low">Valor: Alto para Baixo</string>
-    <string name="amount_low_to_high">Valor: Baixo para Alto</string>
-    <string name="description_a_to_z">Descrição: A-Z</string>
-    <string name="description_z_to_a">Descrição: Z-A</string>
-    <string name="category_a_to_z">Categoria: A-Z</string>
-    <string name="category_z_to_a">Categoria: Z-A</string>
-    <string name="end_date_recurring">Fim: %s</string>
-    <string name="search_placeholder">Pesquisar por descrição, valor ou categoria...</string>
-    <string name="no_search_results">Nenhum resultado de pesquisa encontrado</string>
-    <string name="search_no_results_description">Nenhum resultado encontrado para \"%1$s\". Tente um termo de pesquisa diferente.</string>
-    <string name="no_recurring_expenses">Nenhum gasto recorrente ainda</string>
-    <string name="recurring_expenses_hint">Pressione o botão + para adicionar gastos recorrentes</string>
-    <string name="results_found">%d resultados encontrados</string>
-    <string name="daily">Diário</string>
-    <string name="weekdays">Dias úteis</string>
-    <string name="weekly">Semanal</string>
-    <string name="monthly">Mensal</string>
-    <string name="exchange_rate">Taxa de Câmbio: %s</string>
-    <string name="delete">Excluir</string>
-    <string name="amount">Valor</string>
-    <string name="description">Descrição</string>
-    <string name="exchange_rate_field">Taxa de Câmbio</string>
-    <string name="select_date">Selecionar Data</string>
-    <string name="delete_recurring_expense">Excluir Gasto Recorrente</string>
-    <string name="delete_recurring_confirmation">Tem certeza de que deseja excluir este gasto recorrente a partir de hoje? Esta ação não pode ser desfeita.</string>
+    <string name="recurring_expenses">Recurring Expenses</string>
+    <string name="sort">Sort</string>
+    <string name="search">Search</string>
+    <string name="back">Back</string>
+    <string name="amount_high_to_low">Amount: High to Low</string>
+    <string name="amount_low_to_high">Amount: Low to High</string>
+    <string name="description_a_to_z">Description: A-Z</string>
+    <string name="description_z_to_a">Description: Z-A</string>
+    <string name="category_a_to_z">Category: A-Z</string>
+    <string name="category_z_to_a">Category: Z-A</string>
+    <string name="end_date_recurring">End: %s</string>
+    <string name="search_placeholder">Search by description, amount or category...</string>
+    <string name="no_search_results">No search results found</string>
+    <string name="search_no_results_description">No results found for \"%1$s\". Try a different search term.</string>
+    <string name="no_recurring_expenses">No recurring expenses yet</string>
+    <string name="recurring_expenses_hint">Press the + button to add recurring expenses</string>
+    <string name="results_found">%d results found</string>
+    <string name="daily">Daily</string>
+    <string name="weekdays">Weekdays</string>
+    <string name="weekly">Weekly</string>
+    <string name="monthly">Monthly</string>
+    <string name="exchange_rate">Exchange Rate: %s</string>
+    <string name="delete">Delete</string>
+    <string name="amount">Amount</string>
+    <string name="description">Description</string>
+    <string name="exchange_rate_field">Exchange Rate</string>
+    <string name="select_date">Select Date</string>
+    <string name="delete_recurring_expense">Delete Recurring Expense</string>
+    <string name="delete_recurring_confirmation">Are you sure you want to delete this recurring expense from today onwards? This action cannot be undone.</string>
     <string name="ok">OK</string>
     <!-- PlanningScreen -->
-    <string name="financial_planning">Planejamento Financeiro</string>
-    <string name="planning_description">Crie e acompanhe seus planos futuros</string>
-    <string name="no_plans_yet">Nenhum plano ainda</string>
-    <string name="create_first_plan">Pressione o botão + para criar seu primeiro plano financeiro</string>
-    <string name="add_plan">Adicionar Plano</string>
-    <string name="delete_plan">Excluir Plano</string>
-    <string name="delete_plan_confirmation">Tem certeza de que deseja excluir o plano \"%1$s\"? Esta ação não pode ser desfeita.</string>
+    <string name="financial_planning">Financial Planning</string>
+    <string name="planning_description">Create and track your future plans</string>
+    <string name="no_plans_yet">No plans yet</string>
+    <string name="create_first_plan">Press the + button to create your first financial plan</string>
+    <string name="add_plan">Add Plan</string>
+    <string name="delete_plan">Delete Plan</string>
+    <string name="delete_plan_confirmation">Are you sure you want to delete the \"%1$s\" plan? This action cannot be undone.</string>
 
     <!-- ExpensesScreen -->
-    <string name="results_count">%d resultados</string>
-    <string name="search_expenses_placeholder">Pesquisar por descrição, valor ou categoria...</string>
-    <string name="monthly_limit_exceeded">⚠️ Você excedeu seu limite de gasto mensal!</string>
-    <string name="time_newest_first">Data: Mais Recente Primeiro</string>
-    <string name="time_oldest_first">Data: Mais Antigo Primeiro</string>
+    <string name="results_count">%d results</string>
+    <string name="search_expenses_placeholder">Search by description, amount or category...</string>
+    <string name="monthly_limit_exceeded">⚠️ You have exceeded your monthly spending limit!</string>
+    <string name="time_newest_first">Date: Newest First</string>
+    <string name="time_oldest_first">Date: Oldest First</string>
 
     <!-- AnalysisScreen -->
-    <string name="current_period_total">Total de Gastos do Período Atual</string>
-    <string name="vs_previous_month">Comparado ao mês anterior</string>
-    <string name="vs_6_month_average">Comparado à média de 6 meses</string>
-    <string name="no_expenses_this_period">Nenhum gasto neste período ainda</string>
-    <string name="analysis_will_appear">A análise aparecerá aqui quando você adicionar gastos</string>
-    <string name="previous_month">Mês anterior</string>
-    <string name="next_month">Próximo mês</string>
-    <string name="select_date_range">Selecionar intervalo de datas</string>
-    <string name="fixed_expenses">Gastos Fixos</string>
-    <string name="recurring_expenses_description">Gastos que continuarão por 3+ meses</string>
-    <string name="recurring_expenses_cd">Gastos recorrentes</string>
-    <string name="pick_date_range">Escolher intervalo de datas</string>
+    <string name="current_period_total">Current Period Total Spending</string>
+    <string name="vs_previous_month">Compared to previous month</string>
+    <string name="vs_6_month_average">Compared to 6-month average</string>
+    <string name="no_expenses_this_period">No expenses this period yet</string>
+    <string name="analysis_will_appear">Analysis will appear here when you add expenses</string>
+    <string name="previous_month">Previous month</string>
+    <string name="next_month">Next month</string>
+    <string name="select_date_range">Select date range</string>
+    <string name="fixed_expenses">Fixed Expenses</string>
+    <string name="recurring_expenses_description">Expenses that will continue for 3+ months</string>
+    <string name="recurring_expenses_cd">Recurring expenses</string>
+    <string name="pick_date_range">Pick date range</string>
 
     <!-- AddExpenseScreen -->
-    <string name="enter_expense_details">Digite os detalhes do gasto</string>
-    <string name="expense_amount_placeholder">0,00</string>
-    <string name="search_placeholder_category">pesquisar...</string>
-    <string name="description_optional">Descrição (Opcional)</string>
-    <string name="add_description_placeholder">Adicionar descrição...</string>
-    <string name="recurrence_type">Tipo de Recorrência</string>
-    <string name="end_date">Data de Fim</string>
-    <string name="exchange_rate_label">Taxa de Câmbio (1 %1$s = ? %2$s)</string>
-    <string name="exchange_rate_example">ex: 0,035 (1 %1$s = 0,035 %2$s)</string>
-    <string name="exchange_rate_note">Esta taxa será usada para cálculos de progresso</string>
-    <string name="add_expense">Adicionar Gasto</string>
-    <string name="update_expense">Atualizar Gasto</string>
-    <string name="none">Nenhum</string>
-    <string name="one_time">Uma vez</string>
-    <string name="every_day">Todos os dias</string>
-    <string name="weekdays_only">Apenas dias úteis</string>
-    <string name="once_per_week">Uma vez por semana</string>
-    <string name="once_per_month">Uma vez por mês</string>
-    <string name="edit_expense">Editar Gasto</string>
-    <string name="new_expense">Novo Gasto</string>
-    <string name="selectCategory">Seleção de categoria</string>
-    <string name="single_time">Uma única vez</string>
-    <string name="okay">Ok</string>
+    <string name="enter_expense_details">Enter expense details</string>
+    <string name="expense_amount_placeholder">0.00</string>
+    <string name="search_placeholder_category">search...</string>
+    <string name="description_optional">Description (Optional)</string>
+    <string name="add_description_placeholder">Add description...</string>
+    <string name="recurrence_type">Recurrence Type</string>
+    <string name="end_date">End Date</string>
+    <string name="exchange_rate_label">Exchange Rate (1 %1$s = ? %2$s)</string>
+    <string name="exchange_rate_example">e.g: 0.035 (1 %1$s = 0.035 %2$s)</string>
+    <string name="exchange_rate_note">This rate will be used for progress calculations</string>
+    <string name="add_expense">Add Expense</string>
+    <string name="update_expense">Update Expense</string>
+    <string name="none">None</string>
+    <string name="one_time">One time</string>
+    <string name="every_day">Every day</string>
+    <string name="weekdays_only">Weekdays only</string>
+    <string name="once_per_week">Once per week</string>
+    <string name="once_per_month">Once per month</string>
+    <string name="edit_expense">Edit Expense</string>
+    <string name="new_expense">New Expense</string>
+    <string name="selectCategory">Category selection</string>
+    <string name="single_time">Single time</string>
+    <string name="okay">Okay</string>
 
     <!-- SubCategoryDetailBottomSheet -->
-    <string name="parent_category">Categoria Pai</string>
-    <string name="total_amount">Valor Total</string>
-    <string name="expense_count">Número de Gastos</string>
-    <string name="average">Média</string>
-    <string name="expenses">Gastos</string>
-    <string name="recurring_label">Recorrente</string>
+    <string name="parent_category">Parent Category</string>
+    <string name="total_amount">Total Amount</string>
+    <string name="expense_count">Expense Count</string>
+    <string name="average">Average</string>
+    <string name="expenses">Expenses</string>
+    <string name="recurring_label">Recurring</string>
 
     <!-- ProgressRingComponent -->
-    <string name="monthly_label">Mensal</string>
-    <string name="daily_label">Diário</string>
+    <string name="monthly_label">Monthly</string>
+    <string name="daily_label">Daily</string>
 
     <!-- PlanDetailBottomSheet -->
-    <string name="update_expense_data">Atualizar Dados de Gastos</string>
-    <string name="update_expense_data_description">Recalcula os meses atuais e futuros com dados atualizados</string>
-    <string name="total_net_value">Valor Líquido Total</string>
-    <string name="month">Mês</string>
-    <string name="income">Renda</string>
-    <string name="expense">Gasto</string>
-    <string name="net">Líquido</string>
+    <string name="update_expense_data">Update Expense Data</string>
+    <string name="update_expense_data_description">Recalculates current and future months with updated data</string>
+    <string name="total_net_value">Total Net Value</string>
+    <string name="month">Month</string>
+    <string name="income">Income</string>
+    <string name="expense">Expense</string>
+    <string name="net">Net</string>
     <string name="total">Total</string>
 
     <!-- PlanCard -->
-    <string name="avg_monthly_income">Renda Mensal Média</string>
-    <string name="avg_monthly_expense">Gastos Mensais Médios</string>
-    <string name="current_net">Líquido Atual</string>
-    <string name="target_net">Meta Líquida</string>
+    <string name="avg_monthly_income">Avg. Monthly Income</string>
+    <string name="avg_monthly_expense">Avg. Monthly Expense</string>
+    <string name="current_net">Current Net</string>
+    <string name="target_net">Target Net</string>
 
     <!-- MonthlyLineChart -->
-    <string name="all">Todos</string>
-    <string name="one_time_expense">Gasto Único</string>
-    <string name="period_expense_trend">Tendência de Gastos do Período</string>
-    <string name="expand">Expandir</string>
-    <string name="collapse">Recolher</string>
-    <string name="no_data_found">Nenhum dado encontrado</string>
-    <string name="highest">Maior</string>
+    <string name="all">All</string>
+    <string name="one_time_expense">One-Time Expense</string>
+    <string name="period_expense_trend">Period Expense Trend</string>
+    <string name="expand">Expand</string>
+    <string name="collapse">Collapse</string>
+    <string name="no_data_found">No data found</string>
+    <string name="highest">Highest</string>
 
     <!-- MonthlyExpensesView -->
-    <string name="no_expenses_this_month">Nenhum gasto este mês</string>
-    <string name="add_expense_for_month">Pressione o botão + na tela principal para adicionar gastos para este mês</string>
+    <string name="no_expenses_this_month">No expenses this month</string>
+    <string name="add_expense_for_month">Press the + button on the main screen to add expenses for this month</string>
 
     <!-- MonthlyCalendarView - Day headers -->
-    <string name="monday_short">S</string>
+    <string name="monday_short">M</string>
     <string name="tuesday_short">T</string>
-    <string name="wednesday_short">Q</string>
-    <string name="thursday_short">Q</string>
-    <string name="friday_short">S</string>
+    <string name="wednesday_short">W</string>
+    <string name="thursday_short">T</string>
+    <string name="friday_short">F</string>
     <string name="saturday_short">S</string>
-    <string name="sunday_short">D</string>
+    <string name="sunday_short">S</string>
 
     <!-- MonthlyAnalysisPieChart -->
-    <string name="category_distribution">Distribuição por Categorias</string>
-    <string name="tap_chart_to_select_category">Toque no gráfico para selecionar uma categoria</string>
+    <string name="category_distribution">Category Distribution</string>
+    <string name="tap_chart_to_select_category">Tap the chart to select a category</string>
 
     <!-- ExpenseRowView -->
-    <string name="unknown">Desconhecido</string>
-    <string name="delete_expense">Excluir Gasto</string>
-    <string name="delete_expense_confirmation">Tem certeza de que deseja excluir este gasto? Esta ação não pode ser desfeita.</string>
+    <string name="unknown">Unknown</string>
+    <string name="delete_expense">Delete Expense</string>
+    <string name="delete_expense_confirmation">Are you sure you want to delete this expense? This action cannot be undone.</string>
 
     <!-- DailyCategoryDetailBottomSheet -->
-    <string name="amount_high_to_low_arrow">Valor (Alto → Baixo)</string>
-    <string name="amount_low_to_high_arrow">Valor (Baixo → Alto)</string>
-    <string name="time_newest_first_arrow">Tempo (Novo → Antigo)</string>
-    <string name="time_oldest_first_arrow">Tempo (Antigo → Novo)</string>
-    <string name="description_a_to_z_arrow">Descrição (A → Z)</string>
-    <string name="description_z_to_a_arrow">Descrição (Z → A)</string>
-    <string name="total_spending">Gasto Total</string>
-    <string name="no_expenses_in_category">Nenhum gasto encontrado nesta categoria</string>
-    <string name="expense_singular">Gasto</string>
+    <string name="amount_high_to_low_arrow">Amount (High → Low)</string>
+    <string name="amount_low_to_high_arrow">Amount (Low → High)</string>
+    <string name="time_newest_first_arrow">Time (New → Old)</string>
+    <string name="time_oldest_first_arrow">Time (Old → New)</string>
+    <string name="description_a_to_z_arrow">Description (A → Z)</string>
+    <string name="description_z_to_a_arrow">Description (Z → A)</string>
+    <string name="total_spending">Total Spending</string>
+    <string name="no_expenses_in_category">No expenses found in this category</string>
+    <string name="expense_singular">Expense</string>
 
     <!-- CreatePlanDialog -->
-    <string name="create_new_plan">Criar Novo Plano</string>
-    <string name="plan_name">Nome do Plano</string>
-    <string name="plan_name_example">ex: Plano de Poupança 2024</string>
-    <string name="plan_duration">Duração do Plano</string>
-    <string name="apply_interest_to_savings">Aplicar Juros (à Poupança)</string>
-    <string name="simple_interest">Juros Simples</string>
-    <string name="compound_interest">Juros Compostos</string>
-    <string name="annual_interest_rate">Taxa de juros anual %</string>
-    <string name="interest_applied_to_positive_savings">Os juros são aplicados à poupança positiva</string>
-    <string name="interest_type">Tipo de Juros</string>
-    <string name="monthly_income_currency">Renda Mensal (%s)</string>
-    <string name="use_app_expense_data">Usar dados de gastos do aplicativo</string>
-    <string name="monthly_expenses_currency">Gastos Mensais (%s)</string>
-    <string name="manual_monthly_expense_amount">Valor manual de gastos mensais</string>
-    <string name="enter_manual_expense_amount">Digite o valor manual de gastos</string>
-    <string name="apply_inflation">Aplicar Inflação</string>
-    <string name="annual_percentage_rate">Taxa anual %</string>
-    <string name="create">Criar</string>
+    <string name="create_new_plan">Create New Plan</string>
+    <string name="plan_name">Plan Name</string>
+    <string name="plan_name_example">e.g: 2024 Savings Plan</string>
+    <string name="plan_duration">Plan Duration</string>
+    <string name="apply_interest_to_savings">Apply Interest (to Savings)</string>
+    <string name="simple_interest">Simple Interest</string>
+    <string name="compound_interest">Compound Interest</string>
+    <string name="annual_interest_rate">Annual interest rate %</string>
+    <string name="interest_applied_to_positive_savings">Interest is applied to positive savings</string>
+    <string name="interest_type">Interest Type</string>
+    <string name="monthly_income_currency">Monthly Income (%s)</string>
+    <string name="use_app_expense_data">Use app\'s expense data</string>
+    <string name="monthly_expenses_currency">Monthly Expenses (%s)</string>
+    <string name="manual_monthly_expense_amount">Manual monthly expense amount</string>
+    <string name="enter_manual_expense_amount">Enter manual expense amount</string>
+    <string name="apply_inflation">Apply Inflation</string>
+    <string name="annual_percentage_rate">Annual % rate</string>
+    <string name="create">Create</string>
 
     <!-- CategorySummarySection -->
-    <string name="category_details">Detalhes da Categoria</string>
-    <string name="main_categories">Categorias Principais</string>
-    <string name="sub_categories">Subcategorias</string>
-    <string name="expense_lowercase">gasto</string>
-    <string name="see_details">Ver detalhes</string>
+    <string name="category_details">Category Details</string>
+    <string name="main_categories">Main Categories</string>
+    <string name="sub_categories">Sub Categories</string>
+    <string name="expense_lowercase">expense</string>
+    <string name="see_details">See details</string>
 
     <!-- CategoryPopupLines -->
-    <string name="vs_previous_month_colon">Comparado ao mês anterior:</string>
-    <string name="vs_average_colon">Comparado à média:</string>
+    <string name="vs_previous_month_colon">Compared to previous month:</string>
+    <string name="vs_average_colon">Compared to average:</string>
 
     <!-- CategoryManagementScreen -->
-    <string name="add_new_main_category">Adicionar Nova Categoria Principal</string>
-    <string name="add_main_category_content_desc">Adicionar Categoria Principal</string>
-    <string name="category_name_hint">Digite o nome da categoria</string>
-    <string name="unique_category_name_note">Escolha um nome único para a categoria</string>
-    <string name="icon_selection">Seleção de Ícone</string>
-    <string name="color_selection">Seleção de Cor</string>
-    <string name="add_button">Adicionar</string>
-    <string name="main_category">Categoria Principal</string>
-    <string name="select_category">Selecionar categoria</string>
-    <string name="subcategory_name">Nome da Subcategoria</string>
-    <string name="subcategory_name_hint">Digite o nome da subcategoria</string>
-    <string name="unique_subcategory_name_note">Escolha um nome único para a subcategoria</string>
-    <string name="edit_subcategory">Editar Subcategoria</string>
-    <string name="edit_category">Editar Categoria</string>
-    <string name="edit">Editar</string>
-    <string name="enter_name_hint">Digite o nome</string>
-    <string name="delete_confirmation">Confirmação de Exclusão</string>
-    <string name="delete_item_confirmation">Tem certeza de que deseja excluir \"%s\"? Esta ação não pode ser desfeita.</string>
-    <string name="this_item">Este item</string>
-    <string name="collapse_desc">Recolher</string>
-    <string name="expand_desc">Expandir</string>
-    <string name="edit_category_desc">Editar Categoria</string>
-    <string name="delete_category_desc">Excluir Categoria</string>
-    <string name="add_subcategory">Adicionar Subcategoria</string>
-    <string name="add_subcategory_desc">Adicionar Subcategoria</string>
-    <string name="edit_subcategory_desc">Editar Subcategoria</string>
-    <string name="delete_subcategory_desc">Excluir Subcategoria</string>
-    <string name="selected">Selecionado</string>
+    <string name="add_new_main_category">Add New Main Category</string>
+    <string name="add_main_category_content_desc">Add Main Category</string>
+    <string name="category_name_hint">Enter category name</string>
+    <string name="unique_category_name_note">Choose a unique name for the category</string>
+    <string name="icon_selection">Icon Selection</string>
+    <string name="color_selection">Color Selection</string>
+    <string name="add_button">Add</string>
+    <string name="main_category">Main Category</string>
+    <string name="select_category">Select category</string>
+    <string name="subcategory_name">Subcategory Name</string>
+    <string name="subcategory_name_hint">Enter subcategory name</string>
+    <string name="unique_subcategory_name_note">Choose a unique name for the subcategory</string>
+    <string name="edit_subcategory">Edit Subcategory</string>
+    <string name="edit_category">Edit Category</string>
+    <string name="edit">Edit</string>
+    <string name="enter_name_hint">Enter name</string>
+    <string name="delete_confirmation">Delete Confirmation</string>
+    <string name="delete_item_confirmation">Are you sure you want to delete \"%s\"? This action cannot be undone.</string>
+    <string name="this_item">This item</string>
+    <string name="collapse_desc">Collapse</string>
+    <string name="expand_desc">Expand</string>
+    <string name="edit_category_desc">Edit Category</string>
+    <string name="delete_category_desc">Delete Category</string>
+    <string name="add_subcategory">Add Subcategory</string>
+    <string name="add_subcategory_desc">Add Subcategory</string>
+    <string name="edit_subcategory_desc">Edit Subcategory</string>
+    <string name="delete_subcategory_desc">Delete Subcategory</string>
+    <string name="selected">Selected</string>
 
     <!-- CategoryDistributionChart -->
-    <string name="no_data">Nenhum dado</string>
-    <string name="category">Categoria</string>
+    <string name="no_data">No data</string>
+    <string name="category">Category</string>
 
     <!-- CategoryDetailBottomSheet -->
-    <string name="sort_amount_desc">Por Valor (Alto → Baixo)</string>
-    <string name="sort_amount_asc">Por Valor (Baixo → Alto)</string>
-    <string name="sort_date_desc">Por Data (Novo → Antigo)</string>
-    <string name="sort_date_asc">Por Data (Antigo → Novo)</string>
-    <string name="sort_name_asc">Por Descrição (A → Z)</string>
-    <string name="sort_name_desc">Por Descrição (Z → A)</string>
+    <string name="sort_amount_desc">By Amount (High → Low)</string>
+    <string name="sort_amount_asc">By Amount (Low → High)</string>
+    <string name="sort_date_desc">By Date (New → Old)</string>
+    <string name="sort_date_asc">By Date (Old → New)</string>
+    <string name="sort_name_asc">By Description (A → Z)</string>
+    <string name="sort_name_desc">By Description (Z → A)</string>
 
     <!-- SubCategory - Default subcategories -->
     <!-- Food & Drink -->
-    <string name="subcategory_restaurant">Restaurante</string>
-    <string name="subcategory_kitchen_shopping">Compras de cozinha</string>
+    <string name="subcategory_restaurant">Restaurant</string>
+    <string name="subcategory_kitchen_shopping">Kitchen shopping</string>
 
     <!-- Housing -->
-    <string name="subcategory_rent">Aluguel</string>
-    <string name="subcategory_dues">Condomínio</string>
-    <string name="subcategory_mortgage">Pagamento de financiamento</string>
-    <string name="subcategory_electricity">Conta de luz</string>
-    <string name="subcategory_water">Conta de água</string>
-    <string name="subcategory_heating">Aquecimento</string>
-    <string name="subcategory_internet_phone">Internet e telefone</string>
-    <string name="subcategory_other_bills">Outras Contas</string>
-    <string name="subcategory_general_shopping">Compras gerais de supermercado</string>
+    <string name="subcategory_rent">Rent</string>
+    <string name="subcategory_dues">Dues</string>
+    <string name="subcategory_mortgage">Mortgage payment</string>
+    <string name="subcategory_electricity">Electricity bill</string>
+    <string name="subcategory_water">Water bill</string>
+    <string name="subcategory_heating">Heating</string>
+    <string name="subcategory_internet_phone">Internet and phone</string>
+    <string name="subcategory_other_bills">Other Bills</string>
+    <string name="subcategory_general_shopping">General grocery shopping</string>
 
     <!-- Transportation -->
-    <string name="subcategory_fuel">Combustível</string>
-    <string name="subcategory_public_transport">Transporte público</string>
-    <string name="subcategory_car_maintenance">Manutenção do carro</string>
-    <string name="subcategory_car_rental">Aluguel de carro</string>
-    <string name="subcategory_taxi_uber">Táxi/Uber</string>
-    <string name="subcategory_car_insurance">Seguro do carro</string>
-    <string name="subcategory_mtv">IPVA</string>
-    <string name="subcategory_parking_fees">Taxas de estacionamento</string>
+    <string name="subcategory_fuel">Fuel</string>
+    <string name="subcategory_public_transport">Public transport</string>
+    <string name="subcategory_car_maintenance">Car maintenance</string>
+    <string name="subcategory_car_rental">Car rental</string>
+    <string name="subcategory_taxi_uber">Taxi/Uber</string>
+    <string name="subcategory_car_insurance">Car insurance</string>
+    <string name="subcategory_mtv">Vehicle tax</string>
+    <string name="subcategory_parking_fees">Parking fees</string>
 
     <!-- Health -->
-    <string name="subcategory_doctor_appointment">Consulta médica</string>
-    <string name="subcategory_medicines">Medicamentos</string>
-    <string name="subcategory_gym_membership">Mensalidade da academia</string>
-    <string name="subcategory_cosmetics">Cosméticos</string>
+    <string name="subcategory_doctor_appointment">Doctor appointment</string>
+    <string name="subcategory_medicines">Medicines</string>
+    <string name="subcategory_gym_membership">Gym membership</string>
+    <string name="subcategory_cosmetics">Cosmetics</string>
 
     <!-- Entertainment -->
-    <string name="subcategory_cinema_theater">Cinema e teatro</string>
-    <string name="subcategory_concerts_events">Shows e eventos</string>
-    <string name="subcategory_subscriptions">Assinaturas</string>
-    <string name="subcategory_books_magazines">Livros e revistas</string>
-    <string name="subcategory_travel_vacation">Viagens e férias</string>
-    <string name="subcategory_games_apps">Jogos e aplicativos</string>
+    <string name="subcategory_cinema_theater">Cinema and theater</string>
+    <string name="subcategory_concerts_events">Concerts and events</string>
+    <string name="subcategory_subscriptions">Subscriptions</string>
+    <string name="subcategory_books_magazines">Books and magazines</string>
+    <string name="subcategory_travel_vacation">Travel and vacation</string>
+    <string name="subcategory_games_apps">Games and apps</string>
 
     <!-- Education -->
-    <string name="subcategory_course_fees">Taxas de cursos</string>
-    <string name="subcategory_education_materials">Materiais educacionais</string>
-    <string name="subcategory_seminars">Seminários</string>
-    <string name="subcategory_online_courses">Cursos online</string>
+    <string name="subcategory_course_fees">Course fees</string>
+    <string name="subcategory_education_materials">Education materials</string>
+    <string name="subcategory_seminars">Seminars</string>
+    <string name="subcategory_online_courses">Online courses</string>
 
     <!-- Shopping -->
-    <string name="subcategory_electronics">Eletrônicos</string>
-    <string name="subcategory_clothing">Roupas</string>
-    <string name="subcategory_home_goods">Artigos para casa</string>
-    <string name="subcategory_gifts">Presentes</string>
+    <string name="subcategory_electronics">Electronics</string>
+    <string name="subcategory_clothing">Clothing</string>
+    <string name="subcategory_home_goods">Home goods</string>
+    <string name="subcategory_gifts">Gifts</string>
     <string name="subcategory_perfume">Perfume</string>
 
     <!-- Pets -->
-    <string name="subcategory_pet_food_toys">Ração e brinquedos</string>
-    <string name="subcategory_vet_services">Serviços veterinários</string>
-    <string name="subcategory_pet_insurance">Seguro pet</string>
+    <string name="subcategory_pet_food_toys">Food and toys</string>
+    <string name="subcategory_vet_services">Veterinary services</string>
+    <string name="subcategory_pet_insurance">Pet insurance</string>
 
     <!-- Work -->
-    <string name="subcategory_work_meals">Refeições de trabalho</string>
-    <string name="subcategory_office_supplies">Material de escritório</string>
-    <string name="subcategory_business_travel">Viagens de negócios</string>
-    <string name="subcategory_work_education">Treinamento e seminários</string>
-    <string name="subcategory_freelance_payments">Pagamentos de freelance</string>
+    <string name="subcategory_work_meals">Work meals</string>
+    <string name="subcategory_office_supplies">Office supplies</string>
+    <string name="subcategory_business_travel">Business travel</string>
+    <string name="subcategory_work_education">Training and seminars</string>
+    <string name="subcategory_freelance_payments">Freelance work payments</string>
 
     <!-- Tax -->
-    <string name="subcategory_tax_payments">Pagamentos de impostos</string>
+    <string name="subcategory_tax_payments">Tax payments</string>
 
     <!-- Others -->
-    <string name="subcategory_other_expenses">Outros Gastos</string>
+    <string name="subcategory_other_expenses">Other Expenses</string>
 
     <!-- ExpensesScreen - Empty state messages -->
-    <string name="no_search_results_found">Nenhum resultado de pesquisa encontrado</string>
-    <string name="no_expenses_yet">Nenhum gasto ainda</string>
-    <string name="no_expenses_today">Nenhum gasto hoje</string>
-    <string name="no_search_results_description">Nenhum resultado encontrado para \"%1$s\". Tente um termo de pesquisa diferente.</string>
-    <string name="first_expense_hint">Pressione o botão + para adicionar seu primeiro gasto</string>
-    <string name="add_expense_for_day_hint">Pressione o botão + para adicionar gastos para este dia</string>
-    <string name="calendar_tab">Calendário</string>
-    <string name="expenses_tab">Gastos</string>
+    <string name="no_search_results_found">No search results found</string>
+    <string name="no_expenses_yet">No expenses yet</string>
+    <string name="no_expenses_today">No expenses today</string>
+    <string name="no_search_results_description">No results found for \"%1$s\". Try a different search term.</string>
+    <string name="first_expense_hint">Press the + button to add your first expense</string>
+    <string name="add_expense_for_day_hint">Press the + button to add expenses for this day</string>
+    <string name="calendar_tab">Calendar</string>
+    <string name="expenses_tab">Expenses</string>
 
     <!-- PlanningUtils - Plan status and validation -->
-    <string name="plan_status_not_started">Não iniciado</string>
-    <string name="plan_status_completed">Concluído</string>
-    <string name="plan_status_active">Ativo</string>
-    <string name="validation_plan_name_empty">O nome do plano não pode estar vazio</string>
-    <string name="validation_monthly_income_positive">A renda mensal deve ser maior que 0</string>
-    <string name="validation_duration_positive">A duração do plano deve ser maior que 0</string>
-    <string name="validation_duration_max_10_years">A duração do plano não pode ser mais de 10 anos</string>
-    <string name="validation_inflation_rate_range">A taxa de inflação deve estar entre -50%% e 100%%</string>
-    <string name="duration_3_months">3 Meses</string>
-    <string name="duration_6_months">6 Meses</string>
-    <string name="duration_1_year">1 Ano</string>
-    <string name="duration_1_5_years">1,5 Anos</string>
-    <string name="duration_2_years">2 Anos</string>
-    <string name="duration_3_years">3 Anos</string>
-    <string name="duration_5_years">5 Anos</string>
+    <string name="plan_status_not_started">Not started</string>
+    <string name="plan_status_completed">Completed</string>
+    <string name="plan_status_active">Active</string>
+    <string name="validation_plan_name_empty">Plan name cannot be empty</string>
+    <string name="validation_monthly_income_positive">Monthly income must be greater than 0</string>
+    <string name="validation_duration_positive">Plan duration must be greater than 0</string>
+    <string name="validation_duration_max_10_years">Plan duration cannot be more than 10 years</string>
+    <string name="validation_inflation_rate_range">Inflation rate must be between -50%% and 100%%</string>
+    <string name="duration_3_months">3 Months</string>
+    <string name="duration_6_months">6 Months</string>
+    <string name="duration_1_year">1 Year</string>
+    <string name="duration_1_5_years">1.5 Years</string>
+    <string name="duration_2_years">2 Years</string>
+    <string name="duration_3_years">3 Years</string>
+    <string name="duration_5_years">5 Years</string>
 
     <!-- PlanningViewModel - Error messages -->
-    <string name="error_loading_plan">Erro ao carregar o plano: %s</string>
-    <string name="error_creating_plan">Erro ao criar o plano: %s</string>
-    <string name="error_deleting_plan">Erro ao excluir o plano: %s</string>
-    <string name="error_updating_expense_data">Erro ao atualizar os dados de gastos: %s</string>
-    <string name="error_updating_plan_calculations">Erro ao atualizar os cálculos do plano: %s</string>
-    <string name="error_saving_changes">Erro ao salvar as alterações: %s</string>
+    <string name="error_loading_plan">Error loading plan: %s</string>
+    <string name="error_creating_plan">Error creating plan: %s</string>
+    <string name="error_deleting_plan">Error deleting plan: %s</string>
+    <string name="error_updating_expense_data">Error updating expense data: %s</string>
+    <string name="error_updating_plan_calculations">Error updating plan calculations: %s</string>
+    <string name="error_saving_changes">Error saving changes: %s</string>
 
     <!-- Category - Default categories -->
-    <string name="category_food">Comida e Bebida</string>
-    <string name="category_housing">Moradia</string>
-    <string name="category_transportation">Transporte</string>
-    <string name="category_health">Saúde e Cuidados Pessoais</string>
-    <string name="category_entertainment">Entretenimento e Hobbies</string>
-    <string name="category_education">Educação</string>
-    <string name="category_shopping">Compras</string>
-    <string name="category_pets">Animais de Estimação</string>
-    <string name="category_work">Trabalho e Gastos Profissionais</string>
-    <string name="category_tax">Impostos e Gastos Legais</string>
-    <string name="category_donations">Doações e Ajuda</string>
-    <string name="category_others">Outros Pagamentos</string>
+    <string name="category_food">Food and Drink</string>
+    <string name="category_housing">Housing</string>
+    <string name="category_transportation">Transportation</string>
+    <string name="category_health">Health and Personal Care</string>
+    <string name="category_entertainment">Entertainment and Hobbies</string>
+    <string name="category_education">Education</string>
+    <string name="category_shopping">Shopping</string>
+    <string name="category_pets">Pets</string>
+    <string name="category_work">Work and Professional Expenses</string>
+    <string name="category_tax">Tax and Legal Expenses</string>
+    <string name="category_donations">Donations and Aid</string>
+    <string name="category_others">Other Payments</string>
 </resources>
