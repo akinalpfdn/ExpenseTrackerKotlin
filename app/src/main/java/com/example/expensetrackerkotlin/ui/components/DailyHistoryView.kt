@@ -129,7 +129,7 @@ private fun DailyHistoryItem(
             .background(
                 if (isSelected) ThemeColors.getTextColor(isDarkTheme).copy(alpha = 0.2f) else Color.Transparent
             )
-            .padding(8.dp)
+            .padding(1.dp)
     ) {
         // Day letter
         Text(
@@ -150,7 +150,7 @@ private fun DailyHistoryItem(
             ProgressRing(
                 progress = data.progressPercentage.toFloat(),
                 isLimitOver = data.isOverLimit,
-                modifier = Modifier.size(40.dp),
+                modifier = Modifier.size(50.dp),
                 strokeWidth = 5.dp
             )
             
@@ -167,7 +167,7 @@ private fun DailyHistoryItem(
         
         // Amount
         Text(
-            text = "₺${NumberFormatter.formatAmount(data.totalAmount)}",
+            text = NumberFormatter.formatAmount(data.totalAmount),
             fontSize = 10.sp,
             color = if (data.isOverLimit) Color.Red else ThemeColors.getTextColor(isDarkTheme),
             fontWeight = FontWeight.Medium

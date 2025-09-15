@@ -1,11 +1,14 @@
 package com.example.expensetrackerkotlin.ui.components
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
@@ -31,6 +34,7 @@ import com.example.expensetrackerkotlin.ui.theme.ThemeColors
 import com.example.expensetrackerkotlin.utils.NumberFormatter
 import com.example.expensetrackerkotlin.utils.PlanningUtils
 
+@SuppressLint("DefaultLocale")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PlanDetailBottomSheet(
@@ -46,6 +50,7 @@ fun PlanDetailBottomSheet(
     
     var editingCell by remember { mutableStateOf<Pair<Int, String>?>(null) } // (rowIndex, "income"/"expenses")
     var editedValue by remember { mutableStateOf("") }
+    val scrollState = rememberScrollState()
     
     Column(
         modifier = modifier
@@ -142,15 +147,17 @@ fun PlanDetailBottomSheet(
         // Table Header
         Row(
             modifier = Modifier
-                .fillMaxWidth()
+                .horizontalScroll(scrollState)
                 .background(
                     ThemeColors.getTextGrayColor(isDarkTheme).copy(alpha = 0.1f),
                     RoundedCornerShape(topStart = 8.dp, topEnd = 8.dp)
                 )
-                .padding(12.dp),
+                .padding(4.dp)
+                .width(400.dp), // Fixed width to enable horizontal scrolling
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
 
+            Spacer(modifier = Modifier.width(26.dp)) // For edit button space
             Text(
                 text = stringResource(R.string.income),
                 fontSize = 12.sp,
@@ -191,7 +198,6 @@ fun PlanDetailBottomSheet(
                 modifier = Modifier.weight(1f),
                 textAlign = TextAlign.Center
             )
-            Spacer(modifier = Modifier.width(40.dp)) // For edit button space
         }
 
         HorizontalDivider(
@@ -207,19 +213,56 @@ fun PlanDetailBottomSheet(
             itemsIndexed(breakdowns) { index, breakdown ->
                 Row(
                     modifier = Modifier
-                        .fillMaxWidth()
+                        .horizontalScroll(scrollState)
                         .background(
-                            if (index % 2 == 0) Color.Transparent 
+                            if (index % 2 == 0) Color.Transparent
                             else ThemeColors.getTextGrayColor(isDarkTheme).copy(alpha = 0.05f)
                         )
-                        .padding(12.dp),
+                        .padding(4.dp)
+                        .width(400.dp),
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-
+                    val isEditingExpenses = editingCell?.first == index && editingCell?.second == "expenses"
+                    val isEditingIncome = editingCell?.first == index && editingCell?.second == "income"
+// Save Button (only show when editing)
+                    if (isEditingIncome || isEditingExpenses) {
+                        IconButton(
+                            onClick = {
+                                // Save the current edit
+                                val newValue = editedValue.toDoubleOrNull()
+                                if (newValue != null) {
+                                    val updatedBreakdown = if (isEditingIncome) {
+                                        breakdown.copy(
+                                            projectedIncome = newValue,
+                                            netAmount = newValue - breakdown.totalProjectedExpenses
+                                        )
+                                    } else {
+                                        breakdown.copy(
+                                            totalProjectedExpenses = newValue,
+                                            netAmount = breakdown.projectedIncome - newValue
+                                        )
+                                    }
+                                    onUpdateBreakdown(updatedBreakdown)
+                                }
+                                editingCell = null
+                                editedValue = ""
+                            },
+                            modifier = Modifier.size(26.dp)
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Save,
+                                contentDescription = stringResource(R.string.save),
+                                tint = AppColors.PrimaryOrange,
+                                modifier = Modifier.size(16.dp)
+                            )
+                        }
+                    } else {
+                        // Empty space to maintain layout
+                        Spacer(modifier = Modifier.size(26.dp))
+                    }
                     
                     // Income (clickable cell)
-                    val isEditingIncome = editingCell?.first == index && editingCell?.second == "income"
                     
                     if (isEditingIncome) {
                         BasicTextField(
@@ -250,7 +293,7 @@ fun PlanDetailBottomSheet(
                                 .weight(1.6f)
                                 .clickable {
                                     editingCell = Pair(index, "income")
-                                    editedValue = breakdown.projectedIncome.toString()
+                                    editedValue =  String.format("%.2f", breakdown.projectedIncome)
                                 }
                                 .padding(8.dp),
                             contentAlignment = Alignment.Center
@@ -265,7 +308,6 @@ fun PlanDetailBottomSheet(
                     }
                     
                     // Expenses (clickable cell)
-                    val isEditingExpenses = editingCell?.first == index && editingCell?.second == "expenses"
                     
                     if (isEditingExpenses) {
                         BasicTextField(
@@ -296,7 +338,7 @@ fun PlanDetailBottomSheet(
                                 .weight(1.6f)
                                 .clickable {
                                     editingCell = Pair(index, "expenses")
-                                    editedValue = breakdown.totalProjectedExpenses.toString()
+                                    editedValue =  String.format("%.2f", breakdown.totalProjectedExpenses) 
                                 }
                                 .padding(8.dp),
                             contentAlignment = Alignment.Center
@@ -351,42 +393,7 @@ fun PlanDetailBottomSheet(
                         modifier = Modifier.weight(1f),
                         textAlign = TextAlign.Center
                     )
-                    // Save Button (only show when editing)
-                    if (isEditingIncome || isEditingExpenses) {
-                        IconButton(
-                            onClick = {
-                                // Save the current edit
-                                val newValue = editedValue.toDoubleOrNull()
-                                if (newValue != null) {
-                                    val updatedBreakdown = if (isEditingIncome) {
-                                        breakdown.copy(
-                                            projectedIncome = newValue,
-                                            netAmount = newValue - breakdown.totalProjectedExpenses
-                                        )
-                                    } else {
-                                        breakdown.copy(
-                                            totalProjectedExpenses = newValue,
-                                            netAmount = breakdown.projectedIncome - newValue
-                                        )
-                                    }
-                                    onUpdateBreakdown(updatedBreakdown)
-                                }
-                                editingCell = null
-                                editedValue = ""
-                            },
-                            modifier = Modifier.size(32.dp)
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.Save,
-                                contentDescription = stringResource(R.string.save),
-                                tint = AppColors.PrimaryOrange,
-                                modifier = Modifier.size(16.dp)
-                            )
-                        }
-                    } else {
-                        // Empty space to maintain layout
-                        Spacer(modifier = Modifier.size(32.dp))
-                    }
+
                 }
             }
         }
