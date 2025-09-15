@@ -338,7 +338,7 @@ fun PlanDetailBottomSheet(
                                 .weight(1.6f)
                                 .clickable {
                                     editingCell = Pair(index, "expenses")
-                                    editedValue =  String.format("%.2f", breakdown.totalProjectedExpenses) 
+                                    editedValue =  String.format("%.2f", breakdown.totalProjectedExpenses)
                                 }
                                 .padding(8.dp),
                             contentAlignment = Alignment.Center

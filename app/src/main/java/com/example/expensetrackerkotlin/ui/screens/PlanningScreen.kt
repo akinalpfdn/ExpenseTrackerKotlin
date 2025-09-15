@@ -1,9 +1,11 @@
 package com.example.expensetrackerkotlin.ui.screens
 
+import androidx.compose.animation.*
+import androidx.compose.animation.core.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -19,6 +21,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import kotlinx.coroutines.delay
 import com.example.expensetrackerkotlin.R
 import com.example.expensetrackerkotlin.ui.components.PlanCard
 import com.example.expensetrackerkotlin.ui.components.CreatePlanBottomSheet
@@ -127,8 +130,9 @@ fun PlanningScreen(
                     verticalArrangement = Arrangement.spacedBy(16.dp),
                     modifier = Modifier.weight(1f)
                 ) {
-                    items(plansWithBreakdowns) { planWithBreakdowns ->
-                        PlanCard(
+                    itemsIndexed(plansWithBreakdowns) { index, planWithBreakdowns ->
+                        AnimatedPlanCard(
+                            index = index,
                             planWithBreakdowns = planWithBreakdowns,
                             onCardClick = {
                                 planningViewModel.selectPlan(planWithBreakdowns.plan.id)
@@ -325,5 +329,46 @@ fun PlanningScreen(
                 containerColor = ThemeColors.getDialogBackgroundColor(isDarkTheme)
             )
         }
+    }
+}
+
+@Composable
+private fun AnimatedPlanCard(
+    index: Int,
+    planWithBreakdowns: com.example.expensetrackerkotlin.data.PlanWithBreakdowns,
+    onCardClick: () -> Unit,
+    onDeleteClick: () -> Unit,
+    isDarkTheme: Boolean,
+    defaultCurrency: String
+) {
+    var isVisible by remember { mutableStateOf(false) }
+
+    LaunchedEffect(Unit) {
+        delay(index * 100L) // Stagger animation
+        isVisible = true
+    }
+
+    AnimatedVisibility(
+        visible = isVisible,
+        enter = slideInVertically(
+            initialOffsetY = { fullHeight -> fullHeight+1200 },
+            animationSpec = tween(
+                durationMillis = 600,
+                easing = FastOutSlowInEasing
+            )
+        ) + fadeIn(
+            animationSpec = tween(
+                durationMillis = 600,
+                easing = FastOutSlowInEasing
+            )
+        )
+    ) {
+        PlanCard(
+            planWithBreakdowns = planWithBreakdowns,
+            onCardClick = onCardClick,
+            onDeleteClick = onDeleteClick,
+            isDarkTheme = isDarkTheme,
+            defaultCurrency = defaultCurrency
+        )
     }
 }
