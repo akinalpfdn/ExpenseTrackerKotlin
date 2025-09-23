@@ -423,7 +423,7 @@ class ExpenseViewModel(
                 // Update remaining expenses with new values (only from today onwards)
                 val expensesToUpdate = existingExpenses.filter { 
                     !it.date.isAfter(newEndDate) && 
-                    it.date.toLocalDate().isAfter(today.toLocalDate().minusDays(1)) // Today and future
+                    it.date.toLocalDate().isAfter(selectedDate.value.toLocalDate().minusDays(1)) // Today and future
                 }
                 expensesToUpdate.forEach { existingExpense ->
                     val updatedExpense = existingExpense.copy(
@@ -439,7 +439,7 @@ class ExpenseViewModel(
                 
                 // Update existing expenses with new values (only from today onwards)
                 val expensesToUpdate = existingExpenses.filter { 
-                    it.date.toLocalDate().isAfter(today.toLocalDate().minusDays(1)) // Today and future
+                    it.date.toLocalDate().isAfter(selectedDate.value.toLocalDate().minusDays(1)) // Today and future
                 }
                 expensesToUpdate.forEach { existingExpense ->
                     val updatedExpense = existingExpense.copy(
@@ -478,7 +478,7 @@ class ExpenseViewModel(
             } else {
                 // End date unchanged - just update existing expenses (only from today onwards)
                 val expensesToUpdate = existingExpenses.filter { 
-                    it.date.toLocalDate().isAfter(today.toLocalDate().minusDays(1)) // Today and future
+                    it.date.toLocalDate().isAfter(selectedDate.value.toLocalDate().minusDays(1)) // Today and future
                 }
                 expensesToUpdate.forEach { existingExpense ->
                     val updatedExpense = existingExpense.copy(
