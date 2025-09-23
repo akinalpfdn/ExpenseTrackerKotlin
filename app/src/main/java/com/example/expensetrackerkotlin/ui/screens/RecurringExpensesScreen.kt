@@ -387,6 +387,24 @@ fun RecurringExpenseCard(
     // Get category and subcategory for this expense
     val category = categories.find { it.id == expense.categoryId }
     val subCategory = subCategories.find { it.id == expense.subCategoryId }
+
+    // Calculate total and remaining amounts based on selected date
+    val allExpenses by viewModel.expenses.collectAsState()
+    val selectedDate = viewModel.selectedDate.collectAsState().value
+    val recurringExpensesForThisGroup = allExpenses.filter {
+        it.recurrenceGroupId == expense.recurrenceGroupId
+    }
+
+    // Total amount for all expenses in this recurring group
+    val totalAmount = recurringExpensesForThisGroup
+        .sumOf { it.getAmountInDefaultCurrency(viewModel.defaultCurrency) }
+
+    // Remaining amount from selected date onwards
+    val remainingAmount =
+        recurringExpensesForThisGroup.filter {
+            it.date.toLocalDate().isAfter(selectedDate.toLocalDate()) &&
+            it.date.toLocalDate().isBefore(expense.endDate!!.toLocalDate().plusDays(1))
+        }.sumOf { it.getAmountInDefaultCurrency(viewModel.defaultCurrency) }
     
     // Swipe animation state
     var offsetX by remember { mutableStateOf(0f) }
@@ -557,6 +575,16 @@ fun RecurringExpenseCard(
                                     color = ThemeColors.getTextGrayColor(isDarkTheme)
                                 )
                             }
+                            Text(
+                                text = "Toplam: ${viewModel.defaultCurrency} ${NumberFormatter.formatAmount(totalAmount)}",
+                                fontSize = 11.sp,
+                                color = ThemeColors.getTextGrayColor(isDarkTheme)
+                            )
+                            Text(
+                                text = "Kalan: ${viewModel.defaultCurrency} ${NumberFormatter.formatAmount(remainingAmount)}",
+                                fontSize = 11.sp,
+                                color = AppColors.PrimaryOrange
+                            )
                         }
                     }
                     

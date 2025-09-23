@@ -78,11 +78,11 @@ fun AddExpenseScreen(
     // Collect categories and subcategories from ViewModel
     val categories by viewModel.categories.collectAsState()
     val subCategories by viewModel.subCategories.collectAsState()
-    
     // Initialize with first subcategory if not editing
     LaunchedEffect(subCategories) {
+
         if (subCategories.isNotEmpty() && selectedSubCategoryId.isEmpty() && editingExpense == null) {
-            selectedSubCategoryId = subCategories.first().id
+            selectedSubCategoryId = subCategories.minByOrNull { it.name.lowercase(Locale.ROOT) }!!.id
         }
     }
     
@@ -93,7 +93,7 @@ fun AddExpenseScreen(
     
     // Filter subcategories based on search and filter
     val filteredSubCategories = remember(subCategories, categories, categorySearchText, selectedCategoryFilter) {
-        var filtered = subCategories
+        var filtered = subCategories.sortedBy { it.name.lowercase(Locale.ROOT) }
         
 
         // Apply search filter
@@ -104,7 +104,7 @@ fun AddExpenseScreen(
             }
         }
         
-        filtered.sortedBy { it.name }
+        filtered
     }
     
     val currencies = listOf("₺", "$", "€", "£")
