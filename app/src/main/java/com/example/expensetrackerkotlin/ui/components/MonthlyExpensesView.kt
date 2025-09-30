@@ -31,8 +31,6 @@ import com.example.expensetrackerkotlin.ui.screens.ExpenseSortType
 import com.example.expensetrackerkotlin.utils.NumberFormatter
 import com.example.expensetrackerkotlin.viewmodel.ExpenseViewModel
 import java.time.YearMonth
-import java.time.format.DateTimeFormatter
-import java.util.*
 
 @Composable
 fun MonthlyExpensesView(

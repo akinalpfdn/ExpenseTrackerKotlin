@@ -69,7 +69,6 @@ fun ExpensesScreen(
     val editingExpenseId by viewModel.editingExpenseId.collectAsState()
     val categories by viewModel.categories.collectAsState()
     val subCategories by viewModel.subCategories.collectAsState()
-    val dailyHistoryData by viewModel.dailyHistoryData.collectAsState()
     val weeklyHistoryData by viewModel.weeklyHistoryData.collectAsState()
     
     var showingAddExpense by remember { mutableStateOf(false) }
