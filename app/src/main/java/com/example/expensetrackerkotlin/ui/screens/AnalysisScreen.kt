@@ -857,7 +857,7 @@ fun calculateSubCategoryComparison(
     // Calculate 6-month average (current + 5 previous months)
     val monthsToCheck = listOf(currentMonth, currentMonth.minusMonths(1), currentMonth.minusMonths(2), currentMonth.minusMonths(3),
         currentMonth.minusMonths(4), currentMonth.minusMonths(5))
-    val totalAmountLast6Months = monthsToCheck.sumOf { month ->
+    val monthlyAmounts = monthsToCheck.map { month ->
         expenses.filter { expense ->
             val expenseDate = expense.date.toLocalDate()
             expenseDate.year == month.year && expenseDate.month == month.month &&
@@ -870,7 +870,8 @@ fun calculateSubCategoryComparison(
             }
         }.sumOf { it.getAmountInDefaultCurrency(defaultCurrency) }
     }
-    val avgAmount = totalAmountLast6Months / 6.0
+    val monthsWithExpenses = monthlyAmounts.filter { it > 0 }
+    val avgAmount = if (monthsWithExpenses.isNotEmpty()) monthsWithExpenses.sum() / monthsWithExpenses.size else 0.0
 
 
     // Calculate amount difference vs average
@@ -918,12 +919,15 @@ fun calculateCategoryComparison(
     val previousAmount = previousMonthExpenses.sumOf { it.getAmountInDefaultCurrency(defaultCurrency) }
     
     // Calculate amount difference vs previous month
-    val vsLastMonth = currentAmount - previousAmount
-    
+    var vsLastMonth =   currentAmount - previousAmount
+    if(previousAmount == 0.0 )
+    {
+        vsLastMonth = 0.0
+    }
     // Calculate 6-month average (current + 5 previous months)
     val monthsToCheck = listOf(currentMonth, currentMonth.minusMonths(1), currentMonth.minusMonths(2), currentMonth.minusMonths(3)
         , currentMonth.minusMonths(4), currentMonth.minusMonths(5))
-    val totalAmountLast6Months = monthsToCheck.sumOf { month ->
+    val monthlyAmounts = monthsToCheck.map { month ->
         expenses.filter { expense ->
             val expenseDate = expense.date.toLocalDate()
             expenseDate.year == month.year && expenseDate.month == month.month &&
@@ -936,7 +940,8 @@ fun calculateCategoryComparison(
             }
         }.sumOf { it.getAmountInDefaultCurrency(defaultCurrency) }
     }
-    val avgAmount = totalAmountLast6Months / 6.0
+    val monthsWithExpenses = monthlyAmounts.filter { it > 0 }
+    val avgAmount = if (monthsWithExpenses.isNotEmpty()) monthsWithExpenses.sum() / monthsWithExpenses.size else 0.0
     
     // Calculate amount difference vs average
     val vsAverage = currentAmount - avgAmount
@@ -980,11 +985,16 @@ fun calculateTotalComparison(
     val previousAmount = previousMonthExpenses.sumOf { it.getAmountInDefaultCurrency(defaultCurrency) }
     
     // Calculate amount difference vs previous month
-    val vsLastMonth = currentAmount - previousAmount
-    
+
+    var vsLastMonth =   currentAmount - previousAmount
+    if(previousAmount == 0.0 )
+    {
+        vsLastMonth = 0.0
+    }
+
     // Calculate 6-month average
     val monthsToCheck = listOf(currentMonth, currentMonth.minusMonths(1), currentMonth.minusMonths(2), currentMonth.minusMonths(3), currentMonth.minusMonths(4), currentMonth.minusMonths(5))
-    val totalAmountLast6Months = monthsToCheck.sumOf { month ->
+    val monthlyAmounts = monthsToCheck.map { month ->
         expenses.filter { expense ->
             val expenseDate = expense.date.toLocalDate()
             expenseDate.year == month.year && expenseDate.month == month.month
@@ -996,7 +1006,8 @@ fun calculateTotalComparison(
             }
         }.sumOf { it.getAmountInDefaultCurrency(defaultCurrency) }
     }
-    val avgAmount = totalAmountLast6Months / 6.0
+    val monthsWithExpenses = monthlyAmounts.filter { it > 0 }
+    val avgAmount = if (monthsWithExpenses.isNotEmpty()) monthsWithExpenses.sum() / monthsWithExpenses.size else 0.0
     
     // Calculate amount difference vs average
     val vsAverage = currentAmount - avgAmount
