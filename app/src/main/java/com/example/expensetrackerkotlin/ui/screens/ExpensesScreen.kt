@@ -35,7 +35,12 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.res.stringResource
 import com.example.expensetrackerkotlin.R
 import com.example.expensetrackerkotlin.ui.components.*
+import com.example.expensetrackerkotlin.ui.components.PurchaseBottomSheet
+import com.example.expensetrackerkotlin.billing.BillingManager
 import com.example.expensetrackerkotlin.viewmodel.ExpenseViewModel
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.ui.platform.LocalContext
+import androidx.activity.ComponentActivity
 import kotlinx.coroutines.launch
 import java.time.LocalDateTime
 import androidx.compose.foundation.layout.WindowInsets
@@ -43,6 +48,7 @@ import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material.icons.automirrored.filled.Sort
+import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import com.example.expensetrackerkotlin.utils.NumberFormatter
 import java.util.Locale
@@ -63,6 +69,9 @@ enum class ExpenseSortType {
 fun ExpensesScreen(
     viewModel: ExpenseViewModel
 ) {
+    val context = LocalContext.current
+    val activity = context as? ComponentActivity
+
     val expenses by viewModel.expenses.collectAsState()
     val selectedDate by viewModel.selectedDate.collectAsState()
     val showingOverLimitAlert by viewModel.showingOverLimitAlert.collectAsState()
@@ -70,11 +79,43 @@ fun ExpensesScreen(
     val categories by viewModel.categories.collectAsState()
     val subCategories by viewModel.subCategories.collectAsState()
     val weeklyHistoryData by viewModel.weeklyHistoryData.collectAsState()
+
+    // Billing Manager
+    val billingManager = remember { BillingManager(context) }
+    val purchaseState by billingManager.purchaseState.collectAsState()
+
+    // Initialize billing client
+    DisposableEffect(Unit) {
+        billingManager.initialize()
+        onDispose {
+            billingManager.destroy()
+        }
+    }
+
+    // Handle purchase state
+    LaunchedEffect(purchaseState) {
+        when (purchaseState) {
+            is BillingManager.PurchaseState.Success -> {
+                // Show success message or handle success
+                billingManager.resetPurchaseState()
+            }
+            is BillingManager.PurchaseState.Error -> {
+                // Show error message
+                billingManager.resetPurchaseState()
+            }
+            is BillingManager.PurchaseState.Cancelled -> {
+                // Handle cancellation
+                billingManager.resetPurchaseState()
+            }
+            else -> { /* Do nothing */ }
+        }
+    }
     
     var showingAddExpense by remember { mutableStateOf(false) }
     var showingSettings by remember { mutableStateOf(false) }
     var showingMonthlyCalendar by remember { mutableStateOf(false) }
     var showingRecurringExpenses by remember { mutableStateOf(false) }
+    var showingPurchase by remember { mutableStateOf(false) }
     var currentCalendarMonth by remember { mutableStateOf(java.time.YearMonth.from(selectedDate)) }
     
     // Daily category detail bottom sheet state
@@ -476,30 +517,53 @@ fun ExpensesScreen(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            // Settings Button (Left)
-            FloatingActionButton(
-                onClick = { showingSettings = true },
-                containerColor = Color.Transparent,
-                modifier = Modifier.size(60.dp)
-                    .offset(y = 175.dp)
+            // Left side buttons (vertical stack)
+            Column(
+                verticalArrangement = Arrangement.spacedBy(12.dp),
+                horizontalAlignment = Alignment.Start
             ) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .background(
-                            Brush.radialGradient(
-                                colors = listOf(Color(0xFF101010), Color(0xFF101010))
-                            ),
-                            CircleShape
-                        ),
-                    contentAlignment = Alignment.Center
+                // Purchase/Donation Button (Top)
+                FloatingActionButton(
+                    onClick = { showingPurchase = true },
+                    containerColor = Color.Transparent,
+                    modifier = Modifier.size(60.dp)
+                        .offset(y = 140.dp)
                 ) {
-                    Icon(
-                        imageVector = Icons.Default.Settings,
-                        contentDescription = "Settings",
-                        tint = Color.White,
-                        modifier = Modifier.size(30.dp)
-                    )
+
+                        Icon(
+                            imageVector = Icons.Default.FavoriteBorder,
+                            contentDescription = "Support",
+                            tint = Color.White,
+                            modifier = Modifier.size(30.dp)
+                        )
+
+                }
+
+                // Settings Button (Bottom)
+                FloatingActionButton(
+                    onClick = { showingSettings = true },
+                    containerColor = Color.Transparent,
+                    modifier = Modifier.size(60.dp)
+                        .offset(y = 140.dp)
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .background(
+                                Brush.radialGradient(
+                                    colors = listOf(Color(0xFF101010), Color(0xFF101010))
+                                ),
+                                CircleShape
+                            ),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Settings,
+                            contentDescription = "Settings",
+                            tint = Color.White,
+                            modifier = Modifier.size(30.dp)
+                        )
+                    }
                 }
             }
             
@@ -824,6 +888,19 @@ fun ExpensesScreen(
             onDismiss = {
                 showingDailyCategoryDetail = false
                 selectedCategoryForDetail = null
+            }
+        )
+    }
+
+    // Purchase Bottom Sheet
+    if (showingPurchase) {
+        PurchaseBottomSheet(
+            isDarkTheme = isDarkTheme,
+            onDismiss = { showingPurchase = false },
+            onPurchase = { productId ->
+                activity?.let { act ->
+                    billingManager.launchPurchaseFlow(act, productId)
+                }
             }
         )
     }

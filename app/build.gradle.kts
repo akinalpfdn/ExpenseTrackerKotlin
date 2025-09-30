@@ -80,7 +80,10 @@ dependencies {
     
     // For charts and progress rings
     implementation("androidx.compose.material:material-icons-extended:1.5.4")
-    
+
+    // Google Play Billing
+    implementation("com.android.billingclient:billing-ktx:6.1.0")
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
