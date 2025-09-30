@@ -28,6 +28,7 @@ import com.example.expensetrackerkotlin.ui.theme.AppColors
 import com.example.expensetrackerkotlin.ui.theme.ThemeColors
 import com.example.expensetrackerkotlin.data.Expense
 import com.example.expensetrackerkotlin.ui.screens.ExpenseSortType
+import com.example.expensetrackerkotlin.utils.NumberFormatter
 import com.example.expensetrackerkotlin.viewmodel.ExpenseViewModel
 import java.time.YearMonth
 import java.time.format.DateTimeFormatter
@@ -220,9 +221,15 @@ fun MonthlyExpensesView(
                             fontSize = 12.sp,
                             color = ThemeColors.getTextGrayColor(isDarkTheme)
                         )
+                    Text(
+                        text = "${viewModel.defaultCurrency} ${NumberFormatter.formatAmount(( monthlyExpenses.sumOf { it.amount }))}" ,
+                        fontSize = 12.sp,
+                        color = ThemeColors.getTextGrayColor(isDarkTheme)
+                    )
 
                 }
                 // Month header
+                    /*
                 Text(
                     text = currentMonth.format(
                         DateTimeFormatter.ofPattern("MMMM yyyy", Locale.getDefault())
@@ -232,6 +239,8 @@ fun MonthlyExpensesView(
                     color = ThemeColors.getTextColor(isDarkTheme),
                     modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
                 )
+
+                     */
             }
             
             // Search bar

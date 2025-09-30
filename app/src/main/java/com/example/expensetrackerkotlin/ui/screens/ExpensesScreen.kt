@@ -44,6 +44,7 @@ import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material.icons.automirrored.filled.Sort
 import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
+import com.example.expensetrackerkotlin.utils.NumberFormatter
 import java.util.Locale
 
 enum class ExpenseSortType {
@@ -320,6 +321,11 @@ fun ExpensesScreen(
                     if (searchText.isNotBlank()) {
                         Text(
                             text = stringResource(R.string.results_count, selectedDateExpenses.size),
+                            fontSize = 12.sp,
+                            color = ThemeColors.getTextGrayColor(isDarkTheme)
+                        )
+                        Text(
+                            text = "${viewModel.defaultCurrency} ${NumberFormatter.formatAmount(( selectedDateExpenses.sumOf { it.amount }))}" ,
                             fontSize = 12.sp,
                             color = ThemeColors.getTextGrayColor(isDarkTheme)
                         )
