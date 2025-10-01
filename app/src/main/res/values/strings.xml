@@ -66,8 +66,8 @@
 
     <!-- AnalysisScreen -->
     <string name="current_period_total">Current Period Total Spending</string>
-    <string name="vs_previous_month">Compared to previous month</string>
-    <string name="vs_6_month_average">Compared to 6-month average</string>
+    <string name="vs_previous_month">vs. last month</string>
+    <string name="vs_6_month_average">vs. average</string>
     <string name="no_expenses_this_period">No expenses this period yet</string>
     <string name="analysis_will_appear">Analysis will appear here when you add expenses</string>
     <string name="previous_month">Previous month</string>
@@ -201,8 +201,8 @@
     <string name="see_details">See details</string>
 
     <!-- CategoryPopupLines -->
-    <string name="vs_previous_month_colon">Compared to previous month:</string>
-    <string name="vs_average_colon">Compared to average:</string>
+    <string name="vs_previous_month_colon">vs. last month:</string>
+    <string name="vs_average_colon">vs. average:</string>
 
     <!-- CategoryManagementScreen -->
     <string name="add_new_main_category">Add New Main Category</string>
