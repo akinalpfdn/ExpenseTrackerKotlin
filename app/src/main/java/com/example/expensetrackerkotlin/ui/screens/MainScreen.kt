@@ -30,16 +30,42 @@ fun MainScreen(
     val isFirstLaunch by viewModel.isFirstLaunch.collectAsState()
     val scope = rememberCoroutineScope()
 
-    // Show welcome screen on first launch
-    if (!isFirstLaunch) {
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(ThemeColors.getBackgroundColor(isDarkTheme))
-                .windowInsetsPadding(WindowInsets.statusBars)
-                .windowInsetsPadding(WindowInsets.navigationBars)
-        )
-        {
+    // Show loading or welcome screen based on state
+    when (isFirstLaunch) {
+        null -> {
+            // Loading state - show nothing or a splash
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(ThemeColors.getBackgroundColor(false))
+            )
+            return
+        }
+        true -> {
+            // First launch - show welcome screen
+            WelcomeScreen(
+                onFinish = {
+                    scope.launch {
+                        viewModel.completeFirstLaunch()
+                    }
+                },
+                isDarkTheme = isDarkTheme
+            )
+            return
+        }
+        false -> {
+            // Not first launch - show main app
+        }
+    }
+
+    // Main app content (isFirstLaunch == false)
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(ThemeColors.getBackgroundColor(isDarkTheme))
+            .windowInsetsPadding(WindowInsets.statusBars)
+            .windowInsetsPadding(WindowInsets.navigationBars)
+    ) {
             // Main content with HorizontalPager
             HorizontalPager(
                 state = pagerState,
@@ -85,16 +111,4 @@ fun MainScreen(
             }
         }
     }
-    else
-    {
-        WelcomeScreen(
-            onFinish = {
-                scope.launch {
-                    viewModel.completeFirstLaunch()
-                }
-            },
-            isDarkTheme = isDarkTheme
-        )
-        return
-    }
-}
+

@@ -49,8 +49,8 @@ class ExpenseViewModel(
     var monthlyLimit by mutableStateOf("")
     var theme by mutableStateOf("dark")
 
-    private val _isFirstLaunch = MutableStateFlow(true)
-    val isFirstLaunch: StateFlow<Boolean> = _isFirstLaunch.asStateFlow()
+    private val _isFirstLaunch = MutableStateFlow<Boolean?>(null) // null = loading, true = first launch, false = not first
+    val isFirstLaunch: StateFlow<Boolean?> = _isFirstLaunch.asStateFlow()
     
     init {
         // Load preferences
