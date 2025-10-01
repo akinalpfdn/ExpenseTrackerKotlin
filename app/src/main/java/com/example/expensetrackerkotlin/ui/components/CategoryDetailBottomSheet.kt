@@ -332,7 +332,7 @@ private fun DetailComparisonIndicator(
                 color = ThemeColors.getTextGrayColor(isDarkTheme)
             )
         Text(
-            text = if (amount == 0.0) "±0" else "${if (amount > 0) "+" else ""}$currency ${NumberFormatter.formatAmount(kotlin.math.abs(amount))}",
+            text = if (amount == 0.0) "±0" else "${if (amount > 0) "+" else "-"}$currency ${NumberFormatter.formatAmount(kotlin.math.abs(amount))}",
             fontSize = 16.sp,
             color = when {
                 amount > 0 -> Color.Red

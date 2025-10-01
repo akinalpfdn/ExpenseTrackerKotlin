@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Context
 import android.util.Log
 import com.android.billingclient.api.*
+import com.android.billingclient.api.PurchasesUpdatedListener
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -26,7 +27,7 @@ class BillingManager(private val context: Context) : PurchasesUpdatedListener {
     fun initialize(onBillingSetupFinished: (Boolean) -> Unit = {}) {
         billingClient = BillingClient.newBuilder(context)
             .setListener(this)
-            .enablePendingPurchases()
+            .enablePendingPurchases(PendingPurchasesParams.newBuilder().enableOneTimeProducts().build())
             .build()
 
         billingClient?.startConnection(object : BillingClientStateListener {
@@ -67,8 +68,8 @@ class BillingManager(private val context: Context) : PurchasesUpdatedListener {
             .build()
 
         client.queryProductDetailsAsync(productDetailsParams) { billingResult, productDetailsList ->
-            if (billingResult.responseCode == BillingClient.BillingResponseCode.OK && productDetailsList.isNotEmpty()) {
-                val productDetails = productDetailsList[0]
+            if (billingResult.responseCode == BillingClient.BillingResponseCode.OK && productDetailsList.productDetailsList.isNotEmpty()) {
+                val productDetails = productDetailsList.productDetailsList[0]
 
                 val billingFlowParams = BillingFlowParams.newBuilder()
                     .setProductDetailsParamsList(

@@ -363,4 +363,25 @@
     <string name="error_updating_expense_data">Harcama verileri güncellenirken hata: %s</string>
     <string name="error_updating_plan_calculations">Plan hesaplamaları güncellenirken hata: %s</string>
     <string name="error_saving_changes">Değişiklikler kaydedilirken hata: %s</string>
+
+
+    <!-- Billing Page -->
+    <string name="no_add_text">Seni saçma reklamlar ile boğmak istemiyorum ve tüm özelliklere premium versiyon olmadan ulaşabilmeni istiyorum.
+                        Ama geliştirme yapabilmem için gelire ihtiyacım var.
+                        Uygulamamı beğendiysen ve destek olmak istersen bir çayını içerim(Fiyatlara enflasyon etki etmiyor burada) :).</string>
+    <string name="buy_water">Su ısmarla</string>
+    <string name="buy_bagel">Simit ısmarla</string>
+    <string name="buy_tea">Çay ısmarla</string>
+    <string name="buy_coffee">kahve ısmarla</string>
+    <string name="buy_wrap">Hatay dürüm ısmarla</string>
+    <string name="buy_burger">burger ısmarla</string>
+    <string name="buy_doner">İskender ısmarla</string>
+    <string name="max_donation">Şaşırt beni</string>
+
+
+
+    <string name="recurring_total">"Toplam: "</string>
+    <string name="recurring_remaining">"Kalan: "</string>
+    <string name="clear">Temizle</string>
+    <string name="select_date_range_picker">Seçili Aralık:</string>
 </resources>

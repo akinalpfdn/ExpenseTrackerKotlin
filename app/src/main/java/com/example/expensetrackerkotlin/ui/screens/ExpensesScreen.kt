@@ -80,6 +80,31 @@ fun ExpensesScreen(
     val subCategories by viewModel.subCategories.collectAsState()
     val weeklyHistoryData by viewModel.weeklyHistoryData.collectAsState()
 
+    var showingAddExpense by remember { mutableStateOf(false) }
+    var showingSettings by remember { mutableStateOf(false) }
+    var showingMonthlyCalendar by remember { mutableStateOf(false) }
+    var showingRecurringExpenses by remember { mutableStateOf(false) }
+    var showingPurchase by remember { mutableStateOf(false) }
+    var currentCalendarMonth by remember { mutableStateOf(java.time.YearMonth.from(selectedDate)) }
+
+    // Daily category detail bottom sheet state
+    var showingDailyCategoryDetail by remember { mutableStateOf(false) }
+    var selectedCategoryForDetail by remember { mutableStateOf<com.example.expensetrackerkotlin.data.Category?>(null) }
+
+    // Search and sorting state
+    var searchText by remember { mutableStateOf("") }
+    var showSortMenu by remember { mutableStateOf(false) }
+    var currentSortType by remember { mutableStateOf(ExpenseSortType.TIME_NEWEST_FIRST) }
+    var showSearchBar by remember { mutableStateOf(false) }
+
+    val scope = rememberCoroutineScope()
+
+    // Get selected date expenses (including recurring expenses)
+    val baseSelectedDateExpenses = remember(expenses, selectedDate) {
+        expenses.filter { expense ->
+            expense.isActiveOnDate(selectedDate)
+        }
+    }
     // Billing Manager
     val billingManager = remember { BillingManager(context) }
     val purchaseState by billingManager.purchaseState.collectAsState()
@@ -92,50 +117,40 @@ fun ExpensesScreen(
         }
     }
 
+    // Purchase result state for showing messages
+    var showPurchaseMessage by remember { mutableStateOf<String?>(null) }
+
     // Handle purchase state
     LaunchedEffect(purchaseState) {
-        when (purchaseState) {
+        when (val state = purchaseState) {
             is BillingManager.PurchaseState.Success -> {
-                // Show success message or handle success
+                showPurchaseMessage = "🎉 Teşekkürler! Satın alma başarılı: ${state.productId}"
+                showingPurchase = false
                 billingManager.resetPurchaseState()
             }
             is BillingManager.PurchaseState.Error -> {
-                // Show error message
+                showPurchaseMessage = "❌ Hata: ${state.message}"
                 billingManager.resetPurchaseState()
             }
             is BillingManager.PurchaseState.Cancelled -> {
-                // Handle cancellation
+                showPurchaseMessage = "❌ Satın alma iptal edildi"
                 billingManager.resetPurchaseState()
+            }
+            is BillingManager.PurchaseState.Loading -> {
+                showPurchaseMessage = "⏳ Satın alma işlemi başlatılıyor..."
             }
             else -> { /* Do nothing */ }
         }
     }
-    
-    var showingAddExpense by remember { mutableStateOf(false) }
-    var showingSettings by remember { mutableStateOf(false) }
-    var showingMonthlyCalendar by remember { mutableStateOf(false) }
-    var showingRecurringExpenses by remember { mutableStateOf(false) }
-    var showingPurchase by remember { mutableStateOf(false) }
-    var currentCalendarMonth by remember { mutableStateOf(java.time.YearMonth.from(selectedDate)) }
-    
-    // Daily category detail bottom sheet state
-    var showingDailyCategoryDetail by remember { mutableStateOf(false) }
-    var selectedCategoryForDetail by remember { mutableStateOf<com.example.expensetrackerkotlin.data.Category?>(null) }
-    
-    // Search and sorting state
-    var searchText by remember { mutableStateOf("") }
-    var showSortMenu by remember { mutableStateOf(false) }
-    var currentSortType by remember { mutableStateOf(ExpenseSortType.TIME_NEWEST_FIRST) }
-    var showSearchBar by remember { mutableStateOf(false) }
-    
-    val scope = rememberCoroutineScope()
-    
-    // Get selected date expenses (including recurring expenses)
-    val baseSelectedDateExpenses = remember(expenses, selectedDate) {
-        expenses.filter { expense ->
-            expense.isActiveOnDate(selectedDate)
+
+    // Auto-hide message after 3 seconds
+    LaunchedEffect(showPurchaseMessage) {
+        if (showPurchaseMessage != null) {
+            kotlinx.coroutines.delay(3000)
+            showPurchaseMessage = null
         }
     }
+
     
     // Filter and sort expenses
     val selectedDateExpenses = remember(baseSelectedDateExpenses, searchText, currentSortType, categories, subCategories) {
@@ -652,9 +667,44 @@ fun ExpensesScreen(
                         fontWeight = FontWeight.Medium,
                         modifier = Modifier.weight(1f)
                     )
-                    
+
                     TextButton(
                         onClick = { viewModel.dismissOverLimitAlert() }
+                    ) {
+                        Text("✕", color = Color.White)
+                    }
+                }
+            }
+        }
+
+        // Purchase Message Alert
+        if (showPurchaseMessage != null) {
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(20.dp)
+                    .align(Alignment.TopCenter),
+                colors = CardDefaults.cardColors(
+                    containerColor = if (showPurchaseMessage!!.contains("🎉"))
+                        Color.Green else AppColors.PrimaryOrange
+                ),
+                elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
+            ) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = showPurchaseMessage!!,
+                        color = Color.White,
+                        fontWeight = FontWeight.Medium,
+                        modifier = Modifier.weight(1f)
+                    )
+
+                    TextButton(
+                        onClick = { showPurchaseMessage = null }
                     ) {
                         Text("✕", color = Color.White)
                     }

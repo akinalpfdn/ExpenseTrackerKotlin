@@ -925,8 +925,14 @@ fun calculateCategoryComparison(
         vsLastMonth = 0.0
     }
     // Calculate 6-month average (current + 5 previous months)
-    val monthsToCheck = listOf(currentMonth, currentMonth.minusMonths(1), currentMonth.minusMonths(2), currentMonth.minusMonths(3)
-        , currentMonth.minusMonths(4), currentMonth.minusMonths(5))
+    val monthsToCheck = listOf( currentMonth.minusMonths(1),
+        currentMonth.minusMonths(2),
+        currentMonth.minusMonths(3)
+        , currentMonth.minusMonths(4),
+
+        currentMonth.minusMonths(5),
+        currentMonth.minusMonths(6)
+    ,)
     val monthlyAmounts = monthsToCheck.map { month ->
         expenses.filter { expense ->
             val expenseDate = expense.date.toLocalDate()
@@ -993,7 +999,12 @@ fun calculateTotalComparison(
     }
 
     // Calculate 6-month average
-    val monthsToCheck = listOf(currentMonth, currentMonth.minusMonths(1), currentMonth.minusMonths(2), currentMonth.minusMonths(3), currentMonth.minusMonths(4), currentMonth.minusMonths(5))
+    val monthsToCheck = listOf( currentMonth.minusMonths(1),
+        currentMonth.minusMonths(2),
+        currentMonth.minusMonths(3),
+        currentMonth.minusMonths(4),
+        currentMonth.minusMonths(5),
+        currentMonth.minusMonths(6))
     val monthlyAmounts = monthsToCheck.map { month ->
         expenses.filter { expense ->
             val expenseDate = expense.date.toLocalDate()
@@ -1039,7 +1050,7 @@ private fun TotalComparisonIndicator(
         Spacer(modifier = Modifier.height(14.dp))
         
         Text(
-            text = if (amount == 0.0) "±0" else "${if (amount > 0) "+" else ""}$currency ${NumberFormatter.formatAmount(
+            text = if (amount == 0.0) "±0" else "${if (amount > 0) "+" else "-"}$currency ${NumberFormatter.formatAmount(
                 abs(amount)
             )}",
             fontSize = 16.sp,

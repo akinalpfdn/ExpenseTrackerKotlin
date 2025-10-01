@@ -64,7 +64,7 @@ fun DateRangePicker(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = "Tarih Aralığı Seçin",
+                    text = stringResource(R.string.pick_date_range) ,
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Bold,
                     color = ThemeColors.getTextColor(isDarkTheme)
@@ -76,7 +76,7 @@ fun DateRangePicker(
                     }
                 ) {
                     Text(
-                        text = "Temizle",
+                        text = stringResource(R.string.clear),
                         color = AppColors.PrimaryOrange
                     )
                 }
@@ -97,7 +97,7 @@ fun DateRangePicker(
                         modifier = Modifier.padding(10.dp)
                     ) {
                         Text(
-                            text = "Seçili Aralık:",
+                            text = stringResource(R.string.select_date_range_picker),
                             fontSize = 14.sp,
                             color = ThemeColors.getTextGrayColor(isDarkTheme),
                             fontWeight = FontWeight.Medium

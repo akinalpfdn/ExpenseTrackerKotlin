@@ -5,6 +5,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
@@ -16,6 +17,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -55,31 +57,36 @@ fun PurchaseBottomSheet(
         containerColor = ThemeColors.getBackgroundColor(isDarkTheme),
         dragHandle = { BottomSheetDefaults.DragHandle() }
     ) {
-        Column(
+        Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(24.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
+                .heightIn(max = 600.dp)
         ) {
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(24.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
+                item {
 
 
-            // Typewriter Animation Text
-            TypewriterText(
-                text = "Senin saçma reklamlar ile boğmak istemiyorum ve tüm özelliklere premium versiyon olmadan ulaşabilmeni istiyorum." +
-                " Ama geliştirme yapabilmem için gelire ihtiyacım var." +
-                " Uygulamamı beğendiysen ve destek olmak istersen bir çayını içerim(Fiyatlara enflasyon etki etmiyor burada) :).",
-                isDarkTheme = isDarkTheme
-            )
+                    // Typewriter Animation Text
+                    TypewriterText(
+                        stringResource(R.string.no_add_text),
+                        isDarkTheme = isDarkTheme
+                    )
+                }
 
-            Spacer(modifier = Modifier.height(32.dp))
-
-            // Purchase Options
-            PurchaseOptions(
-                isDarkTheme = isDarkTheme,
-                onPurchase = onPurchase
-            )
-
-            Spacer(modifier = Modifier.height(24.dp))
+                item {
+                    // Purchase Options
+                    PurchaseOptions(
+                        isDarkTheme = isDarkTheme,
+                        onPurchase = onPurchase
+                    )
+                }
+            }
         }
     }
 }
@@ -123,49 +130,49 @@ private fun PurchaseOptions(
     val burrito: ImageVector = ImageVector.vectorResource(id = R.drawable.burrito)
     val purchaseOptions = listOf(
         PurchaseOption(
-            title = "Su ısmarla",
+            title =  stringResource(R.string.buy_water),
             price = "5 TL",
             icon = Icons.Default.LocalDrink,
             productId = "su_donation"
         ),
         PurchaseOption(
-            title = "Çay ısmarla",
+            title =  stringResource(R.string.buy_tea),
             price = "10 TL",
             icon = Icons.Default.LocalCafe,
             productId = "tea_donation"
         ),
         PurchaseOption(
-            title = "Simit ısmarla",
+            title =  stringResource(R.string.buy_bagel),
             price = "25 TL",
             icon = bagel,
             productId = "bagel_donation"
         ),
         PurchaseOption(
-            title = "Kahve ısmarla",
+            title =  stringResource(R.string.buy_coffee),
             price = "50 TL",
             icon = Icons.Default.LocalCafe,
             productId = "coffee_donation"
         ),
         PurchaseOption(
-            title = "Hatay Dürüm ısmarla",
+            title =  stringResource(R.string.buy_wrap),
             price = "100 TL",
             icon = burrito,
             productId = "wrap_donation"
         ),
         PurchaseOption(
-            title = "Burger ısmarla",
+            title =  stringResource(R.string.buy_burger),
             price = "250 TL",
             icon = Icons.Default.LunchDining,
             productId = "burger_donation"
         ),
         PurchaseOption(
-            title = "İskender ısmarla",
+            title =  stringResource(R.string.buy_doner),
             price = "400 TL",
             icon = doner,
             productId = "doner_donation"
         ),
         PurchaseOption(
-            title = "Şımart beni",
+            title =  stringResource(R.string.max_donation),
             price = "500 TL",
             icon = Icons.Default.Star,
             productId = "max_donation"

@@ -576,12 +576,12 @@ fun RecurringExpenseCard(
                                 )
                             }
                             Text(
-                                text = "Toplam: ${viewModel.defaultCurrency} ${NumberFormatter.formatAmount(totalAmount)}",
+                                text = stringResource(R.string.recurring_total) + "${viewModel.defaultCurrency} ${NumberFormatter.formatAmount(totalAmount)}",
                                 fontSize = 11.sp,
                                 color = ThemeColors.getTextGrayColor(isDarkTheme)
                             )
                             Text(
-                                text = "Kalan: ${viewModel.defaultCurrency} ${NumberFormatter.formatAmount(remainingAmount)}",
+                                text = stringResource(R.string.recurring_remaining) +"${viewModel.defaultCurrency} ${NumberFormatter.formatAmount(remainingAmount)}",
                                 fontSize = 11.sp,
                                 color = AppColors.PrimaryOrange
                             )

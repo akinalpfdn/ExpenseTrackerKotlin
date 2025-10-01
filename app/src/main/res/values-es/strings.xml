@@ -365,4 +365,21 @@
     <string name="category_tax">Impuestos y Gastos Legales</string>
     <string name="category_donations">Donaciones y Ayuda</string>
     <string name="category_others">Otros Pagos</string>
+    <!-- Billing Page -->
+    <string name="no_add_text">I don\'t want to bombard you with silly ads,
+        and I want you to be able to access all features without needing the premium version.
+        But I need income to keep developing. If you like my app and want to support me,
+        feel free to tip a cup of tea (Prices aren\'t affected by inflation here) :).</string>
+    <string name="buy_water">tip a water</string>
+    <string name="buy_bagel">tip a bagel</string>
+    <string name="buy_tea">tip a tea</string>
+    <string name="buy_coffee">tip a coffee</string>
+    <string name="buy_wrap">tip a wrap</string>
+    <string name="buy_burger">tip a burger</string>
+    <string name="buy_doner">tip a doner</string>
+    <string name="max_donation">suprise me</string>
+    <string name="recurring_total">"Total: "</string>
+    <string name="recurring_remaining">"Remaining: "</string>
+    <string name="clear">Clear</string>
+    <string name="select_date_range_picker">Selected Range:</string>
 </resources>
