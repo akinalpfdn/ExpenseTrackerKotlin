@@ -31,7 +31,62 @@ fun MainScreen(
     val scope = rememberCoroutineScope()
 
     // Show welcome screen on first launch
-    if (isFirstLaunch) {
+    if (!isFirstLaunch) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(ThemeColors.getBackgroundColor(isDarkTheme))
+                .windowInsetsPadding(WindowInsets.statusBars)
+                .windowInsetsPadding(WindowInsets.navigationBars)
+        )
+        {
+            // Main content with HorizontalPager
+            HorizontalPager(
+                state = pagerState,
+                modifier = Modifier.fillMaxSize()
+            ) { page ->
+                when (page) {
+                    0 -> ExpensesScreen(viewModel = viewModel)
+                    1 -> AnalysisScreen(viewModel = viewModel, isDarkTheme = isDarkTheme)
+                    2 -> PlanningScreen(
+                        isDarkTheme = isDarkTheme,
+                        planningViewModel = planningViewModel,
+                        defaultCurrency = viewModel.defaultCurrency
+                    )
+                }
+            }
+
+            // Page indicator at the bottom
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .align(Alignment.BottomCenter)
+                    .padding(bottom = 20.dp),
+                horizontalArrangement = Arrangement.Center
+            ) {
+                repeat(3) { index ->
+                    Box(
+                        modifier = Modifier
+                            .padding(horizontal = 4.dp)
+                            .size(
+                                width = if (pagerState.currentPage == index) 24.dp else 8.dp,
+                                height = 8.dp
+                            )
+                            .background(
+                                color = if (pagerState.currentPage == index) {
+                                    AppColors.PrimaryOrange
+                                } else {
+                                    ThemeColors.getTextGrayColor(isDarkTheme).copy(alpha = 0.5f)
+                                },
+                                shape = androidx.compose.foundation.shape.RoundedCornerShape(4.dp)
+                            )
+                    )
+                }
+            }
+        }
+    }
+    else
+    {
         WelcomeScreen(
             onFinish = {
                 scope.launch {
@@ -41,57 +96,5 @@ fun MainScreen(
             isDarkTheme = isDarkTheme
         )
         return
-    }
-    
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(ThemeColors.getBackgroundColor(isDarkTheme))
-            .windowInsetsPadding(WindowInsets.statusBars)
-            .windowInsetsPadding(WindowInsets.navigationBars)
-    ) {
-        // Main content with HorizontalPager
-        HorizontalPager(
-            state = pagerState,
-            modifier = Modifier.fillMaxSize()
-        ) { page ->
-            when (page) {
-                0 -> ExpensesScreen(viewModel = viewModel)
-                1 -> AnalysisScreen(viewModel = viewModel,isDarkTheme = isDarkTheme)
-                2-> PlanningScreen(
-                    isDarkTheme = isDarkTheme,
-                    planningViewModel = planningViewModel,
-                    defaultCurrency = viewModel.defaultCurrency
-                )
-            }
-        }
-        
-        // Page indicator at the bottom
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .align(Alignment.BottomCenter)
-                .padding(bottom = 20.dp),
-            horizontalArrangement = Arrangement.Center
-        ) {
-            repeat(3) { index ->
-                Box(
-                    modifier = Modifier
-                        .padding(horizontal = 4.dp)
-                        .size(
-                            width = if (pagerState.currentPage == index) 24.dp else 8.dp,
-                            height = 8.dp
-                        )
-                        .background(
-                            color = if (pagerState.currentPage == index) {
-                                AppColors.PrimaryOrange
-                            } else {
-                                ThemeColors.getTextGrayColor(isDarkTheme).copy(alpha = 0.5f)
-                            },
-                            shape = androidx.compose.foundation.shape.RoundedCornerShape(4.dp)
-                        )
-                )
-            }
-        }
     }
 }

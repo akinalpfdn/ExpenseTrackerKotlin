@@ -41,6 +41,7 @@ import com.example.expensetrackerkotlin.viewmodel.ExpenseViewModel
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.ui.platform.LocalContext
 import androidx.activity.ComponentActivity
+import androidx.compose.foundation.clickable
 import kotlinx.coroutines.launch
 import java.time.LocalDateTime
 import androidx.compose.foundation.layout.WindowInsets
@@ -125,7 +126,6 @@ fun ExpensesScreen(
         when (val state = purchaseState) {
             is BillingManager.PurchaseState.Success -> {
                 showPurchaseMessage = "🎉 Teşekkürler! Satın alma başarılı: ${state.productId}"
-                showingPurchase = false
                 billingManager.resetPurchaseState()
             }
             is BillingManager.PurchaseState.Error -> {
@@ -689,36 +689,50 @@ fun ExpensesScreen(
             }
         }
 
-        // Purchase Message Alert
+        // Purchase Message Alert - Full screen overlay
         if (showPurchaseMessage != null) {
-            Card(
+            Box(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(20.dp)
-                    .align(Alignment.TopCenter),
-                colors = CardDefaults.cardColors(
-                    containerColor = if (showPurchaseMessage!!.contains("🎉"))
-                        Color.Green else AppColors.PrimaryOrange
-                ),
-                elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
+                    .fillMaxSize()
+                    .background(Color.Black.copy(alpha = 0.5f))
+                    .clickable { showPurchaseMessage = null },
+                contentAlignment = Alignment.Center
             ) {
-                Row(
+                Card(
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp),
-                    verticalAlignment = Alignment.CenterVertically
+                        .fillMaxWidth(0.85f)
+                        .clickable { }, // Prevent click through
+                    colors = CardDefaults.cardColors(
+                        containerColor = if (showPurchaseMessage!!.contains("🎉"))
+                            Color(0xFF4CAF50) else AppColors.PrimaryOrange
+                    ),
+                    elevation = CardDefaults.cardElevation(defaultElevation = 16.dp),
+                    shape = RoundedCornerShape(20.dp)
                 ) {
-                    Text(
-                        text = showPurchaseMessage!!,
-                        color = Color.White,
-                        fontWeight = FontWeight.Medium,
-                        modifier = Modifier.weight(1f)
-                    )
-
-                    TextButton(
-                        onClick = { showPurchaseMessage = null }
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(24.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                        Text("✕", color = Color.White)
+                        Text(
+                            text = showPurchaseMessage!!,
+                            color = Color.White,
+                            fontWeight = FontWeight.Medium,
+                            fontSize = 16.sp,
+                            textAlign = TextAlign.Center
+                        )
+
+                        Spacer(modifier = Modifier.height(16.dp))
+
+                        Button(
+                            onClick = { showPurchaseMessage = null },
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = Color.White.copy(alpha = 0.2f)
+                            )
+                        ) {
+                            Text("OK", color = Color.White)
+                        }
                     }
                 }
             }
