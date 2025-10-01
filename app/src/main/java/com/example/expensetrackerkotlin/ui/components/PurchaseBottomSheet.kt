@@ -13,10 +13,8 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
@@ -131,49 +129,49 @@ private fun PurchaseOptions(
     val purchaseOptions = listOf(
         PurchaseOption(
             title =  stringResource(R.string.buy_water),
-            price = "5 TL",
+            price = stringResource(R.string.water_price),
             icon = Icons.Default.LocalDrink,
             productId = "su_donation"
         ),
         PurchaseOption(
             title =  stringResource(R.string.buy_tea),
-            price = "10 TL",
+            price = stringResource(R.string.tea_price),
             icon = Icons.Default.LocalCafe,
             productId = "tea_donation"
         ),
         PurchaseOption(
             title =  stringResource(R.string.buy_bagel),
-            price = "25 TL",
+            price = stringResource(R.string.bagel_price),
             icon = bagel,
             productId = "bagel_donation"
         ),
         PurchaseOption(
             title =  stringResource(R.string.buy_coffee),
-            price = "50 TL",
+            price = stringResource(R.string.coffee_price),
             icon = Icons.Default.LocalCafe,
             productId = "coffee_donation"
         ),
         PurchaseOption(
             title =  stringResource(R.string.buy_wrap),
-            price = "100 TL",
+            price = stringResource(R.string.wrap_price),
             icon = burrito,
             productId = "wrap_donation"
         ),
         PurchaseOption(
             title =  stringResource(R.string.buy_burger),
-            price = "250 TL",
+            price = stringResource(R.string.burger_price),
             icon = Icons.Default.LunchDining,
             productId = "burger_donation"
         ),
         PurchaseOption(
             title =  stringResource(R.string.buy_doner),
-            price = "400 TL",
+            price = stringResource(R.string.doner_price),
             icon = doner,
             productId = "doner_donation"
         ),
         PurchaseOption(
             title =  stringResource(R.string.max_donation),
-            price = "500 TL",
+            price = stringResource(R.string.max_price),
             icon = Icons.Default.Star,
             productId = "max_donation"
         )
@@ -266,14 +264,6 @@ private fun PurchaseOptionCard(
     modifier: Modifier = Modifier
 ) {
     var isPressed by remember { mutableStateOf(false) }
-    val scale by animateFloatAsState(
-        targetValue = if (isPressed) 0.95f else 1f,
-        animationSpec = spring(
-            dampingRatio = Spring.DampingRatioMediumBouncy,
-            stiffness = Spring.StiffnessLow
-        ),
-        label = "card_scale"
-    )
 
     Card(
         modifier = modifier
@@ -294,7 +284,7 @@ private fun PurchaseOptionCard(
             containerColor = Color.Transparent
         ),
         elevation = CardDefaults.cardElevation(
-            defaultElevation = if (isPressed) 8.dp else 4.dp
+            defaultElevation = if (isPressed) 8.dp else 0.dp
         ),
         shape = RoundedCornerShape(16.dp)
     ) {

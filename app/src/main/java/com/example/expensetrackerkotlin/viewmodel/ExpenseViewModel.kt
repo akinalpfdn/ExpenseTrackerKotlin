@@ -49,6 +49,9 @@ class ExpenseViewModel(
     var dailyLimit by mutableStateOf("")
     var monthlyLimit by mutableStateOf("")
     var theme by mutableStateOf("dark")
+
+    private val _isFirstLaunch = MutableStateFlow(true)
+    val isFirstLaunch: StateFlow<Boolean> = _isFirstLaunch.asStateFlow()
     
     init {
         // Load preferences
@@ -72,7 +75,12 @@ class ExpenseViewModel(
                 theme = themeValue
             }
         }
-        
+        viewModelScope.launch {
+            preferencesManager.isFirstLaunch.collect { isFirst ->
+                _isFirstLaunch.value = isFirst
+            }
+        }
+
         // Load expenses from database
         viewModelScope.launch {
             expenseRepository.allExpenses.collect { expensesList ->
@@ -548,7 +556,12 @@ class ExpenseViewModel(
         preferencesManager.setTheme(theme)
         this.theme = theme
     }
-    
+
+    suspend fun completeFirstLaunch() {
+        preferencesManager.setFirstLaunchCompleted()
+        _isFirstLaunch.value = false
+    }
+
     // Monthly progress methods for specific month
     fun getMonthlyTotal(yearMonth: java.time.YearMonth): Double {
         val startOfMonth = yearMonth.atDay(1).atStartOfDay()

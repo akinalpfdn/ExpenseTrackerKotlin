@@ -384,4 +384,12 @@
     <string name="recurring_remaining">"Kalan: "</string>
     <string name="clear">Temizle</string>
     <string name="select_date_range_picker">Seçili Aralık:</string>
+    <string name="water_price">5 TL</string>
+    <string name="tea_price">10 TL</string>
+    <string name="bagel_price">25 TL</string>
+    <string name="coffee_price">50 TL</string>
+    <string name="wrap_price">100 TL</string>
+    <string name="burger_price">250 TL</string>
+    <string name="doner_price">400 TL</string>
+    <string name="max_price">500 TL</string>
 </resources>

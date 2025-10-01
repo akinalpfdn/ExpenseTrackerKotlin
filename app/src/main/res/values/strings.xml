@@ -383,4 +383,12 @@
     <string name="recurring_remaining">"Remaining: "</string>
     <string name="clear">Clear</string>
     <string name="select_date_range_picker">Selected Range:</string>
+    <string name="water_price">0.5 USD</string>
+    <string name="tea_price">0.24 USD</string>
+    <string name="bagel_price">0.60 USD</string>
+    <string name="coffee_price">1.20 USD</string>
+    <string name="wrap_price">2.40 USD</string>
+    <string name="burger_price">6 USD</string>
+    <string name="doner_price">9.60 USD</string>
+    <string name="max_price">12 USD</string>
 </resources>

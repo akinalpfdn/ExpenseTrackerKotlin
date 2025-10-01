@@ -153,6 +153,8 @@ fun PlanningScreen(
         FloatingActionButton(
             onClick = { showCreatePlanDialog = true },
             containerColor = Color.Transparent,
+            elevation = FloatingActionButtonDefaults.elevation(0.dp, 0.dp, 0.dp, 0.dp),
+
             modifier = Modifier
                 .align(Alignment.BottomEnd)
                 .padding(20.dp)

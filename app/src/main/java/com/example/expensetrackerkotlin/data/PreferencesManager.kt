@@ -5,6 +5,7 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
+import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -17,6 +18,7 @@ class PreferencesManager(private val context: Context) {
         private val DAILY_LIMIT_KEY = stringPreferencesKey("daily_limit")
         private val MONTHLY_LIMIT_KEY = stringPreferencesKey("monthly_limit")
         private val THEME_KEY = stringPreferencesKey("theme")
+        private val IS_FIRST_LAUNCH_KEY = booleanPreferencesKey("is_first_launch")
     }
 
     val defaultCurrency: Flow<String> = context.dataStore.data.map { preferences ->
@@ -33,6 +35,10 @@ class PreferencesManager(private val context: Context) {
 
     val theme: Flow<String> = context.dataStore.data.map { preferences ->
         preferences[THEME_KEY] ?: "dark"
+    }
+
+    val isFirstLaunch: Flow<Boolean> = context.dataStore.data.map { preferences ->
+        preferences[IS_FIRST_LAUNCH_KEY] ?: true
     }
 
     suspend fun setDefaultCurrency(currency: String) {
@@ -56,6 +62,12 @@ class PreferencesManager(private val context: Context) {
     suspend fun setTheme(theme: String) {
         context.dataStore.edit { preferences ->
             preferences[THEME_KEY] = theme
+        }
+    }
+
+    suspend fun setFirstLaunchCompleted() {
+        context.dataStore.edit { preferences ->
+            preferences[IS_FIRST_LAUNCH_KEY] = false
         }
     }
 }

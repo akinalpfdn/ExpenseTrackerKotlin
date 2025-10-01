@@ -8,18 +8,16 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import com.example.expensetrackerkotlin.ui.theme.AppColors
 import com.example.expensetrackerkotlin.ui.theme.ThemeColors
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.example.expensetrackerkotlin.viewmodel.ExpenseViewModel
 import com.example.expensetrackerkotlin.viewmodel.PlanningViewModel
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.windowInsetsPadding
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -29,6 +27,21 @@ fun MainScreen(
 ) {
     val pagerState = rememberPagerState(pageCount = { 3 },initialPage = 0)
     val isDarkTheme = viewModel.theme == "dark"
+    val isFirstLaunch by viewModel.isFirstLaunch.collectAsState()
+    val scope = rememberCoroutineScope()
+
+    // Show welcome screen on first launch
+    if (isFirstLaunch) {
+        WelcomeScreen(
+            onFinish = {
+                scope.launch {
+                    viewModel.completeFirstLaunch()
+                }
+            },
+            isDarkTheme = isDarkTheme
+        )
+        return
+    }
     
     Box(
         modifier = Modifier
