@@ -26,6 +26,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.zIndex
 import com.example.expensetrackerkotlin.ui.theme.AppColors
 import com.example.expensetrackerkotlin.ui.theme.ThemeColors
 import androidx.compose.ui.text.font.FontWeight
@@ -689,13 +690,14 @@ fun ExpensesScreen(
             }
         }
 
-        // Purchase Message Alert - Full screen overlay
-        if (showPurchaseMessage != null) {
+        // Purchase Message Alert - Only shown when bottom sheet is NOT open
+        if (showPurchaseMessage != null && !showingPurchase) {
             Box(
                 modifier = Modifier
                     .fillMaxSize()
                     .background(Color.Black.copy(alpha = 0.5f))
-                    .clickable { showPurchaseMessage = null },
+                    .clickable { showPurchaseMessage = null }
+                    .zIndex(1000f),
                 contentAlignment = Alignment.Center
             ) {
                 Card(
@@ -977,7 +979,9 @@ fun ExpensesScreen(
                 activity?.let { act ->
                     billingManager.launchPurchaseFlow(act, productId)
                 }
-            }
+            },
+            purchaseMessage = showPurchaseMessage,
+            onMessageDismiss = { showPurchaseMessage = null }
         )
     }
 }

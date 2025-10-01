@@ -37,7 +37,9 @@ data class PurchaseOption(
 fun PurchaseBottomSheet(
     isDarkTheme: Boolean,
     onDismiss: () -> Unit,
-    onPurchase: (String) -> Unit
+    onPurchase: (String) -> Unit,
+    purchaseMessage: String? = null,
+    onMessageDismiss: () -> Unit = {}
 ) {
     val sheetState = rememberModalBottomSheetState(
         skipPartiallyExpanded = true,
@@ -85,6 +87,35 @@ fun PurchaseBottomSheet(
                 }
             }
         }
+    }
+
+    // Purchase Message as separate Dialog (will be on top of ModalBottomSheet)
+    if (purchaseMessage != null) {
+        AlertDialog(
+            onDismissRequest = onMessageDismiss,
+            confirmButton = {
+                Button(
+                    onClick = onMessageDismiss,
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color.White.copy(alpha = 0.2f)
+                    )
+                ) {
+                    Text("OK", color = Color.White)
+                }
+            },
+            text = {
+                Text(
+                    text = purchaseMessage,
+                    color = Color.White,
+                    fontWeight = FontWeight.Medium,
+                    fontSize = 16.sp,
+                    textAlign = TextAlign.Center
+                )
+            },
+            containerColor = if (purchaseMessage.contains("🎉"))
+                Color(0xFF4CAF50) else AppColors.PrimaryOrange,
+            shape = RoundedCornerShape(20.dp)
+        )
     }
 }
 
