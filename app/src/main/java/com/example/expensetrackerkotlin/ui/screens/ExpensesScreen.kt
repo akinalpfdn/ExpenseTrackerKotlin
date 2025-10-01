@@ -540,6 +540,7 @@ fun ExpensesScreen(
                 // Purchase/Donation Button (Top)
                 FloatingActionButton(
                     onClick = { showingPurchase = true },
+                    elevation = FloatingActionButtonDefaults.elevation(0.dp, 0.dp, 0.dp, 0.dp),
                     containerColor = Color.Transparent,
                     modifier = Modifier.size(60.dp)
                         .offset(y = 140.dp)
@@ -566,6 +567,7 @@ fun ExpensesScreen(
                 // Settings Button (Bottom)
                 FloatingActionButton(
                     onClick = { showingSettings = true },
+                    elevation = FloatingActionButtonDefaults.elevation(0.dp, 0.dp, 0.dp, 0.dp),
                     containerColor = Color.Transparent,
                     modifier = Modifier.size(60.dp)
                         .offset(y = 140.dp)
@@ -598,6 +600,7 @@ fun ExpensesScreen(
                 // Recurring Expenses Button (Top)
                 FloatingActionButton(
                     onClick = { showingRecurringExpenses = true },
+                    elevation = FloatingActionButtonDefaults.elevation(0.dp, 0.dp, 0.dp, 0.dp),
                     containerColor = Color.Transparent,
                     modifier = Modifier.size(60.dp)
                         .offset(y = 140.dp)
@@ -625,6 +628,7 @@ fun ExpensesScreen(
                 // Add Expense Button (Bottom)
                 FloatingActionButton(
                     onClick = { showingAddExpense = true },
+                    elevation = FloatingActionButtonDefaults.elevation(0.dp, 0.dp, 0.dp, 0.dp),
                     containerColor = Color.Transparent,
                     modifier = Modifier.size(60.dp)
                         .offset(y = 140.dp)
