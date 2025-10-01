@@ -65,27 +65,36 @@ dependencies {
     implementation(libs.androidx.material3)
     
     // Navigation
+    //noinspection UseTomlInstead,GradleDependency
     implementation("androidx.navigation:navigation-compose:2.7.6")
     
     // ViewModel
+    //noinspection UseTomlInstead,GradleDependency
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.7.0")
     
     // Date picker
+    //noinspection UseTomlInstead,GradleDependency
     implementation("io.github.vanpra.compose-material-dialogs:datetime:0.9.0")
     
     // Preferences DataStore
+    //noinspection UseTomlInstead,GradleDependency
     implementation("androidx.datastore:datastore-preferences:1.0.0")
     
     // Room Database
+    //noinspection UseTomlInstead,GradleDependency
     implementation("androidx.room:room-runtime:2.6.1")
+    //noinspection UseTomlInstead,GradleDependency
     implementation("androidx.room:room-ktx:2.6.1")
     implementation(libs.billing.ktx)
+    //noinspection GradleDependency,KaptUsageInsteadOfKsp,UseTomlInstead
     kapt("androidx.room:room-compiler:2.6.1")
     
     // For charts and progress rings
+    //noinspection UseTomlInstead,GradleDependency
     implementation("androidx.compose.material:material-icons-extended:1.5.4")
 
     // Google Play Billing
+    //noinspection GradleDependency,UseTomlInstead
     implementation("com.android.billingclient:billing-ktx:6.1.0")
 
     testImplementation(libs.junit)
