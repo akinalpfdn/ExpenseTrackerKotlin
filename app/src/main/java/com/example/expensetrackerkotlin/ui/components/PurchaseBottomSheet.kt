@@ -104,7 +104,7 @@ private fun TypewriterText(
         isAnimationComplete = false
 
         text.forEachIndexed { index, _ ->
-            delay(80) // Typewriter speed
+            delay(60) // Typewriter speed
             displayText = text.substring(0, index + 1)
         }
 

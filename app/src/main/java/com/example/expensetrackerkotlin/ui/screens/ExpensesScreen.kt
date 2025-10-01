@@ -544,14 +544,23 @@ fun ExpensesScreen(
                     modifier = Modifier.size(60.dp)
                         .offset(y = 140.dp)
                 ) {
-
-                        Icon(
-                            imageVector = Icons.Default.FavoriteBorder,
-                            contentDescription = "Support",
-                            tint = Color.White,
-                            modifier = Modifier.size(30.dp)
-                        )
-
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .background(
+                                ThemeColors.getCardBackgroundColor(isDarkTheme)
+                                ,
+                                CircleShape
+                            ),
+                        contentAlignment = Alignment.Center
+                    ) {
+                    Icon(
+                        imageVector = Icons.Default.FavoriteBorder,
+                        contentDescription = "Support",
+                        tint = ThemeColors.getTextColor(isDarkTheme),
+                        modifier = Modifier.size(30.dp)
+                    )
+                }
                 }
 
                 // Settings Button (Bottom)
@@ -565,9 +574,8 @@ fun ExpensesScreen(
                         modifier = Modifier
                             .fillMaxSize()
                             .background(
-                                Brush.radialGradient(
-                                    colors = listOf(Color(0xFF101010), Color(0xFF101010))
-                                ),
+                                    ThemeColors.getCardBackgroundColor(isDarkTheme)
+                                 ,
                                 CircleShape
                             ),
                         contentAlignment = Alignment.Center
@@ -575,7 +583,7 @@ fun ExpensesScreen(
                         Icon(
                             imageVector = Icons.Default.Settings,
                             contentDescription = "Settings",
-                            tint = Color.White,
+                            tint = ThemeColors.getTextColor(isDarkTheme),
                             modifier = Modifier.size(30.dp)
                         )
                     }

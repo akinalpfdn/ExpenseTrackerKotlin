@@ -16,7 +16,7 @@ object PlanningUtils {
      * Formats a plan's date range in Turkish
      */
     fun formatPlanDateRange(startDate: LocalDateTime, endDate: LocalDateTime): String {
-        val formatter = DateTimeFormatter.ofPattern("MMM yyyy", Locale.forLanguageTag("tr"))
+        val formatter = DateTimeFormatter.ofPattern("MMM yyyy", Locale.getDefault())
         return "${startDate.format(formatter)} - ${endDate.format(formatter)}"
     }
     
@@ -58,7 +58,7 @@ object PlanningUtils {
      */
     fun getMonthName(plan: FinancialPlan, monthIndex: Int): String {
         val targetDate = plan.startDate.plusMonths(monthIndex.toLong())
-        val formatter = DateTimeFormatter.ofPattern("MMMM yyyy", Locale.forLanguageTag("tr"))
+        val formatter = DateTimeFormatter.ofPattern("MMMM yyyy", Locale.getDefault())
         return targetDate.format(formatter)
     }
     
