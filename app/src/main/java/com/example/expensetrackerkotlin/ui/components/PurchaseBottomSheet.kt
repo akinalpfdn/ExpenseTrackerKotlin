@@ -113,7 +113,7 @@ fun PurchaseBottomSheet(
                 )
             },
             containerColor = if (purchaseMessage.contains("🎉"))
-                Color(0xFF4CAF50) else AppColors.PrimaryOrange,
+                Color(0xFF317334) else AppColors.PrimaryOrange.copy(alpha = 0.8f),
             shape = RoundedCornerShape(20.dp)
         )
     }

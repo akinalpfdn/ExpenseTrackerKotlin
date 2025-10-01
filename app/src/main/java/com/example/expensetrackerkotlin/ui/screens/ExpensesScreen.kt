@@ -126,19 +126,19 @@ fun ExpensesScreen(
     LaunchedEffect(purchaseState) {
         when (val state = purchaseState) {
             is BillingManager.PurchaseState.Success -> {
-                showPurchaseMessage = "🎉 Teşekkürler! Satın alma başarılı: ${state.productId}"
+                showPurchaseMessage = context.getString(R.string.purchase_success, state.productId)
                 billingManager.resetPurchaseState()
             }
             is BillingManager.PurchaseState.Error -> {
-                showPurchaseMessage = "❌ Hata: ${state.message}"
+                showPurchaseMessage = context.getString(R.string.purchase_error, state.message)
                 billingManager.resetPurchaseState()
             }
             is BillingManager.PurchaseState.Cancelled -> {
-                showPurchaseMessage = "❌ Satın alma iptal edildi"
+                showPurchaseMessage = context.getString(R.string.purchase_cancelled)
                 billingManager.resetPurchaseState()
             }
             is BillingManager.PurchaseState.Loading -> {
-                showPurchaseMessage = "⏳ Satın alma işlemi başlatılıyor..."
+                showPurchaseMessage = context.getString(R.string.purchase_loading)
             }
             else -> { /* Do nothing */ }
         }
@@ -706,7 +706,7 @@ fun ExpensesScreen(
                         .clickable { }, // Prevent click through
                     colors = CardDefaults.cardColors(
                         containerColor = if (showPurchaseMessage!!.contains("🎉"))
-                            Color(0xFF4CAF50) else AppColors.PrimaryOrange
+                            Color(0xFF317334).copy(alpha = 0.2f) else AppColors.PrimaryOrange.copy(alpha = 0.8f)
                     ),
                     elevation = CardDefaults.cardElevation(defaultElevation = 16.dp),
                     shape = RoundedCornerShape(20.dp)

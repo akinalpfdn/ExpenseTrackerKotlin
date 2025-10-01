@@ -391,4 +391,10 @@
     <string name="burger_price">6 USD</string>
     <string name="doner_price">9.60 USD</string>
     <string name="max_price">12 USD</string>
+
+    <!-- Purchase Messages -->
+    <string name="purchase_success">🎉 Thank you! Purchase successful: %1$s</string>
+    <string name="purchase_error">Error: %1$s</string>
+    <string name="purchase_cancelled">Purchase cancelled</string>
+    <string name="purchase_loading">⏳ Starting purchase process…</string>
 </resources>
