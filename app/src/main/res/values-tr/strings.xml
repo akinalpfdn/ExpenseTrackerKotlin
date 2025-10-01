@@ -29,7 +29,7 @@
     <string name="category_a_to_z">Kategori: A-Z</string>
     <string name="category_z_to_a">Kategori: Z-A</string>
     <string name="end_date_recurring">Bitiş: %s</string>
-    <string name="search_placeholder">Açıklama, miktar veya kategoriye göre ara...</string>
+    <string name="search_placeholder">Açıklama, miktar veya kategoriye göre ara…</string>
     <string name="no_search_results">Arama sonucu bulunamadı</string>
     <string name="search_no_results_description">\"%1$s\" için sonuç bulunamadı. Farklı bir arama terimi deneyin.</string>
     <string name="no_recurring_expenses">Henüz tekrar eden harcama yok</string>
@@ -59,7 +59,7 @@
 
     <!-- ExpensesScreen -->
     <string name="results_count">%d sonuç</string>
-    <string name="search_expenses_placeholder">Açıklama, miktar veya kategoriye göre ara...</string>
+    <string name="search_expenses_placeholder">Açıklama, miktar veya kategoriye göre ara…</string>
     <string name="monthly_limit_exceeded">⚠️ Aylık harcama limitinizi aştınız!</string>
     <string name="time_newest_first">Tarih: Yeniden Eskiye</string>
     <string name="time_oldest_first">Tarih: Eskiden Yeniye</string>
@@ -81,9 +81,9 @@
     <!-- AddExpenseScreen -->
     <string name="enter_expense_details">Harcama detaylarını girin</string>
     <string name="expense_amount_placeholder">0.00</string>
-    <string name="search_placeholder_category">ara...</string>
+    <string name="search_placeholder_category">ara…</string>
     <string name="description_optional">Açıklama (İsteğe bağlı)</string>
-    <string name="add_description_placeholder">Açıklama ekleyin...</string>
+    <string name="add_description_placeholder">Açıklama ekleyin…</string>
     <string name="recurrence_type">Tekrar Türü</string>
     <string name="end_date">Bitiş Tarihi</string>
     <string name="exchange_rate_label">Döviz Kuru (1 %1$s = ? %2$s)</string>

@@ -12,7 +12,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.launch
 import java.time.LocalDateTime
@@ -165,7 +164,6 @@ class ExpenseViewModel(
     
     // Track current week for infinite scrolling
     private val _currentWeekOffset = MutableStateFlow(0) // 0 = this week, -1 = previous, +1 = next
-    val currentWeekOffset: StateFlow<Int> = _currentWeekOffset.asStateFlow()
 
     // Generate 3 weeks of data for infinite pager (previous, current, next)
     val weeklyHistoryData: StateFlow<List<List<DailyData>>> = combine(
@@ -218,19 +216,6 @@ class ExpenseViewModel(
         initialValue = emptyList()
     )
 
-    // Backward compatibility - current week data
-    val dailyHistoryData: StateFlow<List<DailyData>> = weeklyHistoryData.map { weeks ->
-        if (weeks.isNotEmpty() && weeks.size >= 2) {
-            weeks[1] // Return current week (middle week)
-        } else {
-            emptyList()
-        }
-    }.stateIn(
-        scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(5000),
-        initialValue = emptyList()
-    )
-    
     // Methods
     fun updateSelectedDate(date: LocalDateTime) {
         val currentSelected = _selectedDate.value
@@ -254,10 +239,6 @@ class ExpenseViewModel(
         println("ViewModel Debug: Selected date stays: ${_selectedDate.value.toLocalDate()}")
     }
 
-    fun resetWeekOffset() {
-        _currentWeekOffset.value = 0
-    }
-    
     fun addExpense(expense: Expense) {
         viewModelScope.launch {
             if (expense.recurrenceType != RecurrenceType.NONE && expense.recurrenceGroupId != null) {
@@ -412,7 +393,7 @@ class ExpenseViewModel(
     ) {
         viewModelScope.launch {
             val oldEndDate = baseExpense.endDate ?: LocalDateTime.now().plusYears(1)
-            val today = LocalDateTime.now()
+            LocalDateTime.now()
             
             // Get all existing expenses with the same recurrence group ID
             val existingExpenses = _expenses.value.filter { 
