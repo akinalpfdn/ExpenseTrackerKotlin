@@ -1,3 +1,393 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="app_name">Śledzenie wydatków</string>
+    <string name="general_settings">Ustawienia ogólne</string>
+    <string name="categories">Kategorie</string>
+    <string name="default_currency">Domyślna waluta</string>
+    <string name="currency_description">Domyślna waluta używana dla nowych wydatków</string>
+    <string name="daily_spending_limit">Dzienny limit wydatków</string>
+    <string name="enter_daily_limit">Wprowadź dzienny limit</string>
+    <string name="daily_limit_description">Twój dzienny limit wydatków. Brak limitu, jeśli pozostawisz puste</string>
+    <string name="monthly_spending_limit">Miesięczny limit wydatków</string>
+    <string name="enter_monthly_limit">Wprowadź miesięczny limit</string>
+    <string name="monthly_limit_description">Twój całkowity miesięczny limit wydatków. Pierścień postępu jest wyświetlany na podstawie tej wartości</string>
+    <string name="theme">Motyw</string>
+    <string name="dark_theme">Ciemny motyw</string>
+    <string name="light_theme">Jasny motyw</string>
+    <string name="theme_description">Zmień wygląd aplikacji</string>
+    <string name="cancel">Anuluj</string>
+    <string name="save">Zapisz</string>
+    <string name="recurring_expenses">Wydatki cykliczne</string>
+    <string name="sort">Sortuj</string>
+    <string name="search">Szukaj</string>
+    <string name="back">Wstecz</string>
+    <string name="amount_high_to_low">Kwota: od najwyższej</string>
+    <string name="amount_low_to_high">Kwota: od najniższej</string>
+    <string name="description_a_to_z">Opis: A-Z</string>
+    <string name="description_z_to_a">Opis: Z-A</string>
+    <string name="category_a_to_z">Kategoria: A-Z</string>
+    <string name="category_z_to_a">Kategoria: Z-A</string>
+    <string name="end_date_recurring">Koniec: %s</string>
+    <string name="search_placeholder">Szukaj wg opisu, kwoty lub kategorii...</string>
+    <string name="no_search_results">Nie znaleziono wyników wyszukiwania</string>
+    <string name="search_no_results_description">Nie znaleziono wyników dla \"%1$s\". Spróbuj innego hasła.</string>
+    <string name="no_recurring_expenses">Brak wydatków cyklicznych</string>
+    <string name="recurring_expenses_hint">Naciśnij przycisk +, aby dodać wydatki cykliczne</string>
+    <string name="results_found">Znaleziono %d wyników</string>
+    <string name="daily">Codziennie</string>
+    <string name="weekdays">Dni robocze</string>
+    <string name="weekly">Tygodniowo</string>
+    <string name="monthly">Miesięcznie</string>
+    <string name="exchange_rate">Kurs wymiany: %s</string>
+    <string name="delete">Usuń</string>
+    <string name="amount">Kwota</string>
+    <string name="description">Opis</string>
+    <string name="exchange_rate_field">Kurs wymiany</string>
+    <string name="select_date">Wybierz datę</string>
+    <string name="delete_recurring_expense">Usuń wydatek cykliczny</string>
+    <string name="delete_recurring_confirmation">Czy na pewno chcesz usunąć ten wydatek cykliczny od dzisiaj? Tej akcji nie można cofnąć.</string>
+    <string name="ok">OK</string>
+    <string name="financial_planning">Planowanie finansowe</string>
+    <string name="planning_description">Twórz i śledź swoje przyszłe plany</string>
+    <string name="no_plans_yet">Brak planów</string>
+    <string name="create_first_plan">Naciśnij przycisk +, aby utworzyć swój pierwszy plan finansowy</string>
+    <string name="add_plan">Dodaj plan</string>
+    <string name="delete_plan">Usuń plan</string>
+    <string name="delete_plan_confirmation">Czy na pewno chcesz usunąć plan \"%1$s\"? Tej akcji nie można cofnąć.</string>
+
+    <string name="results_count">%d wyników</string>
+    <string name="search_expenses_placeholder">Szukaj wg opisu, kwoty lub kategorii...</string>
+    <string name="monthly_limit_exceeded">⚠️ Przekroczono miesięczny limit wydatków!</string>
+    <string name="time_newest_first">Data: od najnowszych</string>
+    <string name="time_oldest_first">Data: od najstarszych</string>
+
+    <string name="current_period_total">Suma wydatków w bieżącym okresie</string>
+    <string name="vs_previous_month">wzgl. ost. miesiąca</string>
+    <string name="vs_6_month_average">wzgl. średniej</string>
+    <string name="no_expenses_this_period">Brak wydatków w tym okresie</string>
+    <string name="analysis_will_appear">Analiza pojawi się tutaj, gdy dodasz wydatki</string>
+    <string name="previous_month">Poprzedni miesiąc</string>
+    <string name="next_month">Następny miesiąc</string>
+    <string name="select_date_range">Wybierz zakres dat</string>
+    <string name="fixed_expenses">Wydatki stałe</string>
+    <string name="recurring_expenses_description">Wydatki, które będą kontynuowane przez 3+ miesiące</string>
+    <string name="recurring_expenses_cd">Wydatki cykliczne</string>
+    <string name="pick_date_range">Wybierz zakres dat</string>
+
+    <string name="enter_expense_details">Wprowadź szczegóły wydatku</string>
+    <string name="expense_amount_placeholder">0.00</string>
+    <string name="search_placeholder_category">szukaj...</string>
+    <string name="description_optional">Opis (Opcjonalnie)</string>
+    <string name="add_description_placeholder">Dodaj opis...</string>
+    <string name="recurrence_type">Typ cykliczności</string>
+    <string name="end_date">Data zakończenia</string>
+    <string name="exchange_rate_label">Kurs wymiany (1 %1$s = ? %2$s)</string>
+    <string name="exchange_rate_example">np.: 0.035 (1 %1$s = 0.035 %2$s)</string>
+    <string name="exchange_rate_note">Ten kurs będzie używany do obliczeń postępu</string>
+    <string name="add_expense">Dodaj wydatek</string>
+    <string name="update_expense">Aktualizuj wydatek</string>
+    <string name="none">Brak</string>
+    <string name="one_time">Jednorazowo</string>
+    <string name="every_day">Codziennie</string>
+    <string name="weekdays_only">Tylko w dni robocze</string>
+    <string name="once_per_week">Raz w tygodniu</string>
+    <string name="once_per_month">Raz w miesiącu</string>
+    <string name="edit_expense">Edytuj wydatek</string>
+    <string name="new_expense">Nowy wydatek</string>
+    <string name="selectCategory">Wybór kategorii</string>
+    <string name="single_time">Pojedynczy</string>
+    <string name="okay">Okay</string>
+
+    <string name="parent_category">Kategoria nadrzędna</string>
+    <string name="total_amount">Kwota całkowita</string>
+    <string name="expense_count">Liczba wydatków</string>
+    <string name="average">Średnia</string>
+    <string name="expenses">Wydatki</string>
+    <string name="recurring_label">Cykliczny</string>
+
+    <string name="monthly_label">Miesięczny</string>
+    <string name="daily_label">Dzienny</string>
+
+    <string name="update_expense_data">Aktualizuj dane o wydatkach</string>
+    <string name="update_expense_data_description">Przelicza bieżące i przyszłe miesiące przy użyciu zaktualizowanych danych</string>
+    <string name="total_net_value">Całkowita wartość netto</string>
+    <string name="month">Miesiąc</string>
+    <string name="income">Przychód</string>
+    <string name="expense">Wydatek</string>
+    <string name="net">Netto</string>
+    <string name="total">Suma</string>
+
+    <string name="avg_monthly_income">Śr. miesięczny przychód</string>
+    <string name="avg_monthly_expense">Śr. miesięczny wydatek</string>
+    <string name="current_net">Bieżące netto</string>
+    <string name="target_net">Docelowe netto</string>
+
+    <string name="all">Wszystko</string>
+    <string name="one_time_expense">Wydatek jednorazowy</string>
+    <string name="period_expense_trend">Trend wydatków w okresie</string>
+    <string name="expand">Rozwiń</string>
+    <string name="collapse">Zwiń</string>
+    <string name="no_data_found">Nie znaleziono danych</string>
+    <string name="highest">Najwyższy</string>
+
+    <string name="no_expenses_this_month">Brak wydatków w tym miesiącu</string>
+    <string name="add_expense_for_month">Naciśnij przycisk + na ekranie głównym, aby dodać wydatki na ten miesiąc</string>
+
+    <string name="monday_short">P</string>
+    <string name="tuesday_short">W</string>
+    <string name="wednesday_short">Ś</string>
+    <string name="thursday_short">C</string>
+    <string name="friday_short">P</string>
+    <string name="saturday_short">S</string>
+    <string name="sunday_short">N</string>
+
+    <string name="category_distribution">Podział na kategorie</string>
+    <string name="tap_chart_to_select_category">Dotknij wykresu, aby wybrać kategorię</string>
+
+    <string name="unknown">Nieznany</string>
+    <string name="delete_expense">Usuń wydatek</string>
+    <string name="delete_expense_confirmation">Czy na pewno chcesz usunąć ten wydatek? Tej akcji nie można cofnąć.</string>
+
+    <string name="amount_high_to_low_arrow">Kwota (Wys. → Niska)</string>
+    <string name="amount_low_to_high_arrow">Kwota (Niska → Wys.)</string>
+    <string name="time_newest_first_arrow">Czas (Nowe → Stare)</string>
+    <string name="time_oldest_first_arrow">Czas (Stare → Nowe)</string>
+    <string name="description_a_to_z_arrow">Opis (A → Z)</string>
+    <string name="description_z_to_a_arrow">Opis (Z → A)</string>
+    <string name="total_spending">Całkowite wydatki</string>
+    <string name="no_expenses_in_category">Nie znaleziono wydatków w tej kategorii</string>
+    <string name="expense_singular">Wydatek</string>
+
+    <string name="create_new_plan">Utwórz nowy plan</string>
+    <string name="plan_name">Nazwa planu</string>
+    <string name="plan_name_example">np.: Plan oszczędnościowy 2024</string>
+    <string name="plan_duration">Czas trwania planu</string>
+    <string name="apply_interest_to_savings">Zastosuj oprocentowanie (do oszczędności)</string>
+    <string name="simple_interest">Odsetki proste</string>
+    <string name="compound_interest">Procent składany</string>
+    <string name="annual_interest_rate">Roczna stopa oprocentowania %</string>
+    <string name="interest_applied_to_positive_savings">Oprocentowanie jest stosowane do dodatnich oszczędności</string>
+    <string name="interest_type">Rodzaj oprocentowania</string>
+    <string name="monthly_income_currency">Miesięczny przychód (%s)</string>
+    <string name="use_app_expense_data">Użyj danych o wydatkach z aplikacji</string>
+    <string name="monthly_expenses_currency">Miesięczne wydatki (%s)</string>
+    <string name="manual_monthly_expense_amount">Ręczna kwota miesięcznych wydatków</string>
+    <string name="enter_manual_expense_amount">Wprowadź ręczną kwotę wydatków</string>
+    <string name="apply_inflation">Zastosuj inflację</string>
+    <string name="annual_percentage_rate">Roczna stawka %</string>
+    <string name="create">Utwórz</string>
+
+    <string name="category_details">Szczegóły kategorii</string>
+    <string name="main_categories">Kategorie główne</string>
+    <string name="sub_categories">Podkategorie</string>
+    <string name="expense_lowercase">wydatek</string>
+    <string name="see_details">Zobacz szczegóły</string>
+
+    <string name="vs_previous_month_colon">wzgl. ost. miesiąca:</string>
+    <string name="vs_average_colon">wzgl. średniej:</string>
+
+    <string name="add_new_main_category">Dodaj nową kategorię główną</string>
+    <string name="add_main_category_content_desc">Dodaj kategorię główną</string>
+    <string name="category_name_hint">Wprowadź nazwę kategorii</string>
+    <string name="unique_category_name_note">Wybierz unikalną nazwę dla kategorii</string>
+    <string name="icon_selection">Wybór ikony</string>
+    <string name="color_selection">Wybór koloru</string>
+    <string name="add_button">Dodaj</string>
+    <string name="main_category">Kategoria główna</string>
+    <string name="select_category">Wybierz kategorię</string>
+    <string name="subcategory_name">Nazwa podkategorii</string>
+    <string name="subcategory_name_hint">Wprowadź nazwę podkategorii</string>
+    <string name="unique_subcategory_name_note">Wybierz unikalną nazwę dla podkategorii</string>
+    <string name="edit_subcategory">Edytuj podkategorię</string>
+    <string name="edit_category">Edytuj kategorię</string>
+    <string name="edit">Edytuj</string>
+    <string name="enter_name_hint">Wprowadź nazwę</string>
+    <string name="delete_confirmation">Potwierdzenie usunięcia</string>
+    <string name="delete_item_confirmation">Czy na pewno chcesz usunąć \"%s\"? Tej akcji nie można cofnąć.</string>
+    <string name="this_item">Ten element</string>
+    <string name="collapse_desc">Zwiń</string>
+    <string name="expand_desc">Rozwiń</string>
+    <string name="edit_category_desc">Edytuj kategorię</string>
+    <string name="delete_category_desc">Usuń kategorię</string>
+    <string name="add_subcategory">Dodaj podkategorię</string>
+    <string name="add_subcategory_desc">Dodaj podkategorię</string>
+    <string name="edit_subcategory_desc">Edytuj podkategorię</string>
+    <string name="delete_subcategory_desc">Usuń podkategorię</string>
+    <string name="selected">Wybrano</string>
+
+    <string name="no_data">Brak danych</string>
+    <string name="category">Kategoria</string>
+
+    <string name="sort_amount_desc">Według kwoty (Wys. → Niska)</string>
+    <string name="sort_amount_asc">Według kwoty (Niska → Wys.)</string>
+    <string name="sort_date_desc">Według daty (Nowe → Stare)</string>
+    <string name="sort_date_asc">Według daty (Stare → Nowe)</string>
+    <string name="sort_name_asc">Według opisu (A → Z)</string>
+    <string name="sort_name_desc">Według opisu (Z → A)</string>
+
+    <string name="subcategory_restaurant">Restauracja</string>
+    <string name="subcategory_kitchen_shopping">Zakupy spożywcze</string>
+
+    <string name="subcategory_rent">Czynsz</string>
+    <string name="subcategory_dues">Opłaty</string>
+    <string name="subcategory_mortgage">Rata kredytu hipotecznego</string>
+    <string name="subcategory_electricity">Rachunek za prąd</string>
+    <string name="subcategory_water">Rachunek za wodę</string>
+    <string name="subcategory_heating">Ogrzewanie</string>
+    <string name="subcategory_internet_phone">Internet i telefon</string>
+    <string name="subcategory_other_bills">Inne rachunki</string>
+    <string name="subcategory_general_shopping">Ogólne zakupy spożywcze</string>
+
+    <string name="subcategory_fuel">Paliwo</string>
+    <string name="subcategory_public_transport">Transport publiczny</string>
+    <string name="subcategory_car_maintenance">Konserwacja samochodu</string>
+    <string name="subcategory_car_rental">Wypożyczalnia samochodów</string>
+    <string name="subcategory_taxi_uber">Taxi/Uber</string>
+    <string name="subcategory_car_insurance">Ubezpieczenie samochodu</string>
+    <string name="subcategory_mtv">Podatek od pojazdu</string>
+    <string name="subcategory_parking_fees">Opłaty parkingowe</string>
+
+    <string name="subcategory_doctor_appointment">Wizyta u lekarza</string>
+    <string name="subcategory_medicines">Lekarstwa</string>
+    <string name="subcategory_gym_membership">Karnet na siłownię</string>
+    <string name="subcategory_cosmetics">Kosmetyki</string>
+
+    <string name="subcategory_cinema_theater">Kino i teatr</string>
+    <string name="subcategory_concerts_events">Koncerty i wydarzenia</string>
+    <string name="subcategory_subscriptions">Subskrypcje</string>
+    <string name="subcategory_books_magazines">Książki i czasopisma</string>
+    <string name="subcategory_travel_vacation">Podróże i wakacje</string>
+    <string name="subcategory_games_apps">Gry i aplikacje</string>
+
+    <string name="subcategory_course_fees">Opłaty za kursy</string>
+    <string name="subcategory_education_materials">Materiały edukacyjne</string>
+    <string name="subcategory_seminars">Seminaria</string>
+    <string name="subcategory_online_courses">Kursy online</string>
+
+    <string name="subcategory_electronics">Elektronika</string>
+    <string name="subcategory_clothing">Odzież</string>
+    <string name="subcategory_home_goods">Artykuły domowe</string>
+    <string name="subcategory_gifts">Prezenty</string>
+    <string name="subcategory_perfume">Perfumy</string>
+
+    <string name="subcategory_pet_food_toys">Karma i zabawki</string>
+    <string name="subcategory_vet_services">Usługi weterynaryjne</string>
+    <string name="subcategory_pet_insurance">Ubezpieczenie zwierząt</string>
+
+    <string name="subcategory_work_meals">Posiłki w pracy</string>
+    <string name="subcategory_office_supplies">Artykuły biurowe</string>
+    <string name="subcategory_business_travel">Podróże służbowe</string>
+    <string name="subcategory_work_education">Szkolenia i seminaria</string>
+    <string name="subcategory_freelance_payments">Płatności za zlecenia</string>
+
+    <string name="subcategory_tax_payments">Płatności podatkowe</string>
+
+    <string name="subcategory_other_expenses">Inne wydatki</string>
+
+    <string name="no_search_results_found">Nie znaleziono wyników wyszukiwania</string>
+    <string name="no_expenses_yet">Brak wydatków</string>
+    <string name="no_expenses_today">Brak wydatków dzisiaj</string>
+    <string name="no_search_results_description">Nie znaleziono wyników dla \"%1$s\". Spróbuj innego hasła.</string>
+    <string name="first_expense_hint">Naciśnij przycisk +, aby dodać swój pierwszy wydatek</string>
+    <string name="add_expense_for_day_hint">Naciśnij przycisk +, aby dodać wydatki na ten dzień</string>
+    <string name="calendar_tab">Kalendarz</string>
+    <string name="expenses_tab">Wydatki</string>
+
+    <string name="plan_status_not_started">Nie rozpoczęto</string>
+    <string name="plan_status_completed">Ukończono</string>
+    <string name="plan_status_active">Aktywny</string>
+    <string name="validation_plan_name_empty">Nazwa planu nie może być pusta</string>
+    <string name="validation_monthly_income_positive">Miesięczny przychód musi być większy niż 0</string>
+    <string name="validation_duration_positive">Czas trwania planu musi być większy niż 0</string>
+    <string name="validation_duration_max_10_years">Czas trwania planu nie może przekraczać 10 lat</string>
+    <string name="validation_inflation_rate_range">Stopa inflacji musi wynosić od -50%% do 100%%</string>
+    <string name="duration_3_months">3 miesiące</string>
+    <string name="duration_6_months">6 miesięcy</string>
+    <string name="duration_1_year">1 rok</string>
+    <string name="duration_1_5_years">1,5 roku</string>
+    <string name="duration_2_years">2 lata</string>
+    <string name="duration_3_years">3 lata</string>
+    <string name="duration_5_years">5 lat</string>
+
+    <string name="error_loading_plan">Błąd podczas ładowania planu: %s</string>
+    <string name="error_creating_plan">Błąd podczas tworzenia planu: %s</string>
+    <string name="error_deleting_plan">Błąd podczas usuwania planu: %s</string>
+    <string name="error_updating_expense_data">Błąd podczas aktualizowania danych o wydatkach: %s</string>
+    <string name="error_updating_plan_calculations">Błąd podczas aktualizowania obliczeń planu: %s</string>
+    <string name="error_saving_changes">Błąd podczas zapisywania zmian: %s</string>
+
+    <string name="category_food">Jedzenie i napoje</string>
+    <string name="category_housing">Mieszkanie</string>
+    <string name="category_transportation">Transport</string>
+    <string name="category_health">Zdrowie i higiena</string>
+    <string name="category_entertainment">Rozrywka i hobby</string>
+    <string name="category_education">Edukacja</string>
+    <string name="category_shopping">Zakupy</string>
+    <string name="category_pets">Zwierzęta</string>
+    <string name="category_work">Praca i wydatki służbowe</string>
+    <string name="category_tax">Podatki i opłaty prawne</string>
+    <string name="category_donations">Darowizny i pomoc</string>
+    <string name="category_others">Inne płatności</string>
+
+    <string name="no_add_text">Nie chcę bombardować Cię głupimi reklamami
+        i chcę, abyś miał dostęp do wszystkich funkcji bez wersji premium.
+        Ale potrzebuję dochodu, aby kontynuować rozwój. Jeśli podoba Ci się moja aplikacja i chcesz mnie wesprzeć,
+        możesz postawić filiżankę herbaty (Ceny tutaj nie są zależne od inflacji) :).</string>
+    <string name="buy_water">Postaw wodę</string>
+    <string name="buy_bagel">Postaw bajgla</string>
+    <string name="buy_tea">Postaw herbatę</string>
+    <string name="buy_coffee">Postaw kawę</string>
+    <string name="buy_wrap">Postaw wrapa</string>
+    <string name="buy_burger">Postaw burgera</string>
+    <string name="buy_doner">Postaw donera</string>
+    <string name="max_donation">zaskocz mnie</string>
+    <string name="recurring_total">"Suma: "</string>
+    <string name="recurring_remaining">"Pozostało: "</string>
+    <string name="clear">Wyczyść</string>
+    <string name="select_date_range_picker">Wybrany zakres:</string>
+    <string name="water_price">0.5 USD</string>
+    <string name="tea_price">0.24 USD</string>
+    <string name="bagel_price">0.60 USD</string>
+    <string name="coffee_price">1.20 USD</string>
+    <string name="wrap_price">2.40 USD</string>
+    <string name="burger_price">6 USD</string>
+    <string name="doner_price">9.60 USD</string>
+    <string name="max_price">12 USD</string>
+
+    <string name="purchase_success">🎉 Dziękujemy! Zakup udany: %1$s</string>
+    <string name="purchase_error">Błąd: %1$s</string>
+    <string name="purchase_cancelled">Zakup anulowany</string>
+    <string name="purchase_loading">⏳ Rozpoczynanie procesu zakupu…</string>
+    <string name="backupRestore"><![CDATA[Kopia zapasowa i przywracanie]]></string>
+    <string name="backupText">Wyeksportuj swoje dane do kopii zapasowej lub zaimportuj poprzednią kopię</string>
+    <string name="exportData">Eksportuj dane</string>
+    <string name="importData">Importuj dane</string>
+    <string name="shareText">Udostępnij: Wyślij przez WhatsApp, Dysk, E-mail itp.</string>
+    <string name="saveText">Zapisz w pamięci: Zapisz bezpośrednio na urządzeniu</string>
+    <string name="share">Udostępnij</string>
+    <string name="saveToStorage">Zapisz w pamięci</string>
+    <string name="success">Sukces</string>
+    <string name="importApprove">Zatwierdź import</string>
+    <string name="importButton">Importuj i zamień dane</string>
+    <string name="importSucceed">Import udany</string>
+    <string name="chooseExport">Wybierz metodę eksportu:</string>
+
+    <string name="tutorial_add_expense_title">Dodaj wydatek</string>
+    <string name="tutorial_add_expense_message">Stuknij tutaj, aby dodać wydatki</string>
+    <string name="tutorial_recurring_expenses_title">Wydatki cykliczne</string>
+    <string name="tutorial_recurring_expenses_message">Przeglądaj i edytuj wydatki cykliczne tutaj</string>
+    <string name="tutorial_calendar_title">Postęp miesięczny</string>
+    <string name="tutorial_calendar_message">Wyświetl postęp miesięcznych wydatków. Stuknij środkowy pierścień, aby zobaczyć kalendarz miesięczny i historię wydatków. Przesuń w lewo, aby zobaczyć dzienny postęp i wykresy kategorii</string>
+    <string name="tutorial_daily_history_title">Historia dzienna</string>
+    <string name="tutorial_daily_history_message">Uzyskaj dostęp do dziennej historii wydatków tutaj</string>
+    <string name="tutorial_settings_title">Ustawienia</string>
+    <string name="tutorial_settings_message">Dostosuj walutę, limity wydatków, motyw, kategorie i zarządzaj kopią zapasową danych</string>
+    <string name="tutorial_secret_title">Wsparcie</string>
+    <string name="tutorial_secret_message">NAJTAJNIEJSZA STREFA</string>
+    <string name="tutorial_expense_list_title">Twoje wydatki</string>
+    <string name="tutorial_expense_list_message">Twoje wydatki są tutaj wymienione. Przesuń w lewo na ekranie głównym, aby zobaczyć analizy i wykresy wydatków. Przesuń ponownie w lewo, aby uzyskać dostęp do ekranu planowania finansowego</string>
+    <string name="tutorial_skip">Pomiń</string>
+    <string name="tutorial_next">Dalej</string>
+    <string name="tutorial_finish">Zakończ</string>
+    <string name="tutorial_tap_to_continue">Stuknij, aby kontynuować</string>
 </resources>

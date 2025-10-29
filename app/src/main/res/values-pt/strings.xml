@@ -366,22 +366,22 @@
     <string name="category_donations">Doações e Ajuda</string>
     <string name="category_others">Outros Pagamentos</string>
     <!-- Billing Page -->
-    <string name="no_add_text">I don\'t want to bombard you with silly ads,
-        and I want you to be able to access all features without needing the premium version.
-        But I need income to keep developing. If you like my app and want to support me,
-        feel free to tip a cup of tea (Prices aren\'t affected by inflation here) :).</string>
-    <string name="buy_water">tip a water</string>
-    <string name="buy_bagel">tip a bagel</string>
-    <string name="buy_tea">tip a tea</string>
-    <string name="buy_coffee">tip a coffee</string>
-    <string name="buy_wrap">tip a wrap</string>
-    <string name="buy_burger">tip a burger</string>
-    <string name="buy_doner">tip a doner</string>
-    <string name="max_donation">suprise me</string>
+    <string name="no_add_text">Eu não quero bombardeá-lo com anúncios irritantes,
+    e quero que você possa acessar todos os recursos sem precisar da versão premium.
+    Mas eu preciso de receita para continuar desenvolvendo. Se você gosta do meu aplicativo e quer me apoiar,
+    sinta-se à vontade para me pagar um chá (Os preços aqui não são afetados pela inflação) :).</string>
+    <string name="buy_water">Pagar uma água</string>
+    <string name="buy_bagel">Pagar um bagel</string>
+    <string name="buy_tea">Pagar um chá</string>
+    <string name="buy_coffee">Pagar um café</string>
+    <string name="buy_wrap">Pagar um wrap</string>
+    <string name="buy_burger">Pagar um hambúrguer</string>
+    <string name="buy_doner">Pagar um doner</string>
+    <string name="max_donation">surpreenda-me</string>
     <string name="recurring_total">"Total: "</string>
-    <string name="recurring_remaining">"Remaining: "</string>
-    <string name="clear">Clear</string>
-    <string name="select_date_range_picker">Selected Range:</string>
+    <string name="recurring_remaining">"Restante: "</string>
+    <string name="clear">Limpar</string>
+    <string name="select_date_range_picker">Intervalo selecionado:</string>
     <string name="water_price">0.5 USD</string>
     <string name="tea_price">0.24 USD</string>
     <string name="bagel_price">0.60 USD</string>
@@ -390,22 +390,40 @@
     <string name="burger_price">6 USD</string>
     <string name="doner_price">9.60 USD</string>
     <string name="max_price">12 USD</string>
-    <!-- Purchase Messages -->
-    <string name="purchase_success">🎉 Thank you! Purchase successful: %1$s</string>
-    <string name="purchase_error">Error: %1$s</string>
-    <string name="purchase_cancelled">Purchase cancelled</string>
-    <string name="purchase_loading">⏳ Starting purchase process…</string>
-    <string name="backupRestore"><![CDATA[Backup & Restore]]></string>
-    <string name="backupText">Export your data to backup or import a previous backup</string>
-    <string name="exportData">Export Data</string>
-    <string name="importData">Import Data</string>
-    <string name="shareText">Share: Send via WhatsApp, Drive, Email, etc.</string>
-    <string name="saveText">Save to Storage: Save directly to your device</string>
-    <string name="share">Share</string>
-    <string name="saveToStorage">Save to Storage</string>
-    <string name="success">Success</string>
-    <string name="importApprove">Import Approve</string>
-    <string name="importButton">Import and Replace Data</string>
-    <string name="importSucceed">Import Successful</string>
-    <string name="chooseExport">Choose export method:</string>
+    <string name="purchase_success">🎉 Obrigado! Compra realizada com sucesso: %1$s</string>
+    <string name="purchase_error">Erro: %1$s</string>
+    <string name="purchase_cancelled">Compra cancelada</string>
+    <string name="purchase_loading">⏳ Iniciando processo de compra…</string>
+    <string name="backupRestore"><![CDATA[Backup e Restauração]]></string>
+
+    <string name="backupText">Exporte seus dados para backup ou importe um backup anterior</string>
+    <string name="exportData">Exportar Dados</string>
+    <string name="importData">Importar Dados</string>
+    <string name="shareText">Compartilhar: Envie via WhatsApp, Drive, Email, etc.</string>
+    <string name="saveText">Salvar no Armazenamento: Salve diretamente no seu dispositivo</string>
+    <string name="share">Compartilhar</string>
+    <string name="saveToStorage">Salvar no Armazenamento</string>
+    <string name="success">Sucesso</string>
+    <string name="importApprove">Aprovar Importação</string>
+    <string name="importButton">Importar e Substituir Dados</string>
+    <string name="importSucceed">Importação bem-sucedida</string>
+    <string name="chooseExport">Escolha o método de exportação:</string>
+    <string name="tutorial_add_expense_title">Adicionar Despesa</string>
+    <string name="tutorial_add_expense_message">Toque aqui para adicionar despesas</string>
+    <string name="tutorial_recurring_expenses_title">Despesas Recorrentes</string>
+    <string name="tutorial_recurring_expenses_message">Liste e edite despesas recorrentes aqui</string>
+    <string name="tutorial_calendar_title">Progresso Mensal</string>
+    <string name="tutorial_calendar_message">Veja o progresso dos seus gastos mensais. Toque no anel central para ver seu calendário mensal e histórico de gastos. Deslize para a esquerda para ver o progresso diário e gráficos de categoria</string>
+    <string name="tutorial_daily_history_title">Histórico Diário</string>
+    <string name="tutorial_daily_history_message">Acesse seu histórico diário de gastos aqui</string>
+    <string name="tutorial_settings_title">Configurações</string>
+    <string name="tutorial_settings_message">Personalize moeda, limites de gastos, tema, categorias e gerencie seu backup de dados</string>
+    <string name="tutorial_secret_title">Suporte</string>
+    <string name="tutorial_secret_message">ÁREA ULTRASSECRETA</string>
+    <string name="tutorial_expense_list_title">Suas Despesas</string>
+    <string name="tutorial_expense_list_message">Suas despesas estão listadas aqui. Deslize para a esquerda na tela principal para ver análises e gráficos de gastos. Deslize para a esquerda novamente para acessar a tela de planejamento financeiro</string>
+    <string name="tutorial_skip">Pular</string>
+    <string name="tutorial_next">Próximo</string>
+    <string name="tutorial_finish">Concluir</string>
+    <string name="tutorial_tap_to_continue">Toque para continuar</string>
 </resources>

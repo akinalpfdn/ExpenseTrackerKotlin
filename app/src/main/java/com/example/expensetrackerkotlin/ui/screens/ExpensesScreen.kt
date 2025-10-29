@@ -29,8 +29,6 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.zIndex
-import androidx.compose.ui.layout.onGloballyPositioned
-import androidx.compose.ui.layout.positionInWindow
 import com.example.expensetrackerkotlin.ui.theme.AppColors
 import com.example.expensetrackerkotlin.ui.theme.ThemeColors
 import androidx.compose.ui.text.font.FontWeight
@@ -56,8 +54,6 @@ import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material.icons.automirrored.filled.Sort
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
-import androidx.compose.ui.layout.positionInRoot
-import androidx.compose.ui.layout.positionOnScreen
 import com.example.expensetrackerkotlin.utils.NumberFormatter
 import java.util.Locale
 
@@ -290,19 +286,7 @@ fun ExpensesScreen(
                     contentAlignment = Alignment.Center,
                     modifier = Modifier
                         .fillMaxSize()
-                        .onGloballyPositioned { coordinates ->
-                            // Calendar button for tutorial (center circle of progress ring)
-                            val position = coordinates.positionInRoot()
-                            tutorialManager?.updateStepTargetBounds(
-                                com.example.expensetrackerkotlin.ui.tutorial.TutorialStepId.CALENDAR,
-                                androidx.compose.ui.geometry.Rect(
-                                    position.x,
-                                    position.y - 140f,
-                                    position.x + coordinates.size.width,
-                                    position.y + coordinates.size.height - 200f
-                                )
-                            )
-                        }
+
                 ) {
                     when (page) {
                         0 -> {
@@ -666,18 +650,7 @@ fun ExpensesScreen(
                     containerColor = Color.Transparent,
                     modifier = Modifier.size(60.dp)
                         .offset(y = 140.dp)
-                        .onGloballyPositioned { coordinates ->
-                            val position = coordinates.positionInRoot()
-                            tutorialManager?.updateStepTargetBounds(
-                                com.example.expensetrackerkotlin.ui.tutorial.TutorialStepId.SECRET_AREA,
-                                androidx.compose.ui.geometry.Rect(
-                                    position.x,
-                                    position.y - 95f,
-                                    position.x + coordinates.size.width,
-                                    position.y + coordinates.size.height - 200f
-                                )
-                            )
-                        }
+
                 ) {
                     Box(
                         modifier = Modifier
@@ -726,18 +699,7 @@ fun ExpensesScreen(
                     containerColor = Color.Transparent,
                     modifier = Modifier.size(60.dp)
                         .offset(y = 140.dp)
-                        .onGloballyPositioned { coordinates ->
-                            val position = coordinates.positionInRoot()
-                            tutorialManager?.updateStepTargetBounds(
-                                com.example.expensetrackerkotlin.ui.tutorial.TutorialStepId.SETTINGS,
-                                androidx.compose.ui.geometry.Rect(
-                                    position.x,
-                                    position.y - 95f,
-                                    position.x + coordinates.size.width,
-                                    position.y + coordinates.size.height - 200f
-                                )
-                            )
-                        }
+
                 ) {
                     Box(
                         modifier = Modifier
@@ -792,18 +754,7 @@ fun ExpensesScreen(
                     containerColor = Color.Transparent,
                     modifier = Modifier.size(60.dp)
                         .offset(y = 140.dp)
-                        .onGloballyPositioned { coordinates ->
-                            val position = coordinates.positionInRoot()
-                            tutorialManager?.updateStepTargetBounds(
-                                com.example.expensetrackerkotlin.ui.tutorial.TutorialStepId.RECURRING_EXPENSES,
-                                androidx.compose.ui.geometry.Rect(
-                                    position.x,
-                                    position.y - 95f,
-                                    position.x + coordinates.size.width,
-                                    position.y + coordinates.size.height - 200f
-                                )
-                            )
-                        }
+
                 ) {
                     Box(
                         modifier = Modifier
@@ -854,18 +805,7 @@ fun ExpensesScreen(
                     containerColor = Color.Transparent,
                     modifier = Modifier.size(60.dp)
                         .offset(y = 140.dp)
-                        .onGloballyPositioned { coordinates ->
-                            val position = coordinates.positionInRoot()
-                            tutorialManager?.updateStepTargetBounds(
-                                com.example.expensetrackerkotlin.ui.tutorial.TutorialStepId.ADD_EXPENSE,
-                                androidx.compose.ui.geometry.Rect(
-                                    position.x,
-                                    position.y - 0f,
-                                    position.x + coordinates.size.width,
-                                    position.y + coordinates.size.height - 200f
-                                )
-                            )
-                        }
+
                 ) {
                     Box(
                         modifier = Modifier

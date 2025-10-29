@@ -365,22 +365,22 @@
     <string name="calendar_tab">Kalender</string>
     <string name="expenses_tab">Ausgaben</string>
     <!-- Billing Page -->
-    <string name="no_add_text">I don\'t want to bombard you with silly ads,
-        and I want you to be able to access all features without needing the premium version.
-        But I need income to keep developing. If you like my app and want to support me,
-        feel free to tip a cup of tea (Prices aren\'t affected by inflation here) :).</string>
-    <string name="buy_water">tip a water</string>
-    <string name="buy_bagel">tip a bagel</string>
-    <string name="buy_tea">tip a tea</string>
-    <string name="buy_coffee">tip a coffee</string>
-    <string name="buy_wrap">tip a wrap</string>
-    <string name="buy_burger">tip a burger</string>
-    <string name="buy_doner">tip a doner</string>
-    <string name="max_donation">suprise me</string>
-    <string name="recurring_total">"Total: "</string>
-    <string name="recurring_remaining">"Remaining: "</string>
-    <string name="clear">Clear</string>
-    <string name="select_date_range_picker">Selected Range:</string>
+    <string name="no_add_text">Ich möchte Sie nicht mit alberner Werbung bombardieren
+    und ich möchte, dass Sie auf alle Funktionen zugreifen können, ohne die Premium-Version zu benötigen.
+    Aber ich brauche Einnahmen, um weiterzuentwickeln. Wenn Ihnen meine App gefällt und Sie mich unterstützen möchten,
+    fühlen Sie sich frei, eine Tasse Tee zu spendieren (Die Preise sind hier nicht von der Inflation betroffen) :).</string>
+    <string name="buy_water">Ein Wasser spendieren</string>
+    <string name="buy_bagel">Einen Bagel spendieren</string>
+    <string name="buy_tea">Einen Tee spendieren</string>
+    <string name="buy_coffee">Einen Kaffee spendieren</string>
+    <string name="buy_wrap">Einen Wrap spendieren</string>
+    <string name="buy_burger">Einen Burger spendieren</string>
+    <string name="buy_doner">Einen Döner spendieren</string>
+    <string name="max_donation">Überrasch mich</string>
+    <string name="recurring_total">"Gesamt: "</string>
+    <string name="recurring_remaining">"Verbleibend: "</string>
+    <string name="clear">Löschen</string>
+    <string name="select_date_range_picker">Ausgewählter Bereich:</string>
     <string name="water_price">0.5 USD</string>
     <string name="tea_price">0.24 USD</string>
     <string name="bagel_price">0.60 USD</string>
@@ -389,22 +389,40 @@
     <string name="burger_price">6 USD</string>
     <string name="doner_price">9.60 USD</string>
     <string name="max_price">12 USD</string>
-    <!-- Purchase Messages -->
-    <string name="purchase_success">🎉 Thank you! Purchase successful: %1$s</string>
-    <string name="purchase_error">Error: %1$s</string>
-    <string name="purchase_cancelled">Purchase cancelled</string>
-    <string name="purchase_loading">⏳ Starting purchase process…</string>
-    <string name="backupRestore"><![CDATA[Backup & Restore]]></string>
-    <string name="backupText">Export your data to backup or import a previous backup</string>
-    <string name="exportData">Export Data</string>
-    <string name="importData">Import Data</string>
-    <string name="shareText">Share: Send via WhatsApp, Drive, Email, etc.</string>
-    <string name="saveText">Save to Storage: Save directly to your device</string>
-    <string name="share">Share</string>
-    <string name="saveToStorage">Save to Storage</string>
-    <string name="success">Success</string>
-    <string name="importApprove">Import Approve</string>
-    <string name="importButton">Import and Replace Data</string>
-    <string name="importSucceed">Import Successful</string>
-    <string name="chooseExport">Choose export method:</string>
+    <string name="purchase_success">🎉 Danke! Kauf erfolgreich: %1$s</string>
+    <string name="purchase_error">Fehler: %1$s</string>
+    <string name="purchase_cancelled">Kauf abgebrochen</string>
+    <string name="purchase_loading">⏳ Kaufvorgang wird gestartet…</string>
+    <string name="backupRestore"><![CDATA[Sichern & Wiederherstellen]]></string>
+
+    <string name="backupText">Exportieren Sie Ihre Daten zur Sicherung oder importieren Sie eine frühere Sicherung</string>
+    <string name="exportData">Daten exportieren</string>
+    <string name="importData">Daten importieren</string>
+    <string name="shareText">Teilen: Senden über WhatsApp, Drive, E-Mail, etc.</string>
+    <string name="saveText">Im Speicher speichern: Direkt auf Ihrem Gerät speichern</string>
+    <string name="share">Teilen</string>
+    <string name="saveToStorage">Im Speicher speichern</string>
+    <string name="success">Erfolgreich</string>
+    <string name="importApprove">Import genehmigen</string>
+    <string name="importButton">Daten importieren und ersetzen</string>
+    <string name="importSucceed">Import erfolgreich</string>
+    <string name="chooseExport">Exportmethode auswählen:</string>
+    <string name="tutorial_add_expense_title">Ausgabe hinzufügen</string>
+    <string name="tutorial_add_expense_message">Tippen Sie hier, um Ausgaben hinzuzufügen</string>
+    <string name="tutorial_recurring_expenses_title">Wiederkehrende Ausgaben</string>
+    <string name="tutorial_recurring_expenses_message">Listen Sie hier wiederkehrende Ausgaben auf und bearbeiten Sie sie</string>
+    <string name="tutorial_calendar_title">Monatlicher Fortschritt</string>
+    <string name="tutorial_calendar_message">Sehen Sie sich Ihren monatlichen Ausgabenfortschritt an. Tippen Sie auf den mittleren Ring, um Ihren Monatskalender und den Ausgabenverlauf anzuzeigen. Wischen Sie nach links, um den täglichen Fortschritt und Kategoriendiagramme zu sehen</string>
+    <string name="tutorial_daily_history_title">Täglicher Verlauf</string>
+    <string name="tutorial_daily_history_message">Greifen Sie hier auf Ihren täglichen Ausgabenverlauf zu</string>
+    <string name="tutorial_settings_title">Einstellungen</string>
+    <string name="tutorial_settings_message">Passen Sie Währung, Ausgabenlimits, Thema, Kategorien an und verwalten Sie Ihre Datensicherung</string>
+    <string name="tutorial_secret_title">Support</string>
+    <string name="tutorial_secret_message">STRENG GEHEIMER BEREICH</string>
+    <string name="tutorial_expense_list_title">Ihre Ausgaben</string>
+    <string name="tutorial_expense_list_message">Ihre Ausgaben werden hier aufgelistet. Wischen Sie auf dem Hauptbildschirm nach links, um Ausgabenanalysen und Diagramme anzuzeigen. Wischen Sie erneut nach links, um zum Finanzplanungsbildschirm zu gelangen</string>
+    <string name="tutorial_skip">Überspringen</string>
+    <string name="tutorial_next">Weiter</string>
+    <string name="tutorial_finish">Fertig</string>
+    <string name="tutorial_tap_to_continue">Zum Fortfahren tippen</string>
 </resources>
