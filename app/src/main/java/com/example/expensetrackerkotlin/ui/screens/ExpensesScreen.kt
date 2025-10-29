@@ -104,7 +104,7 @@ fun ExpensesScreen(
     // Tutorial animation
     val infiniteTransition = rememberInfiniteTransition(label = "tutorial_glow")
     val tutorialGlowAlpha by infiniteTransition.animateFloat(
-        initialValue = 0.3f,
+        initialValue = 0.8f,
         targetValue = 1f,
         animationSpec = infiniteRepeatable(
             animation = tween(durationMillis = 800, easing = FastOutSlowInEasing),
@@ -258,7 +258,18 @@ fun ExpensesScreen(
                 },
                 modifier = Modifier.then(
                     if (currentTutorialStep == com.example.expensetrackerkotlin.ui.tutorial.TutorialStepId.DAILY_HISTORY) {
-                        Modifier.border(4.dp, Color(0xFFFF9500), RoundedCornerShape(12.dp))
+                        Modifier
+                            .shadow(
+                                elevation = 16.dp,
+                                shape = RoundedCornerShape(12.dp),
+                                spotColor = Color(0xFF2CE91E).copy(alpha = tutorialGlowAlpha),
+                                ambientColor = Color(0xFF2CE91E).copy(alpha = tutorialGlowAlpha * 0.5f)
+                            )
+                            .border(
+                                width = tutorialBorderWidth,
+                                color = Color(0xFF2CE91E).copy(alpha = tutorialGlowAlpha),
+                                shape = RoundedCornerShape(12.dp)
+                            )
                     } else Modifier
                 )
             )
@@ -298,7 +309,18 @@ fun ExpensesScreen(
                             // Monthly Progress Ring
                             MonthlyProgressRingView(
                                 modifier = if (currentTutorialStep == com.example.expensetrackerkotlin.ui.tutorial.TutorialStepId.CALENDAR) {
-                                    Modifier.border(4.dp, Color(0xFFFF9500), CircleShape)
+                                    Modifier
+                                        .shadow(
+                                            elevation = 16.dp,
+                                            shape = RoundedCornerShape(12.dp),
+                                            spotColor = Color(0xFF2CE91E).copy(alpha = tutorialGlowAlpha),
+                                            ambientColor = Color(0xFF2CE91E).copy(alpha = tutorialGlowAlpha * 0.5f)
+                                        )
+                                        .border(
+                                            width = tutorialBorderWidth,
+                                            color = Color(0xFF2CE91E).copy(alpha = tutorialGlowAlpha),
+                                            shape = RoundedCornerShape(12.dp)
+                                        )
                                 } else Modifier,
                                 totalSpent = viewModel.getMonthlyTotal(currentCalendarMonth),
                                 progressPercentage = viewModel.getMonthlyProgressPercentage(currentCalendarMonth),
@@ -567,7 +589,18 @@ fun ExpensesScreen(
                         .weight(1f)
                         .then(
                             if (currentTutorialStep == com.example.expensetrackerkotlin.ui.tutorial.TutorialStepId.EXPENSE_LIST) {
-                                Modifier.border(4.dp, Color(0xFFFF9500), RoundedCornerShape(12.dp))
+                                Modifier
+                                    .shadow(
+                                        elevation = 16.dp,
+                                        shape = CircleShape,
+                                        spotColor = Color(0xFF2CE91E).copy(alpha = tutorialGlowAlpha),
+                                        ambientColor = Color(0xFF2CE91E).copy(alpha = tutorialGlowAlpha * 0.5f)
+                                    )
+                                    .border(
+                                        width = tutorialBorderWidth,
+                                        color = Color(0xFF2CE91E).copy(alpha = tutorialGlowAlpha),
+                                        shape = CircleShape
+                                    )
                             } else Modifier
                         )
                 ) {
@@ -648,7 +681,18 @@ fun ExpensesScreen(
                             )
                             .then(
                                 if (currentTutorialStep == com.example.expensetrackerkotlin.ui.tutorial.TutorialStepId.SECRET_AREA) {
-                                    Modifier.border(4.dp, Color(0xFFFF9500), CircleShape)
+                                    Modifier
+                                        .shadow(
+                                            elevation = 16.dp,
+                                            shape = CircleShape,
+                                            spotColor = Color(0xFF2CE91E).copy(alpha = tutorialGlowAlpha),
+                                            ambientColor = Color(0xFF2CE91E).copy(alpha = tutorialGlowAlpha * 0.5f)
+                                        )
+                                        .border(
+                                            width = tutorialBorderWidth,
+                                            color = Color(0xFF2CE91E).copy(alpha = tutorialGlowAlpha),
+                                            shape = CircleShape
+                                        )
                                 } else Modifier
                             ),
                         contentAlignment = Alignment.Center
@@ -697,7 +741,18 @@ fun ExpensesScreen(
                             )
                             .then(
                                 if (currentTutorialStep == com.example.expensetrackerkotlin.ui.tutorial.TutorialStepId.SETTINGS) {
-                                    Modifier.border(4.dp, Color(0xFFFF9500), CircleShape)
+                                    Modifier
+                                        .shadow(
+                                            elevation = 16.dp,
+                                            shape = CircleShape,
+                                            spotColor = Color(0xFF2CE91E).copy(alpha = tutorialGlowAlpha),
+                                            ambientColor = Color(0xFF2CE91E).copy(alpha = tutorialGlowAlpha * 0.5f)
+                                        )
+                                        .border(
+                                            width = tutorialBorderWidth,
+                                            color = Color(0xFF2CE91E).copy(alpha = tutorialGlowAlpha),
+                                            shape = CircleShape
+                                        )
                                 } else Modifier
                             ),
                         contentAlignment = Alignment.Center
@@ -754,7 +809,18 @@ fun ExpensesScreen(
                             )
                             .then(
                                 if (currentTutorialStep == com.example.expensetrackerkotlin.ui.tutorial.TutorialStepId.RECURRING_EXPENSES) {
-                                    Modifier.border(4.dp, Color(0xFFFF9500), CircleShape)
+                                    Modifier
+                                        .shadow(
+                                            elevation = 16.dp,
+                                            shape = CircleShape,
+                                            spotColor = Color(0xFF2CE91E).copy(alpha = tutorialGlowAlpha),
+                                            ambientColor = Color(0xFF2CE91E).copy(alpha = tutorialGlowAlpha * 0.5f)
+                                        )
+                                        .border(
+                                            width = tutorialBorderWidth,
+                                            color = Color(0xFF2CE91E).copy(alpha = tutorialGlowAlpha),
+                                            shape = CircleShape
+                                        )
                                 } else Modifier
                             ),
                         contentAlignment = Alignment.Center
