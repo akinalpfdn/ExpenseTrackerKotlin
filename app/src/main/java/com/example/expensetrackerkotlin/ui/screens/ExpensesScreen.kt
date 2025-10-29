@@ -97,6 +97,7 @@ fun ExpensesScreen(
     // Tutorial state
     val tutorialState = tutorialManager?.state?.collectAsState()
     val isTutorialActive = tutorialState?.value?.isActive == true
+    val currentTutorialStep = tutorialState?.value?.currentStep?.id
 
     var showingAddExpense by remember { mutableStateOf(false) }
     var showingSettings by remember { mutableStateOf(false) }
@@ -230,18 +231,11 @@ fun ExpensesScreen(
                 onWeekNavigate = { direction ->
                     viewModel.navigateToWeek(direction)
                 },
-                modifier = Modifier.onGloballyPositioned { coordinates ->
-                    val position = coordinates.positionInRoot()
-                    tutorialManager?.updateStepTargetBounds(
-                        com.example.expensetrackerkotlin.ui.tutorial.TutorialStepId.DAILY_HISTORY,
-                        androidx.compose.ui.geometry.Rect(
-                            position.x,
-                            position.y - 200f,
-                            position.x + coordinates.size.width,
-                            position.y + coordinates.size.height - 200f
-                        )
-                    )
-                }
+                modifier = Modifier.then(
+                    if (currentTutorialStep == com.example.expensetrackerkotlin.ui.tutorial.TutorialStepId.DAILY_HISTORY) {
+                        Modifier.border(4.dp, Color(0xFFFF9500), RoundedCornerShape(12.dp))
+                    } else Modifier
+                )
             )
             
             Spacer(modifier = Modifier.height(6.dp))
@@ -278,6 +272,9 @@ fun ExpensesScreen(
                         0 -> {
                             // Monthly Progress Ring
                             MonthlyProgressRingView(
+                                modifier = if (currentTutorialStep == com.example.expensetrackerkotlin.ui.tutorial.TutorialStepId.CALENDAR) {
+                                    Modifier.border(4.dp, Color(0xFFFF9500), CircleShape)
+                                } else Modifier,
                                 totalSpent = viewModel.getMonthlyTotal(currentCalendarMonth),
                                 progressPercentage = viewModel.getMonthlyProgressPercentage(currentCalendarMonth),
                                 isOverLimit = viewModel.isMonthlyOverLimit(currentCalendarMonth),
@@ -291,7 +288,6 @@ fun ExpensesScreen(
                                 currency = viewModel.defaultCurrency,
                                 isDarkTheme = isDarkTheme,
                                 month = currentCalendarMonth.format(java.time.format.DateTimeFormatter.ofPattern("MMMM", Locale.getDefault())),
-
                                 selectedDate = viewModel.selectedDate
                             )
                         }
@@ -544,18 +540,11 @@ fun ExpensesScreen(
                     verticalArrangement = Arrangement.spacedBy(8.dp),
                     modifier = Modifier
                         .weight(1f)
-                        .onGloballyPositioned { coordinates ->
-                            val position = coordinates.positionInWindow()
-                            tutorialManager?.updateStepTargetBounds(
-                                com.example.expensetrackerkotlin.ui.tutorial.TutorialStepId.EXPENSE_LIST,
-                                androidx.compose.ui.geometry.Rect(
-                                    position.x,
-                                    position.y-95f,
-                                    position.x + coordinates.size.width,
-                                    position.y + coordinates.size.height
-                                )
-                            )
-                        }
+                        .then(
+                            if (currentTutorialStep == com.example.expensetrackerkotlin.ui.tutorial.TutorialStepId.EXPENSE_LIST) {
+                                Modifier.border(4.dp, Color(0xFFFF9500), RoundedCornerShape(12.dp))
+                            } else Modifier
+                        )
                 ) {
                     items(selectedDateExpenses) { expense ->
                         ExpenseRowView(
@@ -629,9 +618,13 @@ fun ExpensesScreen(
                         modifier = Modifier
                             .fillMaxSize()
                             .background(
-                                ThemeColors.getCardBackgroundColor(isDarkTheme)
-                                ,
+                                ThemeColors.getCardBackgroundColor(isDarkTheme),
                                 CircleShape
+                            )
+                            .then(
+                                if (currentTutorialStep == com.example.expensetrackerkotlin.ui.tutorial.TutorialStepId.SECRET_AREA) {
+                                    Modifier.border(4.dp, Color(0xFFFF9500), CircleShape)
+                                } else Modifier
                             ),
                         contentAlignment = Alignment.Center
                     ) {
@@ -674,9 +667,13 @@ fun ExpensesScreen(
                         modifier = Modifier
                             .fillMaxSize()
                             .background(
-                                    ThemeColors.getCardBackgroundColor(isDarkTheme)
-                                 ,
+                                    ThemeColors.getCardBackgroundColor(isDarkTheme),
                                 CircleShape
+                            )
+                            .then(
+                                if (currentTutorialStep == com.example.expensetrackerkotlin.ui.tutorial.TutorialStepId.SETTINGS) {
+                                    Modifier.border(4.dp, Color(0xFFFF9500), CircleShape)
+                                } else Modifier
                             ),
                         contentAlignment = Alignment.Center
                     ) {
@@ -729,6 +726,11 @@ fun ExpensesScreen(
                                     colors = listOf(AppColors.RecurringButtonStart, AppColors.RecurringButtonEnd)
                                 ),
                                 CircleShape
+                            )
+                            .then(
+                                if (currentTutorialStep == com.example.expensetrackerkotlin.ui.tutorial.TutorialStepId.RECURRING_EXPENSES) {
+                                    Modifier.border(4.dp, Color(0xFFFF9500), CircleShape)
+                                } else Modifier
                             ),
                         contentAlignment = Alignment.Center
                     ) {
@@ -775,6 +777,11 @@ fun ExpensesScreen(
                                     colors = listOf(Color(0xFFFF9500), Color(0xFFFF3B30))
                                 ),
                                 CircleShape
+                            )
+                            .then(
+                                if (currentTutorialStep == com.example.expensetrackerkotlin.ui.tutorial.TutorialStepId.ADD_EXPENSE) {
+                                    Modifier.border(4.dp, Color(0xFFFF9500), CircleShape)
+                                } else Modifier
                             ),
                         contentAlignment = Alignment.Center
                     ) {
