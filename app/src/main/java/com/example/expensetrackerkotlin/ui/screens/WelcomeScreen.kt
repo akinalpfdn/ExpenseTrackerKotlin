@@ -16,10 +16,13 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.expensetrackerkotlin.R
 import com.example.expensetrackerkotlin.ui.theme.AppColors
 import com.example.expensetrackerkotlin.ui.theme.ThemeColors
 import kotlinx.coroutines.launch
@@ -36,22 +39,23 @@ fun WelcomeScreen(
     onFinish: () -> Unit,
     isDarkTheme: Boolean = true
 ) {
+    val context = LocalContext.current
     val pages = listOf(
         OnboardingPage(
-            title = "Welcome to Expense Tracker",
-            description = "Track your daily expenses easily and take control of your finances. Simple, fast, and completely private.",
+            title = context.getString(R.string.welcome_page1_title),
+            description = context.getString(R.string.welcome_page1_description),
             icon = Icons.Default.AccountBalance,
             gradient = listOf(Color(0xFF667eea), Color(0xFF764ba2))
         ),
         OnboardingPage(
-            title = "Smart Analytics",
-            description = "Visualize your spending with beautiful charts. See where your money goes with category breakdowns and monthly trends.",
+            title = context.getString(R.string.welcome_page2_title),
+            description = context.getString(R.string.welcome_page2_description),
             icon = Icons.Default.Analytics,
             gradient = listOf(Color(0xFFf093fb), Color(0xFFf5576c))
         ),
         OnboardingPage(
-            title = "Your Privacy Matters",
-            description = "All your data stays on your device. No cloud storage, no tracking, no ads. Your financial information is completely private.",
+            title = context.getString(R.string.welcome_page3_title),
+            description = context.getString(R.string.welcome_page3_description),
             icon = Icons.Default.Lock,
             gradient = listOf(Color(0xFF4facfe), Color(0xFF00f2fe))
         )
@@ -79,7 +83,7 @@ fun WelcomeScreen(
                     modifier = Modifier.align(Alignment.TopEnd)
                 ) {
                     Text(
-                        "Skip",
+                        stringResource(R.string.welcome_skip),
                         color = ThemeColors.getTextGrayColor(isDarkTheme)
                     )
                 }
@@ -151,7 +155,10 @@ fun WelcomeScreen(
                     shape = RoundedCornerShape(16.dp)
                 ) {
                     Text(
-                        text = if (pagerState.currentPage < pages.size - 1) "Next" else "Get Started",
+                        text = if (pagerState.currentPage < pages.size - 1)
+                            stringResource(R.string.welcome_next)
+                        else
+                            stringResource(R.string.welcome_get_started),
                         fontSize = 18.sp,
                         fontWeight = FontWeight.Bold,
                         color = Color.White

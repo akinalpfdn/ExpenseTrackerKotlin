@@ -426,4 +426,14 @@
     <string name="tutorial_next">Próximo</string>
     <string name="tutorial_finish">Concluir</string>
     <string name="tutorial_tap_to_continue">Toque para continuar</string>
+
+    <string name="welcome_skip">Pular</string>
+    <string name="welcome_next">Próximo</string>
+    <string name="welcome_get_started">Começar</string>
+    <string name="welcome_page1_title">Bem-vindo ao Gerenciador de Despesas</string>
+    <string name="welcome_page1_description">Acompanhe suas despesas diárias facilmente e assuma o controle de suas finanças. Simples, rápido e totalmente privado.</string>
+    <string name="welcome_page2_title">Análises Inteligentes</string>
+    <string name="welcome_page2_description">Visualize seus gastos com belos gráficos. Veja para onde vai o seu dinheiro com detalhamento por categoria e tendências mensais.</string>
+    <string name="welcome_page3_title">Sua Privacidade Importa</string>
+    <string name="welcome_page3_description">Todos os seus dados permanecem no seu dispositivo. Sem armazenamento na nuvem, sem rastreamento, sem anúncios. Suas informações financeiras são completamente privadas.</string>
 </resources>

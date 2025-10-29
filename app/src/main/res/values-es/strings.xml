@@ -426,4 +426,14 @@
     <string name="tutorial_next">Siguiente</string>
     <string name="tutorial_finish">Finalizar</string>
     <string name="tutorial_tap_to_continue">Toca para continuar</string>
+
+    <string name="welcome_skip">Omitir</string>
+    <string name="welcome_next">Siguiente</string>
+    <string name="welcome_get_started">Comenzar</string>
+    <string name="welcome_page1_title">Bienvenido al Seguimiento de Gastos</string>
+    <string name="welcome_page1_description">Realiza un seguimiento de tus gastos diarios fácilmente y toma el control de tus finanzas. Simple, rápido y completamente privado.</string>
+    <string name="welcome_page2_title">Análisis Inteligente</string>
+    <string name="welcome_page2_description">Visualiza tus gastos con hermosos gráficos. Mira a dónde va tu dinero con desgloses por categoría y tendencias mensuales.</string>
+    <string name="welcome_page3_title">Tu Privacidad Importa</string>
+    <string name="welcome_page3_description">Todos tus datos permanecen en tu dispositivo. Sin almacenamiento en la nube, sin seguimiento, sin anuncios. Tu información financiera es completamente privada.</string>
 </resources>

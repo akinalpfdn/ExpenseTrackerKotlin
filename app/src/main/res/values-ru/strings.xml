@@ -426,4 +426,14 @@
     <string name="tutorial_next">Далее</string>
     <string name="tutorial_finish">Готово</string>
     <string name="tutorial_tap_to_continue">Нажмите, чтобы продолжить</string>
+
+    <string name="welcome_skip">Пропустить</string>
+    <string name="welcome_next">Далее</string>
+    <string name="welcome_get_started">Начать</string>
+    <string name="welcome_page1_title">Добро пожаловать в Трекер расходов</string>
+    <string name="welcome_page1_description">Легко отслеживайте свои ежедневные расходы и контролируйте финансы. Просто, быстро и полностью конфиденциально.</string>
+    <string name="welcome_page2_title">Умная аналитика</string>
+    <string name="welcome_page2_description">Визуализируйте свои траты с помощью красивых диаграмм. Смотрите, куда уходят ваши деньги, с разбивкой по категориям и месячным трендам.</string>
+    <string name="welcome_page3_title">Ваша конфиденциальность важна</string>
+    <string name="welcome_page3_description">Все ваши данные остаются на вашем устройстве. Нет облачного хранения, нет отслеживания, нет рекламы. Ваша финансовая информация полностью конфиденциальна.</string>
 </resources>

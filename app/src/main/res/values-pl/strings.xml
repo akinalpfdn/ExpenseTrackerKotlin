@@ -390,4 +390,14 @@
     <string name="tutorial_next">Dalej</string>
     <string name="tutorial_finish">Zakończ</string>
     <string name="tutorial_tap_to_continue">Stuknij, aby kontynuować</string>
+
+    <string name="welcome_skip">Pomiń</string>
+    <string name="welcome_next">Dalej</string>
+    <string name="welcome_get_started">Rozpocznij</string>
+    <string name="welcome_page1_title">Witamy w Śledzeniu Wydatków</string>
+    <string name="welcome_page1_description">Śledź swoje codzienne wydatki z łatwością i przejmij kontrolę nad swoimi finansami. Prosto, szybko i całkowicie prywatnie.</string>
+    <string name="welcome_page2_title">Inteligentna Analityka</string>
+    <string name="welcome_page2_description">Wizualizuj swoje wydatki za pomocą pięknych wykresów. Zobacz, na co idą Twoje pieniądze, dzięki podziałom na kategorie i trendom miesięcznym.</string>
+    <string name="welcome_page3_title">Twoja Prywatność Ma Znaczenie</string>
+    <string name="welcome_page3_description">Wszystkie Twoje dane pozostają na Twoim urządzeniu. Bez przechowywania w chmurze, bez śledzenia, bez reklam. Twoje informacje finansowe są całkowicie prywatne.</string>
 </resources>

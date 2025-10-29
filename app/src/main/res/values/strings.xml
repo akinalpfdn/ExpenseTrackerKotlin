@@ -430,4 +430,15 @@
     <string name="tutorial_next">Next</string>
     <string name="tutorial_finish">Finish</string>
     <string name="tutorial_tap_to_continue">Tap to continue</string>
+
+    <!-- Welcome Screen -->
+    <string name="welcome_skip">Skip</string>
+    <string name="welcome_next">Next</string>
+    <string name="welcome_get_started">Get Started</string>
+    <string name="welcome_page1_title">Welcome to Expense Tracker</string>
+    <string name="welcome_page1_description">Track your daily expenses easily and take control of your finances. Simple, fast, and completely private.</string>
+    <string name="welcome_page2_title">Smart Analytics</string>
+    <string name="welcome_page2_description">Visualize your spending with beautiful charts. See where your money goes with category breakdowns and monthly trends.</string>
+    <string name="welcome_page3_title">Your Privacy Matters</string>
+    <string name="welcome_page3_description">All your data stays on your device. No cloud storage, no tracking, no ads. Your financial information is completely private.</string>
 </resources>

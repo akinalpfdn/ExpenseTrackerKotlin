@@ -369,7 +369,7 @@
     <string name="no_add_text">Non voglio bombardarti di pubblicità inutili,
     e voglio che tu possa accedere a tutte le funzionalità senza bisogno della versione premium.
     Ma ho bisogno di entrate per continuare a sviluppare. Se ti piace la mia app e vuoi sostenermi,
-    sentiti libero di offrirmi un tè (I prezzi qui non sono influenzati dall'inflazione) :).</string>
+    sentiti libero di offrirmi un tè (I prezzi qui non sono influenzati dall\'inflazione) :).</string>
     <string name="buy_water">Offri un\'acqua</string>
     <string name="buy_bagel">Offri un bagel</string>
     <string name="buy_tea">Offri un tè</string>
@@ -413,7 +413,7 @@
     <string name="tutorial_recurring_expenses_title">Spese Ricorrenti</string>
     <string name="tutorial_recurring_expenses_message">Elenca e modifica le spese ricorrenti qui</string>
     <string name="tutorial_calendar_title">Progresso Mensile</string>
-    <string name="tutorial_calendar_message">Visualizza l'andamento delle tue spese mensili. Tocca l'anello centrale per vedere il calendario mensile e la cronologia delle spese. Scorri a sinistra per vedere i progressi giornalieri e i grafici delle categorie</string>
+    <string name="tutorial_calendar_message">Visualizza l\'andamento delle tue spese mensili. Tocca l\'anello centrale per vedere il calendario mensile e la cronologia delle spese. Scorri a sinistra per vedere i progressi giornalieri e i grafici delle categorie</string>
     <string name="tutorial_daily_history_title">Cronologia Giornaliera</string>
     <string name="tutorial_daily_history_message">Accedi alla cronologia delle tue spese giornaliere qui</string>
     <string name="tutorial_settings_title">Impostazioni</string>
@@ -426,4 +426,14 @@
     <string name="tutorial_next">Avanti</string>
     <string name="tutorial_finish">Fine</string>
     <string name="tutorial_tap_to_continue">Tocca per continuare</string>
+
+    <string name="welcome_skip">Salta</string>
+    <string name="welcome_next">Avanti</string>
+    <string name="welcome_get_started">Inizia</string>
+    <string name="welcome_page1_title">Benvenuto in Gestore Spese</string>
+    <string name="welcome_page1_description">Tieni traccia delle tue spese quotidiane facilmente e prendi il controllo delle tue finanze. Semplice, veloce e completamente privato.</string>
+    <string name="welcome_page2_title">Analisi Intelligente</string>
+    <string name="welcome_page2_description">Visualizza le tue spese con splendidi grafici. Scopri dove vanno i tuoi soldi con suddivisioni per categoria e tendenze mensili.</string>
+    <string name="welcome_page3_title">La tua Privacy è Importante</string>
+    <string name="welcome_page3_description">Tutti i tuoi dati rimangono sul tuo dispositivo. Nessun archivio cloud, nessun tracciamento, nessuna pubblicità. Le tue informazioni finanziarie sono completamente private.</string>
 </resources>
