@@ -36,7 +36,7 @@ fun MainScreen(
     val scope = rememberCoroutineScope()
 
     // Tutorial manager
-    val tutorialManager = remember { TutorialManager(viewModel.preferencesManager) }
+    val tutorialManager = remember { TutorialManager(viewModel.preferencesManager, context) }
     val tutorialState by tutorialManager.state.collectAsState()
 
     // Start tutorial after welcome screen if not completed

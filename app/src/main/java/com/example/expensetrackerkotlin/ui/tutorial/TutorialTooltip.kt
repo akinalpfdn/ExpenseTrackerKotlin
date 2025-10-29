@@ -16,11 +16,14 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Popup
 import androidx.compose.ui.window.PopupProperties
+import com.example.expensetrackerkotlin.R
 
 @Composable
 fun TutorialTooltip(
@@ -32,6 +35,7 @@ fun TutorialTooltip(
     isDarkTheme: Boolean,
     modifier: Modifier = Modifier
 ) {
+    val context = LocalContext.current
     val configuration = LocalConfiguration.current
     val screenWidth = configuration.screenWidthDp.dp
     val screenHeight = configuration.screenHeightDp.dp
@@ -111,7 +115,7 @@ fun TutorialTooltip(
                     ) {
                         TextButton(onClick = onSkip) {
                             Text(
-                                text = "Skip",
+                                text = stringResource(R.string.tutorial_skip),
                                 color = if (isDarkTheme) Color.Gray else Color.DarkGray
                             )
                         }
@@ -121,14 +125,17 @@ fun TutorialTooltip(
                         if (!step.requiresTap) {
                             TextButton(onClick = onNext) {
                                 Text(
-                                    text = if (stepIndex == totalSteps - 1) "Finish" else "Next",
+                                    text = if (stepIndex == totalSteps - 1)
+                                        stringResource(R.string.tutorial_finish)
+                                    else
+                                        stringResource(R.string.tutorial_next),
                                     color = Color(0xFFFF9500),
                                     fontWeight = FontWeight.SemiBold
                                 )
                             }
                         } else {
                             Text(
-                                text = "Tap to continue",
+                                text = stringResource(R.string.tutorial_tap_to_continue),
                                 fontSize = 12.sp,
                                 color = Color(0xFFFF9500),
                                 fontWeight = FontWeight.Medium

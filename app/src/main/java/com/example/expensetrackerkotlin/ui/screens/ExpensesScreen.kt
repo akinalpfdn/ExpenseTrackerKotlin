@@ -229,6 +229,18 @@ fun ExpensesScreen(
                 },
                 onWeekNavigate = { direction ->
                     viewModel.navigateToWeek(direction)
+                },
+                modifier = Modifier.onGloballyPositioned { coordinates ->
+                    val position = coordinates.positionInRoot()
+                    tutorialManager?.updateStepTargetBounds(
+                        com.example.expensetrackerkotlin.ui.tutorial.TutorialStepId.DAILY_HISTORY,
+                        androidx.compose.ui.geometry.Rect(
+                            position.x,
+                            position.y - 200f,
+                            position.x + coordinates.size.width,
+                            position.y + coordinates.size.height - 200f
+                        )
+                    )
                 }
             )
             
@@ -250,14 +262,14 @@ fun ExpensesScreen(
                         .fillMaxSize()
                         .onGloballyPositioned { coordinates ->
                             // Calendar button for tutorial (center circle of progress ring)
-                            val position = coordinates.positionInWindow()
+                            val position = coordinates.positionInRoot()
                             tutorialManager?.updateStepTargetBounds(
                                 com.example.expensetrackerkotlin.ui.tutorial.TutorialStepId.CALENDAR,
                                 androidx.compose.ui.geometry.Rect(
                                     position.x,
-                                    position.y-100f,
+                                    position.y - 200f,
                                     position.x + coordinates.size.width,
-                                    position.y + coordinates.size.height
+                                    position.y + coordinates.size.height - 200f
                                 )
                             )
                         }
@@ -589,11 +601,29 @@ fun ExpensesScreen(
             ) {
                 // Purchase/Donation Button (Top)
                 FloatingActionButton(
-                    onClick = { showingPurchase = true },
+                    onClick = {
+                        if (isTutorialActive) {
+                            tutorialManager?.nextStep()
+                        } else {
+                            showingPurchase = true
+                        }
+                    },
                     elevation = FloatingActionButtonDefaults.elevation(0.dp, 0.dp, 0.dp, 0.dp),
                     containerColor = Color.Transparent,
                     modifier = Modifier.size(60.dp)
                         .offset(y = 140.dp)
+                        .onGloballyPositioned { coordinates ->
+                            val position = coordinates.positionInRoot()
+                            tutorialManager?.updateStepTargetBounds(
+                                com.example.expensetrackerkotlin.ui.tutorial.TutorialStepId.SECRET_AREA,
+                                androidx.compose.ui.geometry.Rect(
+                                    position.x,
+                                    position.y - 200f,
+                                    position.x + coordinates.size.width,
+                                    position.y + coordinates.size.height - 200f
+                                )
+                            )
+                        }
                 ) {
                     Box(
                         modifier = Modifier
@@ -667,11 +697,29 @@ fun ExpensesScreen(
             ) {
                 // Recurring Expenses Button (Top)
                 FloatingActionButton(
-                    onClick = { showingRecurringExpenses = true },
+                    onClick = {
+                        if (isTutorialActive) {
+                            tutorialManager?.nextStep()
+                        } else {
+                            showingRecurringExpenses = true
+                        }
+                    },
                     elevation = FloatingActionButtonDefaults.elevation(0.dp, 0.dp, 0.dp, 0.dp),
                     containerColor = Color.Transparent,
                     modifier = Modifier.size(60.dp)
                         .offset(y = 140.dp)
+                        .onGloballyPositioned { coordinates ->
+                            val position = coordinates.positionInRoot()
+                            tutorialManager?.updateStepTargetBounds(
+                                com.example.expensetrackerkotlin.ui.tutorial.TutorialStepId.RECURRING_EXPENSES,
+                                androidx.compose.ui.geometry.Rect(
+                                    position.x,
+                                    position.y - 200f,
+                                    position.x + coordinates.size.width,
+                                    position.y + coordinates.size.height - 200f
+                                )
+                            )
+                        }
                 ) {
                     Box(
                         modifier = Modifier

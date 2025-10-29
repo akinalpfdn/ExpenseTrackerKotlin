@@ -1,5 +1,6 @@
 package com.example.expensetrackerkotlin.ui.tutorial
 
+import android.content.Context
 import androidx.compose.ui.geometry.Rect
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -19,7 +20,8 @@ data class TutorialState(
 )
 
 class TutorialManager(
-    private val preferencesManager: PreferencesManager
+    private val preferencesManager: PreferencesManager,
+    context: Context
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(TutorialState())
@@ -30,7 +32,7 @@ class TutorialManager(
 
     init {
         // Load default steps
-        steps.addAll(TutorialSteps.getDefaultSteps())
+        steps.addAll(TutorialSteps.getDefaultSteps(context))
     }
 
     fun startTutorial() {

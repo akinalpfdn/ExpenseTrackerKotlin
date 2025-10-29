@@ -1,15 +1,18 @@
 package com.example.expensetrackerkotlin.ui.tutorial
 
+import android.content.Context
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
+import com.example.expensetrackerkotlin.R
 
 enum class TutorialStepId {
     ADD_EXPENSE,
-    EXPENSE_LIST,
+    RECURRING_EXPENSES,
     CALENDAR,
+    DAILY_HISTORY,
     SETTINGS,
-    SWIPE_ANALYTICS,
-    SWIPE_PLANNING,
+    SECRET_AREA,
+    EXPENSE_LIST,
     COMPLETED
 }
 
@@ -41,50 +44,59 @@ enum class HighlightShape {
 
 // Predefined tutorial steps with default messages
 object TutorialSteps {
-    fun getDefaultSteps(): List<TutorialStep> {
+    fun getDefaultSteps(context: Context): List<TutorialStep> {
         return listOf(
             TutorialStep(
                 id = TutorialStepId.ADD_EXPENSE,
-                title = "Add Expense",
-                message = "Tap here to add your first expense. Track all your spending in one place!",
+                title = context.getString(R.string.tutorial_add_expense_title),
+                message = context.getString(R.string.tutorial_add_expense_message),
                 highlightRadius = 70f,
                 tooltipPosition = TooltipPosition.TOP
             ),
             TutorialStep(
-                id = TutorialStepId.EXPENSE_LIST,
-                title = "Your Expenses",
-                message = "All your expenses appear here. Swipe to see charts and analytics.",
+                id = TutorialStepId.RECURRING_EXPENSES,
+                title = context.getString(R.string.tutorial_recurring_expenses_title),
+                message = context.getString(R.string.tutorial_recurring_expenses_message),
+                highlightRadius = 70f,
+                tooltipPosition = TooltipPosition.TOP
+            ),
+            TutorialStep(
+                id = TutorialStepId.CALENDAR,
+                title = context.getString(R.string.tutorial_calendar_title),
+                message = context.getString(R.string.tutorial_calendar_message),
+                highlightRadius = 80f,
+                tooltipPosition = TooltipPosition.TOP
+            ),
+            TutorialStep(
+                id = TutorialStepId.DAILY_HISTORY,
+                title = context.getString(R.string.tutorial_daily_history_title),
+                message = context.getString(R.string.tutorial_daily_history_message),
                 highlightShape = HighlightShape.ROUNDED_RECT,
                 requiresTap = false,
                 autoProgress = false,
                 tooltipPosition = TooltipPosition.TOP
             ),
             TutorialStep(
-                id = TutorialStepId.CALENDAR,
-                title = "Calendar View",
-                message = "Tap the center ring to view your monthly calendar and spending history.",
-                highlightRadius = 80f,
-                tooltipPosition = TooltipPosition.TOP
-            ),
-            TutorialStep(
                 id = TutorialStepId.SETTINGS,
-                title = "Settings",
-                message = "Customize currency, spending limits, theme, and manage your data backup.",
+                title = context.getString(R.string.tutorial_settings_title),
+                message = context.getString(R.string.tutorial_settings_message),
                 highlightRadius = 50f,
                 tooltipPosition = TooltipPosition.TOP
             ),
             TutorialStep(
-                id = TutorialStepId.SWIPE_ANALYTICS,
-                title = "Analytics",
-                message = "Swipe left on the main screen to see spending analytics and charts.",
+                id = TutorialStepId.SECRET_AREA,
+                title = context.getString(R.string.tutorial_secret_title),
+                message = context.getString(R.string.tutorial_secret_message),
+                highlightRadius = 50f,
                 requiresTap = false,
                 autoProgress = false,
                 tooltipPosition = TooltipPosition.TOP
             ),
             TutorialStep(
-                id = TutorialStepId.SWIPE_PLANNING,
-                title = "Financial Planning",
-                message = "Swipe left again to access financial planning and savings tools.",
+                id = TutorialStepId.EXPENSE_LIST,
+                title = context.getString(R.string.tutorial_expense_list_title),
+                message = context.getString(R.string.tutorial_expense_list_message),
+                highlightShape = HighlightShape.ROUNDED_RECT,
                 requiresTap = false,
                 autoProgress = false,
                 tooltipPosition = TooltipPosition.TOP

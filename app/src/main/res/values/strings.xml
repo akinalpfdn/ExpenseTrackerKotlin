@@ -410,4 +410,24 @@
     <string name="importButton">Import and Replace Data</string>
     <string name="importSucceed">Import Successful</string>
     <string name="chooseExport">Choose export method:</string>
+
+    <!-- Tutorial -->
+    <string name="tutorial_add_expense_title">Add Expense</string>
+    <string name="tutorial_add_expense_message">Tap here to add expenses</string>
+    <string name="tutorial_recurring_expenses_title">Recurring Expenses</string>
+    <string name="tutorial_recurring_expenses_message">List and edit recurring expenses here</string>
+    <string name="tutorial_calendar_title">Monthly Progress</string>
+    <string name="tutorial_calendar_message">View your monthly spending progress. Tap the center ring to view your monthly calendar and spending history. Swipe left to see daily progress and category charts</string>
+    <string name="tutorial_daily_history_title">Daily History</string>
+    <string name="tutorial_daily_history_message">Access your daily spending history here</string>
+    <string name="tutorial_settings_title">Settings</string>
+    <string name="tutorial_settings_message">Customize currency, spending limits, theme, categories and manage your data backup</string>
+    <string name="tutorial_secret_title">Support</string>
+    <string name="tutorial_secret_message">ULTIMATE TOP SECRET AREA</string>
+    <string name="tutorial_expense_list_title">Your Expenses</string>
+    <string name="tutorial_expense_list_message">Your expenses are listed here. Swipe left on the main screen to see spending analytics and charts. Swipe left again to access financial planning screen</string>
+    <string name="tutorial_skip">Skip</string>
+    <string name="tutorial_next">Next</string>
+    <string name="tutorial_finish">Finish</string>
+    <string name="tutorial_tap_to_continue">Tap to continue</string>
 </resources>
