@@ -395,4 +395,17 @@
     <string name="purchase_error">Error: %1$s</string>
     <string name="purchase_cancelled">Purchase cancelled</string>
     <string name="purchase_loading">⏳ Starting purchase process…</string>
+    <string name="backupRestore"><![CDATA[Backup & Restore]]></string>
+    <string name="backupText">Export your data to backup or import a previous backup</string>
+    <string name="exportData">Export Data</string>
+    <string name="importData">Import Data</string>
+    <string name="shareText">Share: Send via WhatsApp, Drive, Email, etc.</string>
+    <string name="saveText">Save to Storage: Save directly to your device</string>
+    <string name="share">Share</string>
+    <string name="saveToStorage">Save to Storage</string>
+    <string name="success">Success</string>
+    <string name="importApprove">Import Approve</string>
+    <string name="importButton">Import and Replace Data</string>
+    <string name="importSucceed">Import Successful</string>
+    <string name="chooseExport">Choose export method:</string>
 </resources>

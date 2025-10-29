@@ -476,15 +476,26 @@ fun DataManagementSection(
 
     var showImportDialog by remember { mutableStateOf(false) }
     var showImportSuccessDialog by remember { mutableStateOf(false) }
+    var showExportDialog by remember { mutableStateOf(false) }
+    var showSuccessDialog by remember { mutableStateOf(false) }
+    var successMessage by remember { mutableStateOf("") }
     var importSummary by remember { mutableStateOf<com.example.expensetrackerkotlin.data.ImportSummary?>(null) }
     var pendingImportUri by remember { mutableStateOf<android.net.Uri?>(null) }
 
-    val filePickerLauncherWithState = rememberLauncherForActivityResult(
+    val importFilePickerLauncher = rememberLauncherForActivityResult(
         contract = androidx.activity.result.contract.ActivityResultContracts.GetContent()
     ) { uri: android.net.Uri? ->
         pendingImportUri = uri
         uri?.let {
             showImportDialog = true
+        }
+    }
+
+    val saveToStorageLauncher = rememberLauncherForActivityResult(
+        contract = androidx.activity.result.contract.ActivityResultContracts.CreateDocument("application/json")
+    ) { uri: android.net.Uri? ->
+        uri?.let {
+            viewModel.saveToStorage(it)
         }
     }
 
@@ -495,6 +506,14 @@ fun DataManagementSection(
             is com.example.expensetrackerkotlin.viewmodel.DataManagementState.ExportSuccess -> {
                 context.startActivity(currentState.shareIntent)
                 viewModel.cleanupExportFile()
+                viewModel.resetState()
+            }
+            is com.example.expensetrackerkotlin.viewmodel.DataManagementState.ExportReadyForStorage -> {
+                saveToStorageLauncher.launch(currentState.saveIntent.getStringExtra(android.content.Intent.EXTRA_TITLE) ?: "backup.json")
+            }
+            is com.example.expensetrackerkotlin.viewmodel.DataManagementState.StorageSaveSuccess -> {
+                successMessage = currentState.message
+                showSuccessDialog = true
                 viewModel.resetState()
             }
             is com.example.expensetrackerkotlin.viewmodel.DataManagementState.ImportSuccess -> {
@@ -510,14 +529,14 @@ fun DataManagementSection(
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         Text(
-            text = "Backup & Restore",
+            text = stringResource(R.string.backupRestore),
             fontSize = 18.sp,
             fontWeight = FontWeight.Medium,
             color = com.example.expensetrackerkotlin.ui.theme.ThemeColors.getTextColor(isDarkTheme)
         )
 
         Text(
-            text = "Export your data to backup or import a previous backup",
+            text = stringResource(R.string.backupText),
             fontSize = 14.sp,
             color = com.example.expensetrackerkotlin.ui.theme.ThemeColors.getTextGrayColor(isDarkTheme)
         )
@@ -526,15 +545,15 @@ fun DataManagementSection(
 
         // Export Button
         Button(
-            onClick = { viewModel.exportData() },
+            onClick = { showExportDialog = true },
             enabled = state !is com.example.expensetrackerkotlin.viewmodel.DataManagementState.Loading,
             modifier = Modifier
                 .fillMaxWidth()
-                .height(48.dp),
+                .height(36.dp),
             colors = ButtonDefaults.buttonColors(
-                containerColor = com.example.expensetrackerkotlin.ui.theme.AppColors.PrimaryOrange
+                containerColor = com.example.expensetrackerkotlin.ui.theme.AppColors.PrimaryOrange.copy(alpha = 0.8f)
             ),
-            shape = RoundedCornerShape(12.dp)
+            shape = RoundedCornerShape(16.dp)
         ) {
             if (state is com.example.expensetrackerkotlin.viewmodel.DataManagementState.Loading) {
                 CircularProgressIndicator(
@@ -543,7 +562,7 @@ fun DataManagementSection(
                 )
             } else {
                 Text(
-                    text = "Export Data",
+                    text = stringResource(R.string.exportData),
                     fontSize = 16.sp,
                     fontWeight = FontWeight.SemiBold,
                     color = com.example.expensetrackerkotlin.ui.theme.ThemeColors.getTextColor(isDarkTheme)
@@ -553,18 +572,18 @@ fun DataManagementSection(
 
         // Import Button
         Button(
-            onClick = { filePickerLauncherWithState.launch("application/json") },
+            onClick = { importFilePickerLauncher.launch("application/json") },
             enabled = state !is com.example.expensetrackerkotlin.viewmodel.DataManagementState.Loading,
             modifier = Modifier
                 .fillMaxWidth()
-                .height(48.dp),
+                .height(36.dp),
             colors = ButtonDefaults.buttonColors(
-                containerColor = com.example.expensetrackerkotlin.ui.theme.AppColors.PrimaryOrange.copy(alpha = 0.8f)
+                containerColor = com.example.expensetrackerkotlin.ui.theme.AppColors.PrimaryOrange.copy(alpha = 0.4f)
             ),
-            shape = RoundedCornerShape(12.dp)
+            shape = RoundedCornerShape(16.dp)
         ) {
             Text(
-                text = "Import Data",
+                text = stringResource(R.string.importData),
                 fontSize = 16.sp,
                 fontWeight = FontWeight.SemiBold,
                 color = com.example.expensetrackerkotlin.ui.theme.ThemeColors.getTextColor(isDarkTheme)
@@ -592,35 +611,125 @@ fun DataManagementSection(
         }
     }
 
+    // Export Options Dialog
+    if (showExportDialog) {
+         AlertDialog(
+            onDismissRequest = {
+                showExportDialog = false
+            },
+            title = {
+                Text(
+                    text = stringResource(R.string.exportData) ,
+                    color = ThemeColors.getTextColor(isDarkTheme),
+                    fontWeight = FontWeight.Bold
+                )
+            },
+            text = {
+                Column {
+                    Text(stringResource(R.string.chooseExport) ,
+                        color = ThemeColors.getTextColor(isDarkTheme))
+                    Spacer(modifier = Modifier.height(16.dp))
+                    Text(
+                        stringResource(R.string.shareText),
+                        fontSize = 14.sp,
+                        color = com.example.expensetrackerkotlin.ui.theme.ThemeColors.getTextGrayColor(isDarkTheme)
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Text(
+                        stringResource(R.string.saveText),
+                        fontSize = 14.sp,
+                        color = com.example.expensetrackerkotlin.ui.theme.ThemeColors.getTextGrayColor(isDarkTheme)
+                    )
+                }
+            },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        viewModel.exportAndShare()
+                        showExportDialog = false
+                    },
+                    modifier = Modifier
+                        .height(36.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = ThemeColors.getButtonDisabledColor(isDarkTheme)
+                    ),
+                    shape = RoundedCornerShape(16.dp)
+                ) {
+                    Text(stringResource(R.string.share),
+                        color = ThemeColors.getTextColor(isDarkTheme))
+                }
+            },
+            dismissButton = {
+                    Button(
+                        onClick = {
+                            viewModel.exportToStorage()
+                            showExportDialog = false
+                        },
+                        modifier = Modifier
+                            .height(36.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = AppColors.PrimaryOrange
+                        ),
+                        shape = RoundedCornerShape(16.dp)
+
+                    ) {
+                        Text(stringResource(R.string.saveToStorage))
+                    }
+
+
+            },
+             containerColor = ThemeColors.getDialogBackgroundColor(isDarkTheme)
+        )
+    }
+
+    // Success Dialog
+    if (showSuccessDialog) {
+        AlertDialog(
+            onDismissRequest = {
+                showSuccessDialog = false
+                successMessage = ""
+            },
+            title = {
+                Text(
+                    text = stringResource(R.string.success),
+                    color = ThemeColors.getTextColor(isDarkTheme),
+                    fontWeight = FontWeight.Bold
+                )
+            },
+            text = {
+                Text(successMessage,
+                    color = ThemeColors.getTextColor(isDarkTheme))
+            },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        showSuccessDialog = false
+                        successMessage = ""
+                    },
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = com.example.expensetrackerkotlin.ui.theme.AppColors.PrimaryOrange.copy(alpha = 0.8f)
+                    )
+                ) {
+                    Text(stringResource(R.string.ok))
+                }
+            },
+            containerColor = ThemeColors.getDialogBackgroundColor(isDarkTheme)
+        )
+    }
+
     // Import Strategy Dialog
     if (showImportDialog) {
-        androidx.compose.material3.AlertDialog(
+       AlertDialog(
             onDismissRequest = {
                 showImportDialog = false
                 pendingImportUri = null
             },
             title = {
                 Text(
-                    text = "Import Strategy",
+                    text = stringResource(R.string.importApprove),
+                    color = ThemeColors.getTextColor(isDarkTheme),
                     fontWeight = FontWeight.Bold
                 )
-            },
-            text = {
-                Column {
-                    Text("Choose how to import the data:")
-                    Spacer(modifier = Modifier.height(16.dp))
-                    Text(
-                        "Replace All: Delete existing data and import new data",
-                        fontSize = 14.sp,
-                        color = com.example.expensetrackerkotlin.ui.theme.ThemeColors.getTextGrayColor(isDarkTheme)
-                    )
-                    Spacer(modifier = Modifier.height(8.dp))
-                    Text(
-                        "Merge: Keep existing data and add/update from import",
-                        fontSize = 14.sp,
-                        color = com.example.expensetrackerkotlin.ui.theme.ThemeColors.getTextGrayColor(isDarkTheme)
-                    )
-                }
             },
             confirmButton = {
                 Button(
@@ -632,31 +741,24 @@ fun DataManagementSection(
                         pendingImportUri = null
                     },
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = androidx.compose.ui.graphics.Color.Red
+                        containerColor = com.example.expensetrackerkotlin.ui.theme.AppColors.PrimaryOrange.copy(alpha = 0.8f)
                     )
                 ) {
-                    Text("Replace All")
+                    Text(stringResource(R.string.importButton))
                 }
             },
             dismissButton = {
-                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                    TextButton(onClick = {
-                        pendingImportUri?.let { uri ->
-                            viewModel.importData(uri, com.example.expensetrackerkotlin.data.ImportStrategy.MERGE)
-                        }
-                        showImportDialog = false
-                        pendingImportUri = null
-                    }) {
-                        Text("Merge")
-                    }
+
                     TextButton(onClick = {
                         showImportDialog = false
                         pendingImportUri = null
                     }) {
-                        Text("Cancel")
+                        Text(stringResource(R.string.cancel),
+                            color = ThemeColors.getTextColor(isDarkTheme))
                     }
-                }
-            }
+
+            },
+           containerColor = ThemeColors.getDialogBackgroundColor(isDarkTheme)
         )
     }
 
@@ -669,19 +771,25 @@ fun DataManagementSection(
             },
             title = {
                 Text(
-                    text = "Import Successful",
+                    text = stringResource(R.string.importSucceed),
+                    color = ThemeColors.getTextColor(isDarkTheme),
                     fontWeight = FontWeight.Bold
                 )
             },
             text = {
                 importSummary?.let { summary ->
                     Column {
-                        Text("Data imported successfully!")
+                        Text("Data imported successfully!",
+                            color = ThemeColors.getTextColor(isDarkTheme))
                         Spacer(modifier = Modifier.height(16.dp))
-                        Text("Categories: ${summary.categoriesImported}", fontSize = 14.sp)
-                        Text("SubCategories: ${summary.subCategoriesImported}", fontSize = 14.sp)
-                        Text("Expenses: ${summary.expensesImported}", fontSize = 14.sp)
-                        Text("Financial Plans: ${summary.financialPlansImported}", fontSize = 14.sp)
+                        Text("Categories: ${summary.categoriesImported}", fontSize = 14.sp,
+                            color = ThemeColors.getTextColor(isDarkTheme))
+                        Text("SubCategories: ${summary.subCategoriesImported}", fontSize = 14.sp,
+                            color = ThemeColors.getTextColor(isDarkTheme))
+                        Text("Expenses: ${summary.expensesImported}", fontSize = 14.sp,
+                            color = ThemeColors.getTextColor(isDarkTheme))
+                        Text("Financial Plans: ${summary.financialPlansImported}", fontSize = 14.sp,
+                            color = ThemeColors.getTextColor(isDarkTheme))
                     }
                 }
             },
@@ -690,11 +798,16 @@ fun DataManagementSection(
                     onClick = {
                         showImportSuccessDialog = false
                         importSummary = null
-                    }
+                    },
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = com.example.expensetrackerkotlin.ui.theme.AppColors.PrimaryOrange.copy(alpha = 0.8f)
+                    )
                 ) {
-                    Text("OK")
+                    Text(stringResource(R.string.ok),
+                        color = ThemeColors.getTextColor(isDarkTheme))
                 }
-            }
+            },
+            containerColor = ThemeColors.getDialogBackgroundColor(isDarkTheme)
         )
     }
 }

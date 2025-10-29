@@ -49,6 +49,35 @@ class FileManager(private val context: Context) {
         return Intent.createChooser(shareIntent, "Share backup file")
     }
 
+    fun createSaveToStorageIntent(): Intent {
+        val timestamp = LocalDateTime.now().format(dateFormatter)
+        val fileName = "expense_tracker_backup_$timestamp.json"
+
+        return Intent(Intent.ACTION_CREATE_DOCUMENT).apply {
+            addCategory(Intent.CATEGORY_OPENABLE)
+            type = "application/json"
+            putExtra(Intent.EXTRA_TITLE, fileName)
+        }
+    }
+
+    suspend fun saveToStorage(uri: Uri, jsonContent: String): Result<Unit> {
+        return withContext(Dispatchers.IO) {
+            try {
+                val outputStream = context.contentResolver.openOutputStream(uri)
+                    ?: return@withContext Result.failure(Exception("Failed to open output stream"))
+
+                outputStream.bufferedWriter().use { writer ->
+                    writer.write(jsonContent)
+                }
+                outputStream.close()
+
+                Result.success(Unit)
+            } catch (e: Exception) {
+                Result.failure(Exception("Failed to save file: ${e.message}", e))
+            }
+        }
+    }
+
     suspend fun readImportFile(uri: Uri): Result<String> {
         return withContext(Dispatchers.IO) {
             try {

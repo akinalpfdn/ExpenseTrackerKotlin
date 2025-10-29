@@ -16,6 +16,8 @@ sealed class DataManagementState {
     object Idle : DataManagementState()
     object Loading : DataManagementState()
     data class ExportSuccess(val shareIntent: Intent) : DataManagementState()
+    data class ExportReadyForStorage(val jsonContent: String, val saveIntent: Intent) : DataManagementState()
+    data class StorageSaveSuccess(val message: String) : DataManagementState()
     data class ImportSuccess(val summary: ImportSummary) : DataManagementState()
     data class Error(val message: String) : DataManagementState()
 }
@@ -33,8 +35,9 @@ class DataManagementViewModel(
     private val fileManager = FileManager(context)
 
     private var lastExportFile: File? = null
+    private var pendingExportJson: String? = null
 
-    fun exportData() {
+    fun exportAndShare() {
         viewModelScope.launch {
             _state.value = DataManagementState.Loading
 
@@ -69,6 +72,65 @@ class DataManagementViewModel(
             } catch (e: Exception) {
                 _state.value = DataManagementState.Error(
                     "Export failed: ${e.message}"
+                )
+            }
+        }
+    }
+
+    fun exportToStorage() {
+        viewModelScope.launch {
+            _state.value = DataManagementState.Loading
+
+            try {
+                // Export data to JSON
+                val exportResult = exportManager.exportAllData(context)
+                if (exportResult.isFailure) {
+                    _state.value = DataManagementState.Error(
+                        exportResult.exceptionOrNull()?.message ?: "Export failed"
+                    )
+                    return@launch
+                }
+
+                val jsonContent = exportResult.getOrThrow()
+                pendingExportJson = jsonContent
+
+                // Create save to storage intent
+                val saveIntent = fileManager.createSaveToStorageIntent()
+                _state.value = DataManagementState.ExportReadyForStorage(jsonContent, saveIntent)
+
+            } catch (e: Exception) {
+                _state.value = DataManagementState.Error(
+                    "Export failed: ${e.message}"
+                )
+            }
+        }
+    }
+
+    fun saveToStorage(uri: Uri) {
+        viewModelScope.launch {
+            _state.value = DataManagementState.Loading
+
+            try {
+                val jsonContent = pendingExportJson
+                if (jsonContent == null) {
+                    _state.value = DataManagementState.Error("No export data available")
+                    return@launch
+                }
+
+                val saveResult = fileManager.saveToStorage(uri, jsonContent)
+                if (saveResult.isFailure) {
+                    _state.value = DataManagementState.Error(
+                        saveResult.exceptionOrNull()?.message ?: "Failed to save file"
+                    )
+                    return@launch
+                }
+
+                pendingExportJson = null
+                _state.value = DataManagementState.StorageSaveSuccess("Backup saved successfully!")
+
+            } catch (e: Exception) {
+                _state.value = DataManagementState.Error(
+                    "Save failed: ${e.message}"
                 )
             }
         }
