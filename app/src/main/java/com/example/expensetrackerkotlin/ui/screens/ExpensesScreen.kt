@@ -260,7 +260,7 @@ fun ExpensesScreen(
                     if (currentTutorialStep == com.example.expensetrackerkotlin.ui.tutorial.TutorialStepId.DAILY_HISTORY) {
                         Modifier
                             .shadow(
-                                elevation = 16.dp,
+                                elevation = 80.dp,
                                 shape = RoundedCornerShape(12.dp),
                                 spotColor = Color(0xFF2CE91E).copy(alpha = tutorialGlowAlpha),
                                 ambientColor = Color(0xFF2CE91E).copy(alpha = tutorialGlowAlpha * 0.5f)
@@ -311,19 +311,21 @@ fun ExpensesScreen(
                                 modifier = if (currentTutorialStep == com.example.expensetrackerkotlin.ui.tutorial.TutorialStepId.CALENDAR) {
                                     Modifier
                                         .shadow(
-                                            elevation = 16.dp,
-                                            shape = RoundedCornerShape(12.dp),
+                                            elevation = 80.dp,
+                                            shape = RoundedCornerShape(16.dp),
                                             spotColor = Color(0xFF2CE91E).copy(alpha = tutorialGlowAlpha),
                                             ambientColor = Color(0xFF2CE91E).copy(alpha = tutorialGlowAlpha * 0.5f)
                                         )
                                         .border(
                                             width = tutorialBorderWidth,
                                             color = Color(0xFF2CE91E).copy(alpha = tutorialGlowAlpha),
-                                            shape = RoundedCornerShape(12.dp)
+                                            shape = RoundedCornerShape(16.dp)
                                         )
                                 } else Modifier,
                                 totalSpent = viewModel.getMonthlyTotal(currentCalendarMonth),
-                                progressPercentage = viewModel.getMonthlyProgressPercentage(currentCalendarMonth),
+                                progressPercentage = viewModel.getMonthlyProgressPercentage(
+                                    currentCalendarMonth
+                                ),
                                 isOverLimit = viewModel.isMonthlyOverLimit(currentCalendarMonth),
                                 onTap = {
                                     if (isTutorialActive) {
@@ -334,7 +336,12 @@ fun ExpensesScreen(
                                 },
                                 currency = viewModel.defaultCurrency,
                                 isDarkTheme = isDarkTheme,
-                                month = currentCalendarMonth.format(java.time.format.DateTimeFormatter.ofPattern("MMMM", Locale.getDefault())),
+                                month = currentCalendarMonth.format(
+                                    java.time.format.DateTimeFormatter.ofPattern(
+                                        "MMMM",
+                                        Locale.getDefault()
+                                    )
+                                ),
                                 selectedDate = viewModel.selectedDate
                             )
                         }
@@ -591,7 +598,7 @@ fun ExpensesScreen(
                             if (currentTutorialStep == com.example.expensetrackerkotlin.ui.tutorial.TutorialStepId.EXPENSE_LIST) {
                                 Modifier
                                     .shadow(
-                                        elevation = 16.dp,
+                                        elevation = 40.dp,
                                         shape = CircleShape,
                                         spotColor = Color(0xFF2CE91E).copy(alpha = tutorialGlowAlpha),
                                         ambientColor = Color(0xFF2CE91E).copy(alpha = tutorialGlowAlpha * 0.5f)
@@ -683,7 +690,7 @@ fun ExpensesScreen(
                                 if (currentTutorialStep == com.example.expensetrackerkotlin.ui.tutorial.TutorialStepId.SECRET_AREA) {
                                     Modifier
                                         .shadow(
-                                            elevation = 16.dp,
+                                            elevation = 40.dp,
                                             shape = CircleShape,
                                             spotColor = Color(0xFF2CE91E).copy(alpha = tutorialGlowAlpha),
                                             ambientColor = Color(0xFF2CE91E).copy(alpha = tutorialGlowAlpha * 0.5f)
@@ -743,7 +750,7 @@ fun ExpensesScreen(
                                 if (currentTutorialStep == com.example.expensetrackerkotlin.ui.tutorial.TutorialStepId.SETTINGS) {
                                     Modifier
                                         .shadow(
-                                            elevation = 16.dp,
+                                            elevation = 40.dp,
                                             shape = CircleShape,
                                             spotColor = Color(0xFF2CE91E).copy(alpha = tutorialGlowAlpha),
                                             ambientColor = Color(0xFF2CE91E).copy(alpha = tutorialGlowAlpha * 0.5f)
@@ -811,7 +818,7 @@ fun ExpensesScreen(
                                 if (currentTutorialStep == com.example.expensetrackerkotlin.ui.tutorial.TutorialStepId.RECURRING_EXPENSES) {
                                     Modifier
                                         .shadow(
-                                            elevation = 16.dp,
+                                            elevation = 40.dp,
                                             shape = CircleShape,
                                             spotColor = Color(0xFF2CE91E).copy(alpha = tutorialGlowAlpha),
                                             ambientColor = Color(0xFF2CE91E).copy(alpha = tutorialGlowAlpha * 0.5f)
@@ -867,7 +874,7 @@ fun ExpensesScreen(
                                 if (currentTutorialStep == com.example.expensetrackerkotlin.ui.tutorial.TutorialStepId.ADD_EXPENSE) {
                                     Modifier
                                         .shadow(
-                                            elevation = 16.dp,
+                                            elevation = 40.dp,
                                             shape = CircleShape,
                                             spotColor = Color(0xFF2CE91E).copy(alpha = tutorialGlowAlpha),
                                             ambientColor = Color(0xFF2CE91E).copy(alpha = tutorialGlowAlpha * 0.5f)

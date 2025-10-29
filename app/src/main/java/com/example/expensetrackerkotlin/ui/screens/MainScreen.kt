@@ -41,9 +41,9 @@ fun MainScreen(
 
     // Start tutorial after welcome screen if not completed
     LaunchedEffect(isFirstLaunch, isTutorialCompleted) {
-       // if (isFirstLaunch == false && isTutorialCompleted == false) {
+        if (isFirstLaunch == false && isTutorialCompleted == false) {
             tutorialManager.startTutorial()
-        //}
+        }
     }
 
     // Show loading or welcome screen based on state
