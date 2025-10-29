@@ -1,5 +1,6 @@
 package com.example.expensetrackerkotlin.ui.screens
 
+import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
@@ -36,10 +37,14 @@ fun SettingsScreen(
     onDailyLimitChanged: (String) -> Unit,
     onMonthlyLimitChanged: (String) -> Unit,
     onThemeChanged: (String) -> Unit,
-    onDismiss: () -> Unit
+    onDismiss: () -> Unit,
+    dataManagementViewModel: com.example.expensetrackerkotlin.viewmodel.DataManagementViewModel? = null
 ) {
     var selectedTabIndex by remember { mutableStateOf(0) }
-    val tabs = listOf(stringResource(R.string.general_settings), stringResource(R.string.categories))
+    val tabs = listOf(
+        stringResource(R.string.general_settings),
+        stringResource(R.string.categories)
+    )
     
     val isDarkTheme = theme == "dark"
     
@@ -95,7 +100,8 @@ fun SettingsScreen(
                 onMonthlyLimitChanged = onMonthlyLimitChanged,
                 onThemeChanged = onThemeChanged,
                 onDismiss = onDismiss,
-                isDarkTheme = isDarkTheme
+                isDarkTheme = isDarkTheme,
+                dataManagementViewModel = dataManagementViewModel
             )
             1 -> CategoryManagementScreen(
                 viewModel = viewModel,
@@ -117,7 +123,8 @@ fun GeneralSettingsTab(
     onMonthlyLimitChanged: (String) -> Unit,
     onThemeChanged: (String) -> Unit,
     onDismiss: () -> Unit,
-    isDarkTheme: Boolean
+    isDarkTheme: Boolean,
+    dataManagementViewModel: com.example.expensetrackerkotlin.viewmodel.DataManagementViewModel? = null
 ) {
     var newDefaultCurrency by remember { mutableStateOf(defaultCurrency) }
     var newDailyLimit by remember { mutableStateOf(dailyLimit) }
@@ -393,8 +400,18 @@ fun GeneralSettingsTab(
                     color = ThemeColors.getTextGrayColor(isDarkTheme)
                 )
             }
+
+            // Data Management Section
+            dataManagementViewModel?.let { dmViewModel ->
+                Spacer(modifier = Modifier.height(8.dp))
+
+                DataManagementSection(
+                    viewModel = dmViewModel,
+                    isDarkTheme = isDarkTheme
+                )
+            }
         }
-        
+
         Spacer(modifier = Modifier.height(20.dp))
         
         // Buttons
@@ -444,9 +461,241 @@ fun GeneralSettingsTab(
                     color = ThemeColors.getTextColor(isDarkTheme)
                 )
             }
-            
+
 
         }
+    }
+}
+
+@Composable
+fun DataManagementSection(
+    viewModel: com.example.expensetrackerkotlin.viewmodel.DataManagementViewModel,
+    isDarkTheme: Boolean
+) {
+    val state by viewModel.state.collectAsState()
+
+    var showImportDialog by remember { mutableStateOf(false) }
+    var showImportSuccessDialog by remember { mutableStateOf(false) }
+    var importSummary by remember { mutableStateOf<com.example.expensetrackerkotlin.data.ImportSummary?>(null) }
+    var pendingImportUri by remember { mutableStateOf<android.net.Uri?>(null) }
+
+    val filePickerLauncherWithState = rememberLauncherForActivityResult(
+        contract = androidx.activity.result.contract.ActivityResultContracts.GetContent()
+    ) { uri: android.net.Uri? ->
+        pendingImportUri = uri
+        uri?.let {
+            showImportDialog = true
+        }
+    }
+
+    val context = androidx.compose.ui.platform.LocalContext.current
+
+    LaunchedEffect(state) {
+        when (val currentState = state) {
+            is com.example.expensetrackerkotlin.viewmodel.DataManagementState.ExportSuccess -> {
+                context.startActivity(currentState.shareIntent)
+                viewModel.cleanupExportFile()
+                viewModel.resetState()
+            }
+            is com.example.expensetrackerkotlin.viewmodel.DataManagementState.ImportSuccess -> {
+                importSummary = currentState.summary
+                showImportSuccessDialog = true
+                viewModel.resetState()
+            }
+            else -> {}
+        }
+    }
+
+    Column(
+        verticalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        Text(
+            text = "Backup & Restore",
+            fontSize = 18.sp,
+            fontWeight = FontWeight.Medium,
+            color = com.example.expensetrackerkotlin.ui.theme.ThemeColors.getTextColor(isDarkTheme)
+        )
+
+        Text(
+            text = "Export your data to backup or import a previous backup",
+            fontSize = 14.sp,
+            color = com.example.expensetrackerkotlin.ui.theme.ThemeColors.getTextGrayColor(isDarkTheme)
+        )
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        // Export Button
+        Button(
+            onClick = { viewModel.exportData() },
+            enabled = state !is com.example.expensetrackerkotlin.viewmodel.DataManagementState.Loading,
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(48.dp),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = com.example.expensetrackerkotlin.ui.theme.AppColors.PrimaryOrange
+            ),
+            shape = RoundedCornerShape(12.dp)
+        ) {
+            if (state is com.example.expensetrackerkotlin.viewmodel.DataManagementState.Loading) {
+                CircularProgressIndicator(
+                    color = com.example.expensetrackerkotlin.ui.theme.ThemeColors.getTextColor(isDarkTheme),
+                    modifier = Modifier.size(20.dp)
+                )
+            } else {
+                Text(
+                    text = "Export Data",
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.SemiBold,
+                    color = com.example.expensetrackerkotlin.ui.theme.ThemeColors.getTextColor(isDarkTheme)
+                )
+            }
+        }
+
+        // Import Button
+        Button(
+            onClick = { filePickerLauncherWithState.launch("application/json") },
+            enabled = state !is com.example.expensetrackerkotlin.viewmodel.DataManagementState.Loading,
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(48.dp),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = com.example.expensetrackerkotlin.ui.theme.AppColors.PrimaryOrange.copy(alpha = 0.8f)
+            ),
+            shape = RoundedCornerShape(12.dp)
+        ) {
+            Text(
+                text = "Import Data",
+                fontSize = 16.sp,
+                fontWeight = FontWeight.SemiBold,
+                color = com.example.expensetrackerkotlin.ui.theme.ThemeColors.getTextColor(isDarkTheme)
+            )
+        }
+
+        // Error Message
+        if (state is com.example.expensetrackerkotlin.viewmodel.DataManagementState.Error) {
+            val error = (state as com.example.expensetrackerkotlin.viewmodel.DataManagementState.Error).message
+            Spacer(modifier = Modifier.height(8.dp))
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                colors = CardDefaults.cardColors(
+                    containerColor = androidx.compose.ui.graphics.Color.Red.copy(alpha = 0.1f)
+                ),
+                shape = RoundedCornerShape(12.dp)
+            ) {
+                Text(
+                    text = error,
+                    color = androidx.compose.ui.graphics.Color.Red,
+                    fontSize = 12.sp,
+                    modifier = Modifier.padding(12.dp)
+                )
+            }
+        }
+    }
+
+    // Import Strategy Dialog
+    if (showImportDialog) {
+        androidx.compose.material3.AlertDialog(
+            onDismissRequest = {
+                showImportDialog = false
+                pendingImportUri = null
+            },
+            title = {
+                Text(
+                    text = "Import Strategy",
+                    fontWeight = FontWeight.Bold
+                )
+            },
+            text = {
+                Column {
+                    Text("Choose how to import the data:")
+                    Spacer(modifier = Modifier.height(16.dp))
+                    Text(
+                        "Replace All: Delete existing data and import new data",
+                        fontSize = 14.sp,
+                        color = com.example.expensetrackerkotlin.ui.theme.ThemeColors.getTextGrayColor(isDarkTheme)
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Text(
+                        "Merge: Keep existing data and add/update from import",
+                        fontSize = 14.sp,
+                        color = com.example.expensetrackerkotlin.ui.theme.ThemeColors.getTextGrayColor(isDarkTheme)
+                    )
+                }
+            },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        pendingImportUri?.let { uri ->
+                            viewModel.importData(uri, com.example.expensetrackerkotlin.data.ImportStrategy.REPLACE_ALL)
+                        }
+                        showImportDialog = false
+                        pendingImportUri = null
+                    },
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = androidx.compose.ui.graphics.Color.Red
+                    )
+                ) {
+                    Text("Replace All")
+                }
+            },
+            dismissButton = {
+                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    TextButton(onClick = {
+                        pendingImportUri?.let { uri ->
+                            viewModel.importData(uri, com.example.expensetrackerkotlin.data.ImportStrategy.MERGE)
+                        }
+                        showImportDialog = false
+                        pendingImportUri = null
+                    }) {
+                        Text("Merge")
+                    }
+                    TextButton(onClick = {
+                        showImportDialog = false
+                        pendingImportUri = null
+                    }) {
+                        Text("Cancel")
+                    }
+                }
+            }
+        )
+    }
+
+    // Import Success Dialog
+    if (showImportSuccessDialog) {
+        androidx.compose.material3.AlertDialog(
+            onDismissRequest = {
+                showImportSuccessDialog = false
+                importSummary = null
+            },
+            title = {
+                Text(
+                    text = "Import Successful",
+                    fontWeight = FontWeight.Bold
+                )
+            },
+            text = {
+                importSummary?.let { summary ->
+                    Column {
+                        Text("Data imported successfully!")
+                        Spacer(modifier = Modifier.height(16.dp))
+                        Text("Categories: ${summary.categoriesImported}", fontSize = 14.sp)
+                        Text("SubCategories: ${summary.subCategoriesImported}", fontSize = 14.sp)
+                        Text("Expenses: ${summary.expensesImported}", fontSize = 14.sp)
+                        Text("Financial Plans: ${summary.financialPlansImported}", fontSize = 14.sp)
+                    }
+                }
+            },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        showImportSuccessDialog = false
+                        importSummary = null
+                    }
+                ) {
+                    Text("OK")
+                }
+            }
+        )
     }
 }
 

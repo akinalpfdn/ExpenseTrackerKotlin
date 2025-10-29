@@ -3,6 +3,7 @@ plugins {
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
     id("kotlin-kapt")
+    kotlin("plugin.serialization") version "1.9.22"
 }
 
 android {
@@ -96,6 +97,10 @@ dependencies {
     // Google Play Billing
     //noinspection GradleDependency,UseTomlInstead
     implementation("com.android.billingclient:billing-ktx:6.1.0")
+
+    // Kotlinx Serialization
+    //noinspection UseTomlInstead
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.0")
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

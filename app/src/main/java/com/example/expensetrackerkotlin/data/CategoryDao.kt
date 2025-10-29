@@ -76,7 +76,21 @@ interface CategoryDao {
     // Check if categories are initialized
     @Query("SELECT COUNT(*) FROM categories WHERE isDefault = 1")
     suspend fun getDefaultCategoriesCount(): Int
-    
+
     @Query("SELECT COUNT(*) FROM subcategories WHERE isDefault = 1")
     suspend fun getDefaultSubCategoriesCount(): Int
+
+    // Get all data for export
+    @Query("SELECT * FROM categories")
+    suspend fun getAllCategoriesDirect(): List<Category>
+
+    @Query("SELECT * FROM subcategories")
+    suspend fun getAllSubCategoriesDirect(): List<SubCategory>
+
+    // Clear all data for import
+    @Query("DELETE FROM categories")
+    suspend fun deleteAllCategories()
+
+    @Query("DELETE FROM subcategories")
+    suspend fun deleteAllSubCategories()
 }

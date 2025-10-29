@@ -74,6 +74,12 @@ fun ExpensesScreen(
     val context = LocalContext.current
     val activity = context as? ComponentActivity
 
+    // Create DataManagementViewModel
+    val database = remember { com.example.expensetrackerkotlin.data.ExpenseDatabase.getDatabase(context) }
+    val dataManagementViewModel = remember {
+        com.example.expensetrackerkotlin.viewmodel.DataManagementViewModel(database, context)
+    }
+
     val expenses by viewModel.expenses.collectAsState()
     val selectedDate by viewModel.selectedDate.collectAsState()
     val showingOverLimitAlert by viewModel.showingOverLimitAlert.collectAsState()
@@ -856,7 +862,8 @@ fun ExpensesScreen(
                             viewModel.updateTheme(theme)
                         }
                     },
-                    onDismiss = { showingSettings = false }
+                    onDismiss = { showingSettings = false },
+                    dataManagementViewModel = dataManagementViewModel
                 )
             }
         }

@@ -51,10 +51,28 @@ interface PlanDao {
     @Transaction
     @Query("SELECT * FROM financial_plans WHERE id = :planId")
     suspend fun getPlanWithBreakdowns(planId: String): PlanWithBreakdowns?
-    
+
     @Transaction
     @Query("SELECT * FROM financial_plans ORDER BY updatedAt DESC")
     fun getAllPlansWithBreakdowns(): Flow<List<PlanWithBreakdowns>>
+
+    // Get all data for export
+    @Query("SELECT * FROM financial_plans")
+    suspend fun getAllPlansDirect(): List<FinancialPlan>
+
+    @Query("SELECT * FROM plan_monthly_breakdowns")
+    suspend fun getAllMonthlyBreakdownsDirect(): List<PlanMonthlyBreakdown>
+
+    // Bulk insert for import
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertPlans(plans: List<FinancialPlan>)
+
+    // Clear all data for import
+    @Query("DELETE FROM financial_plans")
+    suspend fun deleteAllPlans()
+
+    @Query("DELETE FROM plan_monthly_breakdowns")
+    suspend fun deleteAllBreakdowns()
 }
 
 // Relation data class

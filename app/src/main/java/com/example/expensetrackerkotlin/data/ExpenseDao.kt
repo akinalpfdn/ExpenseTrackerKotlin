@@ -29,4 +29,10 @@ interface ExpenseDao {
     
     @Query("SELECT * FROM expenses ORDER BY date DESC")
     suspend fun getAllExpensesDirect(): List<Expense>
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertExpenses(expenses: List<Expense>)
+
+    @Query("DELETE FROM expenses")
+    suspend fun deleteAllExpenses()
 }
