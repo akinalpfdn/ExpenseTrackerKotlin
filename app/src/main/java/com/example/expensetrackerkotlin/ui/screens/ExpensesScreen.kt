@@ -254,10 +254,10 @@ fun ExpensesScreen(
                             tutorialManager?.updateStepTargetBounds(
                                 com.example.expensetrackerkotlin.ui.tutorial.TutorialStepId.CALENDAR,
                                 androidx.compose.ui.geometry.Rect(
-                                    position.x + coordinates.size.width * 0.3f,
-                                    position.y + coordinates.size.height * 0.3f,
-                                    position.x + coordinates.size.width * 0.7f,
-                                    position.y + coordinates.size.height * 0.7f
+                                    position.x,
+                                    position.y-100f,
+                                    position.x + coordinates.size.width,
+                                    position.y + coordinates.size.height
                                 )
                             )
                         }
@@ -538,7 +538,7 @@ fun ExpensesScreen(
                                 com.example.expensetrackerkotlin.ui.tutorial.TutorialStepId.EXPENSE_LIST,
                                 androidx.compose.ui.geometry.Rect(
                                     position.x,
-                                    position.y,
+                                    position.y-100f,
                                     position.x + coordinates.size.width,
                                     position.y + coordinates.size.height
                                 )
@@ -629,14 +629,13 @@ fun ExpensesScreen(
                         .offset(y = 140.dp)
                         .onGloballyPositioned { coordinates ->
                             val position = coordinates.positionInRoot()
-                            android.util.Log.d("Tutorial", "Settings - positionInRoot: $position, size: ${coordinates.size}")
                             tutorialManager?.updateStepTargetBounds(
                                 com.example.expensetrackerkotlin.ui.tutorial.TutorialStepId.SETTINGS,
                                 androidx.compose.ui.geometry.Rect(
                                     position.x,
-                                    position.y,
+                                    position.y - 100f,
                                     position.x + coordinates.size.width,
-                                    position.y + coordinates.size.height
+                                    position.y + coordinates.size.height - 200f
                                 )
                             )
                         }
@@ -709,14 +708,13 @@ fun ExpensesScreen(
                         .offset(y = 140.dp)
                         .onGloballyPositioned { coordinates ->
                             val position = coordinates.positionInRoot()
-                            android.util.Log.d("Tutorial", "Add Expense - positionInRoot: $position, size: ${coordinates.size}")
                             tutorialManager?.updateStepTargetBounds(
                                 com.example.expensetrackerkotlin.ui.tutorial.TutorialStepId.ADD_EXPENSE,
                                 androidx.compose.ui.geometry.Rect(
                                     position.x,
-                                    position.y,
+                                    position.y - 100f,
                                     position.x + coordinates.size.width,
-                                    position.y + coordinates.size.height
+                                    position.y + coordinates.size.height - 200f
                                 )
                             )
                         }
