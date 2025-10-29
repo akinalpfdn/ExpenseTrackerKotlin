@@ -1,6 +1,7 @@
 package com.example.expensetrackerkotlin.ui.screens
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.*
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.background
@@ -24,6 +25,7 @@ import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.zIndex
@@ -98,6 +100,29 @@ fun ExpensesScreen(
     val tutorialState = tutorialManager?.state?.collectAsState()
     val isTutorialActive = tutorialState?.value?.isActive == true
     val currentTutorialStep = tutorialState?.value?.currentStep?.id
+
+    // Tutorial animation
+    val infiniteTransition = rememberInfiniteTransition(label = "tutorial_glow")
+    val tutorialGlowAlpha by infiniteTransition.animateFloat(
+        initialValue = 0.3f,
+        targetValue = 1f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(durationMillis = 800, easing = FastOutSlowInEasing),
+            repeatMode = RepeatMode.Reverse
+        ),
+        label = "glow_alpha"
+    )
+
+    val tutorialBorderWidth by infiniteTransition.animateValue(
+        initialValue = 3.dp,
+        targetValue = 6.dp,
+        typeConverter = androidx.compose.ui.unit.Dp.VectorConverter,
+        animationSpec = infiniteRepeatable(
+            animation = tween(durationMillis = 800, easing = FastOutSlowInEasing),
+            repeatMode = RepeatMode.Reverse
+        ),
+        label = "border_width"
+    )
 
     var showingAddExpense by remember { mutableStateOf(false) }
     var showingSettings by remember { mutableStateOf(false) }
@@ -772,16 +797,27 @@ fun ExpensesScreen(
                     Box(
                         modifier = Modifier
                             .fillMaxSize()
+                            .then(
+                                if (currentTutorialStep == com.example.expensetrackerkotlin.ui.tutorial.TutorialStepId.ADD_EXPENSE) {
+                                    Modifier
+                                        .shadow(
+                                            elevation = 16.dp,
+                                            shape = CircleShape,
+                                            spotColor = Color(0xFF2CE91E).copy(alpha = tutorialGlowAlpha),
+                                            ambientColor = Color(0xFF2CE91E).copy(alpha = tutorialGlowAlpha * 0.5f)
+                                        )
+                                        .border(
+                                            width = tutorialBorderWidth,
+                                            color = Color(0xFF2CE91E).copy(alpha = tutorialGlowAlpha),
+                                            shape = CircleShape
+                                        )
+                                } else Modifier
+                            )
                             .background(
                                 Brush.radialGradient(
                                     colors = listOf(Color(0xFFFF9500), Color(0xFFFF3B30))
                                 ),
                                 CircleShape
-                            )
-                            .then(
-                                if (currentTutorialStep == com.example.expensetrackerkotlin.ui.tutorial.TutorialStepId.ADD_EXPENSE) {
-                                    Modifier.border(4.dp, Color(0xFFFF9500), CircleShape)
-                                } else Modifier
                             ),
                         contentAlignment = Alignment.Center
                     ) {
