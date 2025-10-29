@@ -267,7 +267,7 @@ fun ExpensesScreen(
                                 com.example.expensetrackerkotlin.ui.tutorial.TutorialStepId.CALENDAR,
                                 androidx.compose.ui.geometry.Rect(
                                     position.x,
-                                    position.y - 200f,
+                                    position.y - 140f,
                                     position.x + coordinates.size.width,
                                     position.y + coordinates.size.height - 200f
                                 )
@@ -550,7 +550,7 @@ fun ExpensesScreen(
                                 com.example.expensetrackerkotlin.ui.tutorial.TutorialStepId.EXPENSE_LIST,
                                 androidx.compose.ui.geometry.Rect(
                                     position.x,
-                                    position.y-100f,
+                                    position.y-95f,
                                     position.x + coordinates.size.width,
                                     position.y + coordinates.size.height
                                 )
@@ -618,7 +618,7 @@ fun ExpensesScreen(
                                 com.example.expensetrackerkotlin.ui.tutorial.TutorialStepId.SECRET_AREA,
                                 androidx.compose.ui.geometry.Rect(
                                     position.x,
-                                    position.y - 200f,
+                                    position.y - 95f,
                                     position.x + coordinates.size.width,
                                     position.y + coordinates.size.height - 200f
                                 )
@@ -663,7 +663,7 @@ fun ExpensesScreen(
                                 com.example.expensetrackerkotlin.ui.tutorial.TutorialStepId.SETTINGS,
                                 androidx.compose.ui.geometry.Rect(
                                     position.x,
-                                    position.y - 100f,
+                                    position.y - 95f,
                                     position.x + coordinates.size.width,
                                     position.y + coordinates.size.height - 200f
                                 )
@@ -714,7 +714,7 @@ fun ExpensesScreen(
                                 com.example.expensetrackerkotlin.ui.tutorial.TutorialStepId.RECURRING_EXPENSES,
                                 androidx.compose.ui.geometry.Rect(
                                     position.x,
-                                    position.y - 200f,
+                                    position.y - 95f,
                                     position.x + coordinates.size.width,
                                     position.y + coordinates.size.height - 200f
                                 )
@@ -760,7 +760,7 @@ fun ExpensesScreen(
                                 com.example.expensetrackerkotlin.ui.tutorial.TutorialStepId.ADD_EXPENSE,
                                 androidx.compose.ui.geometry.Rect(
                                     position.x,
-                                    position.y - 100f,
+                                    position.y - 0f,
                                     position.x + coordinates.size.width,
                                     position.y + coordinates.size.height - 200f
                                 )

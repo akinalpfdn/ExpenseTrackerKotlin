@@ -50,6 +50,7 @@ object TutorialSteps {
                 id = TutorialStepId.ADD_EXPENSE,
                 title = context.getString(R.string.tutorial_add_expense_title),
                 message = context.getString(R.string.tutorial_add_expense_message),
+                requiresTap = false,
                 highlightRadius = 70f,
                 tooltipPosition = TooltipPosition.TOP
             ),
@@ -57,6 +58,7 @@ object TutorialSteps {
                 id = TutorialStepId.RECURRING_EXPENSES,
                 title = context.getString(R.string.tutorial_recurring_expenses_title),
                 message = context.getString(R.string.tutorial_recurring_expenses_message),
+                requiresTap = false,
                 highlightRadius = 70f,
                 tooltipPosition = TooltipPosition.TOP
             ),
@@ -64,7 +66,8 @@ object TutorialSteps {
                 id = TutorialStepId.CALENDAR,
                 title = context.getString(R.string.tutorial_calendar_title),
                 message = context.getString(R.string.tutorial_calendar_message),
-                highlightRadius = 80f,
+                requiresTap = false,
+                highlightRadius = 150f,
                 tooltipPosition = TooltipPosition.TOP
             ),
             TutorialStep(
@@ -80,14 +83,15 @@ object TutorialSteps {
                 id = TutorialStepId.SETTINGS,
                 title = context.getString(R.string.tutorial_settings_title),
                 message = context.getString(R.string.tutorial_settings_message),
-                highlightRadius = 50f,
+                requiresTap = false,
+                highlightRadius = 55f,
                 tooltipPosition = TooltipPosition.TOP
             ),
             TutorialStep(
                 id = TutorialStepId.SECRET_AREA,
                 title = context.getString(R.string.tutorial_secret_title),
                 message = context.getString(R.string.tutorial_secret_message),
-                highlightRadius = 50f,
+                highlightRadius = 55f,
                 requiresTap = false,
                 autoProgress = false,
                 tooltipPosition = TooltipPosition.TOP
