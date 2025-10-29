@@ -19,6 +19,7 @@ class PreferencesManager(private val context: Context) {
         private val MONTHLY_LIMIT_KEY = stringPreferencesKey("monthly_limit")
         private val THEME_KEY = stringPreferencesKey("theme")
         private val IS_FIRST_LAUNCH_KEY = booleanPreferencesKey("is_first_launch")
+        private val IS_TUTORIAL_COMPLETED_KEY = booleanPreferencesKey("is_tutorial_completed")
     }
 
     val defaultCurrency: Flow<String> = context.dataStore.data.map { preferences ->
@@ -39,6 +40,10 @@ class PreferencesManager(private val context: Context) {
 
     val isFirstLaunch: Flow<Boolean> = context.dataStore.data.map { preferences ->
         preferences[IS_FIRST_LAUNCH_KEY] ?: true
+    }
+
+    val isTutorialCompleted: Flow<Boolean> = context.dataStore.data.map { preferences ->
+        preferences[IS_TUTORIAL_COMPLETED_KEY] ?: false
     }
 
     suspend fun setDefaultCurrency(currency: String) {
@@ -68,6 +73,18 @@ class PreferencesManager(private val context: Context) {
     suspend fun setFirstLaunchCompleted() {
         context.dataStore.edit { preferences ->
             preferences[IS_FIRST_LAUNCH_KEY] = false
+        }
+    }
+
+    suspend fun setTutorialCompleted() {
+        context.dataStore.edit { preferences ->
+            preferences[IS_TUTORIAL_COMPLETED_KEY] = true
+        }
+    }
+
+    suspend fun resetTutorial() {
+        context.dataStore.edit { preferences ->
+            preferences[IS_TUTORIAL_COMPLETED_KEY] = false
         }
     }
 }

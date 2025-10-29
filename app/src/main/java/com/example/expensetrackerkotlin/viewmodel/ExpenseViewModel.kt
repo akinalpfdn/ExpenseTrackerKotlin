@@ -19,7 +19,7 @@ import java.util.UUID
 import kotlin.math.min
 
 class ExpenseViewModel(
-    private val preferencesManager: PreferencesManager,
+    val preferencesManager: PreferencesManager,
     private val expenseRepository: ExpenseRepository,
     private val categoryRepository: CategoryRepository
 ) : ViewModel() {
@@ -51,7 +51,10 @@ class ExpenseViewModel(
 
     private val _isFirstLaunch = MutableStateFlow<Boolean?>(null) // null = loading, true = first launch, false = not first
     val isFirstLaunch: StateFlow<Boolean?> = _isFirstLaunch.asStateFlow()
-    
+
+    private val _isTutorialCompleted = MutableStateFlow(false)
+    val isTutorialCompleted: StateFlow<Boolean> = _isTutorialCompleted.asStateFlow()
+
     init {
         // Load preferences
         viewModelScope.launch {
@@ -77,6 +80,11 @@ class ExpenseViewModel(
         viewModelScope.launch {
             preferencesManager.isFirstLaunch.collect { isFirst ->
                 _isFirstLaunch.value = isFirst
+            }
+        }
+        viewModelScope.launch {
+            preferencesManager.isTutorialCompleted.collect { isCompleted ->
+                _isTutorialCompleted.value = isCompleted
             }
         }
 

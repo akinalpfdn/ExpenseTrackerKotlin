@@ -17,6 +17,9 @@ import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.windowInsetsPadding
+import androidx.compose.ui.platform.LocalContext
+import com.example.expensetrackerkotlin.ui.tutorial.TutorialManager
+import com.example.expensetrackerkotlin.ui.tutorial.TutorialOverlay
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -25,10 +28,23 @@ fun MainScreen(
     viewModel: ExpenseViewModel,
     planningViewModel: PlanningViewModel
 ) {
+    val context = LocalContext.current
     val pagerState = rememberPagerState(pageCount = { 3 },initialPage = 0)
     val isDarkTheme = viewModel.theme == "dark"
     val isFirstLaunch by viewModel.isFirstLaunch.collectAsState()
+    val isTutorialCompleted by viewModel.isTutorialCompleted.collectAsState()
     val scope = rememberCoroutineScope()
+
+    // Tutorial manager
+    val tutorialManager = remember { TutorialManager(viewModel.preferencesManager) }
+    val tutorialState by tutorialManager.state.collectAsState()
+
+    // Start tutorial after welcome screen if not completed
+    LaunchedEffect(isFirstLaunch, isTutorialCompleted) {
+       // if (isFirstLaunch == false && isTutorialCompleted == false) {
+            tutorialManager.startTutorial()
+        //}
+    }
 
     // Show loading or welcome screen based on state
     when (isFirstLaunch) {
@@ -72,7 +88,10 @@ fun MainScreen(
                 modifier = Modifier.fillMaxSize()
             ) { page ->
                 when (page) {
-                    0 -> ExpensesScreen(viewModel = viewModel)
+                    0 -> ExpensesScreen(
+                        viewModel = viewModel,
+                        tutorialManager = tutorialManager
+                    )
                     1 -> AnalysisScreen(viewModel = viewModel, isDarkTheme = isDarkTheme)
                     2 -> PlanningScreen(
                         isDarkTheme = isDarkTheme,
@@ -109,6 +128,14 @@ fun MainScreen(
                     )
                 }
             }
+
+            // Tutorial overlay
+            TutorialOverlay(
+                tutorialState = tutorialState,
+                onNext = { tutorialManager.nextStep() },
+                onSkip = { tutorialManager.skipTutorial() },
+                isDarkTheme = isDarkTheme
+            )
         }
     }
 

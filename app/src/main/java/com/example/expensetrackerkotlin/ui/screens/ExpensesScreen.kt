@@ -27,6 +27,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.zIndex
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.layout.positionInWindow
 import com.example.expensetrackerkotlin.ui.theme.AppColors
 import com.example.expensetrackerkotlin.ui.theme.ThemeColors
 import androidx.compose.ui.text.font.FontWeight
@@ -52,6 +54,8 @@ import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material.icons.automirrored.filled.Sort
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
+import androidx.compose.ui.layout.positionInRoot
+import androidx.compose.ui.layout.positionOnScreen
 import com.example.expensetrackerkotlin.utils.NumberFormatter
 import java.util.Locale
 
@@ -69,10 +73,12 @@ enum class ExpenseSortType {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ExpensesScreen(
-    viewModel: ExpenseViewModel
+    viewModel: ExpenseViewModel,
+    tutorialManager: com.example.expensetrackerkotlin.ui.tutorial.TutorialManager? = null
 ) {
     val context = LocalContext.current
     val activity = context as? ComponentActivity
+    val density = androidx.compose.ui.platform.LocalDensity.current
 
     // Create DataManagementViewModel
     val database = remember { com.example.expensetrackerkotlin.data.ExpenseDatabase.getDatabase(context) }
@@ -87,6 +93,10 @@ fun ExpensesScreen(
     val categories by viewModel.categories.collectAsState()
     val subCategories by viewModel.subCategories.collectAsState()
     val weeklyHistoryData by viewModel.weeklyHistoryData.collectAsState()
+
+    // Tutorial state
+    val tutorialState = tutorialManager?.state?.collectAsState()
+    val isTutorialActive = tutorialState?.value?.isActive == true
 
     var showingAddExpense by remember { mutableStateOf(false) }
     var showingSettings by remember { mutableStateOf(false) }
@@ -236,7 +246,21 @@ fun ExpensesScreen(
             ) { page ->
                 Box(
                     contentAlignment = Alignment.Center,
-                    modifier = Modifier.fillMaxSize()
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .onGloballyPositioned { coordinates ->
+                            // Calendar button for tutorial (center circle of progress ring)
+                            val position = coordinates.positionInWindow()
+                            tutorialManager?.updateStepTargetBounds(
+                                com.example.expensetrackerkotlin.ui.tutorial.TutorialStepId.CALENDAR,
+                                androidx.compose.ui.geometry.Rect(
+                                    position.x + coordinates.size.width * 0.3f,
+                                    position.y + coordinates.size.height * 0.3f,
+                                    position.x + coordinates.size.width * 0.7f,
+                                    position.y + coordinates.size.height * 0.7f
+                                )
+                            )
+                        }
                 ) {
                     when (page) {
                         0 -> {
@@ -245,7 +269,13 @@ fun ExpensesScreen(
                                 totalSpent = viewModel.getMonthlyTotal(currentCalendarMonth),
                                 progressPercentage = viewModel.getMonthlyProgressPercentage(currentCalendarMonth),
                                 isOverLimit = viewModel.isMonthlyOverLimit(currentCalendarMonth),
-                                onTap = { showingMonthlyCalendar = true },
+                                onTap = {
+                                    if (isTutorialActive) {
+                                        tutorialManager?.nextStep()
+                                    } else {
+                                        showingMonthlyCalendar = true
+                                    }
+                                },
                                 currency = viewModel.defaultCurrency,
                                 isDarkTheme = isDarkTheme,
                                 month = currentCalendarMonth.format(java.time.format.DateTimeFormatter.ofPattern("MMMM", Locale.getDefault())),
@@ -500,7 +530,20 @@ fun ExpensesScreen(
                 LazyColumn(
                     contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
                     verticalArrangement = Arrangement.spacedBy(8.dp),
-                    modifier = Modifier.weight(1f)
+                    modifier = Modifier
+                        .weight(1f)
+                        .onGloballyPositioned { coordinates ->
+                            val position = coordinates.positionInWindow()
+                            tutorialManager?.updateStepTargetBounds(
+                                com.example.expensetrackerkotlin.ui.tutorial.TutorialStepId.EXPENSE_LIST,
+                                androidx.compose.ui.geometry.Rect(
+                                    position.x,
+                                    position.y,
+                                    position.x + coordinates.size.width,
+                                    position.y + coordinates.size.height
+                                )
+                            )
+                        }
                 ) {
                     items(selectedDateExpenses) { expense ->
                         ExpenseRowView(
@@ -573,11 +616,30 @@ fun ExpensesScreen(
 
                 // Settings Button (Bottom)
                 FloatingActionButton(
-                    onClick = { showingSettings = true },
+                    onClick = {
+                        if (isTutorialActive) {
+                            tutorialManager?.nextStep()
+                        } else {
+                            showingSettings = true
+                        }
+                    },
                     elevation = FloatingActionButtonDefaults.elevation(0.dp, 0.dp, 0.dp, 0.dp),
                     containerColor = Color.Transparent,
                     modifier = Modifier.size(60.dp)
                         .offset(y = 140.dp)
+                        .onGloballyPositioned { coordinates ->
+                            val position = coordinates.positionInRoot()
+                            android.util.Log.d("Tutorial", "Settings - positionInRoot: $position, size: ${coordinates.size}")
+                            tutorialManager?.updateStepTargetBounds(
+                                com.example.expensetrackerkotlin.ui.tutorial.TutorialStepId.SETTINGS,
+                                androidx.compose.ui.geometry.Rect(
+                                    position.x,
+                                    position.y,
+                                    position.x + coordinates.size.width,
+                                    position.y + coordinates.size.height
+                                )
+                            )
+                        }
                 ) {
                     Box(
                         modifier = Modifier
@@ -634,11 +696,30 @@ fun ExpensesScreen(
                 
                 // Add Expense Button (Bottom)
                 FloatingActionButton(
-                    onClick = { showingAddExpense = true },
+                    onClick = {
+                        if (isTutorialActive) {
+                            tutorialManager?.nextStep()
+                        } else {
+                            showingAddExpense = true
+                        }
+                    },
                     elevation = FloatingActionButtonDefaults.elevation(0.dp, 0.dp, 0.dp, 0.dp),
                     containerColor = Color.Transparent,
                     modifier = Modifier.size(60.dp)
                         .offset(y = 140.dp)
+                        .onGloballyPositioned { coordinates ->
+                            val position = coordinates.positionInRoot()
+                            android.util.Log.d("Tutorial", "Add Expense - positionInRoot: $position, size: ${coordinates.size}")
+                            tutorialManager?.updateStepTargetBounds(
+                                com.example.expensetrackerkotlin.ui.tutorial.TutorialStepId.ADD_EXPENSE,
+                                androidx.compose.ui.geometry.Rect(
+                                    position.x,
+                                    position.y,
+                                    position.x + coordinates.size.width,
+                                    position.y + coordinates.size.height
+                                )
+                            )
+                        }
                 ) {
                     Box(
                         modifier = Modifier
