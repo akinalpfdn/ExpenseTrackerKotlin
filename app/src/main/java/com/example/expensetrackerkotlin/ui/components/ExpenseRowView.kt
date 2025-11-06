@@ -57,36 +57,22 @@ fun ExpenseRowView(
     viewModel: com.example.expensetrackerkotlin.viewmodel.ExpenseViewModel,
     modifier: Modifier = Modifier
 ) {
-    var isEditing by remember { mutableStateOf(false) }
     var editAmount by remember { mutableStateOf(String.format("%.2f", expense.amount).removeSuffix(".00").replace(",", ".")) }
     var editDescription by remember { mutableStateOf(expense.description) }
     var editExchangeRate by remember { mutableStateOf(expense.exchangeRate?.let { String.format("%.2f", it).removeSuffix(".00").replace(",", ".") } ?: "") }
     var showDeleteConfirmation by remember { mutableStateOf(false) }
-    
+
     // Collect categories and subcategories from ViewModel
     val categories by viewModel.categories.collectAsState()
     val subCategories by viewModel.subCategories.collectAsState()
-    
+
     // Get category and subcategory for this expense
     val category = categories.find { it.id == expense.categoryId }
     val subCategory = subCategories.find { it.id == expense.subCategoryId }
-    
 
+    // Update edit fields when editing starts
     LaunchedEffect(isCurrentlyEditing) {
-        isEditing = isCurrentlyEditing
-        onEditingChanged(isEditing)
-
-        // Update edit fields when editing starts
         if (isCurrentlyEditing) {
-            editAmount = String.format("%.2f", expense.amount).removeSuffix(".00").replace(",", ".")
-            editDescription = expense.description
-            editExchangeRate = expense.exchangeRate?.let { String.format("%.2f", it).removeSuffix(".00").replace(",", ".") } ?: ""
-        }
-    }
-
-    // Update edit fields when expense changes
-    LaunchedEffect(expense) {
-        if (isEditing) {
             editAmount = String.format("%.2f", expense.amount).removeSuffix(".00").replace(",", ".")
             editDescription = expense.description
             editExchangeRate = expense.exchangeRate?.let { String.format("%.2f", it).removeSuffix(".00").replace(",", ".") } ?: ""
@@ -110,9 +96,8 @@ fun ExpenseRowView(
                     .fillMaxWidth()
                     .combinedClickable(
                         onClick = {
-                            if (isEditing) {
+                            if (isCurrentlyEditing) {
                                 // If already editing, close the edit mode
-                                isEditing = false
                                 onEditingChanged(false)
                                 // Reset edit fields to original values
                                 editAmount = String.format("%.2f", expense.amount).removeSuffix(".00").replace(",", ".")
@@ -120,7 +105,6 @@ fun ExpenseRowView(
                                 editExchangeRate = expense.exchangeRate?.let { String.format("%.2f", it).removeSuffix(".00").replace(",", ".") } ?: ""
                             } else {
                                 // If not editing, open edit mode
-                                isEditing = true
                                 onEditingChanged(true)
                             }
                         },
@@ -241,7 +225,7 @@ fun ExpenseRowView(
                     }
                     
                     AnimatedVisibility(
-                        visible = isEditing,
+                        visible = isCurrentlyEditing,
                         enter = expandVertically(),
                         exit = shrinkVertically()
                     ) {
@@ -472,7 +456,6 @@ fun ExpenseRowView(
                                                 )
                                             )
                                         }
-                                        isEditing = false
                                         onEditingChanged(false)
                                     },
                                     modifier = Modifier

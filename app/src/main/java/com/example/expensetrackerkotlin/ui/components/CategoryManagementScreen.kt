@@ -486,10 +486,11 @@ private fun AddMainCategoryDialog(
                      color = ThemeColors.getTextColor(isDarkTheme)
                  )
              }
-         }
+         },
+         containerColor = ThemeColors.getDialogBackgroundColor(isDarkTheme)
      )
  }
- 
+
  @Composable
 private fun AddSubcategoryDialog(
     onDismiss: () -> Unit,
@@ -630,10 +631,11 @@ private fun AddSubcategoryDialog(
                      color = ThemeColors.getTextColor(isDarkTheme)
                  )
              }
-         }
+         },
+         containerColor = ThemeColors.getDialogBackgroundColor(isDarkTheme)
      )
  }
- 
+
  @Composable
 private fun EditCategoryDialog(
     category: com.example.expensetrackerkotlin.data.Category?,
@@ -923,10 +925,11 @@ private fun EditCategoryDialog(
                      color = ThemeColors.getTextColor(isDarkTheme)
                  )
              }
-         }
+         },
+         containerColor = ThemeColors.getDialogBackgroundColor(isDarkTheme)
      )
  }
- 
+
  @Composable
  private fun DeleteConfirmationDialog(
      category: com.example.expensetrackerkotlin.data.Category?,
