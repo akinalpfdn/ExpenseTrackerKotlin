@@ -26,6 +26,12 @@ import com.example.expensetrackerkotlin.ui.theme.AppColors
 import com.example.expensetrackerkotlin.ui.theme.ThemeColors
 import com.example.expensetrackerkotlin.data.InterestType
 import com.example.expensetrackerkotlin.utils.PlanningUtils
+import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.text.input.TransformedText
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.input.OffsetMapping
+import java.text.DecimalFormatSymbols
+import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -317,16 +323,33 @@ fun CreatePlanBottomSheet(
                 ) {
                     BasicTextField(
                         value = monthlyIncome,
-                        onValueChange = { monthlyIncome = it },
+                        onValueChange = { newValue ->
+                            val filtered = newValue.filter { "0123456789.,".contains(it) }
+                            val components = filtered.split(",", ".")
+                            val integerPart = components[0].filter { it.isDigit() }
+                            val decimalPart = if (components.size > 1) components[1].filter { it.isDigit() } else ""
+
+                            // Limit: 9 digits integer + 2 digits decimal
+                            if (integerPart.length <= 9 && decimalPart.length <= 2) {
+                                monthlyIncome = if (components.size > 2 || (decimalPart.isNotEmpty() && components.size > 1)) {
+                                    if (decimalPart.isNotEmpty()) "${integerPart}.${decimalPart}" else "${integerPart}."
+                                } else if (filtered.contains(",") || filtered.contains(".")) {
+                                    "${integerPart}."
+                                } else {
+                                    integerPart
+                                }
+                            }
+                        },
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(16.dp),
                         singleLine = true,
-                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
                         textStyle = androidx.compose.ui.text.TextStyle(
                             fontSize = 16.sp,
                             color = ThemeColors.getTextColor(isDarkTheme)
                         ),
+                        visualTransformation = ThousandSeparatorTransformation(),
                         decorationBox = { innerTextField ->
                             if (monthlyIncome.isEmpty()) {
                                 Text(
@@ -390,16 +413,33 @@ fun CreatePlanBottomSheet(
                 ) {
                     BasicTextField(
                         value = monthlyExpenses,
-                        onValueChange = { monthlyExpenses = it },
+                        onValueChange = { newValue ->
+                            val filtered = newValue.filter { "0123456789.,".contains(it) }
+                            val components = filtered.split(",", ".")
+                            val integerPart = components[0].filter { it.isDigit() }
+                            val decimalPart = if (components.size > 1) components[1].filter { it.isDigit() } else ""
+
+                            // Limit: 9 digits integer + 2 digits decimal
+                            if (integerPart.length <= 9 && decimalPart.length <= 2) {
+                                monthlyExpenses = if (components.size > 2 || (decimalPart.isNotEmpty() && components.size > 1)) {
+                                    if (decimalPart.isNotEmpty()) "${integerPart}.${decimalPart}" else "${integerPart}."
+                                } else if (filtered.contains(",") || filtered.contains(".")) {
+                                    "${integerPart}."
+                                } else {
+                                    integerPart
+                                }
+                            }
+                        },
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(16.dp),
                         singleLine = true,
-                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
                         textStyle = androidx.compose.ui.text.TextStyle(
                             fontSize = 16.sp,
                             color = ThemeColors.getTextColor(isDarkTheme)
                         ),
+                        visualTransformation = ThousandSeparatorTransformation(),
                         decorationBox = { innerTextField ->
                             if (monthlyExpenses.isEmpty()) {
                                 Text(
@@ -547,3 +587,4 @@ fun CreatePlanBottomSheet(
                 }
             }
         }
+

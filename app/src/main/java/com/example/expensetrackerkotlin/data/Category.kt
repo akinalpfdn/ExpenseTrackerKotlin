@@ -113,7 +113,7 @@ data class Category(
                 Category(
                     id = "health",
                     name = context.getString(R.string.category_health),
-                    colorHex = "#FF2D92",
+                    colorHex = "#cb2dff",
                     iconName = "local_hospital",
                     isDefault = true
                 ),
@@ -134,7 +134,7 @@ data class Category(
                 Category(
                     id = "shopping",
                     name = context.getString(R.string.category_shopping),
-                    colorHex = "#FF3B30",
+                    colorHex = "#44dfeb",
                     iconName = "shopping_cart",
                     isDefault = true
                 ),

@@ -494,8 +494,11 @@ fun DataManagementSection(
     val saveToStorageLauncher = rememberLauncherForActivityResult(
         contract = androidx.activity.result.contract.ActivityResultContracts.CreateDocument("application/json")
     ) { uri: android.net.Uri? ->
-        uri?.let {
-            viewModel.saveToStorage(it)
+        if (uri != null) {
+            viewModel.saveToStorage(uri)
+        } else {
+            // User canceled - reset state to prevent re-launching
+            viewModel.resetState()
         }
     }
 

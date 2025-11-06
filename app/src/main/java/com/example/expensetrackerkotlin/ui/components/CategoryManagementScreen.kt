@@ -294,8 +294,8 @@ private fun AddMainCategoryDialog(
      
      // Available colors
      val availableColors = listOf(
-         "#FF9500", "#007AFF", "#34C759", "#FF2D92", "#9D73E3",
-         "#5856D6", "#FF3B30", "#64D2FF", "#5AC8FA", "#FFD60A",
+         "#FF9500", "#007AFF", "#34C759", "#cb2dff", "#9D73E3",
+         "#5856D6", "#44dfeb", "#64D2FF", "#5AC8FA", "#FFD60A",
          "#30D158", "#3F51B5", "#FF6B35", "#4ECDC4", "#45B7D1",
          "#96CEB4", "#FFEAA7", "#DDA0DD", "#98D8C8", "#F7DC6F"
      )
@@ -701,8 +701,8 @@ private fun EditCategoryDialog(
      
      // Available colors (same as AddMainCategoryDialog)
      val availableColors = listOf(
-         "#FF9500", "#007AFF", "#34C759", "#FF2D92", "#9D73E3",
-         "#5856D6", "#FF3B30", "#64D2FF", "#5AC8FA", "#FFD60A",
+         "#FF9500", "#007AFF", "#34C759", "#cb2dff", "#9D73E3",
+         "#5856D6", "#44dfeb", "#64D2FF", "#5AC8FA", "#FFD60A",
          "#30D158", "#3F51B5", "#FF6B35", "#4ECDC4", "#45B7D1",
          "#96CEB4", "#FFEAA7", "#DDA0DD", "#98D8C8", "#F7DC6F"
      )

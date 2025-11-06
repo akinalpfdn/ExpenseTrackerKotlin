@@ -65,7 +65,7 @@
     <string name="time_oldest_first">Date: Oldest First</string>
 
     <!-- AnalysisScreen -->
-    <string name="current_period_total">Current Period Total Spending</string>
+    <string name="current_period_total">Total Spending</string>
     <string name="vs_previous_month">vs. last month</string>
     <string name="vs_6_month_average">vs. average</string>
     <string name="no_expenses_this_period">No expenses this period yet</string>
@@ -74,7 +74,7 @@
     <string name="next_month">Next month</string>
     <string name="select_date_range">Select date range</string>
     <string name="fixed_expenses">Fixed Expenses</string>
-    <string name="recurring_expenses_description">Expenses that will continue for 3+ months</string>
+    <string name="recurring_expenses_description">Recurring for 3+ months</string>
     <string name="recurring_expenses_cd">Recurring expenses</string>
     <string name="pick_date_range">Pick date range</string>
 
