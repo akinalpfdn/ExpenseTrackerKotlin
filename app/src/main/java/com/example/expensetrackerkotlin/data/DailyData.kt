@@ -26,8 +26,8 @@ data class DailyData(
 
     val dayName: String
         get() {
-            val formatter = DateTimeFormatter.ofPattern("E", Locale.forLanguageTag("tr"))
-            return date.format(formatter).first().toString().uppercase()
+            val formatter = DateTimeFormatter.ofPattern("E", Locale.getDefault())
+            return date.format(formatter).first().toString().uppercase(Locale.getDefault())
         }
 
     val dayNumber: String

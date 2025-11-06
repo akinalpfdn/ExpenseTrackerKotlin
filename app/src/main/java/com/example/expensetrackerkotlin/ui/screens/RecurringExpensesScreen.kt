@@ -50,6 +50,11 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.*
 import kotlin.math.abs
+import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.text.input.TransformedText
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.input.OffsetMapping
+import java.text.DecimalFormatSymbols
 
 enum class SortType {
     AMOUNT_HIGH_TO_LOW,
@@ -373,9 +378,9 @@ fun RecurringExpenseCard(
     onDelete: () -> Unit
 ) {
     var isEditing by remember { mutableStateOf(false) }
-    var editAmount by remember { mutableStateOf(expense.amount.toString()) }
+    var editAmount by remember { mutableStateOf(String.format("%.2f", expense.amount).removeSuffix(".00").replace(",", ".")) }
     var editDescription by remember { mutableStateOf(expense.description) }
-    var editExchangeRate by remember { mutableStateOf(expense.exchangeRate?.toString() ?: "") }
+    var editExchangeRate by remember { mutableStateOf(expense.exchangeRate?.let { String.format("%.2f", it).removeSuffix(".00").replace(",", ".") } ?: "") }
     var showDeleteConfirmation by remember { mutableStateOf(false) }
     var showEndDatePicker by remember { mutableStateOf(false) }
     var tempEndDate by remember { mutableStateOf(expense.endDate ?: LocalDateTime.now().plusYears(1)) }
@@ -491,9 +496,9 @@ fun RecurringExpenseCard(
                                 // If already editing, close the edit mode
                                 isEditing = false
                                 // Reset edit fields to original values
-                                editAmount = expense.amount.toString()
+                                editAmount = String.format("%.2f", expense.amount).removeSuffix(".00").replace(",", ".")
                                 editDescription = expense.description
-                                editExchangeRate = expense.exchangeRate?.toString() ?: ""
+                                editExchangeRate = expense.exchangeRate?.let { String.format("%.2f", it).removeSuffix(".00").replace(",", ".") } ?: ""
                             } else {
                                 // If not editing, open edit mode
                                 isEditing = true
@@ -650,8 +655,20 @@ fun RecurringExpenseCard(
                                 BasicTextField(
                                     value = editAmount,
                                     onValueChange = { newValue ->
-                                        if (newValue.isEmpty() || newValue.matches(Regex("^\\d*\\.?\\d*$"))) {
-                                            editAmount = newValue
+                                        val filtered = newValue.filter { "0123456789.,".contains(it) }
+                                        val components = filtered.split(",", ".")
+                                        val integerPart = components[0].filter { it.isDigit() }
+                                        val decimalPart = if (components.size > 1) components[1].filter { it.isDigit() } else ""
+
+                                        // Limit: 9 digits integer + 2 digits decimal
+                                        if (integerPart.length <= 9 && decimalPart.length <= 2) {
+                                            editAmount = if (components.size > 2 || (decimalPart.isNotEmpty() && components.size > 1)) {
+                                                if (decimalPart.isNotEmpty()) "${integerPart}.${decimalPart}" else "${integerPart}."
+                                            } else if (filtered.contains(",") || filtered.contains(".")) {
+                                                "${integerPart}."
+                                            } else {
+                                                integerPart
+                                            }
                                         }
                                     },
                                     modifier = Modifier
@@ -663,6 +680,7 @@ fun RecurringExpenseCard(
                                         fontSize = 14.sp,
                                         color = ThemeColors.getTextColor(isDarkTheme)
                                     ),
+                                    visualTransformation = ThousandSeparatorTransformation(),
                                     decorationBox = { innerTextField ->
                                         Box(
                                             contentAlignment = Alignment.CenterStart
@@ -746,8 +764,20 @@ fun RecurringExpenseCard(
                                     BasicTextField(
                                         value = editExchangeRate,
                                         onValueChange = { newValue ->
-                                            if (newValue.isEmpty() || newValue.matches(Regex("^\\d*\\.?\\d*$"))) {
-                                                editExchangeRate = newValue
+                                            val filtered = newValue.filter { "0123456789.,".contains(it) }
+                                            val components = filtered.split(",", ".")
+                                            val integerPart = components[0].filter { it.isDigit() }
+                                            val decimalPart = if (components.size > 1) components[1].filter { it.isDigit() } else ""
+
+                                            // Limit: 9 digits integer + 2 digits decimal
+                                            if (integerPart.length <= 9 && decimalPart.length <= 2) {
+                                                editExchangeRate = if (components.size > 2 || (decimalPart.isNotEmpty() && components.size > 1)) {
+                                                    if (decimalPart.isNotEmpty()) "${integerPart}.${decimalPart}" else "${integerPart}."
+                                                } else if (filtered.contains(",") || filtered.contains(".")) {
+                                                    "${integerPart}."
+                                                } else {
+                                                    integerPart
+                                                }
                                             }
                                         },
                                         modifier = Modifier
@@ -759,6 +789,7 @@ fun RecurringExpenseCard(
                                             fontSize = 14.sp,
                                             color = ThemeColors.getTextColor(isDarkTheme)
                                         ),
+                                        visualTransformation = ThousandSeparatorTransformation(),
                                         decorationBox = { innerTextField ->
                                             Box(
                                                 contentAlignment = Alignment.CenterStart
@@ -828,9 +859,9 @@ fun RecurringExpenseCard(
                                 Button(
                                     onClick = {
                                         isEditing = false
-                                        editAmount = expense.amount.toString()
+                                        editAmount = String.format("%.2f", expense.amount).removeSuffix(".00").replace(",", ".")
                                         editDescription = expense.description
-                                        editExchangeRate = expense.exchangeRate?.toString() ?: ""
+                                        editExchangeRate = expense.exchangeRate?.let { String.format("%.2f", it).removeSuffix(".00").replace(",", ".") } ?: ""
                                     },
                                     modifier = Modifier
                                         .weight(1f)
@@ -1018,5 +1049,80 @@ fun RecurringExpenseCard(
                 )
             )
         }
+    }
+}
+
+class ThousandSeparatorTransformation : VisualTransformation {
+    override fun filter(text: AnnotatedString): TransformedText {
+        val originalText = text.text
+
+        if (originalText.isEmpty()) {
+            return TransformedText(text, OffsetMapping.Identity)
+        }
+
+        // Get locale-specific decimal separator
+        val symbols = DecimalFormatSymbols.getInstance(Locale.getDefault())
+        val decimalSeparator = symbols.decimalSeparator
+        val groupingSeparator = symbols.groupingSeparator
+
+        // Split by decimal separator
+        val parts = originalText.split(decimalSeparator)
+        val integerPart = parts[0].filter { it.isDigit() }
+        val decimalPart = if (parts.size > 1) parts[1] else ""
+
+        // Format integer part with thousand separators
+        val formattedInteger = if (integerPart.isNotEmpty()) {
+            integerPart.reversed().chunked(3).joinToString(groupingSeparator.toString()).reversed()
+        } else {
+            ""
+        }
+
+        // Combine integer and decimal parts
+        val formattedText = if (decimalPart.isNotEmpty() || originalText.contains(decimalSeparator)) {
+            "$formattedInteger$decimalSeparator$decimalPart"
+        } else {
+            formattedInteger
+        }
+
+        val offsetMapping = object : OffsetMapping {
+            override fun originalToTransformed(offset: Int): Int {
+                if (offset == 0) return 0
+
+                val beforeDecimal = originalText.substringBefore(decimalSeparator)
+                val digitsBeforeOffset = beforeDecimal.substring(0, minOf(offset, beforeDecimal.length)).filter { it.isDigit() }
+
+                if (digitsBeforeOffset.isEmpty()) return 0
+
+                // Calculate how many separators are before this offset
+                val separatorsCount = (digitsBeforeOffset.length - 1) / 3
+                val baseOffset = digitsBeforeOffset.length + separatorsCount
+
+                // If offset is after decimal separator
+                return if (offset > beforeDecimal.length) {
+                    baseOffset + 1 + (offset - beforeDecimal.length - 1)
+                } else {
+                    baseOffset
+                }
+            }
+
+            override fun transformedToOriginal(offset: Int): Int {
+                if (offset == 0) return 0
+
+                val formattedBeforeDecimal = formattedText.substringBefore(decimalSeparator)
+
+                if (offset <= formattedBeforeDecimal.length) {
+                    // Count only digits up to this offset in formatted text
+                    val digitsCount = formattedBeforeDecimal.substring(0, offset).count { it.isDigit() }
+                    return digitsCount
+                } else {
+                    // After decimal separator
+                    val digitsInInteger = formattedBeforeDecimal.count { it.isDigit() }
+                    val offsetAfterDecimal = offset - formattedBeforeDecimal.length - 1
+                    return digitsInInteger + 1 + offsetAfterDecimal
+                }
+            }
+        }
+
+        return TransformedText(AnnotatedString(formattedText), offsetMapping)
     }
 }

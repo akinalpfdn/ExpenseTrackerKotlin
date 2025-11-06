@@ -127,6 +127,11 @@ fun ExpensesScreen(
     var showingPurchase by remember { mutableStateOf(false) }
     var currentCalendarMonth by remember { mutableStateOf(java.time.YearMonth.from(selectedDate)) }
 
+    // Update currentCalendarMonth when selectedDate changes
+    LaunchedEffect(selectedDate) {
+        currentCalendarMonth = java.time.YearMonth.from(selectedDate)
+    }
+
     // Daily category detail bottom sheet state
     var showingDailyCategoryDetail by remember { mutableStateOf(false) }
     var selectedCategoryForDetail by remember { mutableStateOf<com.example.expensetrackerkotlin.data.Category?>(null) }

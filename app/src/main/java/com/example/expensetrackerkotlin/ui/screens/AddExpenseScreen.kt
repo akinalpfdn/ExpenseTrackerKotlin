@@ -9,6 +9,12 @@ import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
+import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.text.input.TransformedText
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.input.OffsetMapping
+import java.text.DecimalFormat
+import java.text.DecimalFormatSymbols
 import androidx.compose.runtime.*
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
@@ -183,11 +189,19 @@ fun AddExpenseScreen(
                         value = amount,
                         onValueChange = { newValue ->
                             val filtered = newValue.filter { "0123456789.,".contains(it) }
-                            val components = filtered.split(",")
-                            amount = if (components.size > 2) {
-                                "${components[0]},${components[1]}"
-                            } else {
-                                filtered
+                            val components = filtered.split(",", ".")
+                            val integerPart = components[0].filter { it.isDigit() }
+                            val decimalPart = if (components.size > 1) components[1].filter { it.isDigit() } else ""
+
+                            // Limit: 9 digits integer + 2 digits decimal
+                            if (integerPart.length <= 9 && decimalPart.length <= 2) {
+                                amount = if (components.size > 2 || (decimalPart.isNotEmpty() && components.size > 1)) {
+                                    if (decimalPart.isNotEmpty()) "${integerPart}.${decimalPart}" else "${integerPart}."
+                                } else if (filtered.contains(",") || filtered.contains(".")) {
+                                    "${integerPart}."
+                                } else {
+                                    integerPart
+                                }
                             }
                         },
                         modifier = Modifier
@@ -199,6 +213,7 @@ fun AddExpenseScreen(
                             fontSize = 14.sp,
                             color = ThemeColors.getTextColor(isDarkTheme)
                         ),
+                        visualTransformation = ThousandSeparatorTransformation(),
                         decorationBox = { innerTextField ->
                             Box(
                                 contentAlignment = Alignment.CenterStart
@@ -599,8 +614,20 @@ fun AddExpenseScreen(
                         BasicTextField(
                             value = exchangeRate,
                             onValueChange = { newValue ->
-                                if (newValue.isEmpty() || newValue.matches(Regex("^\\d*\\.?\\d*$"))) {
-                                    exchangeRate = newValue
+                                val filtered = newValue.filter { "0123456789.,".contains(it) }
+                                val components = filtered.split(",", ".")
+                                val integerPart = components[0].filter { it.isDigit() }
+                                val decimalPart = if (components.size > 1) components[1].filter { it.isDigit() } else ""
+
+                                // Limit: 9 digits integer + 2 digits decimal
+                                if (integerPart.length <= 9 && decimalPart.length <= 2) {
+                                    exchangeRate = if (components.size > 2 || (decimalPart.isNotEmpty() && components.size > 1)) {
+                                        if (decimalPart.isNotEmpty()) "${integerPart}.${decimalPart}" else "${integerPart}."
+                                    } else if (filtered.contains(",") || filtered.contains(".")) {
+                                        "${integerPart}."
+                                    } else {
+                                        integerPart
+                                    }
                                 }
                             },
                             modifier = Modifier
@@ -612,6 +639,7 @@ fun AddExpenseScreen(
                                 fontSize = 14.sp,
                                 color = ThemeColors.getTextColor(isDarkTheme)
                             ),
+                            visualTransformation = ThousandSeparatorTransformation(),
                             decorationBox = { innerTextField ->
                                 Box(
                                     contentAlignment = Alignment.CenterStart

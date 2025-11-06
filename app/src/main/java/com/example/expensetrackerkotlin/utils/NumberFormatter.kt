@@ -17,18 +17,22 @@ object NumberFormatter {
         val symbols = DecimalFormatSymbols(Locale.forLanguageTag("tr"))
         symbols.groupingSeparator = '.'
         symbols.decimalSeparator = ','
-        
+
         // Check if the amount has decimal places that are not zero
         val hasDecimals = amount % 1 != 0.0
-        
+
         val formatter = if (hasDecimals) {
             // Show decimals if they exist
-            DecimalFormat("#,##0.##", symbols)
+            DecimalFormat("###,###,###,##0.##", symbols)
         } else {
             // Show no decimals if it's a whole number
-            DecimalFormat("#,##0", symbols)
+            DecimalFormat("###,###,###,##0", symbols)
         }
-        
+
+        // Disable scientific notation for large numbers
+        formatter.isGroupingUsed = true
+        formatter.maximumFractionDigits = if (hasDecimals) 2 else 0
+
         return formatter.format(amount)
     }
     
@@ -42,8 +46,12 @@ object NumberFormatter {
         val symbols = DecimalFormatSymbols(Locale.forLanguageTag("tr"))
         symbols.groupingSeparator = '.'
         symbols.decimalSeparator = ','
-        
-        val formatter = DecimalFormat("#,##0.00", symbols)
+
+        val formatter = DecimalFormat("###,###,###,##0.00", symbols)
+        formatter.isGroupingUsed = true
+        formatter.maximumFractionDigits = 2
+        formatter.minimumFractionDigits = 2
+
         return formatter.format(amount)
     }
 }
