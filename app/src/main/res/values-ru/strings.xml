@@ -195,7 +195,7 @@
 
     <!-- CategorySummarySection -->
     <string name="category_details">Детали Категории</string>
-    <string name="main_categories">Основные Категории</string>
+    <string name="main_categories">Категории</string>
     <string name="sub_categories">Подкategории</string>
     <string name="expense_lowercase">расход</string>
     <string name="see_details">Посмотреть детали</string>

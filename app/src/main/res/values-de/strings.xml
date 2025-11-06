@@ -65,16 +65,16 @@
     <string name="time_oldest_first">Datum: Älteste zuerst</string>
 
     <!-- AnalysisScreen -->
-    <string name="current_period_total">Aktuelle Periode Gesamtausgaben</string>
-    <string name="vs_previous_month">Verglichen mit dem Vormonat</string>
-    <string name="vs_6_month_average">Verglichen mit dem 6-Monats-Durchschnitt</string>
+    <string name="current_period_total">Gesamtausgaben</string>
+    <string name="vs_previous_month">Vs. dem Vormonat</string>
+    <string name="vs_6_month_average">Vs. Durchschnitt</string>
     <string name="no_expenses_this_period">Noch keine Ausgaben in dieser Periode</string>
     <string name="analysis_will_appear">Die Analyse wird hier angezeigt, wenn Sie Ausgaben hinzufügen</string>
     <string name="previous_month">Vorheriger Monat</string>
     <string name="next_month">Nächster Monat</string>
     <string name="select_date_range">Datumsbereich auswählen</string>
     <string name="fixed_expenses">Fixe Ausgaben</string>
-    <string name="recurring_expenses_description">Ausgaben, die 3+ Monate andauern werden</string>
+    <string name="recurring_expenses_description">wiederkehrend +3 Monate</string>
     <string name="recurring_expenses_cd">Wiederkehrende Ausgaben</string>
     <string name="pick_date_range">Datumsbereich wählen</string>
 
@@ -195,14 +195,14 @@
 
     <!-- CategorySummarySection -->
     <string name="category_details">Kategoriedetails</string>
-    <string name="main_categories">Hauptkategorien</string>
+    <string name="main_categories">Kategorie</string>
     <string name="sub_categories">Unterkategorien</string>
     <string name="expense_lowercase">ausgabe</string>
     <string name="see_details">Details anzeigen</string>
 
     <!-- CategoryPopupLines -->
-    <string name="vs_previous_month_colon">Verglichen mit dem Vormonat:</string>
-    <string name="vs_average_colon">Verglichen mit dem Durchschnitt:</string>
+    <string name="vs_previous_month_colon">Vs. dem Vormonat:</string>
+    <string name="vs_average_colon">Vs. Durchschnitt:</string>
 
     <!-- CategoryManagementScreen -->
     <string name="add_new_main_category">Neue Hauptkategorie hinzufügen</string>

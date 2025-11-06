@@ -65,16 +65,16 @@
     <string name="time_oldest_first">Data: Mais Antigo Primeiro</string>
 
     <!-- AnalysisScreen -->
-    <string name="current_period_total">Total de Gastos do Período Atual</string>
-    <string name="vs_previous_month">Comparado ao mês anterior</string>
-    <string name="vs_6_month_average">Comparado à média de 6 meses</string>
+    <string name="current_period_total">Total de Gastos</string>
+    <string name="vs_previous_month">Vs. mês anterior</string>
+    <string name="vs_6_month_average">Vs. média</string>
     <string name="no_expenses_this_period">Nenhum gasto neste período ainda</string>
     <string name="analysis_will_appear">A análise aparecerá aqui quando você adicionar gastos</string>
     <string name="previous_month">Mês anterior</string>
     <string name="next_month">Próximo mês</string>
     <string name="select_date_range">Selecionar intervalo de datas</string>
     <string name="fixed_expenses">Gastos Fixos</string>
-    <string name="recurring_expenses_description">Gastos que continuarão por 3+ meses</string>
+    <string name="recurring_expenses_description">recorrente por +3 meses</string>
     <string name="recurring_expenses_cd">Gastos recorrentes</string>
     <string name="pick_date_range">Escolher intervalo de datas</string>
 
@@ -195,14 +195,14 @@
 
     <!-- CategorySummarySection -->
     <string name="category_details">Detalhes da Categoria</string>
-    <string name="main_categories">Categorias Principais</string>
+    <string name="main_categories">Categorias</string>
     <string name="sub_categories">Subcategorias</string>
     <string name="expense_lowercase">gasto</string>
     <string name="see_details">Ver detalhes</string>
 
     <!-- CategoryPopupLines -->
-    <string name="vs_previous_month_colon">Comparado ao mês anterior:</string>
-    <string name="vs_average_colon">Comparado à média:</string>
+    <string name="vs_previous_month_colon">Vs. mês anterior:</string>
+    <string name="vs_average_colon">Vs. média:</string>
 
     <!-- CategoryManagementScreen -->
     <string name="add_new_main_category">Adicionar Nova Categoria Principal</string>

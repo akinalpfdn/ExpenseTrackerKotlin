@@ -65,16 +65,16 @@
     <string name="time_oldest_first">Fecha: Más Antiguo Primero</string>
 
     <!-- AnalysisScreen -->
-    <string name="current_period_total">Gasto Total del Período Actual</string>
-    <string name="vs_previous_month">Comparado con el mes anterior</string>
-    <string name="vs_6_month_average">Comparado con el promedio de 6 meses</string>
+    <string name="current_period_total">Gasto Total</string>
+    <string name="vs_previous_month">vs mes anterior</string>
+    <string name="vs_6_month_average">vs promedio</string>
     <string name="no_expenses_this_period">Aún no hay gastos en este período</string>
     <string name="analysis_will_appear">El análisis aparecerá aquí cuando agregue gastos</string>
     <string name="previous_month">Mes anterior</string>
     <string name="next_month">Mes siguiente</string>
     <string name="select_date_range">Seleccionar rango de fechas</string>
     <string name="fixed_expenses">Gastos Fijos</string>
-    <string name="recurring_expenses_description">Gastos que continuarán por 3+ meses</string>
+    <string name="recurring_expenses_description">recurrente durante +3 meses</string>
     <string name="recurring_expenses_cd">Gastos recurrentes</string>
     <string name="pick_date_range">Elegir rango de fechas</string>
 
@@ -195,14 +195,14 @@
 
     <!-- CategorySummarySection -->
     <string name="category_details">Detalles de Categoría</string>
-    <string name="main_categories">Categorías Principales</string>
+    <string name="main_categories">Categorías</string>
     <string name="sub_categories">Subcategorías</string>
     <string name="expense_lowercase">gasto</string>
     <string name="see_details">Ver detalles</string>
 
     <!-- CategoryPopupLines -->
-    <string name="vs_previous_month_colon">Comparado con el mes anterior:</string>
-    <string name="vs_average_colon">Comparado con el promedio:</string>
+    <string name="vs_previous_month_colon">vs mes anterior:</string>
+    <string name="vs_average_colon">vs promedio:</string>
 
     <!-- CategoryManagementScreen -->
     <string name="add_new_main_category">Agregar Nueva Categoría Principal</string>

@@ -65,16 +65,16 @@
     <string name="time_oldest_first">Date : Plus Ancien d\'Abord</string>
 
     <!-- AnalysisScreen -->
-    <string name="current_period_total">Total des Dépenses de la Période Actuelle</string>
-    <string name="vs_previous_month">Comparé au mois précédent</string>
-    <string name="vs_6_month_average">Comparé à la moyenne sur 6 mois</string>
+    <string name="current_period_total">Dépenses totales</string>
+    <string name="vs_previous_month">vs. mois précédent</string>
+    <string name="vs_6_month_average">vs. moyenne</string>
     <string name="no_expenses_this_period">Aucune dépense cette période pour le moment</string>
     <string name="analysis_will_appear">L\'analyse apparaîtra ici lorsque vous ajouterez des dépenses</string>
     <string name="previous_month">Mois précédent</string>
     <string name="next_month">Mois suivant</string>
     <string name="select_date_range">Sélectionner la plage de dates</string>
     <string name="fixed_expenses">Dépenses Fixes</string>
-    <string name="recurring_expenses_description">Dépenses qui continueront pendant 3+ mois</string>
+    <string name="recurring_expenses_description">récurrent depuis +3 mois</string>
     <string name="recurring_expenses_cd">Dépenses récurrentes</string>
     <string name="pick_date_range">Choisir la plage de dates</string>
 
@@ -195,14 +195,14 @@
 
     <!-- CategorySummarySection -->
     <string name="category_details">Détails de la Catégorie</string>
-    <string name="main_categories">Catégories Principales</string>
+    <string name="main_categories">Catégories</string>
     <string name="sub_categories">Sous-Catégories</string>
     <string name="expense_lowercase">dépense</string>
     <string name="see_details">Voir les détails</string>
 
     <!-- CategoryPopupLines -->
-    <string name="vs_previous_month_colon">Comparé au mois précédent :</string>
-    <string name="vs_average_colon">Comparé à la moyenne :</string>
+    <string name="vs_previous_month_colon">vs. mois précédent :</string>
+    <string name="vs_average_colon">vs. moyenne :</string>
 
     <!-- CategoryManagementScreen -->
     <string name="add_new_main_category">Ajouter une Nouvelle Catégorie Principale</string>

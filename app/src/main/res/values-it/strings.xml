@@ -65,9 +65,9 @@
     <string name="time_oldest_first">Data: Più Vecchio Prima</string>
 
     <!-- AnalysisScreen -->
-    <string name="current_period_total">Totale Spese Periodo Corrente</string>
-    <string name="vs_previous_month">Confrontato al mese precedente</string>
-    <string name="vs_6_month_average">Confrontato alla media di 6 mesi</string>
+    <string name="current_period_total">Totale Spese</string>
+    <string name="vs_previous_month">vs. mese precedente</string>
+    <string name="vs_6_month_average">Confrontato alla media</string>
     <string name="no_expenses_this_period">Nessuna spesa in questo periodo ancora</string>
     <string name="analysis_will_appear">L\'analisi apparirà qui quando aggiungerai delle spese</string>
     <string name="previous_month">Mese precedente</string>
@@ -195,7 +195,7 @@
 
     <!-- CategorySummarySection -->
     <string name="category_details">Dettagli Categoria</string>
-    <string name="main_categories">Categorie Principali</string>
+    <string name="main_categories">Categorie</string>
     <string name="sub_categories">Sottocategorie</string>
     <string name="expense_lowercase">spesa</string>
     <string name="see_details">Vedi dettagli</string>

@@ -61,7 +61,7 @@
     <string name="time_newest_first">Data: od najnowszych</string>
     <string name="time_oldest_first">Data: od najstarszych</string>
 
-    <string name="current_period_total">Suma wydatków w bieżącym okresie</string>
+    <string name="current_period_total">Suma wydatków</string>
     <string name="vs_previous_month">wzgl. ost. miesiąca</string>
     <string name="vs_6_month_average">wzgl. średniej</string>
     <string name="no_expenses_this_period">Brak wydatków w tym okresie</string>
@@ -70,7 +70,7 @@
     <string name="next_month">Następny miesiąc</string>
     <string name="select_date_range">Wybierz zakres dat</string>
     <string name="fixed_expenses">Wydatki stałe</string>
-    <string name="recurring_expenses_description">Wydatki, które będą kontynuowane przez 3+ miesiące</string>
+    <string name="recurring_expenses_description">powtarzające się przez +3 miesiące</string>
     <string name="recurring_expenses_cd">Wydatki cykliczne</string>
     <string name="pick_date_range">Wybierz zakres dat</string>
 
@@ -178,7 +178,7 @@
     <string name="create">Utwórz</string>
 
     <string name="category_details">Szczegóły kategorii</string>
-    <string name="main_categories">Kategorie główne</string>
+    <string name="main_categories">Kategorie</string>
     <string name="sub_categories">Podkategorie</string>
     <string name="expense_lowercase">wydatek</string>
     <string name="see_details">Zobacz szczegóły</string>
