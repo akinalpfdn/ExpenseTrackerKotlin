@@ -4,13 +4,32 @@ import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.googlefonts.GoogleFont
+import androidx.compose.ui.text.googlefonts.Font
 import androidx.compose.ui.unit.sp
+import com.example.expensetrackerkotlin.R
+
+val provider = GoogleFont.Provider(
+    providerAuthority = "com.google.android.gms.fonts",
+    providerPackage = "com.google.android.gms",
+    certificates = R.array.com_google_android_gms_fonts_certs
+)
+
+val robotoFlexFont = GoogleFont("Roboto Flex")
+
+val RobotoFlexFontFamily = FontFamily(
+    Font(googleFont = robotoFlexFont, fontProvider = provider, weight = FontWeight.Light),
+    Font(googleFont = robotoFlexFont, fontProvider = provider, weight = FontWeight.Normal),
+    Font(googleFont = robotoFlexFont, fontProvider = provider, weight = FontWeight.Medium),
+    Font(googleFont = robotoFlexFont, fontProvider = provider, weight = FontWeight.SemiBold),
+    Font(googleFont = robotoFlexFont, fontProvider = provider, weight = FontWeight.Bold)
+)
 
 // Set of Material typography styles to start with
 val Typography = Typography(
     bodyLarge = TextStyle(
-        fontFamily = FontFamily.Default,
-        fontWeight = FontWeight.Normal,
+        fontFamily = RobotoFlexFontFamily,
+        fontWeight = FontWeight.Medium,
         fontSize = 16.sp,
         lineHeight = 24.sp,
         letterSpacing = 0.5.sp

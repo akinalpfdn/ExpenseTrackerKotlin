@@ -45,8 +45,9 @@ fun SettingsScreen(
         stringResource(R.string.general_settings),
         stringResource(R.string.categories)
     )
-    
-    val isDarkTheme = theme == "dark"
+
+    var localTheme by remember { mutableStateOf(theme) }
+    val isDarkTheme = localTheme == "dark"
     
     Column(
         modifier = Modifier
@@ -95,6 +96,8 @@ fun SettingsScreen(
                 dailyLimit = dailyLimit,
                 monthlyLimit = monthlyLimit,
                 theme = theme,
+                localTheme = localTheme,
+                onLocalThemeChanged = { localTheme = it },
                 onCurrencyChanged = onCurrencyChanged,
                 onDailyLimitChanged = onDailyLimitChanged,
                 onMonthlyLimitChanged = onMonthlyLimitChanged,
@@ -118,6 +121,8 @@ fun GeneralSettingsTab(
     dailyLimit: String,
     monthlyLimit: String,
     theme: String,
+    localTheme: String,
+    onLocalThemeChanged: (String) -> Unit,
     onCurrencyChanged: (String) -> Unit,
     onDailyLimitChanged: (String) -> Unit,
     onMonthlyLimitChanged: (String) -> Unit,
@@ -129,7 +134,6 @@ fun GeneralSettingsTab(
     var newDefaultCurrency by remember { mutableStateOf(defaultCurrency) }
     var newDailyLimit by remember { mutableStateOf(dailyLimit) }
     var newMonthlyLimit by remember { mutableStateOf(monthlyLimit) }
-    var newTheme by remember { mutableStateOf(theme) }
     var showCurrencyMenu by remember { mutableStateOf(false) }
     
     val currencies = listOf("₺", "$", "€", "£")
@@ -375,15 +379,15 @@ fun GeneralSettingsTab(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = if (newTheme == "dark") stringResource(R.string.dark_theme) else stringResource(R.string.light_theme),
+                        text = if (localTheme == "dark") stringResource(R.string.dark_theme) else stringResource(R.string.light_theme),
                         fontSize = 16.sp,
                         color = ThemeColors.getTextColor(isDarkTheme)
                     )
-                    
+
                     Switch(
-                        checked = newTheme == "light",
+                        checked = localTheme == "light",
                         onCheckedChange = { isLight ->
-                            newTheme = if (isLight) "light" else "dark"
+                            onLocalThemeChanged(if (isLight) "light" else "dark")
                         },
                         colors = SwitchDefaults.colors(
                             checkedThumbColor = AppColors.PrimaryOrange,
@@ -443,7 +447,7 @@ fun GeneralSettingsTab(
                     onCurrencyChanged(newDefaultCurrency)
                     onDailyLimitChanged(newDailyLimit)
                     onMonthlyLimitChanged(newMonthlyLimit)
-                    onThemeChanged(newTheme)
+                    onThemeChanged(localTheme)
                     onDismiss()
                 },
                 modifier = Modifier

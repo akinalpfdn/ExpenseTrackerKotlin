@@ -825,6 +825,7 @@ fun AddExpenseScreen(
                          Text(
                              stringResource(R.string.okay),
                              color = AppColors.PrimaryOrange,
+                             fontSize = 18.sp,
                              fontWeight = FontWeight.SemiBold
                          )
                      }
@@ -835,6 +836,7 @@ fun AddExpenseScreen(
                      ) {
                          Text(
                              stringResource(R.string.cancel),
+                             fontSize = 18.sp,
                              color = if (isDarkTheme) ThemeColors.getTextGrayColor(true) else Color.White
                          )
                      }

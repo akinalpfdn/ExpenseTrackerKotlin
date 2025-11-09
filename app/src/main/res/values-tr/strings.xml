@@ -14,7 +14,7 @@
     <string name="theme">Tema</string>
     <string name="dark_theme">Koyu Tema</string>
     <string name="light_theme">Açık Tema</string>
-    <string name="theme_description">Uygulamanın görünümünü değiştirin</string>
+    <string name="theme_description">Uygulamanın görünümünü değiştirin,geçerli kılmak için kaydedin</string>
     <string name="cancel">İptal</string>
     <string name="save">Kaydet</string>
     <!-- RecurringExpensesScreen -->

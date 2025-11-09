@@ -14,8 +14,8 @@ android {
         applicationId = "com.akinalpfdn.expensetracker"
         minSdk = 26
         targetSdk = 36
-        versionCode = 3
-        versionName = "1.2"
+        versionCode = 4
+        versionName = "1.3"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -93,6 +93,10 @@ dependencies {
     // For charts and progress rings
     //noinspection UseTomlInstead,GradleDependency
     implementation("androidx.compose.material:material-icons-extended:1.5.4")
+
+    // Google Fonts
+    //noinspection UseTomlInstead,GradleDependency
+    implementation("androidx.compose.ui:ui-text-google-fonts:1.5.4")
 
     // Google Play Billing
     //noinspection GradleDependency,UseTomlInstead
