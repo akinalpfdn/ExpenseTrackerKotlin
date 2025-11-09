@@ -14,7 +14,7 @@
     <string name="theme">Design</string>
     <string name="dark_theme">Dunkles Design</string>
     <string name="light_theme">Helles Design</string>
-    <string name="theme_description">Das Erscheinungsbild der App ändern</string>
+    <string name="theme_description">Ändern Sie das Erscheinungsbild der Anwendung, speichern Sie zur Bestätigung.</string>
     <string name="cancel">Abbrechen</string>
     <string name="save">Speichern</string>
     <!-- RecurringExpensesScreen -->
@@ -435,5 +435,5 @@
     <string name="welcome_page2_description">Visualisieren Sie Ihre Ausgaben mit ansprechenden Diagrammen. Sehen Sie, wohin Ihr Geld fließt, mit Kategorieaufschlüsselungen und monatlichen Trends.</string>
     <string name="welcome_page3_title">Ihre Privatsphäre ist uns wichtig</string>
     <string name="welcome_page3_description">Alle Ihre Daten bleiben auf Ihrem Gerät. Keine Cloud-Speicherung, kein Tracking, keine Werbung. Ihre Finanzinformationen sind vollständig privat.</string>
-    <string name="category_info_text">You also need to add subcategories for newly added categories. When adding a new expense, subcategories are used, not the main categories.</string>
+    <string name="category_info_text">Sie müssen auch Unterkategorien für neu hinzugefügte Kategorien anlegen. Beim Hinzufügen einer neuen Ausgabe werden Unterkategorien verwendet, nicht die Hauptkategorien.</string>
 </resources>

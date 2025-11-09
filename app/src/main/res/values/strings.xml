@@ -14,7 +14,7 @@
     <string name="theme">Theme</string>
     <string name="dark_theme">Dark Theme</string>
     <string name="light_theme">Light Theme</string>
-    <string name="theme_description">Change the app\'s appearance</string>
+    <string name="theme_description">Change the application\'s appearance, save to validate.</string>
     <string name="cancel">Cancel</string>
     <string name="save">Save</string>
     <!-- RecurringExpensesScreen -->

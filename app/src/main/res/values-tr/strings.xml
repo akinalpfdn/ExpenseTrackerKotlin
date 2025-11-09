@@ -438,5 +438,5 @@
     <string name="welcome_page2_description">Harcamalarınızı güzel grafiklerle görselleştirin. Kategori dökümleri ve aylık trendlerle paranızın nereye gittiğini görün.</string>
     <string name="welcome_page3_title">Gizliliğiniz Önemlidir</string>
     <string name="welcome_page3_description">Tüm verileriniz cihazınızda kalır. Bulut depolama yok, izleme yok, reklam yok. Finansal bilgileriniz tamamen gizlidir.</string>
-    <string name="category_info_text">You also need to add subcategories for newly added categories. When adding a new expense, subcategories are used, not the main categories.</string>
+    <string name="category_info_text">Yeni eklenen kategoriler için alt kategoriler de eklemeniz gerekmektedir. Yeni bir harcama eklerken ana kategoriler değil, alt kategoriler kullanılır.</string>
 </resources>

@@ -14,7 +14,7 @@
     <string name="theme">Тема</string>
     <string name="dark_theme">Тёмная Тема</string>
     <string name="light_theme">Светлая Тема</string>
-    <string name="theme_description">Изменить внешний вид приложения</string>
+    <string name="theme_description">Измените внешний вид приложения, сохраните для подтверждения.</string>
     <string name="cancel">Отмена</string>
     <string name="save">Сохранить</string>
     <!-- RecurringExpensesScreen -->
@@ -436,5 +436,5 @@
     <string name="welcome_page2_description">Визуализируйте свои траты с помощью красивых диаграмм. Смотрите, куда уходят ваши деньги, с разбивкой по категориям и месячным трендам.</string>
     <string name="welcome_page3_title">Ваша конфиденциальность важна</string>
     <string name="welcome_page3_description">Все ваши данные остаются на вашем устройстве. Нет облачного хранения, нет отслеживания, нет рекламы. Ваша финансовая информация полностью конфиденциальна.</string>
-    <string name="category_info_text">You also need to add subcategories for newly added categories. When adding a new expense, subcategories are used, not the main categories.</string>
+    <string name="category_info_text">Вам также необходимо добавить подкатегории для вновь добавленных категорий. При добавлении нового расхода используются подкатегории, а не основные категории.</string>
 </resources>

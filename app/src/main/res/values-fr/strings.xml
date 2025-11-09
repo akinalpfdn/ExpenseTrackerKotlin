@@ -14,7 +14,7 @@
     <string name="theme">Thème</string>
     <string name="dark_theme">Thème Sombre</string>
     <string name="light_theme">Thème Clair</string>
-    <string name="theme_description">Changer l\'apparence de l\'application</string>
+    <string name="theme_description">Modifiez l\'apparence de l\'application, enregistrez pour valider.</string>
     <string name="cancel">Annuler</string>
     <string name="save">Enregistrer</string>
     <!-- RecurringExpensesScreen -->
@@ -436,5 +436,5 @@
     <string name="welcome_page2_description">Visualisez vos dépenses avec de superbes graphiques. Voyez où va votre argent avec des ventilations par catégorie et des tendances mensuelles.</string>
     <string name="welcome_page3_title">Votre Vie Privée Compte</string>
     <string name="welcome_page3_description">Toutes vos données restent sur votre appareil. Pas de stockage cloud, pas de suivi, pas de publicité. Vos informations financières sont entièrement privées.</string>
-    <string name="category_info_text">You also need to add subcategories for newly added categories. When adding a new expense, subcategories are used, not the main categories.</string>
+    <string name="category_info_text">Vous devez également ajouter des sous-catégories pour les catégories nouvellement créées. Lors de l\'ajout d\'une nouvelle dépense, ce sont les sous-catégories qui sont utilisées, et non les catégories principales.</string>
 </resources>
