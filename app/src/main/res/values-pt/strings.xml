@@ -436,4 +436,5 @@
     <string name="welcome_page2_description">Visualize seus gastos com belos gráficos. Veja para onde vai o seu dinheiro com detalhamento por categoria e tendências mensais.</string>
     <string name="welcome_page3_title">Sua Privacidade Importa</string>
     <string name="welcome_page3_description">Todos os seus dados permanecem no seu dispositivo. Sem armazenamento na nuvem, sem rastreamento, sem anúncios. Suas informações financeiras são completamente privadas.</string>
+    <string name="category_info_text">You also need to add subcategories for newly added categories. When adding a new expense, subcategories are used, not the main categories.</string>
 </resources>

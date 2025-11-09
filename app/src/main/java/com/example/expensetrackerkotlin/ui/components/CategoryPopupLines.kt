@@ -154,7 +154,7 @@ fun CategoryPopupCard(
             },
         onClick = { onCategoryClick(selected) },
         colors = CardDefaults.cardColors(
-            containerColor = selected.category.getColor()
+            containerColor = androidx.compose.ui.graphics.lerp(selected.category.getColor(), Color.Gray, 0.6f)
         ),
         shape = RoundedCornerShape(12.dp),
     ) {

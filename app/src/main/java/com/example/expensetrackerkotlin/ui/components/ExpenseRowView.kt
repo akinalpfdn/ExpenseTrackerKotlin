@@ -57,9 +57,18 @@ fun ExpenseRowView(
     viewModel: com.example.expensetrackerkotlin.viewmodel.ExpenseViewModel,
     modifier: Modifier = Modifier
 ) {
-    var editAmount by remember { mutableStateOf(String.format("%.2f", expense.amount).removeSuffix(".00").replace(",", ".")) }
+    // Helper function to format double to edit string (always uses "." as decimal separator)
+    fun formatDoubleForEdit(value: Double): String {
+        // Use DecimalFormat to avoid scientific notation and thousand separators
+        val df = java.text.DecimalFormat("#")
+        df.maximumFractionDigits = 10 // Allow up to 10 decimal places
+        df.isGroupingUsed = false // No thousand separators
+        return df.format(value)
+    }
+
+    var editAmount by remember { mutableStateOf(formatDoubleForEdit(expense.amount)) }
     var editDescription by remember { mutableStateOf(expense.description) }
-    var editExchangeRate by remember { mutableStateOf(expense.exchangeRate?.let { String.format("%.2f", it).removeSuffix(".00").replace(",", ".") } ?: "") }
+    var editExchangeRate by remember { mutableStateOf(expense.exchangeRate?.let { formatDoubleForEdit(it) } ?: "") }
     var showDeleteConfirmation by remember { mutableStateOf(false) }
 
     // Collect categories and subcategories from ViewModel
@@ -70,12 +79,17 @@ fun ExpenseRowView(
     val category = categories.find { it.id == expense.categoryId }
     val subCategory = subCategories.find { it.id == expense.subCategoryId }
 
+    // Get locale-specific decimal separator
+    val decimalSeparator = remember {
+        java.text.DecimalFormatSymbols.getInstance(java.util.Locale.getDefault()).decimalSeparator
+    }
+
     // Update edit fields when editing starts
     LaunchedEffect(isCurrentlyEditing) {
         if (isCurrentlyEditing) {
-            editAmount = String.format("%.2f", expense.amount).removeSuffix(".00").replace(",", ".")
+            editAmount = formatDoubleForEdit(expense.amount)
             editDescription = expense.description
-            editExchangeRate = expense.exchangeRate?.let { String.format("%.2f", it).removeSuffix(".00").replace(",", ".") } ?: ""
+            editExchangeRate = expense.exchangeRate?.let { formatDoubleForEdit(it) } ?: ""
         }
     }
 
@@ -100,9 +114,9 @@ fun ExpenseRowView(
                                 // If already editing, close the edit mode
                                 onEditingChanged(false)
                                 // Reset edit fields to original values
-                                editAmount = String.format("%.2f", expense.amount).removeSuffix(".00").replace(",", ".")
+                                editAmount = formatDoubleForEdit(expense.amount)
                                 editDescription = expense.description
-                                editExchangeRate = expense.exchangeRate?.let { String.format("%.2f", it).removeSuffix(".00").replace(",", ".") } ?: ""
+                                editExchangeRate = expense.exchangeRate?.let { formatDoubleForEdit(it) } ?: ""
                             } else {
                                 // If not editing, open edit mode
                                 onEditingChanged(true)
@@ -256,19 +270,30 @@ fun ExpenseRowView(
                                 BasicTextField(
                                     value = editAmount,
                                     onValueChange = { newValue ->
-                                        val filtered = newValue.filter { "0123456789.,".contains(it) }
-                                        val components = filtered.split(",", ".")
-                                        val integerPart = components[0].filter { it.isDigit() }
-                                        val decimalPart = if (components.size > 1) components[1].filter { it.isDigit() } else ""
+                                        // Allow digits and both . and , (normalize to decimal separator)
+                                        val filtered = newValue.filter { it.isDigit() || it == '.' || it == ',' }
 
-                                        // Limit: 9 digits integer + 2 digits decimal
-                                        if (integerPart.length <= 9 && decimalPart.length <= 2) {
-                                            editAmount = if (components.size > 2 || (decimalPart.isNotEmpty() && components.size > 1)) {
-                                                if (decimalPart.isNotEmpty()) "${integerPart}.${decimalPart}" else "${integerPart}."
-                                            } else if (filtered.contains(",") || filtered.contains(".")) {
-                                                "${integerPart}."
-                                            } else {
-                                                integerPart
+                                        // Replace any separator with the locale separator
+                                        val normalized = filtered.replace(',', decimalSeparator).replace('.', decimalSeparator)
+
+                                        // Split by decimal separator
+                                        val parts = normalized.split(decimalSeparator)
+
+                                        if (parts.size <= 2) {
+                                            val integerPart = parts[0].filter { it.isDigit() }
+                                            val decimalPart = if (parts.size == 2) parts[1].filter { it.isDigit() } else ""
+
+                                            // Limit: 9 digits integer + 2 digits decimal
+                                            if (integerPart.length <= 9 && decimalPart.length <= 2) {
+                                                editAmount = if (parts.size == 2) {
+                                                    if (decimalPart.isNotEmpty()) {
+                                                        "$integerPart$decimalSeparator$decimalPart"
+                                                    } else {
+                                                        "$integerPart$decimalSeparator"
+                                                    }
+                                                } else {
+                                                    integerPart
+                                                }
                                             }
                                         }
                                     },
@@ -364,19 +389,30 @@ fun ExpenseRowView(
                                     BasicTextField(
                                         value = editExchangeRate,
                                         onValueChange = { newValue ->
-                                            val filtered = newValue.filter { "0123456789.,".contains(it) }
-                                            val components = filtered.split(",", ".")
-                                            val integerPart = components[0].filter { it.isDigit() }
-                                            val decimalPart = if (components.size > 1) components[1].filter { it.isDigit() } else ""
+                                            // Allow digits and both . and , (normalize to decimal separator)
+                                            val filtered = newValue.filter { it.isDigit() || it == '.' || it == ',' }
 
-                                            // Limit: 9 digits integer + 2 digits decimal
-                                            if (integerPart.length <= 9 && decimalPart.length <= 2) {
-                                                editExchangeRate = if (components.size > 2 || (decimalPart.isNotEmpty() && components.size > 1)) {
-                                                    if (decimalPart.isNotEmpty()) "${integerPart}.${decimalPart}" else "${integerPart}."
-                                                } else if (filtered.contains(",") || filtered.contains(".")) {
-                                                    "${integerPart}."
-                                                } else {
-                                                    integerPart
+                                            // Replace any separator with the locale separator
+                                            val normalized = filtered.replace(',', decimalSeparator).replace('.', decimalSeparator)
+
+                                            // Split by decimal separator
+                                            val parts = normalized.split(decimalSeparator)
+
+                                            if (parts.size <= 2) {
+                                                val integerPart = parts[0].filter { it.isDigit() }
+                                                val decimalPart = if (parts.size == 2) parts[1].filter { it.isDigit() } else ""
+
+                                                // Limit: 9 digits integer + 2 digits decimal
+                                                if (integerPart.length <= 9 && decimalPart.length <= 2) {
+                                                    editExchangeRate = if (parts.size == 2) {
+                                                        if (decimalPart.isNotEmpty()) {
+                                                            "$integerPart$decimalSeparator$decimalPart"
+                                                        } else {
+                                                            "$integerPart$decimalSeparator"
+                                                        }
+                                                    } else {
+                                                        integerPart
+                                                    }
                                                 }
                                             }
                                         },
@@ -442,14 +478,18 @@ fun ExpenseRowView(
                                 }
                                 Button(
                                     onClick = {
-                                        val newAmount = editAmount.toDoubleOrNull()
+                                        // Replace locale decimal separator with "." for parsing
+                                        val normalizedAmount = editAmount.replace(decimalSeparator, '.')
+                                        val normalizedExchangeRate = editExchangeRate.replace(decimalSeparator, '.')
+
+                                        val newAmount = normalizedAmount.toDoubleOrNull()
                                         if (newAmount != null && newAmount > 0) {
                                             onUpdate(
                                                 expense.copy(
                                                     amount = newAmount,
                                                     description = editDescription,
                                                     exchangeRate = if (expense.currency != defaultCurrency) {
-                                                        editExchangeRate.toDoubleOrNull()
+                                                        normalizedExchangeRate.toDoubleOrNull()
                                                     } else {
                                                         null
                                                     }

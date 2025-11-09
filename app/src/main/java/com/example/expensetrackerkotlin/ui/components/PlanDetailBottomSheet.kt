@@ -33,6 +33,8 @@ import com.example.expensetrackerkotlin.ui.theme.AppColors
 import com.example.expensetrackerkotlin.ui.theme.ThemeColors
 import com.example.expensetrackerkotlin.utils.NumberFormatter
 import com.example.expensetrackerkotlin.utils.PlanningUtils
+import java.text.DecimalFormatSymbols
+import java.util.Locale
 
 @SuppressLint("DefaultLocale")
 @OptIn(ExperimentalMaterial3Api::class)
@@ -47,7 +49,12 @@ fun PlanDetailBottomSheet(
 ) {
     val plan = planWithBreakdowns.plan
     val breakdowns = planWithBreakdowns.breakdowns
-    
+
+    // Get locale-specific decimal separator
+    val decimalSeparator = remember {
+        DecimalFormatSymbols.getInstance(Locale.getDefault()).decimalSeparator
+    }
+
     var editingCell by remember { mutableStateOf<Pair<Int, String>?>(null) } // (rowIndex, "income"/"expenses")
     var editedValue by remember { mutableStateOf("") }
     val scrollState = rememberScrollState()
@@ -230,7 +237,8 @@ fun PlanDetailBottomSheet(
                         IconButton(
                             onClick = {
                                 // Save the current edit
-                                val newValue = editedValue.toDoubleOrNull()
+                                val normalized = editedValue.replace(decimalSeparator, '.')
+                                val newValue = normalized.toDoubleOrNull()
                                 if (newValue != null) {
                                     val updatedBreakdown = if (isEditingIncome) {
                                         breakdown.copy(
@@ -267,7 +275,28 @@ fun PlanDetailBottomSheet(
                     if (isEditingIncome) {
                         BasicTextField(
                             value = editedValue,
-                            onValueChange = { editedValue = it },
+                            onValueChange = { newValue ->
+                                val filtered = newValue.filter { it.isDigit() || it == '.' || it == ',' }
+                                val normalized = filtered.replace(',', decimalSeparator).replace('.', decimalSeparator)
+                                val parts = normalized.split(decimalSeparator)
+
+                                if (parts.size <= 2) {
+                                    val integerPart = parts[0].filter { it.isDigit() }
+                                    val decimalPart = if (parts.size == 2) parts[1].filter { it.isDigit() } else ""
+
+                                    if (integerPart.length <= 9 && decimalPart.length <= 2) {
+                                        editedValue = if (parts.size == 2) {
+                                            if (decimalPart.isNotEmpty()) {
+                                                "$integerPart$decimalSeparator$decimalPart"
+                                            } else {
+                                                "$integerPart$decimalSeparator"
+                                            }
+                                        } else {
+                                            integerPart
+                                        }
+                                    }
+                                }
+                            },
                             modifier = Modifier
                                 .weight(1.6f)
                                 .background(
@@ -280,7 +309,7 @@ fun PlanDetailBottomSheet(
                                     RoundedCornerShape(6.dp)
                                 )
                                 .padding(8.dp),
-                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
                             textStyle = androidx.compose.ui.text.TextStyle(
                                 fontSize = 12.sp,
                                 color = ThemeColors.getTextColor(isDarkTheme),
@@ -293,7 +322,10 @@ fun PlanDetailBottomSheet(
                                 .weight(1.6f)
                                 .clickable {
                                     editingCell = Pair(index, "income")
-                                    editedValue =  String.format("%.2f", breakdown.projectedIncome)
+                                    val df = java.text.DecimalFormat("#")
+                                    df.maximumFractionDigits = 10
+                                    df.isGroupingUsed = false
+                                    editedValue = df.format(breakdown.projectedIncome)
                                 }
                                 .padding(8.dp),
                             contentAlignment = Alignment.Center
@@ -312,7 +344,28 @@ fun PlanDetailBottomSheet(
                     if (isEditingExpenses) {
                         BasicTextField(
                             value = editedValue,
-                            onValueChange = { editedValue = it },
+                            onValueChange = { newValue ->
+                                val filtered = newValue.filter { it.isDigit() || it == '.' || it == ',' }
+                                val normalized = filtered.replace(',', decimalSeparator).replace('.', decimalSeparator)
+                                val parts = normalized.split(decimalSeparator)
+
+                                if (parts.size <= 2) {
+                                    val integerPart = parts[0].filter { it.isDigit() }
+                                    val decimalPart = if (parts.size == 2) parts[1].filter { it.isDigit() } else ""
+
+                                    if (integerPart.length <= 9 && decimalPart.length <= 2) {
+                                        editedValue = if (parts.size == 2) {
+                                            if (decimalPart.isNotEmpty()) {
+                                                "$integerPart$decimalSeparator$decimalPart"
+                                            } else {
+                                                "$integerPart$decimalSeparator"
+                                            }
+                                        } else {
+                                            integerPart
+                                        }
+                                    }
+                                }
+                            },
                             modifier = Modifier
                                 .weight(1.6f)
                                 .background(
@@ -325,7 +378,7 @@ fun PlanDetailBottomSheet(
                                     RoundedCornerShape(6.dp)
                                 )
                                 .padding(8.dp),
-                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
                             textStyle = androidx.compose.ui.text.TextStyle(
                                 fontSize = 12.sp,
                                 color = ThemeColors.getTextColor(isDarkTheme),
@@ -338,7 +391,10 @@ fun PlanDetailBottomSheet(
                                 .weight(1.6f)
                                 .clickable {
                                     editingCell = Pair(index, "expenses")
-                                    editedValue =  String.format("%.2f", breakdown.totalProjectedExpenses)
+                                    val df = java.text.DecimalFormat("#")
+                                    df.maximumFractionDigits = 10
+                                    df.isGroupingUsed = false
+                                    editedValue = df.format(breakdown.totalProjectedExpenses)
                                 }
                                 .padding(8.dp),
                             contentAlignment = Alignment.Center
@@ -354,13 +410,13 @@ fun PlanDetailBottomSheet(
                     
                     // Net (calculated)
                     val currentIncome = if (isEditingIncome) {
-                        editedValue.toDoubleOrNull() ?: breakdown.projectedIncome
+                        editedValue.replace(decimalSeparator, '.').toDoubleOrNull() ?: breakdown.projectedIncome
                     } else {
                         breakdown.projectedIncome
                     }
-                    
+
                     val currentExpenses = if (isEditingExpenses) {
-                        editedValue.toDoubleOrNull() ?: breakdown.totalProjectedExpenses
+                        editedValue.replace(decimalSeparator, '.').toDoubleOrNull() ?: breakdown.totalProjectedExpenses
                     } else {
                         breakdown.totalProjectedExpenses
                     }

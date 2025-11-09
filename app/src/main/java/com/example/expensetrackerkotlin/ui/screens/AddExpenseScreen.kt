@@ -53,34 +53,48 @@ fun AddExpenseScreen(
     editingExpense: Expense? = null,
     viewModel: com.example.expensetrackerkotlin.viewmodel.ExpenseViewModel
 ) {
-    var amount by remember { 
-        mutableStateOf(editingExpense?.amount?.toString() ?: "") 
+    // Helper function to format double to edit string
+    fun formatDoubleForEdit(value: Double): String {
+        // Use DecimalFormat to avoid scientific notation and thousand separators
+        val df = java.text.DecimalFormat("#")
+        df.maximumFractionDigits = 10
+        df.isGroupingUsed = false
+        return df.format(value)
     }
-    var selectedCurrency by remember(defaultCurrency) { 
-        mutableStateOf(editingExpense?.currency ?: defaultCurrency) 
+
+    var amount by remember {
+        mutableStateOf(editingExpense?.amount?.let { formatDoubleForEdit(it) } ?: "")
     }
-    var selectedSubCategoryId by remember { 
-        mutableStateOf(editingExpense?.subCategoryId ?: "") 
+    var selectedCurrency by remember(defaultCurrency) {
+        mutableStateOf(editingExpense?.currency ?: defaultCurrency)
     }
-    var description by remember { 
-        mutableStateOf(editingExpense?.description ?: "") 
+    var selectedSubCategoryId by remember {
+        mutableStateOf(editingExpense?.subCategoryId ?: "")
     }
-    var exchangeRate by remember { 
-        mutableStateOf(editingExpense?.exchangeRate?.toString() ?: "") 
+    var description by remember {
+        mutableStateOf(editingExpense?.description ?: "")
+    }
+    var exchangeRate by remember {
+        mutableStateOf(editingExpense?.exchangeRate?.let { formatDoubleForEdit(it) } ?: "")
     }
     var showCurrencyMenu by remember { mutableStateOf(false) }
     var showCategoryMenu by remember { mutableStateOf(false) }
     var showRecurrenceMenu by remember { mutableStateOf(false) }
     var categorySearchText by remember { mutableStateOf("") }
     var selectedCategoryFilter by remember { mutableStateOf("ALL") }
-    var selectedRecurrenceType by remember { 
-        mutableStateOf(editingExpense?.recurrenceType ?: RecurrenceType.NONE) 
+    var selectedRecurrenceType by remember {
+        mutableStateOf(editingExpense?.recurrenceType ?: RecurrenceType.NONE)
     }
-    var endDate by remember { 
-        mutableStateOf(editingExpense?.endDate ?: LocalDateTime.now().plusYears(1)) 
+    var endDate by remember {
+        mutableStateOf(editingExpense?.endDate ?: LocalDateTime.now().plusYears(1))
     }
     var showEndDatePicker by remember { mutableStateOf(false) }
-    
+
+    // Get locale-specific decimal separator
+    val decimalSeparator = remember {
+        java.text.DecimalFormatSymbols.getInstance(java.util.Locale.getDefault()).decimalSeparator
+    }
+
     // Collect categories and subcategories from ViewModel
     val categories by viewModel.categories.collectAsState()
     val subCategories by viewModel.subCategories.collectAsState()
@@ -188,19 +202,30 @@ fun AddExpenseScreen(
                     BasicTextField(
                         value = amount,
                         onValueChange = { newValue ->
-                            val filtered = newValue.filter { "0123456789.,".contains(it) }
-                            val components = filtered.split(",", ".")
-                            val integerPart = components[0].filter { it.isDigit() }
-                            val decimalPart = if (components.size > 1) components[1].filter { it.isDigit() } else ""
+                            // Allow digits and both . and , (normalize to decimal separator)
+                            val filtered = newValue.filter { it.isDigit() || it == '.' || it == ',' }
 
-                            // Limit: 9 digits integer + 2 digits decimal
-                            if (integerPart.length <= 9 && decimalPart.length <= 2) {
-                                amount = if (components.size > 2 || (decimalPart.isNotEmpty() && components.size > 1)) {
-                                    if (decimalPart.isNotEmpty()) "${integerPart}.${decimalPart}" else "${integerPart}."
-                                } else if (filtered.contains(",") || filtered.contains(".")) {
-                                    "${integerPart}."
-                                } else {
-                                    integerPart
+                            // Replace any separator with the locale separator
+                            val normalized = filtered.replace(',', decimalSeparator).replace('.', decimalSeparator)
+
+                            // Split by decimal separator
+                            val parts = normalized.split(decimalSeparator)
+
+                            if (parts.size <= 2) {
+                                val integerPart = parts[0].filter { it.isDigit() }
+                                val decimalPart = if (parts.size == 2) parts[1].filter { it.isDigit() } else ""
+
+                                // Limit: 9 digits integer + 2 digits decimal
+                                if (integerPart.length <= 9 && decimalPart.length <= 2) {
+                                    amount = if (parts.size == 2) {
+                                        if (decimalPart.isNotEmpty()) {
+                                            "$integerPart$decimalSeparator$decimalPart"
+                                        } else {
+                                            "$integerPart$decimalSeparator"
+                                        }
+                                    } else {
+                                        integerPart
+                                    }
                                 }
                             }
                         },
@@ -614,19 +639,30 @@ fun AddExpenseScreen(
                         BasicTextField(
                             value = exchangeRate,
                             onValueChange = { newValue ->
-                                val filtered = newValue.filter { "0123456789.,".contains(it) }
-                                val components = filtered.split(",", ".")
-                                val integerPart = components[0].filter { it.isDigit() }
-                                val decimalPart = if (components.size > 1) components[1].filter { it.isDigit() } else ""
+                                // Allow digits and both . and , (normalize to decimal separator)
+                                val filtered = newValue.filter { it.isDigit() || it == '.' || it == ',' }
 
-                                // Limit: 9 digits integer + 2 digits decimal
-                                if (integerPart.length <= 9 && decimalPart.length <= 2) {
-                                    exchangeRate = if (components.size > 2 || (decimalPart.isNotEmpty() && components.size > 1)) {
-                                        if (decimalPart.isNotEmpty()) "${integerPart}.${decimalPart}" else "${integerPart}."
-                                    } else if (filtered.contains(",") || filtered.contains(".")) {
-                                        "${integerPart}."
-                                    } else {
-                                        integerPart
+                                // Replace any separator with the locale separator
+                                val normalized = filtered.replace(',', decimalSeparator).replace('.', decimalSeparator)
+
+                                // Split by decimal separator
+                                val parts = normalized.split(decimalSeparator)
+
+                                if (parts.size <= 2) {
+                                    val integerPart = parts[0].filter { it.isDigit() }
+                                    val decimalPart = if (parts.size == 2) parts[1].filter { it.isDigit() } else ""
+
+                                    // Limit: 9 digits integer + 2 digits decimal
+                                    if (integerPart.length <= 9 && decimalPart.length <= 2) {
+                                        exchangeRate = if (parts.size == 2) {
+                                            if (decimalPart.isNotEmpty()) {
+                                                "$integerPart$decimalSeparator$decimalPart"
+                                            } else {
+                                                "$integerPart$decimalSeparator"
+                                            }
+                                        } else {
+                                            integerPart
+                                        }
                                     }
                                 }
                             },
@@ -693,7 +729,11 @@ fun AddExpenseScreen(
             }
             Button(
                 onClick = {
-                    val amountValue = amount.toDoubleOrNull()
+                    // Replace locale decimal separator with "." for parsing
+                    val normalizedAmount = amount.replace(decimalSeparator, '.')
+                    val normalizedExchangeRate = exchangeRate.replace(decimalSeparator, '.')
+
+                    val amountValue = normalizedAmount.toDoubleOrNull()
                     if (amountValue != null && amountValue > 0) {
                         val expense = if (editingExpense != null) {
                             // Update existing expense
@@ -704,7 +744,7 @@ fun AddExpenseScreen(
                                 subCategoryId = selectedSubCategoryId,
                                 description = description,
                                 exchangeRate = if (selectedCurrency != defaultCurrency) {
-                                    exchangeRate.toDoubleOrNull()
+                                    normalizedExchangeRate.toDoubleOrNull()
                                 } else {
                                     null
                                 },
@@ -723,7 +763,7 @@ fun AddExpenseScreen(
                                 dailyLimitAtCreation = dailyLimit.toDoubleOrNull() ?: 0.0,
                                 monthlyLimitAtCreation = monthlyLimit.toDoubleOrNull() ?: 0.0,
                                 exchangeRate = if (selectedCurrency != defaultCurrency) {
-                                    exchangeRate.toDoubleOrNull()
+                                    normalizedExchangeRate.toDoubleOrNull()
                                 } else {
                                     null
                                 },
@@ -736,16 +776,16 @@ fun AddExpenseScreen(
                         onDismiss()
                     }
                 },
-                enabled = amount.isNotEmpty() && amount.toDoubleOrNull() != null && amount.toDoubleOrNull()!! > 0 &&
+                enabled = amount.isNotEmpty() && amount.replace(decimalSeparator, '.').toDoubleOrNull()?.let { it > 0 } == true &&
                         selectedSubCategoryId.isNotEmpty() &&
-                        (selectedCurrency == defaultCurrency || (exchangeRate.isNotEmpty() && exchangeRate.toDoubleOrNull() != null && exchangeRate.toDoubleOrNull()!! > 0)),
+                        (selectedCurrency == defaultCurrency || (exchangeRate.isNotEmpty() && exchangeRate.replace(decimalSeparator, '.').toDoubleOrNull()?.let { it > 0 } == true)),
                 modifier = Modifier
                     .weight(1f)
                     .height(36.dp),
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = if (amount.isNotEmpty() && amount.toDoubleOrNull() != null && amount.toDoubleOrNull()!! > 0 &&
+                    containerColor = if (amount.isNotEmpty() && amount.replace(decimalSeparator, '.').toDoubleOrNull()?.let { it > 0 } == true &&
                         selectedSubCategoryId.isNotEmpty() &&
-                        (selectedCurrency == defaultCurrency || (exchangeRate.isNotEmpty() && exchangeRate.toDoubleOrNull() != null && exchangeRate.toDoubleOrNull()!! > 0))) {
+                        (selectedCurrency == defaultCurrency || (exchangeRate.isNotEmpty() && exchangeRate.replace(decimalSeparator, '.').toDoubleOrNull()?.let { it > 0 } == true))) {
                         AppColors.PrimaryOrange
                     } else {
                         ThemeColors.getButtonDisabledColor(isDarkTheme)

@@ -52,6 +52,11 @@ fun CreatePlanBottomSheet(
     isDarkTheme: Boolean,
     defaultCurrency: String
 ) {
+    // Get locale-specific decimal separator
+    val decimalSeparator = remember {
+        DecimalFormatSymbols.getInstance(Locale.getDefault()).decimalSeparator
+    }
+
     var planName by remember { mutableStateOf("") }
     var monthlyIncome by remember { mutableStateOf("") }
     var monthlyExpenses by remember { mutableStateOf("") }
@@ -62,7 +67,7 @@ fun CreatePlanBottomSheet(
     var isInterestApplied by remember { mutableStateOf(false) }
     var interestRate by remember { mutableStateOf("") }
     var selectedInterestType by remember { mutableStateOf(InterestType.COMPOUND) }
-    
+
     val context = LocalContext.current
     val suggestedDurations = PlanningUtils.getSuggestedPlanDurations(context)
     
@@ -324,19 +329,24 @@ fun CreatePlanBottomSheet(
                     BasicTextField(
                         value = monthlyIncome,
                         onValueChange = { newValue ->
-                            val filtered = newValue.filter { "0123456789.,".contains(it) }
-                            val components = filtered.split(",", ".")
-                            val integerPart = components[0].filter { it.isDigit() }
-                            val decimalPart = if (components.size > 1) components[1].filter { it.isDigit() } else ""
+                            val filtered = newValue.filter { it.isDigit() || it == '.' || it == ',' }
+                            val normalized = filtered.replace(',', decimalSeparator).replace('.', decimalSeparator)
+                            val parts = normalized.split(decimalSeparator)
 
-                            // Limit: 9 digits integer + 2 digits decimal
-                            if (integerPart.length <= 9 && decimalPart.length <= 2) {
-                                monthlyIncome = if (components.size > 2 || (decimalPart.isNotEmpty() && components.size > 1)) {
-                                    if (decimalPart.isNotEmpty()) "${integerPart}.${decimalPart}" else "${integerPart}."
-                                } else if (filtered.contains(",") || filtered.contains(".")) {
-                                    "${integerPart}."
-                                } else {
-                                    integerPart
+                            if (parts.size <= 2) {
+                                val integerPart = parts[0].filter { it.isDigit() }
+                                val decimalPart = if (parts.size == 2) parts[1].filter { it.isDigit() } else ""
+
+                                if (integerPart.length <= 9 && decimalPart.length <= 2) {
+                                    monthlyIncome = if (parts.size == 2) {
+                                        if (decimalPart.isNotEmpty()) {
+                                            "$integerPart$decimalSeparator$decimalPart"
+                                        } else {
+                                            "$integerPart$decimalSeparator"
+                                        }
+                                    } else {
+                                        integerPart
+                                    }
                                 }
                             }
                         },
@@ -414,19 +424,24 @@ fun CreatePlanBottomSheet(
                     BasicTextField(
                         value = monthlyExpenses,
                         onValueChange = { newValue ->
-                            val filtered = newValue.filter { "0123456789.,".contains(it) }
-                            val components = filtered.split(",", ".")
-                            val integerPart = components[0].filter { it.isDigit() }
-                            val decimalPart = if (components.size > 1) components[1].filter { it.isDigit() } else ""
+                            val filtered = newValue.filter { it.isDigit() || it == '.' || it == ',' }
+                            val normalized = filtered.replace(',', decimalSeparator).replace('.', decimalSeparator)
+                            val parts = normalized.split(decimalSeparator)
 
-                            // Limit: 9 digits integer + 2 digits decimal
-                            if (integerPart.length <= 9 && decimalPart.length <= 2) {
-                                monthlyExpenses = if (components.size > 2 || (decimalPart.isNotEmpty() && components.size > 1)) {
-                                    if (decimalPart.isNotEmpty()) "${integerPart}.${decimalPart}" else "${integerPart}."
-                                } else if (filtered.contains(",") || filtered.contains(".")) {
-                                    "${integerPart}."
-                                } else {
-                                    integerPart
+                            if (parts.size <= 2) {
+                                val integerPart = parts[0].filter { it.isDigit() }
+                                val decimalPart = if (parts.size == 2) parts[1].filter { it.isDigit() } else ""
+
+                                if (integerPart.length <= 9 && decimalPart.length <= 2) {
+                                    monthlyExpenses = if (parts.size == 2) {
+                                        if (decimalPart.isNotEmpty()) {
+                                            "$integerPart$decimalSeparator$decimalPart"
+                                        } else {
+                                            "$integerPart$decimalSeparator"
+                                        }
+                                    } else {
+                                        integerPart
+                                    }
                                 }
                             }
                         },
@@ -557,10 +572,23 @@ fun CreatePlanBottomSheet(
                     
                     Button(
                         onClick = {
-                            val income = monthlyIncome.toDoubleOrNull() ?: 0.0
-                            val expenses = monthlyExpenses.toDoubleOrNull() ?: 0.0
-                            val inflation = if (isInflationApplied) inflationRate.toDoubleOrNull() ?: 0.0 else 0.0
-                            val interest = if (isInterestApplied) interestRate.toDoubleOrNull() ?: 0.0 else 0.0
+                            // Replace locale decimal separator with "." for parsing
+                            android.util.Log.d("CreatePlan", "Raw income: '$monthlyIncome', separator: '$decimalSeparator'")
+                            android.util.Log.d("CreatePlan", "Raw expenses: '$monthlyExpenses'")
+
+                            val normalizedIncome = monthlyIncome.replace(decimalSeparator, '.')
+                            val normalizedExpenses = monthlyExpenses.replace(decimalSeparator, '.')
+
+                            android.util.Log.d("CreatePlan", "Normalized income: '$normalizedIncome'")
+                            android.util.Log.d("CreatePlan", "Normalized expenses: '$normalizedExpenses'")
+
+                            val income = normalizedIncome.toDoubleOrNull() ?: 0.0
+                            val expenses = normalizedExpenses.toDoubleOrNull() ?: 0.0
+                            val inflation = if (isInflationApplied) inflationRate.replace(decimalSeparator, '.').toDoubleOrNull() ?: 0.0 else 0.0
+                            val interest = if (isInterestApplied) interestRate.replace(decimalSeparator, '.').toDoubleOrNull() ?: 0.0 else 0.0
+
+                            android.util.Log.d("CreatePlan", "Parsed income: $income")
+                            android.util.Log.d("CreatePlan", "Parsed expenses: $expenses")
 
                             onCreatePlan(
                                 planName.trim(),

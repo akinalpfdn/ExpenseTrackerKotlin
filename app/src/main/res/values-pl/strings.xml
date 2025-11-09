@@ -400,4 +400,5 @@
     <string name="welcome_page2_description">Wizualizuj swoje wydatki za pomocą pięknych wykresów. Zobacz, na co idą Twoje pieniądze, dzięki podziałom na kategorie i trendom miesięcznym.</string>
     <string name="welcome_page3_title">Twoja Prywatność Ma Znaczenie</string>
     <string name="welcome_page3_description">Wszystkie Twoje dane pozostają na Twoim urządzeniu. Bez przechowywania w chmurze, bez śledzenia, bez reklam. Twoje informacje finansowe są całkowicie prywatne.</string>
+    <string name="category_info_text">You also need to add subcategories for newly added categories. When adding a new expense, subcategories are used, not the main categories.</string>
 </resources>

@@ -46,13 +46,22 @@ fun CategoryManagementScreen(
     // Get categories and subcategories from ViewModel
     val categories by viewModel.categories.collectAsState()
     val subCategories by viewModel.subCategories.collectAsState()
-    
+    Text(
+        text = stringResource(R.string.category_info_text),
+        fontSize = 14.sp,
+        fontWeight = FontWeight.SemiBold,
+        color = ThemeColors.getTextColor(isDarkTheme),
+                modifier = modifier
+            .padding(20.dp,0.dp)
+    )
     Column(
          modifier = modifier
              .fillMaxSize()
              .padding(20.dp)
      ) {
-         // Tree View
+
+
+        // Tree View
                  LazyColumn(
              modifier = Modifier.weight(1f),
              verticalArrangement = Arrangement.spacedBy(8.dp)
